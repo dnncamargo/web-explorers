@@ -1,3 +1,4 @@
-function mostrarMensagem(msg) {
+function mostrarMensagem(e, msg) {
+  e.preventDefault();
   alert(msg);
 }
