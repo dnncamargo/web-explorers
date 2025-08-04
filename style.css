@@ -28,6 +28,6 @@ body {
 
 .mario {
   position: absolute;
-  width: 165px;        /* tamanho do GIF, ajuste conforme necessário */
-  height: 120px;
+  width: 150px;        /* tamanho do GIF, ajuste conforme necessário */
+  height: 112px;
 }
