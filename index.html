@@ -10,7 +10,7 @@
 
 <body>
   <div class="container">
-    <img src="mundo1.jpg" alt="Mapa do Mundo" class="mapa">
+    <img src="mundo1.jpg" alt="Mapa do Mundo" class="mapa" onclick="tocarSom()" />
 
 
     <a href="https://docs.google.com/document/d/1wflAcgpV5LDLaA75kwB3InIVKpug_425OG0B3ozZwD0/edit?usp=sharing"
@@ -37,9 +37,11 @@
   <script src="script.js"></script>
   <script>
     const som = new Audio('smb-techno.mp3');
-    som.play().catch(e => {
-      console.log("Autoplay bloqueado, tente interagir com a página primeiro.");
-    });
+    function tocarSom() {
+      som.play().catch(e => {
+        console.log("Erro ao reproduzir o som:", e);
+      });
+    }
   </script>
 </body>
 

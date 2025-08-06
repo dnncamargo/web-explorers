@@ -10,7 +10,7 @@
 
 <body>
   <div class="container">
-    <img src="mundo3.png" alt="Mapa do Mundo" class="mapa">
+    <img src="mundo3.png" alt="Mapa do Mundo" class="mapa" onclick="tocarSom()" />
 
     <a href="https://docs.google.com/document/d/193ykgReOJX_QEB1PWsmCIHXRZjIj8yTKPCCkcpHoo-4/edit?usp=sharing"
       target="_blank">
@@ -26,9 +26,11 @@
   <script src="script.js"></script>
   <script>
     const som = new Audio('underwater-lofi.mp3');
-    som.play().catch(e => {
-      console.log("Autoplay bloqueado, tente interagir com a página primeiro.");
-    });
+    function tocarSom() {
+      som.play().catch(e => {
+        console.log("Erro ao reproduzir o som:", e);
+      });
+    }
   </script>
 </body>
 
