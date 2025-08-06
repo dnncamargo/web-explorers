@@ -1,31 +1,35 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="UTF-8">
-  <title>Exploradores do Mundo Digital</title>
+  <title>Bem-vindo a fase da água</title>
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="favicon.png" type="image/png" sizes="32x32">
 </head>
+
 <body>
   <div class="container">
     <img src="mundo3.png" alt="Mapa do Mundo" class="mapa">
 
-    <a href="https://docs.google.com/document/d/193ykgReOJX_QEB1PWsmCIHXRZjIj8yTKPCCkcpHoo-4/edit?usp=sharing" target="_blank">
-      <img src="mario_frog.gif" 
-          class="mario" 
-          style="top: 248px; left: 270px;" 
-      />
+    <a href="https://docs.google.com/document/d/193ykgReOJX_QEB1PWsmCIHXRZjIj8yTKPCCkcpHoo-4/edit?usp=sharing"
+      target="_blank">
+      <img src="mario_frog.gif" class="mario" style="top: 248px; left: 270px;" />
     </a>
-   
-    <!-- Tijolos clicáveis -->
-     <img src="smw-block.gif" 
-        class="objeto" 
-        style="top: 355px; left: 465px;" 
-        onclick="mostrarMensagem(event, 'Ctrl + ENTER = Renomear')" 
-    />
 
- </div>
+    <!-- Tijolos clicáveis -->
+    <img src="smw-block.gif" class="objeto" style="top: 355px; left: 465px;"
+      onclick="mostrarMensagem(event, 'Ctrl + ENTER = Renomear')" />
+
+  </div>
 
   <script src="script.js"></script>
+  <script>
+    const som = new Audio('underwater-lofi.mp3');
+    som.play().catch(e => {
+      console.log("Autoplay bloqueado, tente interagir com a página primeiro.");
+    });
+  </script>
 </body>
+
 </html>

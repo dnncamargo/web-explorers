@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Exploradores do Mundo Digital</title>
+  <title>FINAL BOSS</title>
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="favicon.png" type="image/png" sizes="32x32">
 </head>
@@ -20,5 +20,11 @@
  </div>
 
   <script src="script.js"></script>
+  <script>
+    const som = new Audio('final-boss-remix.mp3');
+    som.play().catch(e => {
+      console.log("Autoplay bloqueado, tente interagir com a página primeiro.");
+    });
+  </script>
 </body>
 </html>
