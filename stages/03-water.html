@@ -7,9 +7,7 @@
 <title>Mundo 3 — Fase da Água</title>
 
 <style>
-  * {
-    box-sizing: border-box;
-  }
+  * { box-sizing: border-box; }
 
   :root {
     --panel: rgba(5, 27, 57, .94);
@@ -17,7 +15,6 @@
     --white: #fff;
     --yellow: #ffe56b;
     --green: #7dff9d;
-    --blue: #79c8ff;
     --cyan: #82f1ff;
   }
 
@@ -29,44 +26,27 @@
     font-family: "Courier New", monospace;
   }
 
-  button,
-  input,
-  textarea {
-    font: inherit;
-  }
+  button, input, textarea { font: inherit; }
 
   .world {
     min-height: 100vh;
     background:
-      linear-gradient(
-        to bottom,
-        rgba(1, 20, 38, .12),
-        rgba(1, 20, 38, .78)
-      ),
-      url("../assets/images/worlds/world-3.png")
-      center top / cover fixed;
+      linear-gradient(to bottom, rgba(1,20,38,.12), rgba(1,20,38,.78)),
+      url("../assets/images/worlds/world-3.png") center top / cover fixed;
   }
 
   .start-screen {
     position: fixed;
     inset: 0;
     z-index: 100;
-
     display: grid;
     place-items: center;
-
     padding: 24px;
-
     background:
-      linear-gradient(rgba(1, 20, 38, .62), rgba(1, 20, 38, .92)),
-      url("../assets/images/worlds/world-3.png")
-      center / cover;
-
+      linear-gradient(rgba(1,20,38,.62), rgba(1,20,38,.92)),
+      url("../assets/images/worlds/world-3.png") center / cover;
     text-align: center;
-
-    transition:
-      opacity .45s ease,
-      transform .45s ease;
+    transition: opacity .45s ease, transform .45s ease;
   }
 
   .start-screen.leaving {
@@ -75,9 +55,7 @@
     pointer-events: none;
   }
 
-  .start-content {
-    width: min(680px, 100%);
-  }
+  .start-content { width: min(680px, 100%); }
 
   .world-number {
     color: var(--yellow);
@@ -87,15 +65,12 @@
     text-shadow: 2px 2px 0 #000;
   }
 
-  .start-screen h1,
-  header h1 {
+  .start-screen h1, header h1 {
     margin: 8px 0;
     text-shadow: 4px 4px 0 #000;
   }
 
-  .start-screen h1 {
-    font-size: clamp(38px, 8vw, 68px);
-  }
+  .start-screen h1 { font-size: clamp(38px, 8vw, 68px); }
 
   .start-screen p {
     font-size: 18px;
@@ -107,18 +82,13 @@
     flex-direction: column;
     align-items: center;
     gap: 10px;
-
     margin-top: 18px;
     padding: 14px 20px;
-
     border: 4px solid #07344a;
     border-radius: 12px;
-
-    background: rgba(93, 221, 255, .88);
+    background: rgba(93,221,255,.88);
     color: #052434;
-
     box-shadow: 0 7px 0 #07344a;
-
     font-weight: bold;
     cursor: pointer;
   }
@@ -144,9 +114,7 @@
     text-align: center;
   }
 
-  header h1 {
-    font-size: clamp(34px, 6vw, 58px);
-  }
+  header h1 { font-size: clamp(34px, 6vw, 58px); }
 
   header p {
     margin: 0;
@@ -165,13 +133,10 @@
     align-items: center;
     gap: 16px;
     flex-wrap: wrap;
-
-    margin-bottom: 22px;
+    margin-bottom: 14px;
     padding: 14px 18px;
-
     border: 3px solid white;
     background: var(--panel);
-
     font-weight: bold;
   }
 
@@ -179,47 +144,78 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    flex: 1 1 320px;
+    flex: 1 1 560px;
     min-width: 0;
   }
 
   .explorer-name input {
-    width: min(390px, 100%);
+    flex: 1 1 auto;
+    width: auto;
     min-width: 0;
-
     padding: 8px 10px;
-
     border: 2px solid rgba(255,255,255,.75);
     border-radius: 4px;
-
     background: rgba(0,0,0,.38);
     color: white;
-
     font-weight: bold;
   }
 
-  .explorer-name input::placeholder {
-    color: rgba(255,255,255,.72);
-  }
+  .explorer-name input::placeholder { color: rgba(255,255,255,.72); }
 
   .explorer-name input:focus {
     outline: 3px solid var(--yellow);
     outline-offset: 2px;
   }
 
-  .mission,
-  .finish {
+  .checkpoint-strip {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 7px;
+    margin-bottom: 22px;
+    padding: 10px;
+    border: 3px solid rgba(255,255,255,.7);
+    background: var(--panel);
+  }
+
+  .checkpoint-dot {
+    min-width: 0;
+    padding: 8px 4px;
+    border: 2px solid #56798b;
+    border-radius: 5px;
+    background: rgba(0,0,0,.3);
+    color: #bed6df;
+    text-align: center;
+    font-size: 13px;
+    font-weight: bold;
+  }
+
+  .checkpoint-dot.active {
+    border-color: var(--yellow);
+    color: var(--yellow);
+  }
+
+  .checkpoint-dot.done {
+    border-color: var(--green);
+    background: rgba(25,120,70,.42);
+    color: var(--green);
+  }
+
+  .mission, .finish {
     margin-bottom: 24px;
     padding: 25px;
-
     border: 3px solid white;
     background: var(--panel);
-
     box-shadow: 8px 8px 0 rgba(0,0,0,.5);
   }
 
-  .mission.completed {
-    border-color: var(--green);
+  .mission.completed { border-color: var(--green); }
+
+  .checkpoint-label {
+    margin-bottom: 8px;
+    color: var(--cyan);
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 1px;
   }
 
   .mission h2 {
@@ -227,9 +223,7 @@
     color: var(--yellow);
   }
 
-  .mission p,
-  .mission li,
-  .finish p {
+  .mission p, .mission li, .finish p {
     font-size: 17px;
     line-height: 1.55;
   }
@@ -237,19 +231,24 @@
   .instruction-box {
     margin: 16px 0;
     padding: 15px;
-
     border-left: 5px solid var(--cyan);
     background: var(--panel-soft);
+  }
+
+  .keyboard-demo {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 12px 0;
   }
 
   .practice {
     margin: 18px 0;
     padding: 18px;
-
     border: 4px solid #9dc9dc;
     background: #fff;
     color: #111;
-
     font-family: Arial, sans-serif;
   }
 
@@ -260,19 +259,14 @@
     font-weight: bold;
   }
 
-  .practice input,
-  .practice textarea {
+  .practice input, .practice textarea {
     display: block;
     width: 100%;
-
     padding: 13px 14px;
-
     border: 3px solid #8aabb9;
     border-radius: 4px;
-
     background: white;
     color: #111;
-
     font-family: Arial, sans-serif;
     font-size: 22px;
   }
@@ -286,23 +280,22 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     min-width: 44px;
     min-height: 38px;
-
     padding: 5px 10px;
-
     border: 3px solid #222;
     border-radius: 5px;
-
     background: #f4f4f4;
     color: #111;
-
     box-shadow: 0 4px 0 #888;
-
     font-family: Arial, sans-serif;
     font-size: 18px;
     font-weight: bold;
+  }
+
+  .accent-key {
+    min-width: 72px;
+    font-size: 21px;
   }
 
   .keys {
@@ -315,20 +308,15 @@
   .status {
     min-height: 29px;
     margin-top: 12px;
-
     color: var(--yellow);
     font-weight: bold;
   }
 
-  .status.success {
-    color: var(--green);
-  }
+  .status.success { color: var(--green); }
 
-  .hint-button,
-  .reset-button {
+  .hint-button, .reset-button {
     margin-top: 12px;
     padding: 11px 16px;
-
     font-weight: bold;
     cursor: pointer;
   }
@@ -341,7 +329,6 @@
 
   .reset-button {
     margin-right: 8px;
-
     border: 3px solid #687487;
     background: #dce3eb;
     color: #101722;
@@ -354,42 +341,27 @@
 
   .hint {
     display: none;
-
     margin-top: 12px;
     padding: 15px;
-
     border: 3px solid #4bbfdc;
     background: #073e58;
-
     line-height: 1.6;
   }
 
-  .hint.visible {
-    display: block;
-  }
+  .hint.visible { display: block; }
 
-  .finish {
-    text-align: center;
-  }
-
-  .finish h2 {
-    color: var(--green);
-  }
+  .finish { text-align: center; }
+  .finish h2 { color: var(--green); }
 
   .next-link {
     display: inline-block;
-
     margin-top: 16px;
     padding: 15px 20px;
-
     border: 4px solid #0c3655;
     border-radius: 8px;
-
     background: #7ddfff;
     color: #032335;
-
     box-shadow: 0 6px 0 #0c3655;
-
     font-weight: bold;
     text-decoration: none;
   }
@@ -399,75 +371,46 @@
     box-shadow: 0 1px 0 #0c3655;
   }
 
-  [hidden] {
-    display: none !important;
-  }
+  [hidden] { display: none !important; }
 
   @media (max-width: 560px) {
-    .mission,
-    .finish {
-      padding: 18px;
-    }
+    .mission, .finish { padding: 18px; }
   }
 </style>
 </head>
 
 <body>
 
-<audio
-  id="worldMusic"
-  src="../assets/audio/stage-3-underwater.mp3"
-  preload="auto"
-  loop>
-</audio>
+<audio id="worldMusic" src="../assets/audio/stage-3-underwater.mp3" preload="auto" loop></audio>
 
 <div class="start-screen" id="startScreen">
   <div class="start-content">
     <div class="world-number">🐸 MUNDO 3 🐸</div>
-
     <h1>FASE DA ÁGUA</h1>
+    <p>Agora vamos aprender teclas que mudam letras e símbolos.</p>
 
-    <p>
-      Agora vamos aprender uma tecla que muda o que as outras teclas fazem.
-    </p>
-
-    <button
-      id="startButton"
-      class="frog-entry"
-      type="button"
-    >
-      <img
-        src="../assets/images/characters/mario-frog.gif"
-        alt=""
-        aria-hidden="true"
-      >
+    <button id="startButton" class="frog-entry" type="button">
+      <img src="../assets/images/characters/mario-frog.gif" alt="" aria-hidden="true">
       <span>MERGULHAR</span>
     </button>
   </div>
 </div>
 
 <div class="world">
-
 <header>
   <div class="world-number">MUNDO 3</div>
-
   <h1>FASE DA ÁGUA</h1>
-
-  <p>
-    Segure Shift e pressione outra tecla.
-  </p>
+  <p>Shift, acentos e pontuação.</p>
 </header>
 
 <main>
-
   <div class="hud">
     <label class="explorer-name" for="explorerName">
       <span aria-hidden="true">🐸</span>
-
       <input
         id="explorerName"
         type="text"
-        maxlength="120"
+        maxlength="30"
         autocomplete="off"
         spellcheck="false"
         placeholder="Olá, explorador(a), digite seu nome aqui"
@@ -475,294 +418,256 @@
       >
     </label>
 
-    <span id="progress">⭐ 0 / 5</span>
+    <span id="progress">⭐ 0 / 7</span>
+  </div>
+
+  <div class="checkpoint-strip" aria-label="Checkpoints do Mundo 3">
+    <span class="checkpoint-dot active" id="checkpoint1">1</span>
+    <span class="checkpoint-dot" id="checkpoint2">2</span>
+    <span class="checkpoint-dot" id="checkpoint3">3</span>
+    <span class="checkpoint-dot" id="checkpoint4">4</span>
+    <span class="checkpoint-dot" id="checkpoint5">5</span>
+    <span class="checkpoint-dot" id="checkpoint6">6</span>
+    <span class="checkpoint-dot" id="checkpoint7">7</span>
   </div>
 
   <section class="mission" id="mission1">
+    <div class="checkpoint-label">🚩 CHECKPOINT 1 / 7</div>
     <h2>⇧ Desafio 1 — Letras maiúsculas</h2>
-
-    <p>
-      A tecla <strong>Shift</strong> funciona junto com outra tecla.
-    </p>
+    <p>A tecla <strong>Shift</strong> funciona junto com outra tecla.</p>
 
     <div class="instruction-box">
-      <p>
-        <strong>1.</strong> Segure <kbd>Shift ⇧</kbd>.
-      </p>
-
-      <p>
-        <strong>2.</strong> Sem soltar Shift, pressione uma letra.
-      </p>
-
-      <p>
-        <strong>3.</strong> Depois solte as teclas.
-      </p>
+      <p><strong>1.</strong> Segure <kbd>Shift ⇧</kbd>.</p>
+      <p><strong>2.</strong> Sem soltar Shift, pressione uma letra.</p>
+      <p><strong>3.</strong> Depois solte as teclas.</p>
     </div>
 
-    <p>
-      Escreva <strong>MARIO</strong> usando Shift para fazer as letras maiúsculas.
-    </p>
+    <p>Escreva <strong>MARIO</strong> usando Shift para fazer as letras maiúsculas.</p>
 
     <div class="practice">
       <label for="uppercaseInput">Digite MARIO:</label>
-      <input
-        id="uppercaseInput"
-        type="text"
-        autocomplete="off"
-        spellcheck="false"
-      >
+      <input id="uppercaseInput" type="text" autocomplete="off" spellcheck="false">
     </div>
 
-    <div class="status" id="status1">
-      Segure Shift enquanto pressiona cada letra.
-    </div>
+    <div class="status" id="status1">Segure Shift enquanto pressiona cada letra.</div>
 
-    <button type="button" class="reset-button" data-reset="1">
-      ↻ Reiniciar desafio
-    </button>
-
-    <button type="button" class="hint-button" data-hint="hint1">
-      🧱 Bloco de dica
-    </button>
+    <button type="button" class="reset-button" data-reset="1">↻ Reiniciar desafio</button>
+    <button type="button" class="hint-button" data-hint="hint1">🧱 Bloco de dica</button>
 
     <div class="hint" id="hint1">
-      Não aperte Shift sozinho.
-      <br><br>
       Segure <kbd>Shift ⇧</kbd> e, sem soltar,
       pressione a letra que você quer escrever em maiúscula.
     </div>
   </section>
 
   <section class="mission" id="mission2" hidden>
-    <h2>´ Desafio 2 — Acentos</h2>
+    <div class="checkpoint-label">🚩 CHECKPOINT 2 / 7</div>
+    <h2>´ &#96; ~ ^ Desafio 2 — Acentos</h2>
 
-    <p>
-      Algumas teclas também preparam um acento para a próxima letra.
-    </p>
+    <p>Observe duas teclas importantes do teclado:</p>
+
+    <div class="keyboard-demo">
+      <kbd class="accent-key">´ &#96;</kbd>
+      <kbd class="accent-key">~ ^</kbd>
+    </div>
 
     <div class="instruction-box">
-      <p>
-        Primeiro pressione a tecla do acento.
-        Depois pressione a vogal.
-      </p>
-
-      <p>
-        Às vezes o acento só aparece depois que a vogal é digitada.
-      </p>
+      <p>Essas teclas podem preparar o acento para a próxima letra.</p>
+      <p>Primeiro pressione a tecla do acento. Depois pressione a vogal.</p>
+      <p>O acento pode esperar pela vogal antes de aparecer na tela.</p>
     </div>
 
     <div class="practice">
       <label for="acuteInput">Escreva: água</label>
-      <input
-        id="acuteInput"
-        type="text"
-        autocomplete="off"
-        spellcheck="false"
-      >
+      <input id="acuteInput" type="text" autocomplete="off" spellcheck="false">
 
       <label for="circumflexInput">Escreva: você</label>
-      <input
-        id="circumflexInput"
-        type="text"
-        autocomplete="off"
-        spellcheck="false"
-      >
+      <input id="circumflexInput" type="text" autocomplete="off" spellcheck="false">
 
       <label for="tildeInput">Escreva: irmã</label>
-      <input
-        id="tildeInput"
-        type="text"
-        autocomplete="off"
-        spellcheck="false"
-      >
+      <input id="tildeInput" type="text" autocomplete="off" spellcheck="false">
     </div>
 
-    <div class="status" id="status2">
-      Complete as três palavras com os acentos corretos.
-    </div>
+    <div class="status" id="status2">Complete as três palavras com os sinais corretos.</div>
 
-    <button type="button" class="reset-button" data-reset="2">
-      ↻ Reiniciar desafio
-    </button>
-
-    <button type="button" class="hint-button" data-hint="hint2">
-      🧱 Bloco de dica
-    </button>
+    <button type="button" class="reset-button" data-reset="2">↻ Reiniciar desafio</button>
+    <button type="button" class="hint-button" data-hint="hint2">🧱 Bloco de dica</button>
 
     <div class="hint" id="hint2">
-      Para fazer <strong>á</strong>, pressione o acento agudo e depois <strong>a</strong>.
+      <kbd class="accent-key">´ &#96;</kbd> ajuda a encontrar o acento agudo.
       <br><br>
-      Para fazer <strong>ê</strong>, pressione o circunflexo e depois <strong>e</strong>.
+      <kbd class="accent-key">~ ^</kbd> ajuda a encontrar o til e o circunflexo.
       <br><br>
-      Para fazer <strong>ã</strong>, pressione o til e depois <strong>a</strong>.
+      Pressione o sinal primeiro e a vogal depois.
     </div>
   </section>
 
   <section class="mission" id="mission3" hidden>
+    <div class="checkpoint-label">🚩 CHECKPOINT 3 / 7</div>
     <h2>⇧ + ´ Desafio 3 — Maiúscula com acento</h2>
 
-    <p>
-      Agora vamos juntar as duas ideias.
-    </p>
-
-    <p>
-      Escreva <strong>ÁGUA</strong>.
-    </p>
+    <p>Agora vamos juntar as duas ideias.</p>
+    <p>Escreva exatamente <strong>ÁGUA</strong>.</p>
 
     <div class="instruction-box">
       <p>
-        Para começar com <strong>Á</strong>:
-      </p>
-
-      <p>
-        pressione o acento agudo,
-        depois segure <kbd>Shift ⇧</kbd>
-        e pressione <kbd>A</kbd>.
+        Para começar com <strong>Á</strong>,
+        prepare o acento e depois use Shift com a letra A.
       </p>
     </div>
 
     <div class="practice">
       <label for="accentUpperInput">Digite ÁGUA:</label>
-      <input
-        id="accentUpperInput"
-        type="text"
-        autocomplete="off"
-        spellcheck="false"
-      >
+      <input id="accentUpperInput" type="text" autocomplete="off" spellcheck="false">
     </div>
 
-    <div class="status" id="status3">
-      Use o acento e Shift juntos.
-    </div>
+    <div class="status" id="status3">Use o acento e Shift juntos.</div>
 
-    <button type="button" class="reset-button" data-reset="3">
-      ↻ Reiniciar desafio
-    </button>
-
-    <button type="button" class="hint-button" data-hint="hint3">
-      🧱 Bloco de dica
-    </button>
+    <button type="button" class="reset-button" data-reset="3">↻ Reiniciar desafio</button>
+    <button type="button" class="hint-button" data-hint="hint3">🧱 Bloco de dica</button>
 
     <div class="hint" id="hint3">
-      O acento é preparado primeiro.
-      <br><br>
-      Depois use Shift com a letra para fazê-la maiúscula.
+      Prepare <strong>´</strong>.
+      Depois segure <kbd>Shift ⇧</kbd> e pressione A.
     </div>
   </section>
 
   <section class="mission" id="mission4" hidden>
-    <h2>!? Desafio 4 — Pontuação</h2>
+    <div class="checkpoint-label">🚩 CHECKPOINT 4 / 7</div>
+    <h2>, . Desafio 4 — Vírgula e ponto</h2>
 
-    <p>
-      Shift também ajuda a escrever alguns símbolos.
-    </p>
+    <p>Nem toda pontuação precisa de Shift.</p>
 
-    <div class="instruction-box">
-      <p>
-        Observe o teclado.
-      </p>
-
-      <p>
-        Se o símbolo estiver desenhado na parte de cima de uma tecla,
-        segure <kbd>Shift ⇧</kbd> e pressione essa tecla.
-      </p>
-
-      <p>
-        Em alguns teclados, certos símbolos possuem uma tecla própria.
-      </p>
+    <div class="keyboard-demo">
+      <kbd>,</kbd>
+      <kbd>.</kbd>
     </div>
+
+    <p>Escreva exatamente: <strong>Mario, Luigi.</strong></p>
 
     <div class="practice">
-      <label for="exclamationInput">Escreva: Olá!</label>
-      <input
-        id="exclamationInput"
-        type="text"
-        autocomplete="off"
-        spellcheck="false"
-      >
-
-      <label for="questionInput">Escreva: Tudo bem?</label>
-      <input
-        id="questionInput"
-        type="text"
-        autocomplete="off"
-        spellcheck="false"
-      >
+      <label for="commaPeriodInput">Digite a frase:</label>
+      <input id="commaPeriodInput" type="text" autocomplete="off" spellcheck="false">
     </div>
 
-    <div class="status" id="status4">
-      Use maiúscula, acento e o sinal correto no final.
-    </div>
+    <div class="status" id="status4">Use a vírgula entre os nomes e o ponto no final.</div>
 
-    <button type="button" class="reset-button" data-reset="4">
-      ↻ Reiniciar desafio
-    </button>
-
-    <button type="button" class="hint-button" data-hint="hint4">
-      🧱 Bloco de dica
-    </button>
+    <button type="button" class="reset-button" data-reset="4">↻ Reiniciar desafio</button>
+    <button type="button" class="hint-button" data-hint="hint4">🧱 Bloco de dica</button>
 
     <div class="hint" id="hint4">
-      Primeiro observe onde <strong>!</strong> e <strong>?</strong>
-      aparecem no seu teclado.
+      Procure as teclas <kbd>,</kbd> e <kbd>.</kbd>.
       <br><br>
-      Quando o símbolo estiver na parte de cima da tecla,
-      segure Shift enquanto a pressiona.
+      Não esqueça do espaço depois da vírgula.
     </div>
   </section>
 
   <section class="mission" id="mission5" hidden>
-    <h2>🏁 Desafio 5 — Junte tudo</h2>
+    <div class="checkpoint-label">🚩 CHECKPOINT 5 / 7</div>
+    <h2>! Desafio 5 — Exclamação</h2>
 
-    <p>
-      Agora use letras maiúsculas, acento, vírgula, exclamação e interrogação.
+    <p>Alguns símbolos ficam na parte de cima de uma tecla.</p>
+
+    <div class="instruction-box">
+      <p>
+        Para escrever <strong>!</strong>,
+        segure <kbd>Shift ⇧</kbd>
+        e pressione a tecla onde o símbolo <strong>!</strong> aparece.
+      </p>
+    </div>
+
+    <p>Escreva exatamente: <strong>Olá, Mario!</strong></p>
+
+    <div class="practice">
+      <label for="exclamationInput">Digite a frase:</label>
+      <input id="exclamationInput" type="text" autocomplete="off" spellcheck="false">
+    </div>
+
+    <div class="status" id="status5">Use maiúscula, acento, vírgula e exclamação.</div>
+
+    <button type="button" class="reset-button" data-reset="5">↻ Reiniciar desafio</button>
+    <button type="button" class="hint-button" data-hint="hint5">🧱 Bloco de dica</button>
+
+    <div class="hint" id="hint5">
+      Observe o teclado e encontre <strong>!</strong>.
+      Quando ele estiver na parte de cima de uma tecla,
+      segure Shift enquanto pressiona essa tecla.
+    </div>
+  </section>
+
+  <section class="mission" id="mission6" hidden>
+    <div class="checkpoint-label">🚩 CHECKPOINT 6 / 7</div>
+    <h2>? Desafio 6 — Interrogação no Chromebook</h2>
+
+    <p>Nos Chromebooks desta atividade, o ponto de interrogação usa:</p>
+
+    <p class="keys">
+      <kbd>AltGr</kbd>
+      <span>+</span>
+      <kbd>W</kbd>
     </p>
+
+    <div class="instruction-box">
+      <p>Segure <kbd>AltGr</kbd> e, sem soltar, pressione <kbd>W</kbd>.</p>
+    </div>
+
+    <p>Escreva exatamente: <strong>Tudo bem?</strong></p>
+
+    <div class="practice">
+      <label for="questionInput">Digite a pergunta:</label>
+      <input id="questionInput" type="text" autocomplete="off" spellcheck="false">
+    </div>
+
+    <div class="status" id="status6">Termine a frase com ? usando AltGr + W.</div>
+
+    <button type="button" class="reset-button" data-reset="6">↻ Reiniciar desafio</button>
+    <button type="button" class="hint-button" data-hint="hint6">🧱 Bloco de dica</button>
+
+    <div class="hint" id="hint6">
+      Segure <kbd>AltGr</kbd>.
+      Sem soltar, pressione <kbd>W</kbd>.
+      Depois solte as duas teclas.
+    </div>
+  </section>
+
+  <section class="mission" id="mission7" hidden>
+    <div class="checkpoint-label">🚩 CHECKPOINT 7 / 7</div>
+    <h2>🏁 Desafio 7 — Junte tudo</h2>
+
+    <p>Agora misture maiúsculas, acentos e toda a pontuação que praticamos.</p>
 
     <div class="practice">
       <label for="finalInput">
         Escreva exatamente:
-        <strong>Olá, Mario! Você está pronto?</strong>
+        <strong>Olá, Mario! Você está pronto? Sim.</strong>
       </label>
 
-      <textarea
-        id="finalInput"
-        autocomplete="off"
-        spellcheck="false"
-      ></textarea>
+      <textarea id="finalInput" autocomplete="off" spellcheck="false"></textarea>
     </div>
 
-    <div class="status" id="status5">
-      Confira letras, acentos, espaços e pontuação.
+    <div class="status" id="status7">
+      Confira letras, acentos, espaços, vírgula, ponto, ! e ?.
     </div>
 
-    <button type="button" class="reset-button" data-reset="5">
-      ↻ Reiniciar desafio
-    </button>
+    <button type="button" class="reset-button" data-reset="7">↻ Reiniciar desafio</button>
+    <button type="button" class="hint-button" data-hint="hint7">🧱 Bloco de dica</button>
 
-    <button type="button" class="hint-button" data-hint="hint5">
-      🧱 Bloco de dica
-    </button>
-
-    <div class="hint" id="hint5">
+    <div class="hint" id="hint7">
       Faça devagar.
       <br><br>
-      Use Shift nas letras maiúsculas.
-      Prepare o acento antes da vogal.
-      Observe a vírgula, a exclamação e a interrogação.
+      Shift ajuda nas maiúsculas e no <strong>!</strong>.
+      <br>
+      Use <kbd>AltGr</kbd> + <kbd>W</kbd> para <strong>?</strong>.
+      <br>
+      Procure também <kbd>,</kbd> e <kbd>.</kbd>.
     </div>
   </section>
 
   <section class="finish" id="finish" hidden>
     <h2>🌊 MUNDO 3 CONCLUÍDO!</h2>
 
-    <p>
-      Você aprendeu a usar Shift para escrever maiúsculas
-      e praticou acentuação e pontuação.
-    </p>
-
-    <p>
-      Agora abra o resumo do que já foi aprendido.
-    </p>
+    <p>Você atravessou os 7 checkpoints.</p>
+    <p>Agora abra o resumo do que já foi aprendido.</p>
 
     <a
       class="next-link"
@@ -776,78 +681,46 @@
 </div>
 
 <script>
-const TOTAL_MISSIONS = 5;
+const TOTAL_MISSIONS = 7;
+const CHECKPOINT_KEY = "web-explorers-world3-checkpoint";
 
-const startButton =
-  document.getElementById("startButton");
-
-const startScreen =
-  document.getElementById("startScreen");
-
-const worldMusic =
-  document.getElementById("worldMusic");
-
-const completed =
-  new Set();
+const startButton = document.getElementById("startButton");
+const startScreen = document.getElementById("startScreen");
+const worldMusic = document.getElementById("worldMusic");
+const completed = new Set();
 
 let audioContext = null;
 
 function startMusic() {
-
   worldMusic.volume = .22;
-
-  worldMusic.play().catch(() => {
-    // A atividade continua normalmente se o navegador bloquear o áudio.
-  });
-
+  worldMusic.play().catch(() => {});
 }
 
 startButton.addEventListener("click", () => {
-
   startButton.disabled = true;
-
   startMusic();
-
   startScreen.classList.add("leaving");
 
   setTimeout(() => {
     startScreen.remove();
   }, 500);
-
 });
 
 function successChime() {
-
   if (!audioContext) {
-    audioContext =
-      new (
-        window.AudioContext ||
-        window.webkitAudioContext
-      )();
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
   }
 
-  const notes = [
-    [523, 0],
-    [659, .08],
-    [784, .16]
-  ];
+  const notes = [[523, 0], [659, .08], [784, .16]];
 
   notes.forEach(([frequency, delay]) => {
-
-    const oscillator =
-      audioContext.createOscillator();
-
-    const gain =
-      audioContext.createGain();
+    const oscillator = audioContext.createOscillator();
+    const gain = audioContext.createGain();
 
     oscillator.type = "square";
     oscillator.frequency.value = frequency;
 
-    gain.gain.setValueAtTime(
-      .03,
-      audioContext.currentTime + delay
-    );
-
+    gain.gain.setValueAtTime(.03, audioContext.currentTime + delay);
     gain.gain.exponentialRampToValueAtTime(
       .001,
       audioContext.currentTime + delay + .11
@@ -856,375 +729,292 @@ function successChime() {
     oscillator.connect(gain);
     gain.connect(audioContext.destination);
 
-    oscillator.start(
-      audioContext.currentTime + delay
-    );
-
-    oscillator.stop(
-      audioContext.currentTime + delay + .12
-    );
-
+    oscillator.start(audioContext.currentTime + delay);
+    oscillator.stop(audioContext.currentTime + delay + .12);
   });
-
 }
 
-function completeMission(number) {
+function saveCheckpoint(number) {
+  try {
+    const current = Number(sessionStorage.getItem(CHECKPOINT_KEY) || 0);
 
-  if (completed.has(number)) {
-    return;
+    if (number > current) {
+      sessionStorage.setItem(CHECKPOINT_KEY, String(number));
+    }
+  } catch {}
+}
+
+function updateCheckpointStrip() {
+  for (let number = 1; number <= TOTAL_MISSIONS; number++) {
+    const checkpoint = document.getElementById(`checkpoint${number}`);
+
+    checkpoint.classList.remove("done", "active");
+
+    if (completed.has(number)) {
+      checkpoint.classList.add("done");
+      checkpoint.textContent = `✓ ${number}`;
+    } else {
+      checkpoint.textContent = String(number);
+    }
   }
 
+  const nextNumber = completed.size + 1;
+
+  if (nextNumber <= TOTAL_MISSIONS) {
+    document
+      .getElementById(`checkpoint${nextNumber}`)
+      .classList
+      .add("active");
+  }
+}
+
+function markMissionComplete(number) {
   completed.add(number);
 
-  document
-    .getElementById(`mission${number}`)
-    .classList
-    .add("completed");
+  const mission = document.getElementById(`mission${number}`);
+  mission.hidden = false;
+  mission.classList.add("completed");
 
-  const resetButton =
-    document.querySelector(
-      `[data-reset="${number}"]`
-    );
+  const resetButton = mission.querySelector("[data-reset]");
 
   if (resetButton) {
     resetButton.disabled = true;
-    resetButton.textContent =
-      "✓ Desafio concluído";
+    resetButton.textContent = "✓ Checkpoint concluído";
   }
+}
 
-  document
-    .getElementById("progress")
-    .textContent =
+function completeMission(number) {
+  if (completed.has(number)) return;
+
+  markMissionComplete(number);
+  saveCheckpoint(number);
+
+  document.getElementById("progress").textContent =
     `⭐ ${completed.size} / ${TOTAL_MISSIONS}`;
 
+  updateCheckpointStrip();
   successChime();
 
   if (number < TOTAL_MISSIONS) {
-
-    const next =
-      document.getElementById(
-        `mission${number + 1}`
-      );
-
+    const next = document.getElementById(`mission${number + 1}`);
     next.hidden = false;
 
     setTimeout(() => {
-
       next.scrollIntoView({
         behavior: "smooth",
         block: "start"
       });
-
     }, 250);
-
   } else {
-
-    const finish =
-      document.getElementById("finish");
-
+    const finish = document.getElementById("finish");
     finish.hidden = false;
 
     setTimeout(() => {
-
       finish.scrollIntoView({
         behavior: "smooth",
         block: "center"
       });
-
     }, 250);
-
   }
-
 }
 
-document
-  .querySelectorAll(".hint-button")
-  .forEach(button => {
+function restoreCheckpoint() {
+  let highest = 0;
 
-    button.addEventListener("click", () => {
+  try {
+    highest = Number(sessionStorage.getItem(CHECKPOINT_KEY) || 0);
+  } catch {
+    highest = 0;
+  }
 
-      const hint =
-        document.getElementById(
-          button.dataset.hint
-        );
+  highest = Math.max(0, Math.min(TOTAL_MISSIONS, highest));
 
-      hint.classList.toggle("visible");
+  for (let number = 1; number <= highest; number++) {
+    markMissionComplete(number);
+  }
 
-    });
+  if (highest > 0 && highest < TOTAL_MISSIONS) {
+    document.getElementById(`mission${highest + 1}`).hidden = false;
+  }
 
+  if (highest === TOTAL_MISSIONS) {
+    document.getElementById("finish").hidden = false;
+  }
+
+  document.getElementById("progress").textContent =
+    `⭐ ${completed.size} / ${TOTAL_MISSIONS}`;
+
+  updateCheckpointStrip();
+}
+
+document.querySelectorAll(".hint-button").forEach(button => {
+  button.addEventListener("click", () => {
+    document
+      .getElementById(button.dataset.hint)
+      .classList
+      .toggle("visible");
   });
+});
 
-const uppercaseInput =
-  document.getElementById("uppercaseInput");
-
-const status1 =
-  document.getElementById("status1");
-
+const uppercaseInput = document.getElementById("uppercaseInput");
+const status1 = document.getElementById("status1");
 let shiftedLetters1 = 0;
 
-uppercaseInput.addEventListener(
-  "keydown",
-  event => {
-
-    if (
-      event.shiftKey &&
-      /^[a-zA-Z]$/.test(event.key)
-    ) {
-      shiftedLetters1++;
-    }
-
+uppercaseInput.addEventListener("keydown", event => {
+  if (event.shiftKey && /^[a-zA-Z]$/.test(event.key)) {
+    shiftedLetters1++;
   }
-);
+});
 
-uppercaseInput.addEventListener(
-  "input",
-  () => {
-
-    if (
-      uppercaseInput.value === "MARIO" &&
-      shiftedLetters1 >= 5
-    ) {
-
-      status1.textContent =
-        "⭐ Isso! Shift deixou as letras maiúsculas.";
-
-      status1.classList.add("success");
-
-      completeMission(1);
-
-    } else if (
-      uppercaseInput.value === "MARIO"
-    ) {
-
-      status1.textContent =
-        "A palavra está certa, mas tente fazê-la segurando Shift.";
-
-    }
-
+uppercaseInput.addEventListener("input", () => {
+  if (uppercaseInput.value === "MARIO" && shiftedLetters1 >= 5) {
+    status1.textContent = "⭐ Isso! Shift deixou as letras maiúsculas.";
+    status1.classList.add("success");
+    completeMission(1);
+  } else if (uppercaseInput.value === "MARIO") {
+    status1.textContent =
+      "A palavra está certa, mas tente novamente segurando Shift.";
   }
-);
+});
 
-const acuteInput =
-  document.getElementById("acuteInput");
-
-const circumflexInput =
-  document.getElementById("circumflexInput");
-
-const tildeInput =
-  document.getElementById("tildeInput");
-
-const status2 =
-  document.getElementById("status2");
+const acuteInput = document.getElementById("acuteInput");
+const circumflexInput = document.getElementById("circumflexInput");
+const tildeInput = document.getElementById("tildeInput");
+const status2 = document.getElementById("status2");
 
 function checkAccents() {
-
   if (
     acuteInput.value.trim() === "água" &&
     circumflexInput.value.trim() === "você" &&
     tildeInput.value.trim() === "irmã"
   ) {
-
     status2.textContent =
-      "⭐ Perfeito! Você escreveu três tipos de acento.";
-
+      "⭐ Perfeito! Você encontrou as teclas de acentuação.";
     status2.classList.add("success");
-
     completeMission(2);
-
   }
-
 }
 
-[
-  acuteInput,
-  circumflexInput,
-  tildeInput
-].forEach(input => {
+[acuteInput, circumflexInput, tildeInput].forEach(input => {
   input.addEventListener("input", checkAccents);
 });
 
-const accentUpperInput =
-  document.getElementById("accentUpperInput");
+const accentUpperInput = document.getElementById("accentUpperInput");
+const status3 = document.getElementById("status3");
 
-const status3 =
-  document.getElementById("status3");
-
-let shiftedLetters3 = 0;
-
-accentUpperInput.addEventListener(
-  "keydown",
-  event => {
-
-    if (
-      event.shiftKey &&
-      /^[a-zA-Z]$/.test(event.key)
-    ) {
-      shiftedLetters3++;
-    }
-
+accentUpperInput.addEventListener("input", () => {
+  if (accentUpperInput.value.trim() === "ÁGUA") {
+    status3.textContent =
+      "⭐ Acento e maiúsculas funcionando juntos!";
+    status3.classList.add("success");
+    completeMission(3);
   }
-);
-
-accentUpperInput.addEventListener(
-  "input",
-  () => {
-
-    if (
-      accentUpperInput.value.trim() === "ÁGUA" &&
-      shiftedLetters3 >= 4
-    ) {
-
-      status3.textContent =
-        "⭐ Acento e Shift funcionando juntos!";
-
-      status3.classList.add("success");
-
-      completeMission(3);
-
-    } else if (
-      accentUpperInput.value.trim() === "ÁGUA"
-    ) {
-
-      status3.textContent =
-        "A palavra está certa. Agora tente novamente usando Shift nas letras.";
-
-    }
-
-  }
-);
-
-const exclamationInput =
-  document.getElementById("exclamationInput");
-
-const questionInput =
-  document.getElementById("questionInput");
-
-const status4 =
-  document.getElementById("status4");
-
-function checkPunctuation() {
-
-  if (
-    exclamationInput.value.trim() === "Olá!" &&
-    questionInput.value.trim() === "Tudo bem?"
-  ) {
-
-    status4.textContent =
-      "⭐ Muito bem! A pontuação mudou o sentido das frases.";
-
-    status4.classList.add("success");
-
-    completeMission(4);
-
-  }
-
-}
-
-[
-  exclamationInput,
-  questionInput
-].forEach(input => {
-  input.addEventListener(
-    "input",
-    checkPunctuation
-  );
 });
 
-const finalInput =
-  document.getElementById("finalInput");
+const commaPeriodInput = document.getElementById("commaPeriodInput");
+const status4 = document.getElementById("status4");
 
-const status5 =
-  document.getElementById("status5");
-
-finalInput.addEventListener(
-  "input",
-  () => {
-
-    if (
-      finalInput.value.trim() ===
-      "Olá, Mario! Você está pronto?"
-    ) {
-
-      status5.textContent =
-        "⭐ Excelente! Você juntou todas as habilidades.";
-
-      status5.classList.add("success");
-
-      completeMission(5);
-
-    }
-
+commaPeriodInput.addEventListener("input", () => {
+  if (commaPeriodInput.value === "Mario, Luigi.") {
+    status4.textContent = "⭐ Vírgula e ponto no lugar certo!";
+    status4.classList.add("success");
+    completeMission(4);
   }
-);
+});
+
+const exclamationInput = document.getElementById("exclamationInput");
+const status5 = document.getElementById("status5");
+
+exclamationInput.addEventListener("input", () => {
+  if (exclamationInput.value === "Olá, Mario!") {
+    status5.textContent = "⭐ Exclamação concluída!";
+    status5.classList.add("success");
+    completeMission(5);
+  }
+});
+
+const questionInput = document.getElementById("questionInput");
+const status6 = document.getElementById("status6");
+
+questionInput.addEventListener("input", () => {
+  if (questionInput.value === "Tudo bem?") {
+    status6.textContent = "⭐ AltGr + W encontrou a interrogação!";
+    status6.classList.add("success");
+    completeMission(6);
+  }
+});
+
+const finalInput = document.getElementById("finalInput");
+const status7 = document.getElementById("status7");
+
+finalInput.addEventListener("input", () => {
+  if (
+    finalInput.value.trim() ===
+    "Olá, Mario! Você está pronto? Sim."
+  ) {
+    status7.textContent =
+      "⭐ Excelente! Você juntou todas as habilidades.";
+    status7.classList.add("success");
+    completeMission(7);
+  }
+});
 
 function resetMission1() {
-
   uppercaseInput.value = "";
   shiftedLetters1 = 0;
-
   status1.textContent =
     "Segure Shift enquanto pressiona cada letra.";
-
   status1.classList.remove("success");
-
   uppercaseInput.focus();
-
 }
 
 function resetMission2() {
-
   acuteInput.value = "";
   circumflexInput.value = "";
   tildeInput.value = "";
-
   status2.textContent =
-    "Complete as três palavras com os acentos corretos.";
-
+    "Complete as três palavras com os sinais corretos.";
   status2.classList.remove("success");
-
   acuteInput.focus();
-
 }
 
 function resetMission3() {
-
   accentUpperInput.value = "";
-  shiftedLetters3 = 0;
-
-  status3.textContent =
-    "Use o acento e Shift juntos.";
-
+  status3.textContent = "Use o acento e Shift juntos.";
   status3.classList.remove("success");
-
   accentUpperInput.focus();
-
 }
 
 function resetMission4() {
-
-  exclamationInput.value = "";
-  questionInput.value = "";
-
+  commaPeriodInput.value = "";
   status4.textContent =
-    "Use maiúscula, acento e o sinal correto no final.";
-
+    "Use a vírgula entre os nomes e o ponto no final.";
   status4.classList.remove("success");
-
-  exclamationInput.focus();
-
+  commaPeriodInput.focus();
 }
 
 function resetMission5() {
-
-  finalInput.value = "";
-
+  exclamationInput.value = "";
   status5.textContent =
-    "Confira letras, acentos, espaços e pontuação.";
-
+    "Use maiúscula, acento, vírgula e exclamação.";
   status5.classList.remove("success");
+  exclamationInput.focus();
+}
 
+function resetMission6() {
+  questionInput.value = "";
+  status6.textContent =
+    "Termine a frase com ? usando AltGr + W.";
+  status6.classList.remove("success");
+  questionInput.focus();
+}
+
+function resetMission7() {
+  finalInput.value = "";
+  status7.textContent =
+    "Confira letras, acentos, espaços, vírgula, ponto, ! e ?.";
+  status7.classList.remove("success");
   finalInput.focus();
-
 }
 
 const resetters = {
@@ -1232,41 +1022,33 @@ const resetters = {
   2: resetMission2,
   3: resetMission3,
   4: resetMission4,
-  5: resetMission5
+  5: resetMission5,
+  6: resetMission6,
+  7: resetMission7
 };
 
-document
-  .querySelectorAll("[data-reset]")
-  .forEach(button => {
+document.querySelectorAll("[data-reset]").forEach(button => {
+  button.addEventListener("click", () => {
+    const number = Number(button.dataset.reset);
 
-    button.addEventListener(
-      "click",
-      () => {
+    if (completed.has(number)) return;
 
-        const number =
-          Number(button.dataset.reset);
+    resetters[number]?.();
 
-        if (completed.has(number)) {
-          return;
-        }
+    const mission = document.getElementById(`mission${number}`);
 
-        resetters[number]?.();
+    mission.querySelectorAll(".hint").forEach(hint => {
+      hint.classList.remove("visible");
+    });
 
-        const mission =
-          document.getElementById(
-            `mission${number}`
-          );
-
-        mission
-          .querySelectorAll(".hint")
-          .forEach(hint => {
-            hint.classList.remove("visible");
-          });
-
-      }
-    );
-
+    mission.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
   });
+});
+
+restoreCheckpoint();
 </script>
 
 </body>
