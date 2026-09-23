@@ -1,53 +1,1273 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Bem-vindo à fase da água</title>
-  <link rel="stylesheet" href="../assets/css/main.css">
-  <link rel="icon" href="../assets/images/ui/favicon.png" type="image/png">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Mundo 3 — Fase da Água</title>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  :root {
+    --panel: rgba(5, 27, 57, .94);
+    --panel-soft: rgba(10, 53, 94, .92);
+    --white: #fff;
+    --yellow: #ffe56b;
+    --green: #7dff9d;
+    --blue: #79c8ff;
+    --cyan: #82f1ff;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: #031522;
+    color: var(--white);
+    font-family: "Courier New", monospace;
+  }
+
+  button,
+  input,
+  textarea {
+    font: inherit;
+  }
+
+  .world {
+    min-height: 100vh;
+    background:
+      linear-gradient(
+        to bottom,
+        rgba(1, 20, 38, .12),
+        rgba(1, 20, 38, .78)
+      ),
+      url("../assets/images/worlds/world-3.png")
+      center top / cover fixed;
+  }
+
+  .start-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+
+    display: grid;
+    place-items: center;
+
+    padding: 24px;
+
+    background:
+      linear-gradient(rgba(1, 20, 38, .62), rgba(1, 20, 38, .92)),
+      url("../assets/images/worlds/world-3.png")
+      center / cover;
+
+    text-align: center;
+
+    transition:
+      opacity .45s ease,
+      transform .45s ease;
+  }
+
+  .start-screen.leaving {
+    opacity: 0;
+    transform: scale(1.04);
+    pointer-events: none;
+  }
+
+  .start-content {
+    width: min(680px, 100%);
+  }
+
+  .world-number {
+    color: var(--yellow);
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 0 #000;
+  }
+
+  .start-screen h1,
+  header h1 {
+    margin: 8px 0;
+    text-shadow: 4px 4px 0 #000;
+  }
+
+  .start-screen h1 {
+    font-size: clamp(38px, 8vw, 68px);
+  }
+
+  .start-screen p {
+    font-size: 18px;
+    line-height: 1.5;
+  }
+
+  .frog-entry {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+
+    margin-top: 18px;
+    padding: 14px 20px;
+
+    border: 4px solid #07344a;
+    border-radius: 12px;
+
+    background: rgba(93, 221, 255, .88);
+    color: #052434;
+
+    box-shadow: 0 7px 0 #07344a;
+
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .frog-entry img {
+    width: 110px;
+    max-height: 100px;
+    object-fit: contain;
+  }
+
+  .frog-entry:active {
+    transform: translateY(5px);
+    box-shadow: 0 2px 0 #07344a;
+  }
+
+  .frog-entry:focus-visible {
+    outline: 5px solid var(--yellow);
+    outline-offset: 6px;
+  }
+
+  header {
+    padding: 34px 20px 110px;
+    text-align: center;
+  }
+
+  header h1 {
+    font-size: clamp(34px, 6vw, 58px);
+  }
+
+  header p {
+    margin: 0;
+    font-size: 18px;
+    text-shadow: 2px 2px 0 #000;
+  }
+
+  main {
+    width: min(900px, calc(100% - 24px));
+    margin: -72px auto 70px;
+  }
+
+  .hud {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+
+    margin-bottom: 22px;
+    padding: 14px 18px;
+
+    border: 3px solid white;
+    background: var(--panel);
+
+    font-weight: bold;
+  }
+
+  .explorer-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1 1 320px;
+    min-width: 0;
+  }
+
+  .explorer-name input {
+    width: min(390px, 100%);
+    min-width: 0;
+
+    padding: 8px 10px;
+
+    border: 2px solid rgba(255,255,255,.75);
+    border-radius: 4px;
+
+    background: rgba(0,0,0,.38);
+    color: white;
+
+    font-weight: bold;
+  }
+
+  .explorer-name input::placeholder {
+    color: rgba(255,255,255,.72);
+  }
+
+  .explorer-name input:focus {
+    outline: 3px solid var(--yellow);
+    outline-offset: 2px;
+  }
+
+  .mission,
+  .finish {
+    margin-bottom: 24px;
+    padding: 25px;
+
+    border: 3px solid white;
+    background: var(--panel);
+
+    box-shadow: 8px 8px 0 rgba(0,0,0,.5);
+  }
+
+  .mission.completed {
+    border-color: var(--green);
+  }
+
+  .mission h2 {
+    margin-top: 0;
+    color: var(--yellow);
+  }
+
+  .mission p,
+  .mission li,
+  .finish p {
+    font-size: 17px;
+    line-height: 1.55;
+  }
+
+  .instruction-box {
+    margin: 16px 0;
+    padding: 15px;
+
+    border-left: 5px solid var(--cyan);
+    background: var(--panel-soft);
+  }
+
+  .practice {
+    margin: 18px 0;
+    padding: 18px;
+
+    border: 4px solid #9dc9dc;
+    background: #fff;
+    color: #111;
+
+    font-family: Arial, sans-serif;
+  }
+
+  .practice label {
+    display: block;
+    margin: 12px 0 7px;
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .practice input,
+  .practice textarea {
+    display: block;
+    width: 100%;
+
+    padding: 13px 14px;
+
+    border: 3px solid #8aabb9;
+    border-radius: 4px;
+
+    background: white;
+    color: #111;
+
+    font-family: Arial, sans-serif;
+    font-size: 22px;
+  }
+
+  .practice textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+
+  kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 44px;
+    min-height: 38px;
+
+    padding: 5px 10px;
+
+    border: 3px solid #222;
+    border-radius: 5px;
+
+    background: #f4f4f4;
+    color: #111;
+
+    box-shadow: 0 4px 0 #888;
+
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .keys {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .status {
+    min-height: 29px;
+    margin-top: 12px;
+
+    color: var(--yellow);
+    font-weight: bold;
+  }
+
+  .status.success {
+    color: var(--green);
+  }
+
+  .hint-button,
+  .reset-button {
+    margin-top: 12px;
+    padding: 11px 16px;
+
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .hint-button {
+    border: 3px solid #07506b;
+    background: #67d9f5;
+    color: #06232d;
+  }
+
+  .reset-button {
+    margin-right: 8px;
+
+    border: 3px solid #687487;
+    background: #dce3eb;
+    color: #101722;
+  }
+
+  .reset-button:disabled {
+    opacity: .65;
+    cursor: default;
+  }
+
+  .hint {
+    display: none;
+
+    margin-top: 12px;
+    padding: 15px;
+
+    border: 3px solid #4bbfdc;
+    background: #073e58;
+
+    line-height: 1.6;
+  }
+
+  .hint.visible {
+    display: block;
+  }
+
+  .finish {
+    text-align: center;
+  }
+
+  .finish h2 {
+    color: var(--green);
+  }
+
+  .next-link {
+    display: inline-block;
+
+    margin-top: 16px;
+    padding: 15px 20px;
+
+    border: 4px solid #0c3655;
+    border-radius: 8px;
+
+    background: #7ddfff;
+    color: #032335;
+
+    box-shadow: 0 6px 0 #0c3655;
+
+    font-weight: bold;
+    text-decoration: none;
+  }
+
+  .next-link:active {
+    transform: translateY(5px);
+    box-shadow: 0 1px 0 #0c3655;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  @media (max-width: 560px) {
+    .mission,
+    .finish {
+      padding: 18px;
+    }
+  }
+</style>
 </head>
 
 <body>
-  <div class="container">
-    <img
-      src="../assets/images/worlds/world-3.png"
-      alt="Mapa do Mundo 3"
-      class="mapa"
-      onclick="tocarSom()"
-    >
 
-    <a
-      href="https://docs.google.com/document/d/193ykgReOJX_QEB1PWsmCIHXRZjIj8yTKPCCkcpHoo-4/edit?usp=sharing"
-      target="_blank"
-      rel="noopener noreferrer"
+<audio
+  id="worldMusic"
+  src="../assets/audio/stage-3-underwater.mp3"
+  preload="auto"
+  loop>
+</audio>
+
+<div class="start-screen" id="startScreen">
+  <div class="start-content">
+    <div class="world-number">🐸 MUNDO 3 🐸</div>
+
+    <h1>FASE DA ÁGUA</h1>
+
+    <p>
+      Agora vamos aprender uma tecla que muda o que as outras teclas fazem.
+    </p>
+
+    <button
+      id="startButton"
+      class="frog-entry"
+      type="button"
     >
       <img
         src="../assets/images/characters/mario-frog.gif"
-        class="mario"
-        style="top: 248px; left: 270px;"
-        alt="Mario sapo"
+        alt=""
+        aria-hidden="true"
       >
-    </a>
+      <span>MERGULHAR</span>
+    </button>
+  </div>
+</div>
 
-    <img
-      src="../assets/images/ui/hint-block.gif"
-      class="objeto"
-      style="top: 355px; left: 465px;"
-      onclick="mostrarMensagem(event, 'Ctrl + ENTER = Renomear')"
-      alt="Bloco de dica: renomear"
-    >
+<div class="world">
+
+<header>
+  <div class="world-number">MUNDO 3</div>
+
+  <h1>FASE DA ÁGUA</h1>
+
+  <p>
+    Segure Shift e pressione outra tecla.
+  </p>
+</header>
+
+<main>
+
+  <div class="hud">
+    <label class="explorer-name" for="explorerName">
+      <span aria-hidden="true">🐸</span>
+
+      <input
+        id="explorerName"
+        type="text"
+        maxlength="30"
+        autocomplete="off"
+        spellcheck="false"
+        placeholder="Olá, explorador(a), digite seu nome aqui"
+        aria-label="Nome do explorador"
+      >
+    </label>
+
+    <span id="progress">⭐ 0 / 5</span>
   </div>
 
-  <script src="../assets/js/main.js"></script>
-  <script>
-    const som = new Audio('../assets/audio/stage-3-underwater.mp3');
+  <section class="mission" id="mission1">
+    <h2>⇧ Desafio 1 — Letras maiúsculas</h2>
 
-    function tocarSom() {
-      som.play().catch((error) => {
-        console.log('Erro ao reproduzir o som:', error);
+    <p>
+      A tecla <strong>Shift</strong> funciona junto com outra tecla.
+    </p>
+
+    <div class="instruction-box">
+      <p>
+        <strong>1.</strong> Segure <kbd>Shift ⇧</kbd>.
+      </p>
+
+      <p>
+        <strong>2.</strong> Sem soltar Shift, pressione uma letra.
+      </p>
+
+      <p>
+        <strong>3.</strong> Depois solte as teclas.
+      </p>
+    </div>
+
+    <p>
+      Escreva <strong>MARIO</strong> usando Shift para fazer as letras maiúsculas.
+    </p>
+
+    <div class="practice">
+      <label for="uppercaseInput">Digite MARIO:</label>
+      <input
+        id="uppercaseInput"
+        type="text"
+        autocomplete="off"
+        spellcheck="false"
+      >
+    </div>
+
+    <div class="status" id="status1">
+      Segure Shift enquanto pressiona cada letra.
+    </div>
+
+    <button type="button" class="reset-button" data-reset="1">
+      ↻ Reiniciar desafio
+    </button>
+
+    <button type="button" class="hint-button" data-hint="hint1">
+      🧱 Bloco de dica
+    </button>
+
+    <div class="hint" id="hint1">
+      Não aperte Shift sozinho.
+      <br><br>
+      Segure <kbd>Shift ⇧</kbd> e, sem soltar,
+      pressione a letra que você quer escrever em maiúscula.
+    </div>
+  </section>
+
+  <section class="mission" id="mission2" hidden>
+    <h2>´ Desafio 2 — Acentos</h2>
+
+    <p>
+      Algumas teclas também preparam um acento para a próxima letra.
+    </p>
+
+    <div class="instruction-box">
+      <p>
+        Primeiro pressione a tecla do acento.
+        Depois pressione a vogal.
+      </p>
+
+      <p>
+        Às vezes o acento só aparece depois que a vogal é digitada.
+      </p>
+    </div>
+
+    <div class="practice">
+      <label for="acuteInput">Escreva: água</label>
+      <input
+        id="acuteInput"
+        type="text"
+        autocomplete="off"
+        spellcheck="false"
+      >
+
+      <label for="circumflexInput">Escreva: você</label>
+      <input
+        id="circumflexInput"
+        type="text"
+        autocomplete="off"
+        spellcheck="false"
+      >
+
+      <label for="tildeInput">Escreva: irmã</label>
+      <input
+        id="tildeInput"
+        type="text"
+        autocomplete="off"
+        spellcheck="false"
+      >
+    </div>
+
+    <div class="status" id="status2">
+      Complete as três palavras com os acentos corretos.
+    </div>
+
+    <button type="button" class="reset-button" data-reset="2">
+      ↻ Reiniciar desafio
+    </button>
+
+    <button type="button" class="hint-button" data-hint="hint2">
+      🧱 Bloco de dica
+    </button>
+
+    <div class="hint" id="hint2">
+      Para fazer <strong>á</strong>, pressione o acento agudo e depois <strong>a</strong>.
+      <br><br>
+      Para fazer <strong>ê</strong>, pressione o circunflexo e depois <strong>e</strong>.
+      <br><br>
+      Para fazer <strong>ã</strong>, pressione o til e depois <strong>a</strong>.
+    </div>
+  </section>
+
+  <section class="mission" id="mission3" hidden>
+    <h2>⇧ + ´ Desafio 3 — Maiúscula com acento</h2>
+
+    <p>
+      Agora vamos juntar as duas ideias.
+    </p>
+
+    <p>
+      Escreva <strong>ÁGUA</strong>.
+    </p>
+
+    <div class="instruction-box">
+      <p>
+        Para começar com <strong>Á</strong>:
+      </p>
+
+      <p>
+        pressione o acento agudo,
+        depois segure <kbd>Shift ⇧</kbd>
+        e pressione <kbd>A</kbd>.
+      </p>
+    </div>
+
+    <div class="practice">
+      <label for="accentUpperInput">Digite ÁGUA:</label>
+      <input
+        id="accentUpperInput"
+        type="text"
+        autocomplete="off"
+        spellcheck="false"
+      >
+    </div>
+
+    <div class="status" id="status3">
+      Use o acento e Shift juntos.
+    </div>
+
+    <button type="button" class="reset-button" data-reset="3">
+      ↻ Reiniciar desafio
+    </button>
+
+    <button type="button" class="hint-button" data-hint="hint3">
+      🧱 Bloco de dica
+    </button>
+
+    <div class="hint" id="hint3">
+      O acento é preparado primeiro.
+      <br><br>
+      Depois use Shift com a letra para fazê-la maiúscula.
+    </div>
+  </section>
+
+  <section class="mission" id="mission4" hidden>
+    <h2>!? Desafio 4 — Pontuação</h2>
+
+    <p>
+      Shift também ajuda a escrever alguns símbolos.
+    </p>
+
+    <div class="instruction-box">
+      <p>
+        Observe o teclado.
+      </p>
+
+      <p>
+        Se o símbolo estiver desenhado na parte de cima de uma tecla,
+        segure <kbd>Shift ⇧</kbd> e pressione essa tecla.
+      </p>
+
+      <p>
+        Em alguns teclados, certos símbolos possuem uma tecla própria.
+      </p>
+    </div>
+
+    <div class="practice">
+      <label for="exclamationInput">Escreva: Olá!</label>
+      <input
+        id="exclamationInput"
+        type="text"
+        autocomplete="off"
+        spellcheck="false"
+      >
+
+      <label for="questionInput">Escreva: Tudo bem?</label>
+      <input
+        id="questionInput"
+        type="text"
+        autocomplete="off"
+        spellcheck="false"
+      >
+    </div>
+
+    <div class="status" id="status4">
+      Use maiúscula, acento e o sinal correto no final.
+    </div>
+
+    <button type="button" class="reset-button" data-reset="4">
+      ↻ Reiniciar desafio
+    </button>
+
+    <button type="button" class="hint-button" data-hint="hint4">
+      🧱 Bloco de dica
+    </button>
+
+    <div class="hint" id="hint4">
+      Primeiro observe onde <strong>!</strong> e <strong>?</strong>
+      aparecem no seu teclado.
+      <br><br>
+      Quando o símbolo estiver na parte de cima da tecla,
+      segure Shift enquanto a pressiona.
+    </div>
+  </section>
+
+  <section class="mission" id="mission5" hidden>
+    <h2>🏁 Desafio 5 — Junte tudo</h2>
+
+    <p>
+      Agora use letras maiúsculas, acento, vírgula, exclamação e interrogação.
+    </p>
+
+    <div class="practice">
+      <label for="finalInput">
+        Escreva exatamente:
+        <strong>Olá, Mario! Você está pronto?</strong>
+      </label>
+
+      <textarea
+        id="finalInput"
+        autocomplete="off"
+        spellcheck="false"
+      ></textarea>
+    </div>
+
+    <div class="status" id="status5">
+      Confira letras, acentos, espaços e pontuação.
+    </div>
+
+    <button type="button" class="reset-button" data-reset="5">
+      ↻ Reiniciar desafio
+    </button>
+
+    <button type="button" class="hint-button" data-hint="hint5">
+      🧱 Bloco de dica
+    </button>
+
+    <div class="hint" id="hint5">
+      Faça devagar.
+      <br><br>
+      Use Shift nas letras maiúsculas.
+      Prepare o acento antes da vogal.
+      Observe a vírgula, a exclamação e a interrogação.
+    </div>
+  </section>
+
+  <section class="finish" id="finish" hidden>
+    <h2>🌊 MUNDO 3 CONCLUÍDO!</h2>
+
+    <p>
+      Você aprendeu a usar Shift para escrever maiúsculas
+      e praticou acentuação e pontuação.
+    </p>
+
+    <p>
+      Agora abra o resumo do que já foi aprendido.
+    </p>
+
+    <a
+      class="next-link"
+      href="https://docs.google.com/document/d/193ykgReOJX_QEB1PWsmCIHXRZjIj8yTKPCCkcpHoo-4/edit?usp=sharing"
+    >
+      📘 ABRIR O RESUMO DA AVENTURA
+    </a>
+  </section>
+
+</main>
+</div>
+
+<script>
+const TOTAL_MISSIONS = 5;
+
+const startButton =
+  document.getElementById("startButton");
+
+const startScreen =
+  document.getElementById("startScreen");
+
+const worldMusic =
+  document.getElementById("worldMusic");
+
+const completed =
+  new Set();
+
+let audioContext = null;
+
+function startMusic() {
+
+  worldMusic.volume = .22;
+
+  worldMusic.play().catch(() => {
+    // A atividade continua normalmente se o navegador bloquear o áudio.
+  });
+
+}
+
+startButton.addEventListener("click", () => {
+
+  startButton.disabled = true;
+
+  startMusic();
+
+  startScreen.classList.add("leaving");
+
+  setTimeout(() => {
+    startScreen.remove();
+  }, 500);
+
+});
+
+function successChime() {
+
+  if (!audioContext) {
+    audioContext =
+      new (
+        window.AudioContext ||
+        window.webkitAudioContext
+      )();
+  }
+
+  const notes = [
+    [523, 0],
+    [659, .08],
+    [784, .16]
+  ];
+
+  notes.forEach(([frequency, delay]) => {
+
+    const oscillator =
+      audioContext.createOscillator();
+
+    const gain =
+      audioContext.createGain();
+
+    oscillator.type = "square";
+    oscillator.frequency.value = frequency;
+
+    gain.gain.setValueAtTime(
+      .03,
+      audioContext.currentTime + delay
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+      .001,
+      audioContext.currentTime + delay + .11
+    );
+
+    oscillator.connect(gain);
+    gain.connect(audioContext.destination);
+
+    oscillator.start(
+      audioContext.currentTime + delay
+    );
+
+    oscillator.stop(
+      audioContext.currentTime + delay + .12
+    );
+
+  });
+
+}
+
+function completeMission(number) {
+
+  if (completed.has(number)) {
+    return;
+  }
+
+  completed.add(number);
+
+  document
+    .getElementById(`mission${number}`)
+    .classList
+    .add("completed");
+
+  const resetButton =
+    document.querySelector(
+      `[data-reset="${number}"]`
+    );
+
+  if (resetButton) {
+    resetButton.disabled = true;
+    resetButton.textContent =
+      "✓ Desafio concluído";
+  }
+
+  document
+    .getElementById("progress")
+    .textContent =
+    `⭐ ${completed.size} / ${TOTAL_MISSIONS}`;
+
+  successChime();
+
+  if (number < TOTAL_MISSIONS) {
+
+    const next =
+      document.getElementById(
+        `mission${number + 1}`
+      );
+
+    next.hidden = false;
+
+    setTimeout(() => {
+
+      next.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
       });
+
+    }, 250);
+
+  } else {
+
+    const finish =
+      document.getElementById("finish");
+
+    finish.hidden = false;
+
+    setTimeout(() => {
+
+      finish.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+
+    }, 250);
+
+  }
+
+}
+
+document
+  .querySelectorAll(".hint-button")
+  .forEach(button => {
+
+    button.addEventListener("click", () => {
+
+      const hint =
+        document.getElementById(
+          button.dataset.hint
+        );
+
+      hint.classList.toggle("visible");
+
+    });
+
+  });
+
+const uppercaseInput =
+  document.getElementById("uppercaseInput");
+
+const status1 =
+  document.getElementById("status1");
+
+let shiftedLetters1 = 0;
+
+uppercaseInput.addEventListener(
+  "keydown",
+  event => {
+
+    if (
+      event.shiftKey &&
+      /^[a-zA-Z]$/.test(event.key)
+    ) {
+      shiftedLetters1++;
     }
-  </script>
+
+  }
+);
+
+uppercaseInput.addEventListener(
+  "input",
+  () => {
+
+    if (
+      uppercaseInput.value === "MARIO" &&
+      shiftedLetters1 >= 5
+    ) {
+
+      status1.textContent =
+        "⭐ Isso! Shift deixou as letras maiúsculas.";
+
+      status1.classList.add("success");
+
+      completeMission(1);
+
+    } else if (
+      uppercaseInput.value === "MARIO"
+    ) {
+
+      status1.textContent =
+        "A palavra está certa, mas tente fazê-la segurando Shift.";
+
+    }
+
+  }
+);
+
+const acuteInput =
+  document.getElementById("acuteInput");
+
+const circumflexInput =
+  document.getElementById("circumflexInput");
+
+const tildeInput =
+  document.getElementById("tildeInput");
+
+const status2 =
+  document.getElementById("status2");
+
+function checkAccents() {
+
+  if (
+    acuteInput.value.trim() === "água" &&
+    circumflexInput.value.trim() === "você" &&
+    tildeInput.value.trim() === "irmã"
+  ) {
+
+    status2.textContent =
+      "⭐ Perfeito! Você escreveu três tipos de acento.";
+
+    status2.classList.add("success");
+
+    completeMission(2);
+
+  }
+
+}
+
+[
+  acuteInput,
+  circumflexInput,
+  tildeInput
+].forEach(input => {
+  input.addEventListener("input", checkAccents);
+});
+
+const accentUpperInput =
+  document.getElementById("accentUpperInput");
+
+const status3 =
+  document.getElementById("status3");
+
+let shiftedLetters3 = 0;
+
+accentUpperInput.addEventListener(
+  "keydown",
+  event => {
+
+    if (
+      event.shiftKey &&
+      /^[a-zA-Z]$/.test(event.key)
+    ) {
+      shiftedLetters3++;
+    }
+
+  }
+);
+
+accentUpperInput.addEventListener(
+  "input",
+  () => {
+
+    if (
+      accentUpperInput.value.trim() === "ÁGUA" &&
+      shiftedLetters3 >= 4
+    ) {
+
+      status3.textContent =
+        "⭐ Acento e Shift funcionando juntos!";
+
+      status3.classList.add("success");
+
+      completeMission(3);
+
+    } else if (
+      accentUpperInput.value.trim() === "ÁGUA"
+    ) {
+
+      status3.textContent =
+        "A palavra está certa. Agora tente novamente usando Shift nas letras.";
+
+    }
+
+  }
+);
+
+const exclamationInput =
+  document.getElementById("exclamationInput");
+
+const questionInput =
+  document.getElementById("questionInput");
+
+const status4 =
+  document.getElementById("status4");
+
+function checkPunctuation() {
+
+  if (
+    exclamationInput.value.trim() === "Olá!" &&
+    questionInput.value.trim() === "Tudo bem?"
+  ) {
+
+    status4.textContent =
+      "⭐ Muito bem! A pontuação mudou o sentido das frases.";
+
+    status4.classList.add("success");
+
+    completeMission(4);
+
+  }
+
+}
+
+[
+  exclamationInput,
+  questionInput
+].forEach(input => {
+  input.addEventListener(
+    "input",
+    checkPunctuation
+  );
+});
+
+const finalInput =
+  document.getElementById("finalInput");
+
+const status5 =
+  document.getElementById("status5");
+
+finalInput.addEventListener(
+  "input",
+  () => {
+
+    if (
+      finalInput.value.trim() ===
+      "Olá, Mario! Você está pronto?"
+    ) {
+
+      status5.textContent =
+        "⭐ Excelente! Você juntou todas as habilidades.";
+
+      status5.classList.add("success");
+
+      completeMission(5);
+
+    }
+
+  }
+);
+
+function resetMission1() {
+
+  uppercaseInput.value = "";
+  shiftedLetters1 = 0;
+
+  status1.textContent =
+    "Segure Shift enquanto pressiona cada letra.";
+
+  status1.classList.remove("success");
+
+  uppercaseInput.focus();
+
+}
+
+function resetMission2() {
+
+  acuteInput.value = "";
+  circumflexInput.value = "";
+  tildeInput.value = "";
+
+  status2.textContent =
+    "Complete as três palavras com os acentos corretos.";
+
+  status2.classList.remove("success");
+
+  acuteInput.focus();
+
+}
+
+function resetMission3() {
+
+  accentUpperInput.value = "";
+  shiftedLetters3 = 0;
+
+  status3.textContent =
+    "Use o acento e Shift juntos.";
+
+  status3.classList.remove("success");
+
+  accentUpperInput.focus();
+
+}
+
+function resetMission4() {
+
+  exclamationInput.value = "";
+  questionInput.value = "";
+
+  status4.textContent =
+    "Use maiúscula, acento e o sinal correto no final.";
+
+  status4.classList.remove("success");
+
+  exclamationInput.focus();
+
+}
+
+function resetMission5() {
+
+  finalInput.value = "";
+
+  status5.textContent =
+    "Confira letras, acentos, espaços e pontuação.";
+
+  status5.classList.remove("success");
+
+  finalInput.focus();
+
+}
+
+const resetters = {
+  1: resetMission1,
+  2: resetMission2,
+  3: resetMission3,
+  4: resetMission4,
+  5: resetMission5
+};
+
+document
+  .querySelectorAll("[data-reset]")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        const number =
+          Number(button.dataset.reset);
+
+        if (completed.has(number)) {
+          return;
+        }
+
+        resetters[number]?.();
+
+        const mission =
+          document.getElementById(
+            `mission${number}`
+          );
+
+        mission
+          .querySelectorAll(".hint")
+          .forEach(hint => {
+            hint.classList.remove("visible");
+          });
+
+      }
+    );
+
+  });
+</script>
+
 </body>
 </html>
