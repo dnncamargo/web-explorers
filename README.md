@@ -14,7 +14,8 @@ web-explorers/
 │   ├── 03-water.html
 │   ├── 04-ghost-house.html
 │   ├── 04-final-boss.html      # compatibilidade: redireciona para a fase 5
-│   └── 05-final-boss.html
+│   ├── 05-final-boss.html
+│   └── game-complete.html
 └── assets/
     ├── audio/
     ├── css/
@@ -31,7 +32,8 @@ web-explorers/
 - Mundo 2 — Submundo: seleção, edição de texto, copiar, recortar, colar, desfazer/refazer e Enter.
 - Mundo 3 — Fase da Água: Shift, acentuação e pontuação.
 - Mundo 4 — Casa Fantasma: Downloads, pastas, copiar/mover arquivos e alternar entre janelas.
-- Mundo 5 — Final Boss: reservado para extração de ZIP e renomeação de arquivos.
+- Mundo 5 — Final Boss: extração de ZIP e renomeação de arquivos.
+- Conclusão: página de parabéns, tema de encerramento e recompensa final.
 
 ## Convenções
 
