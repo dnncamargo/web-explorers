@@ -167,37 +167,75 @@
     outline-offset: 2px;
   }
 
-  .checkpoint-strip {
-    display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: 7px;
-    margin-bottom: 22px;
-    padding: 10px;
-    border: 3px solid rgba(255,255,255,.7);
-    background: var(--panel);
+  .radio {
+    margin-bottom: 24px;
+    padding: 18px;
+
+    border: 4px solid #332500;
+    background: #8c5729;
+    box-shadow: 8px 8px 0 rgba(0,0,0,.55);
   }
 
-  .checkpoint-dot {
-    min-width: 0;
-    padding: 8px 4px;
-    border: 2px solid #56798b;
-    border-radius: 5px;
-    background: rgba(0,0,0,.3);
-    color: #bed6df;
-    text-align: center;
-    font-size: 13px;
+  .radio-title {
+    margin-bottom: 12px;
+
+    color: #fff2a6;
+    font-size: 21px;
     font-weight: bold;
+    text-align: center;
+
+    text-shadow: 2px 2px #000;
   }
 
-  .checkpoint-dot.active {
-    border-color: var(--yellow);
+  .radio-body {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+
+  .radio-player {
+    padding: 7px;
+    border: 4px solid #1f1407;
+    background: #111;
+  }
+
+  #goombaRadio {
+    width: 360px;
+    height: 203px;
+  }
+
+  .radio-speaker {
+    width: 130px;
+    min-height: 203px;
+
+    display: grid;
+    place-items: center;
+
+    border: 4px solid #25170b;
+    border-radius: 8px;
+
+    background:
+      radial-gradient(circle, #191919 3px, transparent 4px)
+      0 0 / 15px 15px,
+      #3d2b20;
+  }
+
+  .radio-speaker span {
+    padding: 9px;
+    border-radius: 50%;
+
+    background: #262626;
     color: var(--yellow);
+
+    font-size: 34px;
   }
 
-  .checkpoint-dot.done {
-    border-color: var(--green);
-    background: rgba(25,120,70,.42);
-    color: var(--green);
+  .radio-status {
+    margin: 13px 0 0;
+    text-align: center;
+    font-size: 14px;
   }
 
   .mission, .finish {
@@ -295,7 +333,23 @@
 
   .accent-key {
     min-width: 72px;
+    min-height: 62px;
+    padding: 6px 16px;
+
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+
     font-size: 21px;
+    line-height: 1;
+  }
+
+  .accent-key .key-top,
+  .accent-key .key-bottom {
+    display: block;
+    min-height: 21px;
   }
 
   .keys {
@@ -375,13 +429,16 @@
 
   @media (max-width: 560px) {
     .mission, .finish { padding: 18px; }
+
+    #goombaRadio {
+      width: 320px;
+      height: 200px;
+    }
   }
 </style>
 </head>
 
 <body>
-
-<audio id="worldMusic" src="../assets/audio/stage-3-underwater.mp3" preload="auto" loop></audio>
 
 <div class="start-screen" id="startScreen">
   <div class="start-content">
@@ -421,15 +478,25 @@
     <span id="progress">⭐ 0 / 7</span>
   </div>
 
-  <div class="checkpoint-strip" aria-label="Checkpoints do Mundo 3">
-    <span class="checkpoint-dot active" id="checkpoint1">1</span>
-    <span class="checkpoint-dot" id="checkpoint2">2</span>
-    <span class="checkpoint-dot" id="checkpoint3">3</span>
-    <span class="checkpoint-dot" id="checkpoint4">4</span>
-    <span class="checkpoint-dot" id="checkpoint5">5</span>
-    <span class="checkpoint-dot" id="checkpoint6">6</span>
-    <span class="checkpoint-dot" id="checkpoint7">7</span>
-  </div>
+  <section class="radio">
+    <div class="radio-title">
+      📻 RÁDIO DO GOOMBA
+    </div>
+
+    <div class="radio-body">
+      <div class="radio-player">
+        <div id="goombaRadio"></div>
+      </div>
+
+      <div class="radio-speaker" aria-hidden="true">
+        <span>🎵</span>
+      </div>
+    </div>
+
+    <p class="radio-status" id="radioStatus">
+      A rádio começa quando você mergulha.
+    </p>
+  </section>
 
   <section class="mission" id="mission1">
     <div class="checkpoint-label">🚩 CHECKPOINT 1 / 7</div>
@@ -462,13 +529,20 @@
 
   <section class="mission" id="mission2" hidden>
     <div class="checkpoint-label">🚩 CHECKPOINT 2 / 7</div>
-    <h2>´ &#96; ~ ^ Desafio 2 — Acentos</h2>
+    <h2>Desafio 2 — Acentos</h2>
 
     <p>Observe duas teclas importantes do teclado:</p>
 
     <div class="keyboard-demo">
-      <kbd class="accent-key">´ &#96;</kbd>
-      <kbd class="accent-key">~ ^</kbd>
+      <kbd class="accent-key" aria-label="crase acima de acento agudo">
+        <span class="key-top">&#96;</span>
+        <span class="key-bottom">´</span>
+      </kbd>
+
+      <kbd class="accent-key" aria-label="acento circunflexo acima de til">
+        <span class="key-top">^</span>
+        <span class="key-bottom">~</span>
+      </kbd>
     </div>
 
     <div class="instruction-box">
@@ -494,9 +568,23 @@
     <button type="button" class="hint-button" data-hint="hint2">🧱 Bloco de dica</button>
 
     <div class="hint" id="hint2">
-      <kbd class="accent-key">´ &#96;</kbd> ajuda a encontrar o acento agudo.
+      <div class="keyboard-demo">
+        <kbd class="accent-key" aria-label="crase acima de acento agudo">
+          <span class="key-top">&#96;</span>
+          <span class="key-bottom">´</span>
+        </kbd>
+
+        <kbd class="accent-key" aria-label="acento circunflexo acima de til">
+          <span class="key-top">^</span>
+          <span class="key-bottom">~</span>
+        </kbd>
+      </div>
+
+      A tecla com <strong>crase em cima e acento agudo embaixo</strong>
+      ajuda a fazer <strong>á</strong>.
       <br><br>
-      <kbd class="accent-key">~ ^</kbd> ajuda a encontrar o til e o circunflexo.
+      A tecla com <strong>circunflexo em cima e til embaixo</strong>
+      ajuda a fazer <strong>ê</strong> e <strong>ã</strong>.
       <br><br>
       Pressione o sinal primeiro e a vogal depois.
     </div>
@@ -684,27 +772,143 @@
 const TOTAL_MISSIONS = 7;
 const CHECKPOINT_KEY = "web-explorers-world3-checkpoint";
 
+const RADIO_VIDEO_ID = "ST-zJK8fgS8";
+const RADIO_START = 0;
+const RADIO_END = 147;
+const RADIO_VOLUME = 25;
+
 const startButton = document.getElementById("startButton");
 const startScreen = document.getElementById("startScreen");
-const worldMusic = document.getElementById("worldMusic");
 const completed = new Set();
 
 let audioContext = null;
+let radioPlayer = null;
+let radioReady = false;
+let radioRequested = false;
+let radioMonitor = null;
 
-function startMusic() {
-  worldMusic.volume = .22;
-  worldMusic.play().catch(() => {});
+function loadYouTubeAPI() {
+  const script = document.createElement("script");
+  script.src = "https://www.youtube.com/iframe_api";
+  document.head.appendChild(script);
+}
+
+window.onYouTubeIframeAPIReady = function () {
+  const playerVars = {
+    controls: 1,
+    playsinline: 1,
+    rel: 0
+  };
+
+  if (
+    location.protocol === "https:" ||
+    location.protocol === "http:"
+  ) {
+    playerVars.origin = location.origin;
+  }
+
+  radioPlayer = new YT.Player("goombaRadio", {
+    width: "360",
+    height: "203",
+    videoId: RADIO_VIDEO_ID,
+    playerVars,
+    events: {
+      onReady() {
+        radioReady = true;
+
+        document
+          .getElementById("radioStatus")
+          .textContent = "📻 Rádio pronta.";
+
+        if (radioRequested) {
+          startRadioSegment();
+        }
+      },
+
+      onStateChange(event) {
+        if (event.data === YT.PlayerState.PLAYING) {
+          document
+            .getElementById("radioStatus")
+            .textContent = "🎵 Rádio do Goomba tocando.";
+
+          startRadioMonitor();
+        }
+
+        if (event.data === YT.PlayerState.ENDED) {
+          startRadioSegment();
+        }
+      },
+
+      onAutoplayBlocked() {
+        document
+          .getElementById("radioStatus")
+          .textContent =
+          "▶ O Chrome bloqueou o início automático. Clique em Play na Rádio do Goomba.";
+      },
+
+      onError(event) {
+        document
+          .getElementById("radioStatus")
+          .textContent =
+          "⚠ Não foi possível tocar a Rádio do Goomba. Erro: " +
+          event.data;
+      }
+    }
+  });
+};
+
+function requestRadioStart() {
+  radioRequested = true;
+
+  if (radioReady) {
+    startRadioSegment();
+  }
+}
+
+function startRadioSegment() {
+  if (!radioPlayer) return;
+
+  clearInterval(radioMonitor);
+
+  radioPlayer.setVolume(RADIO_VOLUME);
+
+  radioPlayer.loadVideoById({
+    videoId: RADIO_VIDEO_ID,
+    startSeconds: RADIO_START,
+    endSeconds: RADIO_END
+  });
+}
+
+function startRadioMonitor() {
+  clearInterval(radioMonitor);
+
+  radioMonitor = setInterval(() => {
+    if (
+      !radioPlayer ||
+      typeof radioPlayer.getCurrentTime !== "function"
+    ) {
+      return;
+    }
+
+    if (radioPlayer.getCurrentTime() >= RADIO_END - .25) {
+      startRadioSegment();
+    }
+  }, 500);
 }
 
 startButton.addEventListener("click", () => {
   startButton.disabled = true;
-  startMusic();
+
+  requestRadioStart();
+
   startScreen.classList.add("leaving");
 
   setTimeout(() => {
     startScreen.remove();
   }, 500);
 });
+
+loadYouTubeAPI();
 
 function successChime() {
   if (!audioContext) {
@@ -744,30 +948,6 @@ function saveCheckpoint(number) {
   } catch {}
 }
 
-function updateCheckpointStrip() {
-  for (let number = 1; number <= TOTAL_MISSIONS; number++) {
-    const checkpoint = document.getElementById(`checkpoint${number}`);
-
-    checkpoint.classList.remove("done", "active");
-
-    if (completed.has(number)) {
-      checkpoint.classList.add("done");
-      checkpoint.textContent = `✓ ${number}`;
-    } else {
-      checkpoint.textContent = String(number);
-    }
-  }
-
-  const nextNumber = completed.size + 1;
-
-  if (nextNumber <= TOTAL_MISSIONS) {
-    document
-      .getElementById(`checkpoint${nextNumber}`)
-      .classList
-      .add("active");
-  }
-}
-
 function markMissionComplete(number) {
   completed.add(number);
 
@@ -791,8 +971,6 @@ function completeMission(number) {
 
   document.getElementById("progress").textContent =
     `⭐ ${completed.size} / ${TOTAL_MISSIONS}`;
-
-  updateCheckpointStrip();
   successChime();
 
   if (number < TOTAL_MISSIONS) {
@@ -843,8 +1021,6 @@ function restoreCheckpoint() {
 
   document.getElementById("progress").textContent =
     `⭐ ${completed.size} / ${TOTAL_MISSIONS}`;
-
-  updateCheckpointStrip();
 }
 
 document.querySelectorAll(".hint-button").forEach(button => {
