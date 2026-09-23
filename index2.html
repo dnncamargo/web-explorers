@@ -257,6 +257,7 @@
   .hud {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     gap: 16px;
     flex-wrap: wrap;
 
@@ -267,6 +268,37 @@
     background: var(--panel);
 
     font-weight: bold;
+  }
+
+  .explorer-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1 1 300px;
+    min-width: 0;
+  }
+
+  .explorer-name input {
+    width: min(340px, 100%);
+    min-width: 0;
+    padding: 8px 10px;
+
+    border: 2px solid rgba(255,255,255,.75);
+    border-radius: 4px;
+
+    background: rgba(0,0,0,.45);
+    color: white;
+
+    font-weight: bold;
+  }
+
+  .explorer-name input::placeholder {
+    color: rgba(255,255,255,.7);
+  }
+
+  .explorer-name input:focus {
+    outline: 3px solid var(--yellow);
+    outline-offset: 2px;
   }
 
   /* -------------------------------------------------------
@@ -490,16 +522,36 @@
     color: var(--green);
   }
 
-  .hint-button {
+  .hint-button,
+  .reset-button {
     margin-top: 12px;
     padding: 11px 16px;
 
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .hint-button {
     border: 3px solid #7a3800;
     background: #df841c;
     color: #151000;
+  }
 
-    font-weight: bold;
-    cursor: pointer;
+  .reset-button {
+    margin-right: 8px;
+
+    border: 3px solid #687487;
+    background: #dce3eb;
+    color: #101722;
+  }
+
+  .reset-button:hover {
+    background: #f2f5f8;
+  }
+
+  .reset-button:disabled {
+    opacity: .65;
+    cursor: default;
   }
 
   .hint {
@@ -622,7 +674,19 @@
 <main>
 
   <div class="hud">
-    <span>🍄 Explorador(a)</span>
+    <label class="explorer-name" for="explorerName">
+      <span aria-hidden="true">🍄</span>
+      <input
+        id="explorerName"
+        type="text"
+        maxlength="30"
+        autocomplete="off"
+        spellcheck="false"
+        placeholder="Digite seu nome aqui"
+        aria-label="Nome do explorador"
+      >
+    </label>
+
     <span id="progress">⭐ 0 / 7</span>
   </div>
 
@@ -711,6 +775,16 @@
       Primeiro selecione COGUMELO com dois toques imediatos.
     </div>
 
+    <button type="button" class="reset-button" data-reset="1">
+
+
+      ↻ Reiniciar desafio
+
+
+    </button>
+
+
+
     <button class="hint-button" data-hint="hint1">
       🧱 Bloco de dica
     </button>
@@ -762,6 +836,16 @@
     <div class="status" id="status2">
       Selecione GOOMBA e use o botão de apagar.
     </div>
+
+    <button type="button" class="reset-button" data-reset="2">
+
+
+      ↻ Reiniciar desafio
+
+
+    </button>
+
+
 
     <button class="hint-button" data-hint="hint2">
       🧱 Bloco de dica
@@ -836,6 +920,16 @@
       GOOMBAS restantes: 2
     </div>
 
+    <button type="button" class="reset-button" data-reset="3">
+
+
+      ↻ Reiniciar desafio
+
+
+    </button>
+
+
+
     <button class="hint-button" data-hint="hint3">
       🧱 Bloco de dica
     </button>
@@ -901,6 +995,16 @@
       Copie MOEDA primeiro.
     </div>
 
+    <button type="button" class="reset-button" data-reset="4">
+
+
+      ↻ Reiniciar desafio
+
+
+    </button>
+
+
+
     <button class="hint-button" data-hint="hint4">
       🧱 Bloco de dica
     </button>
@@ -960,6 +1064,16 @@
     <div class="status" id="status5">
       Use Ctrl + V três vezes.
     </div>
+
+    <button type="button" class="reset-button" data-reset="5">
+
+
+      ↻ Reiniciar desafio
+
+
+    </button>
+
+
 
     <button class="hint-button" data-hint="hint5">
       🧱 Bloco de dica
@@ -1048,6 +1162,16 @@
       Selecione ESTRELA e use Ctrl + X.
     </div>
 
+    <button type="button" class="reset-button" data-reset="6">
+
+
+      ↻ Reiniciar desafio
+
+
+    </button>
+
+
+
     <button class="hint-button" data-hint="hint6">
       🧱 Bloco de dica
     </button>
@@ -1108,6 +1232,16 @@
     <div class="status" id="status7">
       O resultado deve ficar com MARIO em cima e LUIGI embaixo.
     </div>
+
+    <button type="button" class="reset-button" data-reset="7">
+
+
+      ↻ Reiniciar desafio
+
+
+    </button>
+
+
 
     <button class="hint-button" data-hint="hint7">
       🧱 Bloco de dica
@@ -1570,6 +1704,17 @@ function completeMission(number) {
     .getElementById(`mission${number}`)
     .classList
     .add("completed");
+
+
+  const resetButton =
+    document.querySelector(
+      `[data-reset="${number}"]`
+    );
+
+  if (resetButton) {
+    resetButton.disabled = true;
+    resetButton.textContent = "✓ Desafio concluído";
+  }
 
 
   document.getElementById("progress")
@@ -2280,6 +2425,175 @@ enterArea.addEventListener(
 
   }
 );
+
+
+/* =========================================================
+   CHECKPOINTS — REINICIAR O DESAFIO ATUAL
+========================================================= */
+
+function resetMission1() {
+
+  firstSelectionDone = false;
+
+  status1.textContent =
+    "Primeiro selecione COGUMELO com dois toques imediatos.";
+
+  status1.classList.remove("success");
+
+  window.getSelection()?.removeAllRanges();
+
+}
+
+
+function resetMission2() {
+
+  undoArea.textContent =
+    "Mario encontrou um GOOMBA no túnel.";
+
+  usedBackspace = false;
+  goombaDeleted = false;
+  undoPressed = false;
+
+  status2.textContent =
+    "Selecione GOOMBA e use o botão de apagar.";
+
+  status2.classList.remove("success");
+
+}
+
+
+function resetMission3() {
+
+  cleanupArea.textContent =
+    "GOOMBA passou por Mario. Depois outro GOOMBA apareceu.";
+
+  validBackspaces = 0;
+
+  status3.textContent =
+    "GOOMBAS restantes: 2";
+
+  status3.classList.remove("success");
+
+}
+
+
+function resetMission4() {
+
+  pasteRepeat.textContent = "";
+
+  coinCopied = false;
+  repeatedPastes = 0;
+
+  status4.textContent =
+    "Copie MOEDA primeiro.";
+
+  status4.classList.remove("success");
+
+}
+
+
+function resetMission5() {
+
+  historyArena.textContent = "";
+
+  historyPhase = "paste";
+  historyPastes = 0;
+  undoCount = 0;
+  redoCount = 0;
+  pendingHistoryShortcut = null;
+
+  status5.textContent =
+    "Use Ctrl + V três vezes.";
+
+  status5.classList.remove("success");
+
+}
+
+
+function resetMission6() {
+
+  cutSource.textContent =
+    "ESTRELA";
+
+  cutTarget.textContent = "";
+
+  validCut = false;
+  validCutPaste = false;
+
+  status6.textContent =
+    "Selecione ESTRELA e use Ctrl + X.";
+
+  status6.classList.remove("success");
+
+}
+
+
+function resetMission7() {
+
+  enterArea.value =
+    "MARIO LUIGI";
+
+  enterPressed = false;
+
+  status7.textContent =
+    "O resultado deve ficar com MARIO em cima e LUIGI embaixo.";
+
+  status7.classList.remove("success");
+
+}
+
+
+const missionResetters = {
+  1: resetMission1,
+  2: resetMission2,
+  3: resetMission3,
+  4: resetMission4,
+  5: resetMission5,
+  6: resetMission6,
+  7: resetMission7
+};
+
+
+document
+  .querySelectorAll("[data-reset]")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        const number =
+          Number(button.dataset.reset);
+
+        const reset =
+          missionResetters[number];
+
+        if (!reset || completed.has(number)) {
+          return;
+        }
+
+        reset();
+
+        const mission =
+          document.getElementById(
+            `mission${number}`
+          );
+
+        mission
+          .querySelectorAll(".hint")
+          .forEach(hint => {
+            hint.classList.remove("visible");
+          });
+
+        mission.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+      }
+    );
+
+  });
 
 </script>
 
