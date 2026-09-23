@@ -521,6 +521,24 @@
     flex-wrap: wrap;
   }
 
+  .tab-key {
+    min-width: 64px;
+    font-size: 28px;
+    line-height: 1;
+  }
+
+  .search-key {
+    min-width: 58px;
+    font-size: 24px;
+    line-height: 1;
+  }
+
+  .backspace-key {
+    min-width: 72px;
+    font-size: 26px;
+    line-height: 1;
+  }
+
   .download-grid {
     display: grid;
     grid-template-columns:
@@ -652,6 +670,33 @@
     background: rgba(55, 43, 74, .9);
 
     color: #efe8ff;
+  }
+
+  .next-link {
+    display: inline-block;
+
+    margin-top: 16px;
+    padding: 14px 18px;
+
+    border: 3px solid #6a588c;
+    border-radius: 7px;
+
+    background: #d9c9ff;
+    color: #1b1425;
+
+    box-shadow: 0 5px 0 #3d3151;
+
+    font-weight: bold;
+    text-decoration: none;
+  }
+
+  .next-link:hover {
+    background: #eee6ff;
+  }
+
+  .next-link:active {
+    transform: translateY(4px);
+    box-shadow: 0 1px 0 #3d3151;
   }
 
   [hidden] {
@@ -946,9 +991,22 @@
       <span class="keys">
         <kbd>Alt</kbd>
         <span>+</span>
-        <kbd>Tab</kbd>
+        <kbd
+          class="tab-key"
+          aria-label="tecla Tab"
+        >⇥</kbd>
       </span>
 
+      <br><br>
+
+      No Chromebook desta atividade,
+      a tecla <strong>Tab</strong> aparece como
+      uma seta para a direita terminando
+      em uma barra vertical:
+      <kbd
+        class="tab-key"
+        aria-label="tecla Tab"
+      >⇥</kbd>.
       <br><br>
 
       Alt + Tab troca entre janelas abertas.
@@ -1213,54 +1271,71 @@
     </div>
 
     <h2>
-      🚪 Desafio 6 — Portais entre janelas
+      🔍 Desafio 6 — O Boo que foi apagado
     </h2>
 
     <p>
-      Falta levar o último fantasma.
+      Agora vamos fazer algo diferente.
     </p>
 
     <p>
-      Mova
-      <strong>boo-verde.svg</strong>
-      de Downloads para
-      <strong>Casa dos Boos</strong>
-      usando:
+      Volte para
+      <strong>Arquivos → Downloads</strong>
+      e selecione:
+    </p>
+
+    <div class="file-card">
+      <span class="icon">👻</span>
+      <code>boo-verde.svg</code>
+    </div>
+
+    <p>
+      Nos Chromebooks desta atividade,
+      a combinação abaixo funciona como
+      <strong>Delete</strong>:
     </p>
 
     <p class="keys">
-      <kbd>Ctrl</kbd>
+      <kbd
+        class="search-key"
+        aria-label="tecla da lupa"
+      >🔍</kbd>
+
       <span>+</span>
-      <kbd>X</kbd>
 
-      <span>&nbsp; depois &nbsp;</span>
+      <kbd
+        class="backspace-key"
+        aria-label="Backspace"
+      >←</kbd>
 
-      <kbd>Ctrl</kbd>
-      <span>+</span>
-      <kbd>V</kbd>
-    </p>
-
-    <p>
-      Depois pratique a troca entre as duas janelas:
+      <span>= Delete</span>
     </p>
 
     <div class="instruction-box">
       <p>
-        Vá para o navegador.
+        <strong>1.</strong>
+        Selecione o arquivo
+        <code>boo-verde.svg</code>.
       </p>
 
       <p>
-        Volte para Arquivos.
+        <strong>2.</strong>
+        Segure a tecla da
+        <strong>lupa</strong>.
       </p>
 
       <p>
-        Volte novamente para esta página.
+        <strong>3.</strong>
+        Sem soltá-la,
+        pressione
+        <strong>Backspace</strong>.
       </p>
     </div>
 
     <div class="ghost-rule">
-      Uma janela pode desaparecer da sua frente
-      e continuar aberta.
+      👻 Copiar cria outra cópia.
+      Recortar faz o arquivo mudar de sala.
+      Delete faz o arquivo sair dali.
     </div>
 
     <button
@@ -1268,7 +1343,7 @@
       class="complete-button"
       data-complete="6"
     >
-      ✓ O Boo verde chegou e eu voltei
+      ✓ Apaguei o Boo verde
     </button>
 
     <button
@@ -1283,15 +1358,32 @@
       class="hint"
       id="hint6"
     >
-      Use os ícones dos aplicativos
-      ou o atalho:
+      Primeiro selecione
+      <strong>boo-verde.svg</strong>.
+      <br><br>
+
+      Depois segure:
+
       <br><br>
 
       <span class="keys">
-        <kbd>Alt</kbd>
+        <kbd
+          class="search-key"
+          aria-label="tecla da lupa"
+        >🔍</kbd>
+
         <span>+</span>
-        <kbd>Tab</kbd>
+
+        <kbd
+          class="backspace-key"
+          aria-label="Backspace"
+        >←</kbd>
       </span>
+
+      <br><br>
+
+      É a combinação de
+      <strong>Lupa + Backspace</strong>.
     </div>
   </section>
 
@@ -1313,11 +1405,10 @@
     </h2>
 
     <p>
-      Você
-      <strong>copiou</strong>
-      um fantasma e
-      <strong>moveu</strong>
-      os outros.
+      Você fez três coisas diferentes:
+      <strong>copiou</strong> um fantasma,
+      <strong>moveu</strong> outro
+      e <strong>apagou</strong> o terceiro.
     </p>
 
     <p>
@@ -1404,7 +1495,7 @@
     <p>
       Você descobriu que arquivos
       também podem ser selecionados,
-      copiados e movidos.
+      copiados, movidos e apagados.
     </p>
 
     <p>
@@ -1419,16 +1510,28 @@
     </div>
 
     <div class="next-note">
-      📜 A próxima mensagem vai resumir
-      o novo aprendizado da Casa Fantasma
-      e mostrar o caminho para o
+      ☁️ <strong>Lakitu apareceu!</strong>
+      <br><br>
+
+      Ele trouxe um cogumelo 🍄
+      e uma nova mensagem.
+      Nela estão as próximas dicas sobre
+      <strong>nomes de arquivos</strong>,
+      <strong>renomear</strong>
+      e arquivos <strong>ZIP</strong>.
+      <br><br>
+
+      Essa mensagem também contém
+      o caminho para o
       <strong>Castelo do Bowser</strong>.
     </div>
 
-    <!--
-      Quando o novo documento estiver pronto,
-      adicione aqui o link para ele.
-    -->
+    <a
+      class="next-link"
+      href="https://docs.google.com/document/d/1JQ6wuB6PZYI6pz22eWCX_b7NLbsCLcLc29iIWaDgDl0/edit?usp=sharing"
+    >
+      ☁️🍄 LER A MENSAGEM DO LAKITU
+    </a>
   </section>
 
 </main>
