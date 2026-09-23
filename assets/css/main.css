@@ -9,8 +9,8 @@ body {
 
 .container {
   position: relative;
-  width: 800px;       /* largura fixa */
-  height: 600px;      /* altura fixa */
+  width: 800px;
+  height: 600px;
 }
 
 .mapa {
@@ -21,13 +21,13 @@ body {
 
 .objeto {
   position: absolute;
-  width: 48px;        /* tamanho do GIF, ajuste conforme necessário */
+  width: 48px;
   height: 48px;
   cursor: pointer;
 }
 
 .mario {
   position: absolute;
-  width: 150px;        /* tamanho do GIF, ajuste conforme necessário */
+  width: 150px;
   height: 112px;
 }
