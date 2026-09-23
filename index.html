@@ -26,15 +26,9 @@
 
   :root {
     --sky: #4ca7f7;
-    --sky-deep: #216ac1;
-    --blue-dark: #103d7b;
-    --panel: #f7fbff;
-    --cream: #fff7d6;
     --yellow: #ffd84c;
     --green: #57cf69;
-    --red: #ef4e3b;
     --ink: #13213a;
-    --white: #fff;
   }
 
   body {
@@ -45,7 +39,7 @@
       linear-gradient(
         to bottom,
         #7bc8ff 0%,
-        var(--sky) 48%,
+        var(--sky) 52%,
         #1e6cb6 100%
       );
 
@@ -54,8 +48,7 @@
     font-family: Arial, sans-serif;
   }
 
-  button,
-  input {
+  button {
     font: inherit;
   }
 
@@ -68,92 +61,84 @@
 
   .page {
     min-height: 100vh;
-
-    padding: 18px 14px 34px;
+    padding: 12px;
   }
 
   .topbar {
-    width: min(960px, 100%);
-    margin: 0 auto 14px;
+    width: min(1120px, 100%);
+    margin: 0 auto 12px;
 
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 14px;
-    flex-wrap: wrap;
+    gap: 12px;
 
-    padding: 12px 15px;
+    padding: 10px 12px;
 
     border: 4px solid #fff;
     border-radius: 9px;
 
     background: rgba(14, 66, 132, .94);
-
     color: #fff;
 
     box-shadow:
-      0 6px 0 rgba(7, 37, 79, .6);
+      0 6px 0 rgba(7, 37, 79, .55);
+  }
+
+  .world-label,
+  .power-counter {
+    font-size: 10px;
+    line-height: 1.5;
+
+    text-shadow: 2px 2px 0 #000;
   }
 
   .world-label {
     color: var(--yellow);
-
-    font-size: 11px;
-    line-height: 1.5;
-
-    text-shadow: 2px 2px 0 #000;
   }
 
-  .power-counter {
-    font-size: 11px;
-    line-height: 1.5;
-
-    text-shadow: 2px 2px 0 #000;
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
 
-  .intro {
-    width: min(960px, 100%);
-    margin: 0 auto 14px;
+  .music-button {
+    width: 34px;
+    height: 34px;
 
-    padding: 16px 18px;
+    display: grid;
+    place-items: center;
 
-    border: 4px solid #2b69a8;
-    border-radius: 9px;
+    padding: 0;
 
-    background: rgba(247, 251, 255, .97);
+    border: 2px solid rgba(255,255,255,.72);
+    border-radius: 50%;
 
-    box-shadow:
-      0 6px 0 rgba(12, 64, 119, .38);
+    background: rgba(255,255,255,.12);
+    color: #fff;
+
+    cursor: pointer;
   }
 
-  .intro h1 {
-    margin: 0 0 10px;
-
-    color: #17569c;
-
-    font-size: clamp(18px, 3vw, 28px);
-    line-height: 1.55;
+  .music-button:hover,
+  .music-button:focus-visible {
+    background: rgba(255,255,255,.22);
   }
 
-  .intro p {
-    margin: 8px 0;
-
-    font-size: 17px;
-    line-height: 1.55;
+  .music-button:focus-visible {
+    outline: 3px solid var(--yellow);
+    outline-offset: 3px;
   }
 
   .map-wrap {
     width: min(
-      800px,
-      calc(100vw - 28px),
-      calc((100vh - 285px) * 1.3333)
+      1120px,
+      calc(100vw - 24px),
+      calc((100vh - 86px) * 1.3333)
     );
 
-    min-width: min(100%, 360px);
-
     margin: 0 auto;
-
-    position: relative;
   }
 
   .map-frame {
@@ -170,8 +155,8 @@
     background: #000;
 
     box-shadow:
-      0 10px 0 rgba(9, 52, 104, .45),
-      0 16px 32px rgba(0,0,0,.24);
+      0 10px 0 rgba(9, 52, 104, .42),
+      0 18px 34px rgba(0,0,0,.22);
   }
 
   .map-image {
@@ -193,7 +178,7 @@
     pointer-events: none;
 
     box-shadow:
-      inset 0 0 30px rgba(0,0,0,.16);
+      inset 0 0 28px rgba(0,0,0,.13);
   }
 
   .hint-block {
@@ -331,8 +316,7 @@
     left: 50%;
     bottom: 100%;
 
-    transform:
-      translateX(-50%);
+    transform: translateX(-50%);
 
     margin-bottom: 3px;
     padding: 7px 9px;
@@ -347,52 +331,54 @@
 
     white-space: nowrap;
 
-    font-size: clamp(6px, 1.15vw, 9px);
+    font-size: clamp(6px, 1vw, 9px);
     line-height: 1.45;
 
     pointer-events: none;
   }
 
-  .hint-panel {
-    width: min(800px, 100%);
-    margin: 18px auto 0;
+  .hint-toast {
+    position: absolute;
+    left: 50%;
+    bottom: 3%;
 
-    padding: 17px 18px;
+    z-index: 5;
 
-    border: 4px solid #2868ad;
-    border-radius: 9px;
+    width: min(560px, 78%);
 
-    background: rgba(247, 251, 255, .98);
+    transform:
+      translate(-50%, 15px);
+
+    padding: 13px 16px;
+
+    border: 4px solid #1b5795;
+    border-radius: 8px;
+
+    background: rgba(248, 252, 255, .96);
+    color: #12365d;
 
     box-shadow:
-      0 6px 0 rgba(12, 64, 119, .35);
+      0 6px 0 rgba(9, 52, 104, .38);
+
+    text-align: center;
+
+    opacity: 0;
+    pointer-events: none;
+
+    transition:
+      opacity .15s ease,
+      transform .15s ease;
   }
 
-  .hint-panel-top {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
+  .hint-toast.visible {
+    opacity: 1;
+
+    transform:
+      translate(-50%, 0);
   }
 
-  .hint-panel-icon {
-    font-size: 32px;
-  }
-
-  .hint-title {
-    margin: 0;
-
-    color: #155397;
-
-    font-size: 12px;
-    line-height: 1.55;
-  }
-
-  .hint-message {
-    margin: 10px 0 0;
-
-    font-size: 17px;
-    line-height: 1.55;
+  .hint-toast strong {
+    color: #174f8a;
   }
 
   .keys {
@@ -401,7 +387,7 @@
     gap: 6px;
     flex-wrap: wrap;
 
-    margin: 5px 0;
+    margin-right: 8px;
   }
 
   kbd {
@@ -409,10 +395,10 @@
     align-items: center;
     justify-content: center;
 
-    min-width: 46px;
-    min-height: 38px;
+    min-width: 44px;
+    min-height: 34px;
 
-    padding: 5px 10px;
+    padding: 4px 9px;
 
     border: 3px solid #222;
     border-radius: 5px;
@@ -423,92 +409,55 @@
     box-shadow: 0 4px 0 #888;
 
     font-family: Arial, sans-serif;
-    font-size: 18px;
+    font-size: 17px;
     font-weight: bold;
   }
 
-  .controls {
-    width: min(800px, 100%);
-    margin: 14px auto 0;
+  .sr-status {
+    position: absolute;
 
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap;
+    width: 1px;
+    height: 1px;
+
+    overflow: hidden;
+
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+
+    white-space: nowrap;
   }
 
-  .control-button {
-    padding: 10px 14px;
-
-    border: 3px solid #114e8e;
-    border-radius: 6px;
-
-    background: #d9ecff;
-    color: #103c6d;
-
-    box-shadow: 0 4px 0 #114e8e;
-
-    font-weight: bold;
-
-    cursor: pointer;
-  }
-
-  .control-button:hover {
-    background: #eff8ff;
-  }
-
-  .control-button:active {
-    transform: translateY(3px);
-    box-shadow: 0 1px 0 #114e8e;
-  }
-
-  .audio-status {
-    min-height: 20px;
-
-    align-self: center;
-
-    color: #eff8ff;
-
-    font-size: 13px;
-    font-weight: bold;
-
-    text-shadow: 1px 1px 0 #0d3b72;
-  }
-
-  @media (max-height: 700px) {
-    .intro p:last-child {
-      display: none;
+  @media (max-width: 620px) {
+    .topbar {
+      padding: 8px 9px;
     }
 
-    .page {
-      padding-top: 10px;
+    .world-label,
+    .power-counter {
+      font-size: 8px;
     }
 
-    .topbar,
-    .intro {
-      margin-bottom: 10px;
-    }
-
-    .intro {
-      padding-top: 11px;
-      padding-bottom: 11px;
-    }
-  }
-
-  @media (max-width: 540px) {
-    .intro p {
-      font-size: 15px;
+    .music-button {
+      width: 30px;
+      height: 30px;
     }
 
     .mission-tag {
       display: none;
     }
 
-    .hint-panel {
-      padding: 14px;
+    .hint-toast {
+      width: 88%;
+
+      padding: 10px 12px;
+
+      font-size: 14px;
     }
 
-    .hint-message {
+    kbd {
+      min-width: 38px;
+      min-height: 30px;
+
       font-size: 15px;
     }
   }
@@ -520,38 +469,32 @@
 <div class="page">
 
   <div class="topbar">
+
     <div class="world-label pixel">
       🌍 MUNDO 1 · OVERWORLD
     </div>
 
-    <div
-      id="powerCounter"
-      class="power-counter pixel"
-    >
-      🧱 DICAS 0 / 4
+    <div class="topbar-right">
+
+      <div
+        id="powerCounter"
+        class="power-counter pixel"
+      >
+        🧱 DICAS 0 / 4
+      </div>
+
+      <button
+        id="musicButton"
+        class="music-button"
+        type="button"
+        aria-label="Tocar música"
+        title="Tocar música"
+      >
+        🔊
+      </button>
+
     </div>
   </div>
-
-  <section class="intro">
-    <h1 class="pixel">
-      EXPLORADORES DO MUNDO DIGITAL
-    </h1>
-
-    <p>
-      Antes da primeira missão,
-      explore o mapa.
-    </p>
-
-    <p>
-      Clique nos
-      <strong>blocos de dica</strong>
-      para descobrir combinações de teclas.
-      Quando estiver pronto,
-      clique no
-      <strong>Mario</strong>
-      para abrir o primeiro documento.
-    </p>
-  </section>
 
   <div class="map-wrap">
 
@@ -574,7 +517,7 @@
         class="hint-block hint-copy"
         type="button"
         data-hint="copy"
-        aria-label="Descobrir dica de copiar"
+        aria-label="Dica de copiar"
       >
         <img
           src="assets/images/ui/hint-block.gif"
@@ -587,7 +530,7 @@
         class="hint-block hint-paste-copy"
         type="button"
         data-hint="paste-copy"
-        aria-label="Descobrir dica de colar depois de copiar"
+        aria-label="Dica de colar"
       >
         <img
           src="assets/images/ui/hint-block.gif"
@@ -600,7 +543,7 @@
         class="hint-block hint-cut"
         type="button"
         data-hint="cut"
-        aria-label="Descobrir dica de recortar"
+        aria-label="Dica de recortar"
       >
         <img
           src="assets/images/ui/hint-block.gif"
@@ -613,7 +556,7 @@
         class="hint-block hint-paste-cut"
         type="button"
         data-hint="paste-cut"
-        aria-label="Descobrir dica de colar depois de recortar"
+        aria-label="Dica de colar"
       >
         <img
           src="assets/images/ui/hint-block.gif"
@@ -623,6 +566,7 @@
       </button>
 
       <a
+        id="missionLink"
         class="mission-link"
         href="https://docs.google.com/document/d/1wflAcgpV5LDLaA75kwB3InIVKpug_425OG0B3ozZwD0/edit?usp=sharing"
         target="_blank"
@@ -635,61 +579,26 @@
 
         <img
           src="assets/images/characters/mario-stage-1.gif"
-          alt="Mario: abrir a primeira missão"
+          alt="Mario e Luigi: abrir a primeira missão"
         >
       </a>
 
+      <div
+        id="hintToast"
+        class="hint-toast"
+        aria-live="polite"
+      ></div>
+
     </div>
   </div>
 
-  <section
-    class="hint-panel"
+  <span
+    id="audioStatus"
+    class="sr-status"
     aria-live="polite"
   >
-    <div class="hint-panel-top">
-      <span
-        class="hint-panel-icon"
-        id="hintIcon"
-        aria-hidden="true"
-      >
-        🧱
-      </span>
-
-      <h2
-        class="hint-title pixel"
-        id="hintTitle"
-      >
-        BLOCOS DE DICA
-      </h2>
-    </div>
-
-    <p
-      class="hint-message"
-      id="hintMessage"
-    >
-      Clique em um bloco
-      <strong>?</strong>
-      no mapa para descobrir um poder.
-    </p>
-  </section>
-
-  <div class="controls">
-    <button
-      id="musicButton"
-      class="control-button"
-      type="button"
-    >
-      🔊 Tocar música
-    </button>
-
-    <span
-      class="audio-status"
-      id="audioStatus"
-      aria-live="polite"
-    >
-      Música do Mundo 1 pronta.
-    </span>
-  </div>
+    Música do Mundo 1 pronta.
+  </span>
 
 </div>
 
@@ -703,35 +612,27 @@
 <script>
 const hints = {
   copy: {
-    icon: "📋",
-    title: "COPIAR",
     keys: ["Ctrl", "C"],
     message:
-      "Faz uma cópia do que foi selecionado."
+      "Copiar: faz uma cópia do que foi selecionado."
   },
 
   "paste-copy": {
-    icon: "📌",
-    title: "COLAR",
     keys: ["Ctrl", "V"],
     message:
-      "Coloca no lugar atual aquilo que você copiou."
+      "Colar: coloca no lugar atual aquilo que você copiou."
   },
 
   cut: {
-    icon: "✂️",
-    title: "RECORTAR",
     keys: ["Ctrl", "X"],
     message:
-      "Prepara o que foi selecionado para mudar de lugar."
+      "Recortar: prepara o que foi selecionado para mudar de lugar."
   },
 
   "paste-cut": {
-    icon: "👻",
-    title: "COLAR",
     keys: ["Ctrl", "V"],
     message:
-      "Faz aquilo que foi recortado aparecer no novo lugar."
+      "Colar: faz aquilo que foi recortado aparecer no novo lugar."
   }
 };
 
@@ -743,20 +644,13 @@ const powerCounter =
     "powerCounter"
   );
 
-const hintIcon =
+const hintToast =
   document.getElementById(
-    "hintIcon"
+    "hintToast"
   );
 
-const hintTitle =
-  document.getElementById(
-    "hintTitle"
-  );
-
-const hintMessage =
-  document.getElementById(
-    "hintMessage"
-  );
+let toastTimer = null;
+let coinAudioContext = null;
 
 function keyMarkup(keys) {
   return (
@@ -771,6 +665,100 @@ function keyMarkup(keys) {
       ) +
     "</span>"
   );
+}
+
+function playCoinSound() {
+  if (!coinAudioContext) {
+    coinAudioContext =
+      new (
+        window.AudioContext ||
+        window.webkitAudioContext
+      )();
+  }
+
+  const now =
+    coinAudioContext.currentTime;
+
+  const notes = [
+    [988, 0, .07],
+    [1319, .055, .12]
+  ];
+
+  notes.forEach(
+    ([frequency, delay, duration]) => {
+
+      const oscillator =
+        coinAudioContext
+          .createOscillator();
+
+      const gain =
+        coinAudioContext
+          .createGain();
+
+      oscillator.type =
+        "square";
+
+      oscillator.frequency
+        .setValueAtTime(
+          frequency,
+          now + delay
+        );
+
+      gain.gain
+        .setValueAtTime(
+          .045,
+          now + delay
+        );
+
+      gain.gain
+        .exponentialRampToValueAtTime(
+          .001,
+          now + delay + duration
+        );
+
+      oscillator.connect(gain);
+
+      gain.connect(
+        coinAudioContext.destination
+      );
+
+      oscillator.start(
+        now + delay
+      );
+
+      oscillator.stop(
+        now + delay + duration
+      );
+    }
+  );
+}
+
+function showHint(hint) {
+  hintToast.innerHTML =
+    keyMarkup(
+      hint.keys
+    ) +
+    "<strong>" +
+    hint.message +
+    "</strong>";
+
+  hintToast
+    .classList
+    .add("visible");
+
+  clearTimeout(
+    toastTimer
+  );
+
+  toastTimer =
+    setTimeout(
+      () => {
+        hintToast
+          .classList
+          .remove("visible");
+      },
+      4200
+    );
 }
 
 document
@@ -790,34 +778,18 @@ document
           const hint =
             hints[id];
 
+          playCoinSound();
+
           discovered.add(id);
 
           button
             .classList
             .add("found");
 
-          hintIcon.textContent =
-            hint.icon;
-
-          hintTitle.textContent =
-            hint.title;
-
-          hintMessage.innerHTML =
-            keyMarkup(
-              hint.keys
-            ) +
-            "<br>" +
-            hint.message;
-
           powerCounter.textContent =
             `🧱 DICAS ${discovered.size} / 4`;
 
-          if (
-            discovered.size === 4
-          ) {
-            hintMessage.innerHTML +=
-              "<br><br><strong>⭐ Você encontrou todas as dicas! Agora clique no Mario para abrir a primeira missão.</strong>";
-          }
+          showHint(hint);
         }
       );
     }
@@ -838,8 +810,32 @@ const audioStatus =
     "audioStatus"
   );
 
+const missionLink =
+  document.getElementById(
+    "missionLink"
+  );
+
 worldMusic.volume =
   .24;
+
+function setMusicButton(
+  playing
+) {
+  musicButton.textContent =
+    playing ? "🔇" : "🔊";
+
+  musicButton.setAttribute(
+    "aria-label",
+    playing
+      ? "Pausar música"
+      : "Tocar música"
+  );
+
+  musicButton.title =
+    playing
+      ? "Pausar música"
+      : "Tocar música";
+}
 
 musicButton.addEventListener(
   "click",
@@ -852,17 +848,16 @@ musicButton.addEventListener(
         .play()
         .then(
           () => {
-            musicButton.textContent =
-              "🔇 Pausar música";
+            setMusicButton(true);
 
             audioStatus.textContent =
-              "🎵 Música do Mundo 1 tocando.";
+              "Música do Mundo 1 tocando.";
           }
         )
         .catch(
           () => {
             audioStatus.textContent =
-              "▶ O navegador bloqueou o áudio. Tente novamente.";
+              "O navegador bloqueou o áudio. Tente novamente.";
           }
         );
 
@@ -870,12 +865,23 @@ musicButton.addEventListener(
     }
 
     worldMusic.pause();
-
-    musicButton.textContent =
-      "🔊 Tocar música";
+    setMusicButton(false);
 
     audioStatus.textContent =
       "Música pausada.";
+  }
+);
+
+missionLink.addEventListener(
+  "click",
+  () => {
+
+    if (
+      !worldMusic.paused
+    ) {
+      worldMusic.pause();
+      setMusicButton(false);
+    }
   }
 );
 </script>
