@@ -1,77 +1,884 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Exploradores do Mundo Digital</title>
-  <link rel="stylesheet" href="assets/css/main.css">
-  <link rel="icon" href="assets/images/ui/favicon.png" type="image/png">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Mundo 1 — Overworld</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+  href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+  rel="stylesheet"
+>
+
+<link
+  rel="icon"
+  href="assets/images/ui/favicon.png"
+  type="image/png"
+>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  :root {
+    --sky: #4ca7f7;
+    --sky-deep: #216ac1;
+    --blue-dark: #103d7b;
+    --panel: #f7fbff;
+    --cream: #fff7d6;
+    --yellow: #ffd84c;
+    --green: #57cf69;
+    --red: #ef4e3b;
+    --ink: #13213a;
+    --white: #fff;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+
+    background:
+      linear-gradient(
+        to bottom,
+        #7bc8ff 0%,
+        var(--sky) 48%,
+        #1e6cb6 100%
+      );
+
+    color: var(--ink);
+
+    font-family: Arial, sans-serif;
+  }
+
+  button,
+  input {
+    font: inherit;
+  }
+
+  .pixel {
+    font-family:
+      "Press Start 2P",
+      "Courier New",
+      monospace;
+  }
+
+  .page {
+    min-height: 100vh;
+
+    padding: 18px 14px 34px;
+  }
+
+  .topbar {
+    width: min(960px, 100%);
+    margin: 0 auto 14px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+
+    padding: 12px 15px;
+
+    border: 4px solid #fff;
+    border-radius: 9px;
+
+    background: rgba(14, 66, 132, .94);
+
+    color: #fff;
+
+    box-shadow:
+      0 6px 0 rgba(7, 37, 79, .6);
+  }
+
+  .world-label {
+    color: var(--yellow);
+
+    font-size: 11px;
+    line-height: 1.5;
+
+    text-shadow: 2px 2px 0 #000;
+  }
+
+  .power-counter {
+    font-size: 11px;
+    line-height: 1.5;
+
+    text-shadow: 2px 2px 0 #000;
+  }
+
+  .intro {
+    width: min(960px, 100%);
+    margin: 0 auto 14px;
+
+    padding: 16px 18px;
+
+    border: 4px solid #2b69a8;
+    border-radius: 9px;
+
+    background: rgba(247, 251, 255, .97);
+
+    box-shadow:
+      0 6px 0 rgba(12, 64, 119, .38);
+  }
+
+  .intro h1 {
+    margin: 0 0 10px;
+
+    color: #17569c;
+
+    font-size: clamp(18px, 3vw, 28px);
+    line-height: 1.55;
+  }
+
+  .intro p {
+    margin: 8px 0;
+
+    font-size: 17px;
+    line-height: 1.55;
+  }
+
+  .map-wrap {
+    width: min(
+      800px,
+      calc(100vw - 28px),
+      calc((100vh - 285px) * 1.3333)
+    );
+
+    min-width: min(100%, 360px);
+
+    margin: 0 auto;
+
+    position: relative;
+  }
+
+  .map-frame {
+    position: relative;
+
+    width: 100%;
+    aspect-ratio: 4 / 3;
+
+    overflow: hidden;
+
+    border: 6px solid #fff;
+    border-radius: 10px;
+
+    background: #000;
+
+    box-shadow:
+      0 10px 0 rgba(9, 52, 104, .45),
+      0 16px 32px rgba(0,0,0,.24);
+  }
+
+  .map-image {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .map-shade {
+    position: absolute;
+    inset: 0;
+
+    pointer-events: none;
+
+    box-shadow:
+      inset 0 0 30px rgba(0,0,0,.16);
+  }
+
+  .hint-block {
+    position: absolute;
+
+    width: 6%;
+    aspect-ratio: 1;
+
+    padding: 0;
+
+    border: 0;
+    background: transparent;
+
+    cursor: pointer;
+
+    filter:
+      drop-shadow(0 3px 0 rgba(0,0,0,.35));
+
+    transition:
+      transform .12s ease,
+      filter .12s ease;
+  }
+
+  .hint-block img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+  }
+
+  .hint-block:hover,
+  .hint-block:focus-visible {
+    transform:
+      translateY(-4px)
+      scale(1.08);
+
+    filter:
+      drop-shadow(0 5px 0 rgba(0,0,0,.36))
+      brightness(1.08);
+  }
+
+  .hint-block:focus-visible {
+    outline: 4px solid var(--yellow);
+    outline-offset: 4px;
+  }
+
+  .hint-block.found::after {
+    content: "✓";
+
+    position: absolute;
+    right: -6px;
+    top: -8px;
+
+    display: grid;
+    place-items: center;
+
+    width: 22px;
+    height: 22px;
+
+    border: 2px solid #1e642b;
+    border-radius: 50%;
+
+    background: var(--green);
+    color: #0c3615;
+
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  .hint-copy {
+    top: 33.833%;
+    left: 67.875%;
+  }
+
+  .hint-paste-copy {
+    top: 33.833%;
+    left: 73.625%;
+  }
+
+  .hint-cut {
+    top: 60%;
+    left: 54.25%;
+  }
+
+  .hint-paste-cut {
+    top: 60%;
+    left: 60%;
+  }
+
+  .mission-link {
+    position: absolute;
+
+    top: 72.5%;
+    left: 18.5%;
+
+    width: 18.75%;
+    aspect-ratio: 150 / 112;
+
+    display: block;
+
+    border-radius: 10px;
+
+    transition:
+      transform .14s ease,
+      filter .14s ease;
+  }
+
+  .mission-link img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    filter:
+      drop-shadow(0 5px 0 rgba(0,0,0,.28));
+  }
+
+  .mission-link:hover,
+  .mission-link:focus-visible {
+    transform:
+      translateY(-5px)
+      scale(1.04);
+  }
+
+  .mission-link:focus-visible {
+    outline: 5px solid var(--yellow);
+    outline-offset: 5px;
+  }
+
+  .mission-tag {
+    position: absolute;
+
+    left: 50%;
+    bottom: 100%;
+
+    transform:
+      translateX(-50%);
+
+    margin-bottom: 3px;
+    padding: 7px 9px;
+
+    border: 3px solid #7a3b00;
+    border-radius: 5px;
+
+    background: var(--yellow);
+    color: #422000;
+
+    box-shadow: 0 4px 0 #7a3b00;
+
+    white-space: nowrap;
+
+    font-size: clamp(6px, 1.15vw, 9px);
+    line-height: 1.45;
+
+    pointer-events: none;
+  }
+
+  .hint-panel {
+    width: min(800px, 100%);
+    margin: 18px auto 0;
+
+    padding: 17px 18px;
+
+    border: 4px solid #2868ad;
+    border-radius: 9px;
+
+    background: rgba(247, 251, 255, .98);
+
+    box-shadow:
+      0 6px 0 rgba(12, 64, 119, .35);
+  }
+
+  .hint-panel-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .hint-panel-icon {
+    font-size: 32px;
+  }
+
+  .hint-title {
+    margin: 0;
+
+    color: #155397;
+
+    font-size: 12px;
+    line-height: 1.55;
+  }
+
+  .hint-message {
+    margin: 10px 0 0;
+
+    font-size: 17px;
+    line-height: 1.55;
+  }
+
+  .keys {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+
+    margin: 5px 0;
+  }
+
+  kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 46px;
+    min-height: 38px;
+
+    padding: 5px 10px;
+
+    border: 3px solid #222;
+    border-radius: 5px;
+
+    background: #f4f4f4;
+    color: #111;
+
+    box-shadow: 0 4px 0 #888;
+
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .controls {
+    width: min(800px, 100%);
+    margin: 14px auto 0;
+
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .control-button {
+    padding: 10px 14px;
+
+    border: 3px solid #114e8e;
+    border-radius: 6px;
+
+    background: #d9ecff;
+    color: #103c6d;
+
+    box-shadow: 0 4px 0 #114e8e;
+
+    font-weight: bold;
+
+    cursor: pointer;
+  }
+
+  .control-button:hover {
+    background: #eff8ff;
+  }
+
+  .control-button:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #114e8e;
+  }
+
+  .audio-status {
+    min-height: 20px;
+
+    align-self: center;
+
+    color: #eff8ff;
+
+    font-size: 13px;
+    font-weight: bold;
+
+    text-shadow: 1px 1px 0 #0d3b72;
+  }
+
+  @media (max-height: 700px) {
+    .intro p:last-child {
+      display: none;
+    }
+
+    .page {
+      padding-top: 10px;
+    }
+
+    .topbar,
+    .intro {
+      margin-bottom: 10px;
+    }
+
+    .intro {
+      padding-top: 11px;
+      padding-bottom: 11px;
+    }
+  }
+
+  @media (max-width: 540px) {
+    .intro p {
+      font-size: 15px;
+    }
+
+    .mission-tag {
+      display: none;
+    }
+
+    .hint-panel {
+      padding: 14px;
+    }
+
+    .hint-message {
+      font-size: 15px;
+    }
+  }
+</style>
 </head>
 
 <body>
-  <div class="container">
-    <img
-      src="assets/images/worlds/world-1.jpg"
-      alt="Mapa do Mundo 1"
-      class="mapa"
-      onclick="tocarSom()"
-    >
 
-    <a
-      href="https://docs.google.com/document/d/1wflAcgpV5LDLaA75kwB3InIVKpug_425OG0B3ozZwD0/edit?usp=sharing"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <img
-        src="assets/images/characters/mario-stage-1.gif"
-        class="mario"
-        style="top: 435px; left: 148px;"
-        alt="Mario"
-      >
-    </a>
+<div class="page">
 
-    <img
-      src="assets/images/ui/hint-block.gif"
-      class="objeto"
-      style="top: 203px; left: 543px;"
-      onclick="mostrarMensagem(event, 'Ctrl + C = Copiar')"
-      alt="Bloco de dica: copiar"
-    >
+  <div class="topbar">
+    <div class="world-label pixel">
+      🌍 MUNDO 1 · OVERWORLD
+    </div>
 
-    <img
-      src="assets/images/ui/hint-block.gif"
-      class="objeto"
-      style="top: 203px; left: 589px;"
-      onclick="mostrarMensagem(event, 'Ctrl + V = Colar')"
-      alt="Bloco de dica: colar"
+    <div
+      id="powerCounter"
+      class="power-counter pixel"
     >
-
-    <img
-      src="assets/images/ui/hint-block.gif"
-      class="objeto"
-      style="top: 360px; left: 434px;"
-      onclick="mostrarMensagem(event, 'Ctrl + X = Recortar')"
-      alt="Bloco de dica: recortar"
-    >
-
-    <img
-      src="assets/images/ui/hint-block.gif"
-      class="objeto"
-      style="top: 360px; left: 480px;"
-      onclick="mostrarMensagem(event, 'Ctrl + V = Colar')"
-      alt="Bloco de dica: colar"
-    >
+      🧱 DICAS 0 / 4
+    </div>
   </div>
 
-  <script src="assets/js/main.js"></script>
-  <script>
-    const som = new Audio('assets/audio/stage-1-theme.mp3');
+  <section class="intro">
+    <h1 class="pixel">
+      EXPLORADORES DO MUNDO DIGITAL
+    </h1>
 
-    function tocarSom() {
-      som.play().catch((error) => {
-        console.log('Erro ao reproduzir o som:', error);
-      });
+    <p>
+      Antes da primeira missão,
+      explore o mapa.
+    </p>
+
+    <p>
+      Clique nos
+      <strong>blocos de dica</strong>
+      para descobrir combinações de teclas.
+      Quando estiver pronto,
+      clique no
+      <strong>Mario</strong>
+      para abrir o primeiro documento.
+    </p>
+  </section>
+
+  <div class="map-wrap">
+
+    <div
+      class="map-frame"
+      id="mapFrame"
+    >
+      <img
+        src="assets/images/worlds/world-1.jpg"
+        class="map-image"
+        alt="Mapa do Mundo 1"
+      >
+
+      <div
+        class="map-shade"
+        aria-hidden="true"
+      ></div>
+
+      <button
+        class="hint-block hint-copy"
+        type="button"
+        data-hint="copy"
+        aria-label="Descobrir dica de copiar"
+      >
+        <img
+          src="assets/images/ui/hint-block.gif"
+          alt=""
+          aria-hidden="true"
+        >
+      </button>
+
+      <button
+        class="hint-block hint-paste-copy"
+        type="button"
+        data-hint="paste-copy"
+        aria-label="Descobrir dica de colar depois de copiar"
+      >
+        <img
+          src="assets/images/ui/hint-block.gif"
+          alt=""
+          aria-hidden="true"
+        >
+      </button>
+
+      <button
+        class="hint-block hint-cut"
+        type="button"
+        data-hint="cut"
+        aria-label="Descobrir dica de recortar"
+      >
+        <img
+          src="assets/images/ui/hint-block.gif"
+          alt=""
+          aria-hidden="true"
+        >
+      </button>
+
+      <button
+        class="hint-block hint-paste-cut"
+        type="button"
+        data-hint="paste-cut"
+        aria-label="Descobrir dica de colar depois de recortar"
+      >
+        <img
+          src="assets/images/ui/hint-block.gif"
+          alt=""
+          aria-hidden="true"
+        >
+      </button>
+
+      <a
+        class="mission-link"
+        href="https://docs.google.com/document/d/1wflAcgpV5LDLaA75kwB3InIVKpug_425OG0B3ozZwD0/edit?usp=sharing"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Abrir a primeira missão"
+      >
+        <span class="mission-tag pixel">
+          1ª MISSÃO
+        </span>
+
+        <img
+          src="assets/images/characters/mario-stage-1.gif"
+          alt="Mario: abrir a primeira missão"
+        >
+      </a>
+
+    </div>
+  </div>
+
+  <section
+    class="hint-panel"
+    aria-live="polite"
+  >
+    <div class="hint-panel-top">
+      <span
+        class="hint-panel-icon"
+        id="hintIcon"
+        aria-hidden="true"
+      >
+        🧱
+      </span>
+
+      <h2
+        class="hint-title pixel"
+        id="hintTitle"
+      >
+        BLOCOS DE DICA
+      </h2>
+    </div>
+
+    <p
+      class="hint-message"
+      id="hintMessage"
+    >
+      Clique em um bloco
+      <strong>?</strong>
+      no mapa para descobrir um poder.
+    </p>
+  </section>
+
+  <div class="controls">
+    <button
+      id="musicButton"
+      class="control-button"
+      type="button"
+    >
+      🔊 Tocar música
+    </button>
+
+    <span
+      class="audio-status"
+      id="audioStatus"
+      aria-live="polite"
+    >
+      Música do Mundo 1 pronta.
+    </span>
+  </div>
+
+</div>
+
+<audio
+  id="worldMusic"
+  src="assets/audio/stage-1-theme.mp3"
+  preload="auto"
+  loop
+></audio>
+
+<script>
+const hints = {
+  copy: {
+    icon: "📋",
+    title: "COPIAR",
+    keys: ["Ctrl", "C"],
+    message:
+      "Faz uma cópia do que foi selecionado."
+  },
+
+  "paste-copy": {
+    icon: "📌",
+    title: "COLAR",
+    keys: ["Ctrl", "V"],
+    message:
+      "Coloca no lugar atual aquilo que você copiou."
+  },
+
+  cut: {
+    icon: "✂️",
+    title: "RECORTAR",
+    keys: ["Ctrl", "X"],
+    message:
+      "Prepara o que foi selecionado para mudar de lugar."
+  },
+
+  "paste-cut": {
+    icon: "👻",
+    title: "COLAR",
+    keys: ["Ctrl", "V"],
+    message:
+      "Faz aquilo que foi recortado aparecer no novo lugar."
+  }
+};
+
+const discovered =
+  new Set();
+
+const powerCounter =
+  document.getElementById(
+    "powerCounter"
+  );
+
+const hintIcon =
+  document.getElementById(
+    "hintIcon"
+  );
+
+const hintTitle =
+  document.getElementById(
+    "hintTitle"
+  );
+
+const hintMessage =
+  document.getElementById(
+    "hintMessage"
+  );
+
+function keyMarkup(keys) {
+  return (
+    '<span class="keys">' +
+    keys
+      .map(
+        key =>
+          `<kbd>${key}</kbd>`
+      )
+      .join(
+        "<span>+</span>"
+      ) +
+    "</span>"
+  );
+}
+
+document
+  .querySelectorAll(
+    "[data-hint]"
+  )
+  .forEach(
+    button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const id =
+            button.dataset.hint;
+
+          const hint =
+            hints[id];
+
+          discovered.add(id);
+
+          button
+            .classList
+            .add("found");
+
+          hintIcon.textContent =
+            hint.icon;
+
+          hintTitle.textContent =
+            hint.title;
+
+          hintMessage.innerHTML =
+            keyMarkup(
+              hint.keys
+            ) +
+            "<br>" +
+            hint.message;
+
+          powerCounter.textContent =
+            `🧱 DICAS ${discovered.size} / 4`;
+
+          if (
+            discovered.size === 4
+          ) {
+            hintMessage.innerHTML +=
+              "<br><br><strong>⭐ Você encontrou todas as dicas! Agora clique no Mario para abrir a primeira missão.</strong>";
+          }
+        }
+      );
     }
-  </script>
+  );
+
+const worldMusic =
+  document.getElementById(
+    "worldMusic"
+  );
+
+const musicButton =
+  document.getElementById(
+    "musicButton"
+  );
+
+const audioStatus =
+  document.getElementById(
+    "audioStatus"
+  );
+
+worldMusic.volume =
+  .24;
+
+musicButton.addEventListener(
+  "click",
+  () => {
+
+    if (
+      worldMusic.paused
+    ) {
+      worldMusic
+        .play()
+        .then(
+          () => {
+            musicButton.textContent =
+              "🔇 Pausar música";
+
+            audioStatus.textContent =
+              "🎵 Música do Mundo 1 tocando.";
+          }
+        )
+        .catch(
+          () => {
+            audioStatus.textContent =
+              "▶ O navegador bloqueou o áudio. Tente novamente.";
+          }
+        );
+
+      return;
+    }
+
+    worldMusic.pause();
+
+    musicButton.textContent =
+      "🔊 Tocar música";
+
+    audioStatus.textContent =
+      "Música pausada.";
+  }
+);
+</script>
+
 </body>
 </html>
