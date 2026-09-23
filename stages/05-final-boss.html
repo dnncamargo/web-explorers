@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Final Boss</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="icon" href="../assets/images/ui/favicon.png" type="image/png">
+</head>
+
+<body>
+  <div class="container">
+    <img
+      src="../assets/images/worlds/world-final.png"
+      alt="Mapa da fase final"
+      class="mapa"
+      onclick="tocarSom()"
+    >
+
+    <a
+      href="https://drive.google.com/file/d/1iw_SKB8L38kMtsEW8DsaRaULMUEIkOcG/view?usp=sharing"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <img
+        src="../assets/images/characters/mario-walking.gif"
+        class="mario"
+        style="top: 306px; left: 230px;"
+        alt="Mario caminhando"
+      >
+    </a>
+  </div>
+
+  <script src="../assets/js/main.js"></script>
+  <script>
+    const som = new Audio('../assets/audio/final-boss-remix.mp3');
+
+    function tocarSom() {
+      som.play().catch((error) => {
+        console.log('Erro ao reproduzir o som:', error);
+      });
+    }
+  </script>
+</body>
+</html>
