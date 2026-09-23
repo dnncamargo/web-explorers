@@ -874,23 +874,32 @@
     <div class="instruction-box">
       <p>
         <strong>1.</strong>
-        Em Downloads, pressione o ZIP com
-        <strong>dois dedos</strong>.
+        Em Downloads, encontre o arquivo
+        <strong>r3n0m3ie.zip</strong>.
+        Mesmo que Downloads esteja em modo miniatura,
+        confira o nome escrito abaixo do arquivo.
       </p>
 
       <p>
         <strong>2.</strong>
+        Pressione
+        <strong>r3n0m3ie.zip</strong>
+        com <strong>dois dedos</strong>.
+      </p>
+
+      <p>
+        <strong>3.</strong>
         Escolha
         <strong>Extrair tudo</strong>.
       </p>
 
       <p>
-        <strong>3.</strong>
+        <strong>4.</strong>
         Aguarde aparecer uma nova pasta.
       </p>
 
       <p>
-        <strong>4.</strong>
+        <strong>5.</strong>
         Abra essa pasta.
       </p>
     </div>
@@ -947,18 +956,38 @@
     </h2>
 
     <p>
-      Dentro da pasta existem tipos diferentes de arquivo.
+      Dentro da pasta extraída existem
+      <strong>quatro vídeos</strong>.
     </p>
 
     <p>
-      Para esta missão, você deve trabalhar
-      <strong>somente com os vídeos</strong>.
+      Observe o final do nome deles.
+      Qual extensão aparece nos quatro arquivos?
     </p>
 
     <div class="quiz" id="extensionQuiz">
       <label>
         <input
-          type="checkbox"
+          type="radio"
+          name="extensionQuiz"
+          value="jpg"
+        >
+        .jpg
+      </label>
+
+      <label>
+        <input
+          type="radio"
+          name="extensionQuiz"
+          value="mp3"
+        >
+        .mp3
+      </label>
+
+      <label>
+        <input
+          type="radio"
+          name="extensionQuiz"
           value="mp4"
         >
         .mp4
@@ -966,39 +995,19 @@
 
       <label>
         <input
-          type="checkbox"
-          value="mov"
+          type="radio"
+          name="extensionQuiz"
+          value="zip"
         >
-        .mov
-      </label>
-
-      <label>
-        <input
-          type="checkbox"
-          value="gif"
-        >
-        .gif
-      </label>
-
-      <label>
-        <input
-          type="checkbox"
-          value="wav"
-        >
-        .wav
+        .zip
       </label>
     </div>
-
-    <p>
-      Marque apenas as extensões dos arquivos
-      que devem ser renomeados.
-    </p>
 
     <div
       class="status"
       id="status4"
     >
-      Escolha as extensões corretas.
+      Escolha a extensão dos quatro vídeos.
     </div>
 
     <button
@@ -1013,16 +1022,11 @@
       class="hint"
       id="hint4"
     >
-      Sua missão é com os vídeos:
-      <strong>.mp4</strong>
-      e
-      <strong>.mov</strong>.
+      Veja o que aparece depois do último ponto
+      no nome de cada vídeo.
       <br><br>
-      Deixe os arquivos
-      <strong>.gif</strong>
-      e
-      <strong>.wav</strong>
-      exatamente como estão.
+      Os quatro terminam em
+      <strong>.mp4</strong>.
     </div>
   </section>
 
@@ -1044,19 +1048,20 @@
     </h2>
 
     <p>
-      Abra
-      <strong>um vídeo por vez</strong>.
+      Abra os quatro arquivos
+      <strong>.mp4</strong>,
+      um de cada vez.
     </p>
 
     <div class="instruction-box">
       <p>
         <strong>1.</strong>
-        Abra um arquivo .mp4 ou .mov.
+        Abra um vídeo.
       </p>
 
       <p>
         <strong>2.</strong>
-        Observe qual animal aparece.
+        Observe o animal e o que ele está fazendo.
       </p>
 
       <p>
@@ -1066,22 +1071,88 @@
 
       <p>
         <strong>4.</strong>
-        Volte para Arquivos.
+        Volte para Arquivos e abra o próximo.
       </p>
     </div>
 
-    <div class="boss-rule">
-      Não confie na posição de uma aba.
-      Confira o nome do arquivo que você abriu.
+    <p>
+      Depois de assistir aos quatro,
+      marque <strong>todos os animais</strong>
+      que aparecem nos vídeos:
+    </p>
+
+    <div class="quiz" id="animalQuiz">
+      <label>
+        <input
+          type="checkbox"
+          value="hamster"
+        >
+        🐹 Hamster
+      </label>
+
+      <label>
+        <input
+          type="checkbox"
+          value="turtle"
+        >
+        🐢 Tartaruga
+      </label>
+
+      <label>
+        <input
+          type="checkbox"
+          value="parakeet"
+        >
+        🐦 Periquito
+      </label>
+
+      <label>
+        <input
+          type="checkbox"
+          value="kittens"
+        >
+        🐱 Gatinhos filhotes
+      </label>
+
+      <label>
+        <input
+          type="checkbox"
+          value="dog"
+        >
+        🐶 Cachorro
+      </label>
+
+      <label>
+        <input
+          type="checkbox"
+          value="rabbit"
+        >
+        🐰 Coelho
+      </label>
+
+      <label>
+        <input
+          type="checkbox"
+          value="frog"
+        >
+        🐸 Sapo
+      </label>
+
+      <label>
+        <input
+          type="checkbox"
+          value="fish"
+        >
+        🐟 Peixe
+      </label>
     </div>
 
-    <button
-      type="button"
-      class="complete-button"
-      data-complete="5"
+    <div
+      class="status"
+      id="status5"
     >
-      ✓ Identifiquei os animais
-    </button>
+      Marque os animais que você encontrou nos vídeos.
+    </div>
 
     <button
       type="button"
@@ -1095,12 +1166,15 @@
       class="hint"
       id="hint5"
     >
-      Veja um vídeo,
-      volte para Arquivos
-      e lembre qual arquivo corresponde àquele animal.
+      Há quatro cenas:
       <br><br>
-      Faça isso com calma,
-      um de cada vez.
+      🐹 um hamster balançando uma garrafa;
+      <br>
+      🐢 uma tartaruga coçando o casco com uma escova de dentes;
+      <br>
+      🐦 um periquito andando de skate;
+      <br>
+      🐱 vários gatinhos filhotes.
     </div>
   </section>
 
@@ -1159,15 +1233,17 @@
     <div class="file-card">
       <span class="icon">🎞️</span>
       <div>
-        <code>VID001.mp4</code>
-        <br>
-        pode virar
-        <code>gato-skatista.mp4</code>
+        <strong>Exemplo:</strong>
+        depois de descobrir que um vídeo mostra
+        um periquito andando de skate,
+        um bom nome poderia ser:
+        <br><br>
+        <code>periquito-skate.mp4</code>
       </div>
     </div>
 
     <div class="boss-rule">
-      ⚠ Não apague .mp4 ou .mov.
+      ⚠ Não apague .mp4.
       A extensão continua fazendo parte do nome do arquivo.
     </div>
 
@@ -1229,7 +1305,7 @@
           type="checkbox"
           id="checkVideos"
         >
-        Os vídeos .mp4 e .mov receberam nomes que identificam os animais.
+        Os quatro vídeos .mp4 receberam nomes que identificam os animais.
       </label>
 
       <label>
@@ -1237,15 +1313,7 @@
           type="checkbox"
           id="checkExtensions"
         >
-        As extensões .mp4 e .mov continuam no final dos nomes.
-      </label>
-
-      <label>
-        <input
-          type="checkbox"
-          id="checkOthers"
-        >
-        Os arquivos .gif e .wav continuam sem alterações.
+        A extensão .mp4 continua no final dos quatro nomes.
       </label>
     </div>
 
@@ -1253,7 +1321,7 @@
       class="status"
       id="status7"
     >
-      Marque os três itens quando conferir a pasta.
+      Marque os dois itens quando conferir a pasta.
     </div>
 
     <button
@@ -1268,10 +1336,11 @@
       class="hint"
       id="hint7"
     >
-      O objetivo não é mudar tudo.
+      Confira os quatro vídeos.
       <br><br>
-      É identificar os arquivos certos
-      e modificar somente o que faz parte da missão.
+      Cada nome deve ajudar a identificar o animal,
+      e todos devem continuar terminando em
+      <strong>.mp4</strong>.
     </div>
   </section>
 
@@ -1305,6 +1374,15 @@
     <p>
       🍄 Missão concluída.
     </p>
+
+    <a
+      class="download-link pixel"
+      href="https://kartbros.io/"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      🏁 JOGAR KART BROS
+    </a>
   </section>
 
 </main>
@@ -1864,7 +1942,7 @@ document
   );
 
 /* ---------------------------------------------------------
-   QUIZ DAS EXTENSÕES
+   QUIZ DA EXTENSÃO
 --------------------------------------------------------- */
 
 const extensionQuiz =
@@ -1879,6 +1957,73 @@ const status4 =
 
 extensionQuiz
   .querySelectorAll(
+    'input[type="radio"]'
+  )
+  .forEach(
+    option => {
+
+      option.addEventListener(
+        "change",
+        () => {
+
+          if (
+            option.value ===
+            "mp4"
+          ) {
+            status4.textContent =
+              "⭐ Certo! Os quatro vídeos terminam em .mp4.";
+
+            status4
+              .classList
+              .add("success");
+
+            extensionQuiz
+              .querySelectorAll(
+                'input[type="radio"]'
+              )
+              .forEach(
+                input => {
+                  input.disabled = true;
+                }
+              );
+
+            completeMission(4);
+          } else {
+            status4.textContent =
+              "Observe novamente o final do nome dos quatro vídeos.";
+
+            status4
+              .classList
+              .remove("success");
+          }
+        }
+      );
+    }
+  );
+
+/* ---------------------------------------------------------
+   QUIZ DOS ANIMAIS
+--------------------------------------------------------- */
+
+const animalQuiz =
+  document.getElementById(
+    "animalQuiz"
+  );
+
+const status5 =
+  document.getElementById(
+    "status5"
+  );
+
+const expectedAnimals = [
+  "hamster",
+  "kittens",
+  "parakeet",
+  "turtle"
+];
+
+animalQuiz
+  .querySelectorAll(
     'input[type="checkbox"]'
   )
   .forEach(
@@ -1890,7 +2035,7 @@ extensionQuiz
 
           const selected =
             [
-              ...extensionQuiz
+              ...animalQuiz
                 .querySelectorAll(
                   'input:checked'
                 )
@@ -1902,19 +2047,27 @@ extensionQuiz
             .sort();
 
           const correct =
-            selected.length === 2 &&
-            selected[0] === "mov" &&
-            selected[1] === "mp4";
+            selected.length ===
+              expectedAnimals.length &&
+            expectedAnimals
+              .every(
+                (
+                  animal,
+                  index
+                ) =>
+                  selected[index] ===
+                  animal
+              );
 
           if (correct) {
-            status4.textContent =
-              "⭐ Certo! A missão é somente com .mp4 e .mov.";
+            status5.textContent =
+              "⭐ Certo! Você encontrou hamster, tartaruga, periquito e gatinhos.";
 
-            status4
+            status5
               .classList
               .add("success");
 
-            extensionQuiz
+            animalQuiz
               .querySelectorAll(
                 'input[type="checkbox"]'
               )
@@ -1924,12 +2077,12 @@ extensionQuiz
                 }
               );
 
-            completeMission(4);
+            completeMission(5);
           } else {
-            status4.textContent =
-              "Escolha somente as extensões dos vídeos que serão renomeados.";
+            status5.textContent =
+              "Confira os quatro vídeos e marque somente os animais que aparecem.";
 
-            status4
+            status5
               .classList
               .remove("success");
           }
@@ -1948,9 +2101,6 @@ const finalChecks = [
   ),
   document.getElementById(
     "checkExtensions"
-  ),
-  document.getElementById(
-    "checkOthers"
   )
 ];
 
@@ -1975,7 +2125,7 @@ finalChecks.forEach(
 
         if (!allChecked) {
           status7.textContent =
-            "Marque os três itens quando conferir a pasta.";
+            "Marque os dois itens quando conferir a pasta.";
 
           status7
             .classList
