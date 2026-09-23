@@ -1,0 +1,2287 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Mundo 2 — Submundo</title>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  :root {
+    --panel: rgba(4, 7, 28, .94);
+    --panel-soft: rgba(10, 14, 45, .90);
+    --white: #fff;
+    --yellow: #ffd83d;
+    --green: #71ff68;
+    --blue: #62a8ff;
+    --red: #ff6969;
+    --brick: #b85c38;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: #020313;
+    color: var(--white);
+    font-family: "Courier New", monospace;
+  }
+
+  button,
+  input,
+  textarea {
+    font: inherit;
+  }
+
+  .world {
+    min-height: 100vh;
+
+    background:
+      linear-gradient(
+        to bottom,
+        rgba(0,0,10,.18),
+        rgba(0,0,18,.78)
+      ),
+      url("https://images.gamebanana.com/img/ss/mods/5d7d7ec87bd4a.webp")
+      center top / cover fixed;
+  }
+
+  /* -------------------------------------------------------
+     TELA DE ENTRADA
+  ------------------------------------------------------- */
+
+  .start-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+
+    display: grid;
+    place-items: center;
+
+    padding: 24px;
+
+    background:
+      linear-gradient(rgba(1,2,18,.76), rgba(1,2,18,.93)),
+      url("https://images.gamebanana.com/img/ss/mods/5d7d7ec87bd4a.webp")
+      center / cover;
+
+    text-align: center;
+
+    transition:
+      opacity .45s ease,
+      transform .45s ease;
+  }
+
+  .start-screen.leaving {
+    opacity: 0;
+    transform: scale(1.04);
+    pointer-events: none;
+  }
+
+  .start-content {
+    max-width: 680px;
+  }
+
+  .world-number {
+    color: var(--yellow);
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 2px;
+  }
+
+  .start-screen h1 {
+    margin: 8px 0;
+    font-size: clamp(38px, 8vw, 72px);
+    text-shadow: 4px 4px 0 #000;
+  }
+
+  .start-screen p {
+    font-size: 18px;
+    line-height: 1.5;
+  }
+
+  /* -------------------------------------------------------
+     CANO
+  ------------------------------------------------------- */
+
+  .pipe-button {
+    position: relative;
+
+    width: 165px;
+    height: 165px;
+
+    margin-top: 26px;
+    padding: 0;
+
+    border: 0;
+    background: transparent;
+
+    cursor: pointer;
+
+    filter:
+      drop-shadow(7px 8px 0 rgba(0,0,0,.65));
+  }
+
+  .pipe-top {
+    position: absolute;
+    z-index: 2;
+
+    left: 4px;
+    top: 0;
+
+    width: 157px;
+    height: 57px;
+
+    border: 5px solid #102000;
+    border-radius: 4px;
+
+    background:
+      linear-gradient(
+        90deg,
+        #73ff18 0 12%,
+        #c2ff5b 12% 28%,
+        #43d900 28% 65%,
+        #148900 65% 82%,
+        #075900 82% 100%
+      );
+
+    box-shadow:
+      inset 0 6px 0 rgba(255,255,255,.35),
+      inset 0 -7px 0 rgba(0,0,0,.28);
+  }
+
+  .pipe-body {
+    position: absolute;
+
+    left: 24px;
+    top: 50px;
+
+    width: 117px;
+    height: 108px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-left: 5px solid #102000;
+    border-right: 5px solid #102000;
+    border-bottom: 5px solid #102000;
+
+    background:
+      linear-gradient(
+        90deg,
+        #64ef0e 0 15%,
+        #aeff44 15% 30%,
+        #3dca00 30% 67%,
+        #148700 67% 84%,
+        #075800 84% 100%
+      );
+  }
+
+  .pipe-text {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+
+    text-shadow:
+      2px 2px 0 black,
+      -1px -1px 0 black;
+  }
+
+  .pipe-button:hover {
+    transform: translateY(-4px);
+  }
+
+  .pipe-button:focus-visible {
+    outline: 5px solid var(--yellow);
+    outline-offset: 7px;
+  }
+
+  .pipe-button:active {
+    transform: translateY(7px);
+  }
+
+  .pipe-button.entering {
+    animation: enterPipe .72s ease-in forwards;
+  }
+
+  @keyframes enterPipe {
+    0% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    55% {
+      transform: translateY(25px);
+      opacity: 1;
+    }
+
+    100% {
+      transform: translateY(90px);
+      opacity: 0;
+    }
+  }
+
+  /* -------------------------------------------------------
+     CABEÇALHO
+  ------------------------------------------------------- */
+
+  header {
+    padding: 34px 20px 115px;
+    text-align: center;
+    text-shadow: 3px 3px #000;
+  }
+
+  header h1 {
+    margin: 7px 0;
+    font-size: clamp(34px, 6vw, 58px);
+  }
+
+  header p {
+    margin: 0;
+    font-size: 18px;
+  }
+
+  main {
+    width: min(900px, calc(100% - 24px));
+    margin: -72px auto 70px;
+  }
+
+  /* -------------------------------------------------------
+     HUD
+  ------------------------------------------------------- */
+
+  .hud {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+
+    margin-bottom: 20px;
+    padding: 14px 18px;
+
+    border: 3px solid white;
+    background: var(--panel);
+
+    font-weight: bold;
+  }
+
+  /* -------------------------------------------------------
+     RÁDIO DO GOOMBA
+  ------------------------------------------------------- */
+
+  .radio {
+    margin-bottom: 26px;
+    padding: 18px;
+
+    border: 4px solid #332500;
+    background: #8c5729;
+    box-shadow: 8px 8px 0 rgba(0,0,0,.6);
+  }
+
+  .radio-title {
+    margin-bottom: 12px;
+
+    color: #fff2a6;
+    font-size: 21px;
+    font-weight: bold;
+    text-align: center;
+
+    text-shadow: 2px 2px #000;
+  }
+
+  .radio-body {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+
+  .radio-player {
+    padding: 7px;
+    border: 4px solid #1f1407;
+    background: #111;
+  }
+
+  #goombaRadio {
+    width: 360px;
+    height: 203px;
+  }
+
+  .radio-speaker {
+    width: 130px;
+    min-height: 203px;
+
+    display: grid;
+    place-items: center;
+
+    border: 4px solid #25170b;
+    border-radius: 8px;
+
+    background:
+      radial-gradient(circle, #191919 3px, transparent 4px)
+      0 0 / 15px 15px,
+      #3d2b20;
+  }
+
+  .radio-speaker span {
+    padding: 9px;
+    border-radius: 50%;
+
+    background: #262626;
+    color: var(--yellow);
+
+    font-size: 34px;
+  }
+
+  .radio-status {
+    margin: 13px 0 0;
+    text-align: center;
+    font-size: 14px;
+  }
+
+  /* -------------------------------------------------------
+     MISSÕES
+  ------------------------------------------------------- */
+
+  .mission,
+  .finish {
+    margin-bottom: 24px;
+    padding: 25px;
+
+    border: 3px solid white;
+    background: var(--panel);
+
+    box-shadow: 8px 8px 0 rgba(0,0,0,.55);
+  }
+
+  .mission.completed {
+    border-color: var(--green);
+  }
+
+  .mission h2 {
+    margin-top: 0;
+    color: var(--yellow);
+  }
+
+  .mission p,
+  .mission li {
+    font-size: 17px;
+    line-height: 1.55;
+  }
+
+  .play-area {
+    margin: 20px 0;
+    padding: 20px;
+
+    border: 4px solid #989898;
+    background: white;
+    color: #111;
+
+    font-family: Arial, sans-serif;
+    font-size: 25px;
+    line-height: 1.6;
+  }
+
+  .select-word {
+    display: inline-block;
+    margin: 7px;
+    padding: 10px 14px;
+
+    border: 3px solid #aaa;
+    background: white;
+    color: #111;
+
+    font-family: Arial, sans-serif;
+    font-size: 25px;
+    font-weight: bold;
+  }
+
+  .editable {
+    outline: 4px dashed transparent;
+  }
+
+  .editable:focus {
+    outline-color: var(--blue);
+  }
+
+  .paste-box {
+    min-height: 90px;
+  }
+
+  textarea {
+    display: block;
+    width: 100%;
+    min-height: 120px;
+
+    margin: 18px 0;
+    padding: 16px;
+
+    resize: vertical;
+
+    border: 4px solid #999;
+    background: white;
+    color: #111;
+
+    font-family: Arial, sans-serif;
+    font-size: 24px;
+  }
+
+  /* -------------------------------------------------------
+     TECLAS
+  ------------------------------------------------------- */
+
+  kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 42px;
+    min-height: 38px;
+
+    padding: 5px 10px;
+
+    border: 3px solid #222;
+    border-radius: 5px;
+
+    background: #f4f4f4;
+    color: #111;
+
+    box-shadow: 0 4px 0 #888;
+
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .backspace-key {
+    min-width: 75px;
+    font-size: 27px;
+  }
+
+  .enter-key {
+    min-width: 100px;
+  }
+
+  .keys {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  /* -------------------------------------------------------
+     STATUS E DICAS
+  ------------------------------------------------------- */
+
+  .status {
+    min-height: 29px;
+    margin-top: 12px;
+
+    color: var(--yellow);
+    font-weight: bold;
+  }
+
+  .status.success {
+    color: var(--green);
+  }
+
+  .hint-button {
+    margin-top: 12px;
+    padding: 11px 16px;
+
+    border: 3px solid #7a3800;
+    background: #df841c;
+    color: #151000;
+
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .hint {
+    display: none;
+
+    margin-top: 12px;
+    padding: 15px;
+
+    border: 3px solid #d89323;
+    background: #4b3100;
+
+    line-height: 1.6;
+  }
+
+  .hint.visible {
+    display: block;
+  }
+
+  .instruction-box {
+    padding: 15px;
+
+    border-left: 5px solid var(--yellow);
+    background: var(--panel-soft);
+  }
+
+  .counter {
+    color: var(--green);
+    font-weight: bold;
+  }
+
+  .finish {
+    text-align: center;
+  }
+
+  .finish h2 {
+    color: var(--green);
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  @media (max-width: 520px) {
+    #goombaRadio {
+      width: 320px;
+      height: 200px;
+    }
+
+    .mission {
+      padding: 18px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<!-- Som do cano -->
+<audio
+  id="pipeSound"
+  preload="auto"
+  src="https://www.myinstants.com/media/sounds/super-mario-bros.mp3">
+</audio>
+
+
+<!-- =======================================================
+     ENTRADA
+======================================================= -->
+
+<div class="start-screen" id="startScreen">
+
+  <div class="start-content">
+
+    <div class="world-number">🍄 MUNDO 2 🍄</div>
+
+    <h1>SUBMUNDO</h1>
+
+    <p>
+      Uma nova fase começou.
+    </p>
+
+    <p>
+      Entre pelo cano para iniciar.
+    </p>
+
+    <button
+      id="startButton"
+      class="pipe-button"
+      aria-label="Entrar no Submundo"
+    >
+      <span class="pipe-top"></span>
+
+      <span class="pipe-body">
+        <span class="pipe-text">ENTRAR</span>
+      </span>
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- =======================================================
+     MUNDO
+======================================================= -->
+
+<div class="world">
+
+<header>
+
+  <div class="world-number">MUNDO 2</div>
+
+  <h1>SUBMUNDO</h1>
+
+  <p>Primeiro selecione. Depois escolha o que fazer.</p>
+
+</header>
+
+
+<main>
+
+  <div class="hud">
+    <span>🍄 Explorador(a)</span>
+    <span id="progress">⭐ 0 / 7</span>
+  </div>
+
+
+  <!-- =====================================================
+       RÁDIO
+  ====================================================== -->
+
+  <section class="radio">
+
+    <div class="radio-title">
+      📻 RÁDIO DO GOOMBA
+    </div>
+
+    <div class="radio-body">
+
+      <div class="radio-player">
+        <div id="goombaRadio"></div>
+      </div>
+
+      <div class="radio-speaker">
+        <span>🎵</span>
+      </div>
+
+    </div>
+
+    <p class="radio-status" id="radioStatus">
+      A rádio começa depois que você entra pelo cano.
+    </p>
+
+  </section>
+
+
+  <!-- =====================================================
+       MISSÃO 1
+  ====================================================== -->
+
+  <section class="mission" id="mission1">
+
+    <h2>👆 Desafio 1 — Selecionar</h2>
+
+    <p>
+      Antes de apagar, copiar ou mover alguma coisa,
+      precisamos dizer ao computador
+      <strong>qual parte queremos usar</strong>.
+    </p>
+
+    <div class="instruction-box">
+
+      <p>
+        Há duas formas de selecionar texto:
+      </p>
+
+      <p>
+        <strong>1.</strong>
+        Dê <strong>dois toques imediatos</strong>
+        sobre uma palavra.
+      </p>
+
+      <p>
+        Tente selecionar:
+      </p>
+
+      <span class="select-word" id="quickWord">
+        COGUMELO
+      </span>
+
+      <p>
+        <strong>2.</strong>
+        Pressione no começo do texto e
+        <strong>arraste o ponteiro</strong>
+        até o final.
+      </p>
+
+      <p>
+        Depois selecione a frase inteira:
+      </p>
+
+      <span class="select-word" id="dragWords">
+        FLOR DE FOGO
+      </span>
+
+    </div>
+
+    <div class="status" id="status1">
+      Primeiro selecione COGUMELO com dois toques imediatos.
+    </div>
+
+    <button class="hint-button" data-hint="hint1">
+      🧱 Bloco de dica
+    </button>
+
+    <div class="hint" id="hint1">
+      Uma palavra pode ser selecionada com
+      <strong>dois toques imediatos</strong>.
+      <br><br>
+      Para selecionar um trecho maior,
+      <strong>arraste o ponteiro</strong>
+      do começo até o final do texto.
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       MISSÃO 2
+  ====================================================== -->
+
+  <section class="mission" id="mission2" hidden>
+
+    <h2>👾 Desafio 2 — Apagar e desfazer</h2>
+
+    <p>
+      Um GOOMBA entrou onde não devia.
+    </p>
+
+    <p>
+      Selecione somente <strong>GOOMBA</strong>.
+    </p>
+
+    <div
+      class="play-area editable"
+      id="undoArea"
+      contenteditable="true"
+      spellcheck="false"
+    >Mario encontrou um GOOMBA no túnel.</div>
+
+    <p>
+      Depois pressione:
+    </p>
+
+    <p>
+      <kbd class="backspace-key">←</kbd>
+      <strong>Backspace — botão de apagar</strong>
+    </p>
+
+    <div class="status" id="status2">
+      Selecione GOOMBA e use o botão de apagar.
+    </div>
+
+    <button class="hint-button" data-hint="hint2">
+      🧱 Bloco de dica
+    </button>
+
+    <div class="hint" id="hint2">
+
+      <strong>Arraste o ponteiro</strong>
+      sobre GOOMBA ou use dois toques imediatos.
+      <br><br>
+
+      Depois pressione:
+
+      <br><br>
+
+      <kbd class="backspace-key">←</kbd>
+      <strong>Backspace — botão de apagar</strong>
+
+      <br><br>
+
+      Quando for pedido para desfazer:
+
+      <br><br>
+
+      <strong>1.</strong> Segure a tecla
+      <kbd>Ctrl</kbd>.
+
+      <br><br>
+
+      <strong>2.</strong> Sem soltar Ctrl,
+      pressione a tecla <kbd>Z</kbd>.
+
+      <br><br>
+
+      <strong>3.</strong> Depois solte as teclas.
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       MISSÃO 3
+  ====================================================== -->
+
+  <section class="mission" id="mission3" hidden>
+
+    <h2>🧹 Desafio 3 — Limpe o caminho</h2>
+
+    <p>
+      Há dois GOOMBAS no caminho.
+    </p>
+
+    <p>
+      Apague os dois, um de cada vez.
+    </p>
+
+    <div
+      class="play-area editable"
+      id="cleanupArea"
+      contenteditable="true"
+      spellcheck="false"
+    >GOOMBA passou por Mario. Depois outro GOOMBA apareceu.</div>
+
+    <p>
+      Use novamente:
+      <kbd class="backspace-key">←</kbd>
+      <strong>Backspace — botão de apagar</strong>
+    </p>
+
+    <div class="status" id="status3">
+      GOOMBAS restantes: 2
+    </div>
+
+    <button class="hint-button" data-hint="hint3">
+      🧱 Bloco de dica
+    </button>
+
+    <div class="hint" id="hint3">
+      Selecione um GOOMBA.
+      <br>
+      Pressione o
+      <kbd class="backspace-key">←</kbd>
+      botão de apagar.
+      <br><br>
+      Depois faça a mesma coisa com o outro.
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       MISSÃO 4
+  ====================================================== -->
+
+  <section class="mission" id="mission4" hidden>
+
+    <h2>🪙 Desafio 4 — Multiplique a moeda</h2>
+
+    <p>
+      Selecione a palavra:
+    </p>
+
+    <div class="play-area">
+      <strong id="coinSource">MOEDA</strong>
+    </div>
+
+    <p>
+      Para copiar:
+    </p>
+
+    <p class="keys">
+      <kbd>Ctrl</kbd>
+      <span>+</span>
+      <kbd>C</kbd>
+    </p>
+
+    <p>
+      Depois clique na caixa abaixo e cole
+      <strong>4 vezes seguidas</strong>.
+    </p>
+
+    <p class="keys">
+      <kbd>Ctrl</kbd>
+      <span>+</span>
+      <kbd>V</kbd>
+    </p>
+
+    <div
+      class="play-area paste-box editable"
+      id="pasteRepeat"
+      contenteditable="true"
+      spellcheck="false"
+    ></div>
+
+    <div class="status" id="status4">
+      Copie MOEDA primeiro.
+    </div>
+
+    <button class="hint-button" data-hint="hint4">
+      🧱 Bloco de dica
+    </button>
+
+    <div class="hint" id="hint4">
+
+      Para copiar:
+      <br><br>
+
+      segure <kbd>Ctrl</kbd>
+      e, sem soltar,
+      pressione <kbd>C</kbd>.
+
+      <br><br>
+
+      Para colar:
+      <br><br>
+
+      segure <kbd>Ctrl</kbd>
+      e, sem soltar,
+      pressione <kbd>V</kbd>.
+
+      <br><br>
+
+      Você pode usar
+      <strong>Ctrl + V várias vezes</strong>
+      sem copiar novamente.
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       MISSÃO 5
+  ====================================================== -->
+
+  <section class="mission" id="mission5" hidden>
+
+    <h2>↩️ Desafio 5 — Voltar no tempo</h2>
+
+    <p>
+      A palavra MOEDA ainda está copiada.
+    </p>
+
+    <p>
+      Cole-a <strong>3 vezes</strong> na caixa.
+    </p>
+
+    <div
+      class="play-area paste-box editable"
+      id="historyArena"
+      contenteditable="true"
+      spellcheck="false"
+    ></div>
+
+    <div class="status" id="status5">
+      Use Ctrl + V três vezes.
+    </div>
+
+    <button class="hint-button" data-hint="hint5">
+      🧱 Bloco de dica
+    </button>
+
+    <div class="hint" id="hint5">
+
+      <strong>Ctrl + Z = desfazer</strong>
+
+      <br><br>
+
+      Segure <kbd>Ctrl</kbd>.
+      <br>
+      Sem soltar Ctrl,
+      pressione <kbd>Z</kbd>.
+
+      <br><br>
+
+      <strong>Ctrl + Shift + Z = refazer</strong>
+
+      <br><br>
+
+      Segure
+      <kbd>Ctrl</kbd>
+      e
+      <kbd>Shift</kbd>
+      ao mesmo tempo.
+
+      <br>
+
+      Sem soltar as duas,
+      pressione
+      <kbd>Z</kbd>.
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       MISSÃO 6
+  ====================================================== -->
+
+  <section class="mission" id="mission6" hidden>
+
+    <h2>⭐ Desafio 6 — Mova a estrela</h2>
+
+    <p>
+      Agora não queremos fazer uma cópia.
+    </p>
+
+    <p>
+      Queremos tirar a ESTRELA daqui e
+      colocá-la em outro lugar.
+    </p>
+
+    <div
+      class="play-area editable"
+      id="cutSource"
+      contenteditable="true"
+      spellcheck="false"
+    >ESTRELA</div>
+
+    <p>
+      Para recortar:
+    </p>
+
+    <p class="keys">
+      <kbd>Ctrl</kbd>
+      <span>+</span>
+      <kbd>X</kbd>
+    </p>
+
+    <p>
+      Depois cole aqui:
+    </p>
+
+    <div
+      class="play-area paste-box editable"
+      id="cutTarget"
+      contenteditable="true"
+      spellcheck="false"
+    ></div>
+
+    <div class="status" id="status6">
+      Selecione ESTRELA e use Ctrl + X.
+    </div>
+
+    <button class="hint-button" data-hint="hint6">
+      🧱 Bloco de dica
+    </button>
+
+    <div class="hint" id="hint6">
+
+      <strong>Arraste o ponteiro</strong>
+      sobre ESTRELA ou use dois toques imediatos.
+
+      <br><br>
+
+      Para recortar:
+      segure <kbd>Ctrl</kbd>
+      e pressione <kbd>X</kbd>.
+
+      <br><br>
+
+      Depois clique no lugar certo,
+      segure <kbd>Ctrl</kbd>
+      e pressione <kbd>V</kbd>.
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       MISSÃO 7
+  ====================================================== -->
+
+  <section class="mission" id="mission7" hidden>
+
+    <h2>↵ Desafio 7 — Uma nova linha</h2>
+
+    <p>
+      Conheça outra tecla importante:
+    </p>
+
+    <p>
+      <kbd class="enter-key">↵ Enter</kbd>
+    </p>
+
+    <p>
+      Neste desafio, Enter serve para
+      <strong>criar uma nova linha</strong>.
+    </p>
+
+    <p>
+      Clique entre MARIO e LUIGI.
+      Depois pressione Enter.
+    </p>
+
+    <textarea
+      id="enterArea"
+      spellcheck="false"
+    >MARIO LUIGI</textarea>
+
+    <div class="status" id="status7">
+      O resultado deve ficar com MARIO em cima e LUIGI embaixo.
+    </div>
+
+    <button class="hint-button" data-hint="hint7">
+      🧱 Bloco de dica
+    </button>
+
+    <div class="hint" id="hint7">
+
+      Clique exatamente entre:
+
+      <br><br>
+
+      MARIO | LUIGI
+
+      <br><br>
+
+      Depois pressione:
+
+      <br><br>
+
+      <kbd class="enter-key">↵ Enter</kbd>
+
+      <br><br>
+
+      Enter é uma tecla grande do teclado
+      que costuma ter uma seta dobrada.
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       FINAL
+  ====================================================== -->
+
+  <section class="finish" id="finish" hidden>
+
+    <h2>🏁 SUBMUNDO CONCLUÍDO!</h2>
+
+    <p>
+      Agora você sabe primeiro
+      <strong>selecionar</strong>
+      e depois decidir o que fazer.
+    </p>
+
+    <p class="keys">
+      <kbd>Ctrl</kbd><span>+</span><kbd>C</kbd>
+      <kbd>Ctrl</kbd><span>+</span><kbd>X</kbd>
+      <kbd>Ctrl</kbd><span>+</span><kbd>V</kbd>
+    </p>
+
+    <p class="keys">
+      <kbd>Ctrl</kbd><span>+</span><kbd>Z</kbd>
+      <kbd>Ctrl</kbd><span>+</span><kbd>Shift</kbd><span>+</span><kbd>Z</kbd>
+    </p>
+
+    <p>
+      <kbd class="backspace-key">←</kbd>
+      botão de apagar
+      &nbsp;&nbsp;
+      <kbd class="enter-key">↵ Enter</kbd>
+    </p>
+
+    <p>⭐ ⭐ ⭐ ⭐ ⭐ ⭐ ⭐</p>
+
+  </section>
+
+</main>
+</div>
+
+
+<script>
+
+/* =========================================================
+   CONFIGURAÇÃO DA RÁDIO
+========================================================= */
+
+const VIDEO_ID = "8ivkQCoMkDI";
+
+const MUSIC_START = 3;
+const MUSIC_END = 482;
+const MUSIC_DELAY = 1000;
+const RADIO_VOLUME = 25;
+
+let radioPlayer = null;
+let radioReady = false;
+let radioRequested = false;
+let radioMonitor = null;
+
+
+/* =========================================================
+   SOM DO CANO
+========================================================= */
+
+const pipeSound =
+  document.getElementById("pipeSound");
+
+const startButton =
+  document.getElementById("startButton");
+
+const startScreen =
+  document.getElementById("startScreen");
+
+
+startButton.addEventListener("click", () => {
+
+  startButton.disabled = true;
+
+  pipeSound.currentTime = 0;
+
+  pipeSound.play().catch(() => {
+    // Se o efeito externo falhar,
+    // a atividade continua normalmente.
+  });
+
+  startButton.classList.add("entering");
+
+  /*
+    A música não começa imediatamente.
+    Esperamos 1 segundo.
+  */
+  setTimeout(() => {
+    requestRadioStart();
+  }, MUSIC_DELAY);
+
+
+  setTimeout(() => {
+    startScreen.classList.add("leaving");
+  }, 650);
+
+
+  setTimeout(() => {
+    startScreen.remove();
+  }, 1150);
+
+});
+
+
+/* =========================================================
+   YOUTUBE IFRAME API
+========================================================= */
+
+function loadYouTubeAPI() {
+
+  const script = document.createElement("script");
+
+  script.src =
+    "https://www.youtube.com/iframe_api";
+
+  document.head.appendChild(script);
+}
+
+
+window.onYouTubeIframeAPIReady = function () {
+
+  const playerVars = {
+    controls: 1,
+    playsinline: 1,
+    rel: 0
+  };
+
+  /*
+    Em uma página HTTP/HTTPS,
+    informa também a origem do site.
+  */
+  if (
+    location.protocol === "https:" ||
+    location.protocol === "http:"
+  ) {
+    playerVars.origin = location.origin;
+  }
+
+
+  radioPlayer = new YT.Player("goombaRadio", {
+
+    width: "360",
+    height: "203",
+
+    videoId: VIDEO_ID,
+
+    playerVars,
+
+    events: {
+
+      onReady() {
+
+        radioReady = true;
+
+        document.getElementById("radioStatus")
+          .textContent =
+          "📻 Rádio pronta.";
+
+        if (radioRequested) {
+          startRadioSegment();
+        }
+      },
+
+
+      onStateChange(event) {
+
+        if (
+          event.data === YT.PlayerState.PLAYING
+        ) {
+
+          document.getElementById("radioStatus")
+            .textContent =
+            "🎵 Rádio do Goomba tocando.";
+
+          startRadioMonitor();
+        }
+
+
+        if (
+          event.data === YT.PlayerState.ENDED
+        ) {
+
+          /*
+            Chegou ao final do trecho.
+            Recomeça em 0:03.
+          */
+          startRadioSegment();
+        }
+      },
+
+
+      onAutoplayBlocked() {
+
+        document.getElementById("radioStatus")
+          .textContent =
+          "▶ O Chrome bloqueou o início automático. Clique em Play na Rádio do Goomba.";
+      },
+
+
+      onError(event) {
+
+        document.getElementById("radioStatus")
+          .textContent =
+          "⚠ Não foi possível tocar a Rádio do Goomba. Erro: " +
+          event.data;
+      }
+
+    }
+
+  });
+
+};
+
+
+function requestRadioStart() {
+
+  radioRequested = true;
+
+  if (radioReady) {
+    startRadioSegment();
+  }
+
+}
+
+
+function startRadioSegment() {
+
+  if (!radioPlayer) return;
+
+  clearInterval(radioMonitor);
+
+  radioPlayer.setVolume(RADIO_VOLUME);
+
+  /*
+    IMPORTANTE:
+    usamos loadVideoById novamente em cada loop,
+    em vez de seekTo(), para conservar endSeconds.
+  */
+
+  radioPlayer.loadVideoById({
+    videoId: VIDEO_ID,
+    startSeconds: MUSIC_START,
+    endSeconds: MUSIC_END
+  });
+
+}
+
+
+function startRadioMonitor() {
+
+  clearInterval(radioMonitor);
+
+  radioMonitor = setInterval(() => {
+
+    if (
+      !radioPlayer ||
+      typeof radioPlayer.getCurrentTime !== "function"
+    ) {
+      return;
+    }
+
+    const current =
+      radioPlayer.getCurrentTime();
+
+    /*
+      Segurança extra para o loop.
+    */
+
+    if (current >= MUSIC_END - 0.25) {
+      startRadioSegment();
+    }
+
+  }, 500);
+
+}
+
+
+/*
+  Se alguém abrir esta página como arquivo local,
+  avisa sobre a Rádio.
+*/
+
+if (location.protocol === "file:") {
+
+  document.getElementById("radioStatus")
+    .textContent =
+    "⚠ A Rádio do Goomba pode não funcionar em um arquivo local. Abra esta fase pelo site.";
+
+}
+
+
+loadYouTubeAPI();
+
+
+/* =========================================================
+   SOM SIMPLES DE ACERTO
+========================================================= */
+
+let audioContext = null;
+
+
+function ensureAudioContext() {
+
+  if (!audioContext) {
+
+    audioContext =
+      new (
+        window.AudioContext ||
+        window.webkitAudioContext
+      )();
+
+  }
+
+}
+
+
+function successChime() {
+
+  ensureAudioContext();
+
+  const notes = [
+    [523, 0],
+    [659, .09],
+    [784, .18]
+  ];
+
+
+  notes.forEach(([frequency, delay]) => {
+
+    const oscillator =
+      audioContext.createOscillator();
+
+    const gain =
+      audioContext.createGain();
+
+
+    oscillator.type = "square";
+
+    oscillator.frequency.value =
+      frequency;
+
+
+    gain.gain.setValueAtTime(
+      .035,
+      audioContext.currentTime + delay
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+      .001,
+      audioContext.currentTime + delay + .11
+    );
+
+
+    oscillator.connect(gain);
+
+    gain.connect(
+      audioContext.destination
+    );
+
+
+    oscillator.start(
+      audioContext.currentTime + delay
+    );
+
+
+    oscillator.stop(
+      audioContext.currentTime + delay + .12
+    );
+
+  });
+
+}
+
+
+/* =========================================================
+   UTILIDADES
+========================================================= */
+
+const TOTAL_MISSIONS = 7;
+
+const completed =
+  new Set();
+
+
+function selectedText() {
+
+  return window
+    .getSelection()
+    .toString()
+    .replace(/\s+/g, " ")
+    .trim();
+
+}
+
+
+function selectionInside(element) {
+
+  const selection =
+    window.getSelection();
+
+  if (
+    !selection ||
+    selection.rangeCount === 0
+  ) {
+    return false;
+  }
+
+  return (
+    element.contains(selection.anchorNode) &&
+    element.contains(selection.focusNode)
+  );
+
+}
+
+
+function completeMission(number) {
+
+  if (completed.has(number)) {
+    return;
+  }
+
+  completed.add(number);
+
+  document
+    .getElementById(`mission${number}`)
+    .classList
+    .add("completed");
+
+
+  document.getElementById("progress")
+    .textContent =
+    `⭐ ${completed.size} / ${TOTAL_MISSIONS}`;
+
+
+  successChime();
+
+
+  if (number < TOTAL_MISSIONS) {
+
+    const next =
+      document.getElementById(
+        `mission${number + 1}`
+      );
+
+    next.hidden = false;
+
+    setTimeout(() => {
+
+      next.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+    }, 250);
+
+  } else {
+
+    const finish =
+      document.getElementById("finish");
+
+    finish.hidden = false;
+
+    setTimeout(() => {
+
+      finish.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+
+    }, 250);
+
+  }
+
+}
+
+
+/* =========================================================
+   BLOCOS DE DICA
+========================================================= */
+
+document
+  .querySelectorAll(".hint-button")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        const hint =
+          document.getElementById(
+            button.dataset.hint
+          );
+
+        hint.classList.toggle("visible");
+
+      }
+    );
+
+  });
+
+
+/* =========================================================
+   MISSÃO 1 — SELEÇÃO
+========================================================= */
+
+const quickWord =
+  document.getElementById("quickWord");
+
+const dragWords =
+  document.getElementById("dragWords");
+
+const status1 =
+  document.getElementById("status1");
+
+let firstSelectionDone = false;
+
+
+document.addEventListener(
+  "selectionchange",
+  () => {
+
+    if (completed.has(1)) {
+      return;
+    }
+
+    const text =
+      selectedText();
+
+
+    if (
+      !firstSelectionDone &&
+      text === "COGUMELO" &&
+      selectionInside(quickWord)
+    ) {
+
+      firstSelectionDone = true;
+
+      status1.textContent =
+        "⭐ Muito bem! Agora arraste o ponteiro para selecionar FLOR DE FOGO.";
+
+      status1.classList.add("success");
+
+      return;
+    }
+
+
+    if (
+      firstSelectionDone &&
+      text === "FLOR DE FOGO" &&
+      selectionInside(dragWords)
+    ) {
+
+      status1.textContent =
+        "⭐ Você selecionou um trecho maior!";
+
+      status1.classList.add("success");
+
+      completeMission(1);
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   MISSÃO 2 — APAGAR + CTRL Z
+========================================================= */
+
+const undoArea =
+  document.getElementById("undoArea");
+
+const status2 =
+  document.getElementById("status2");
+
+let usedBackspace = false;
+let goombaDeleted = false;
+let undoPressed = false;
+
+
+undoArea.addEventListener(
+  "keydown",
+  event => {
+
+    if (
+      event.key === "Backspace" &&
+      selectedText() === "GOOMBA"
+    ) {
+
+      usedBackspace = true;
+
+    }
+
+
+    if (
+      event.ctrlKey &&
+      !event.shiftKey &&
+      event.key.toLowerCase() === "z"
+    ) {
+
+      undoPressed = true;
+
+    }
+
+  }
+);
+
+
+undoArea.addEventListener(
+  "input",
+  () => {
+
+    const text =
+      undoArea.textContent;
+
+
+    if (
+      usedBackspace &&
+      !goombaDeleted &&
+      !text.includes("GOOMBA")
+    ) {
+
+      goombaDeleted = true;
+
+      status2.classList.remove("success");
+
+      status2.innerHTML =
+        "😮 O GOOMBA sumiu! Agora <strong>segure Ctrl e, sem soltar, pressione Z</strong>.";
+
+      return;
+    }
+
+
+    if (
+      goombaDeleted &&
+      undoPressed &&
+      text.includes("GOOMBA")
+    ) {
+
+      status2.textContent =
+        "⭐ Perfeito! Ctrl + Z desfez a última ação.";
+
+      status2.classList.add("success");
+
+      completeMission(2);
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   MISSÃO 3 — APAGAR REPETIDAMENTE
+========================================================= */
+
+const cleanupArea =
+  document.getElementById("cleanupArea");
+
+const status3 =
+  document.getElementById("status3");
+
+let validBackspaces = 0;
+
+
+cleanupArea.addEventListener(
+  "keydown",
+  event => {
+
+    if (
+      event.key === "Backspace" &&
+      selectedText() === "GOOMBA"
+    ) {
+
+      validBackspaces++;
+
+    }
+
+  }
+);
+
+
+cleanupArea.addEventListener(
+  "input",
+  () => {
+
+    const matches =
+      cleanupArea.textContent
+        .match(/GOOMBA/g);
+
+    const remaining =
+      matches ? matches.length : 0;
+
+
+    status3.textContent =
+      `GOOMBAS restantes: ${remaining}`;
+
+
+    if (
+      remaining === 0 &&
+      validBackspaces >= 2
+    ) {
+
+      status3.textContent =
+        "⭐ Caminho limpo!";
+
+      status3.classList.add("success");
+
+      completeMission(3);
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   MISSÃO 4 — COPIAR + CTRL V CONTÍNUO
+========================================================= */
+
+const coinSource =
+  document.getElementById("coinSource");
+
+const pasteRepeat =
+  document.getElementById("pasteRepeat");
+
+const status4 =
+  document.getElementById("status4");
+
+let coinCopied = false;
+let repeatedPastes = 0;
+
+
+document.addEventListener(
+  "copy",
+  () => {
+
+    if (
+      completed.has(4) ||
+      document.getElementById("mission4").hidden
+    ) {
+      return;
+    }
+
+
+    if (
+      selectedText() === "MOEDA" &&
+      selectionInside(coinSource)
+    ) {
+
+      coinCopied = true;
+
+      status4.textContent =
+        "📋 MOEDA foi copiada. Agora use Ctrl + V quatro vezes.";
+
+    }
+
+  }
+);
+
+
+pasteRepeat.addEventListener(
+  "paste",
+  event => {
+
+    const clipboardText =
+      event.clipboardData
+        ?.getData("text/plain")
+        .trim();
+
+
+    if (
+      coinCopied &&
+      clipboardText === "MOEDA"
+    ) {
+
+      repeatedPastes++;
+
+      setTimeout(() => {
+
+        status4.innerHTML =
+          `Colagens: <span class="counter">${repeatedPastes} / 4</span>`;
+
+
+        if (repeatedPastes >= 4) {
+
+          status4.textContent =
+            "⭐ Isso! Uma cópia pode ser colada várias vezes.";
+
+          status4.classList.add("success");
+
+          completeMission(4);
+
+        }
+
+      }, 0);
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   MISSÃO 5 — CTRL V + UNDO + REDO
+========================================================= */
+
+const historyArena =
+  document.getElementById("historyArena");
+
+const status5 =
+  document.getElementById("status5");
+
+let historyPhase = "paste";
+let historyPastes = 0;
+let undoCount = 0;
+let redoCount = 0;
+let pendingHistoryShortcut = null;
+
+
+historyArena.addEventListener(
+  "paste",
+  event => {
+
+    if (historyPhase !== "paste") {
+      return;
+    }
+
+
+    const clipboardText =
+      event.clipboardData
+        ?.getData("text/plain")
+        .trim();
+
+
+    if (clipboardText !== "MOEDA") {
+      return;
+    }
+
+
+    historyPastes++;
+
+
+    setTimeout(() => {
+
+      status5.innerHTML =
+        `Colagens: <span class="counter">${historyPastes} / 3</span>`;
+
+
+      if (historyPastes >= 3) {
+
+        historyPhase = "undo";
+
+        status5.innerHTML =
+          "↩ Agora <strong>segure Ctrl e pressione Z duas vezes</strong>.";
+
+      }
+
+    }, 0);
+
+  }
+);
+
+
+historyArena.addEventListener(
+  "keydown",
+  event => {
+
+    const key =
+      event.key.toLowerCase();
+
+
+    if (
+      event.ctrlKey &&
+      !event.shiftKey &&
+      key === "z"
+    ) {
+
+      pendingHistoryShortcut = "undo";
+
+    }
+
+
+    if (
+      event.ctrlKey &&
+      event.shiftKey &&
+      key === "z"
+    ) {
+
+      pendingHistoryShortcut = "redo";
+
+    }
+
+  }
+);
+
+
+historyArena.addEventListener(
+  "input",
+  event => {
+
+    let action = null;
+
+
+    if (
+      event.inputType === "historyUndo"
+    ) {
+      action = "undo";
+    }
+
+
+    if (
+      event.inputType === "historyRedo"
+    ) {
+      action = "redo";
+    }
+
+
+    if (
+      !action &&
+      pendingHistoryShortcut
+    ) {
+
+      action =
+        pendingHistoryShortcut;
+
+    }
+
+
+    pendingHistoryShortcut = null;
+
+
+    if (
+      historyPhase === "undo" &&
+      action === "undo"
+    ) {
+
+      undoCount++;
+
+      status5.innerHTML =
+        `Desfazer: <span class="counter">${undoCount} / 2</span>`;
+
+
+      if (undoCount >= 2) {
+
+        historyPhase = "redo";
+
+        status5.innerHTML =
+          "⏩ Agora <strong>segure Ctrl + Shift e, sem soltar, pressione Z duas vezes</strong>.";
+
+      }
+
+      return;
+    }
+
+
+    if (
+      historyPhase === "redo" &&
+      action === "redo"
+    ) {
+
+      redoCount++;
+
+      status5.innerHTML =
+        `Refazer: <span class="counter">${redoCount} / 2</span>`;
+
+
+      if (redoCount >= 2) {
+
+        historyPhase = "done";
+
+        status5.textContent =
+          "⭐ Você desfez e refez suas ações!";
+
+        status5.classList.add("success");
+
+        completeMission(5);
+
+      }
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   MISSÃO 6 — CTRL X + CTRL V
+========================================================= */
+
+const cutSource =
+  document.getElementById("cutSource");
+
+const cutTarget =
+  document.getElementById("cutTarget");
+
+const status6 =
+  document.getElementById("status6");
+
+let validCut = false;
+let validCutPaste = false;
+
+
+cutSource.addEventListener(
+  "cut",
+  () => {
+
+    if (
+      selectedText() === "ESTRELA"
+    ) {
+
+      validCut = true;
+
+      status6.textContent =
+        "✂ ESTRELA foi recortada. Agora clique no lugar certo e use Ctrl + V.";
+
+    }
+
+  }
+);
+
+
+cutTarget.addEventListener(
+  "paste",
+  event => {
+
+    const clipboardText =
+      event.clipboardData
+        ?.getData("text/plain")
+        .trim();
+
+
+    if (
+      validCut &&
+      clipboardText === "ESTRELA"
+    ) {
+
+      validCutPaste = true;
+
+    }
+
+  }
+);
+
+
+cutTarget.addEventListener(
+  "input",
+  () => {
+
+    const sourceMoved =
+      !cutSource.textContent
+        .includes("ESTRELA");
+
+    const targetCorrect =
+      cutTarget.textContent
+        .trim() === "ESTRELA";
+
+
+    if (
+      validCut &&
+      validCutPaste &&
+      sourceMoved &&
+      targetCorrect
+    ) {
+
+      status6.textContent =
+        "⭐ Perfeito! Recortar tirou a estrela de um lugar e colar colocou em outro.";
+
+      status6.classList.add("success");
+
+      completeMission(6);
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   MISSÃO 7 — ENTER
+========================================================= */
+
+const enterArea =
+  document.getElementById("enterArea");
+
+const status7 =
+  document.getElementById("status7");
+
+let enterPressed = false;
+
+
+enterArea.addEventListener(
+  "keydown",
+  event => {
+
+    if (event.key === "Enter") {
+      enterPressed = true;
+    }
+
+  }
+);
+
+
+enterArea.addEventListener(
+  "input",
+  () => {
+
+    if (!enterPressed) {
+      return;
+    }
+
+
+    const normalized =
+      enterArea.value
+        .replace(/\r/g, "");
+
+    const lines =
+      normalized.split("\n");
+
+
+    if (
+      lines.length === 2 &&
+      lines[0].trim() === "MARIO" &&
+      lines[1].trim() === "LUIGI"
+    ) {
+
+      status7.textContent =
+        "⭐ Isso! Enter criou uma nova linha.";
+
+      status7.classList.add("success");
+
+      completeMission(7);
+
+    }
+
+  }
+);
+
+</script>
+
+</body>
+</html>
