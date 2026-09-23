@@ -1,45 +1,2010 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Final Boss</title>
-  <link rel="stylesheet" href="../assets/css/main.css">
-  <link rel="icon" href="../assets/images/ui/favicon.png" type="image/png">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Mundo 5 — Final Boss</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+  href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+  rel="stylesheet"
+>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  :root {
+    --night: #100608;
+    --panel: rgba(24, 8, 9, .95);
+    --panel-soft: rgba(55, 17, 14, .93);
+    --red: #ff5a3d;
+    --orange: #ff9a3d;
+    --gold: #ffd66b;
+    --green: #9cff87;
+    --cream: #fff2cf;
+    --white: #fff;
+    --stone: #2c2525;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+
+    background: #100608;
+    color: var(--white);
+
+    font-family: Arial, sans-serif;
+  }
+
+  button,
+  input {
+    font: inherit;
+  }
+
+  .pixel {
+    font-family: "Press Start 2P", "Courier New", monospace;
+  }
+
+  .world {
+    min-height: 100vh;
+
+    background:
+      linear-gradient(
+        to bottom,
+        rgba(16, 6, 8, .23),
+        rgba(16, 6, 8, .92)
+      ),
+      url("../assets/images/worlds/world-final.png")
+      center top / cover fixed;
+
+    position: relative;
+  }
+
+  .start-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+
+    display: grid;
+    place-items: center;
+
+    padding: 24px;
+
+    background:
+      linear-gradient(
+        rgba(12, 4, 5, .56),
+        rgba(12, 4, 5, .9)
+      ),
+      url("../assets/images/worlds/world-final.png")
+      center / cover;
+
+    text-align: center;
+
+    transition:
+      opacity .45s ease,
+      transform .45s ease;
+  }
+
+  .start-screen.leaving {
+    opacity: 0;
+    transform: scale(1.04);
+    pointer-events: none;
+  }
+
+  .start-content {
+    width: min(760px, 100%);
+  }
+
+  .world-number {
+    color: var(--gold);
+
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 1px;
+
+    text-shadow:
+      3px 3px 0 #000;
+  }
+
+  .start-screen h1,
+  header h1 {
+    margin: 14px 0;
+
+    color: var(--cream);
+
+    text-shadow:
+      4px 4px 0 #000,
+      0 0 18px rgba(255,90,61,.38);
+  }
+
+  .start-screen h1 {
+    font-size: clamp(30px, 6vw, 54px);
+    line-height: 1.35;
+  }
+
+  .start-screen p {
+    font-size: 18px;
+    line-height: 1.6;
+  }
+
+  .boss-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    margin-top: 18px;
+    padding: 18px 24px;
+
+    border: 4px solid #6d220f;
+    border-radius: 8px;
+
+    background:
+      linear-gradient(
+        to bottom,
+        #ff8b35,
+        #c53e1e
+      );
+
+    color: #190604;
+
+    box-shadow:
+      0 7px 0 #54150b,
+      0 0 22px rgba(255,154,61,.32);
+
+    font-size: 12px;
+    line-height: 1.5;
+    font-weight: bold;
+
+    cursor: pointer;
+  }
+
+  .boss-button:active {
+    transform: translateY(5px);
+    box-shadow:
+      0 2px 0 #54150b,
+      0 0 22px rgba(255,154,61,.32);
+  }
+
+  .boss-button:focus-visible {
+    outline: 5px solid var(--gold);
+    outline-offset: 6px;
+  }
+
+  header {
+    padding: 34px 20px 112px;
+    text-align: center;
+  }
+
+  header h1 {
+    font-size: clamp(28px, 5vw, 48px);
+    line-height: 1.35;
+  }
+
+  header p {
+    margin: 0;
+
+    font-size: 18px;
+
+    text-shadow: 2px 2px 0 #000;
+  }
+
+  main {
+    width: min(920px, calc(100% - 24px));
+    margin: -74px auto 70px;
+  }
+
+  .hud {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+
+    margin-bottom: 22px;
+    padding: 14px 18px;
+
+    border: 3px solid #ffb464;
+    background: var(--panel);
+
+    font-weight: bold;
+  }
+
+  .explorer-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    flex: 1 1 560px;
+    min-width: 0;
+  }
+
+  .explorer-name input {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+
+    padding: 9px 11px;
+
+    border: 2px solid rgba(255,255,255,.72);
+    border-radius: 4px;
+
+    background: rgba(0,0,0,.36);
+    color: white;
+
+    font-weight: bold;
+  }
+
+  .explorer-name input::placeholder {
+    color: rgba(255,255,255,.72);
+  }
+
+  .explorer-name input:focus {
+    outline: 3px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  /* -------------------------------------------------------
+     RÁDIO DO CASTELO
+  ------------------------------------------------------- */
+
+  .radio {
+    margin-bottom: 26px;
+    padding: 18px;
+
+    border: 4px solid #7f2c19;
+    border-radius: 8px;
+
+    background:
+      linear-gradient(
+        135deg,
+        #29100d,
+        #4a1710 55%,
+        #1b0a09
+      );
+
+    box-shadow:
+      8px 8px 0 rgba(0,0,0,.58),
+      0 0 24px rgba(255,90,61,.18);
+  }
+
+  .radio-title {
+    margin-bottom: 12px;
+
+    color: var(--gold);
+
+    font-size: 12px;
+    line-height: 1.6;
+    text-align: center;
+
+    text-shadow:
+      2px 2px 0 #000;
+  }
+
+  .radio-body {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+
+  .radio-player {
+    padding: 7px;
+
+    border: 4px solid #5a1b10;
+    background: #0c0504;
+  }
+
+  #bossRadio {
+    width: 360px;
+    height: 203px;
+  }
+
+  .radio-speaker {
+    width: 130px;
+    min-height: 203px;
+
+    display: grid;
+    place-items: center;
+
+    border: 4px solid #6d2818;
+    border-radius: 8px;
+
+    background:
+      radial-gradient(
+        circle,
+        #120706 3px,
+        transparent 4px
+      )
+      0 0 / 15px 15px,
+      #392018;
+  }
+
+  .radio-speaker span {
+    padding: 10px;
+
+    border: 2px solid #8b3420;
+    border-radius: 50%;
+
+    background: #180908;
+    color: var(--gold);
+
+    font-size: 36px;
+  }
+
+  .radio-status {
+    margin: 13px 0 0;
+
+    color: #ffd9b0;
+
+    text-align: center;
+    font-size: 14px;
+  }
+
+  /* -------------------------------------------------------
+     DESAFIOS
+  ------------------------------------------------------- */
+
+  .mission,
+  .finish {
+    margin-bottom: 24px;
+    padding: 25px;
+
+    border: 3px solid #f3c48c;
+    background: var(--panel);
+
+    box-shadow:
+      8px 8px 0 rgba(0,0,0,.55);
+  }
+
+  .mission.completed {
+    border-color: var(--green);
+  }
+
+  .checkpoint-label {
+    margin-bottom: 10px;
+
+    color: var(--orange);
+
+    font-size: 10px;
+    line-height: 1.6;
+    letter-spacing: .5px;
+  }
+
+  .mission h2,
+  .finish h2 {
+    margin-top: 0;
+
+    color: var(--gold);
+
+    font-size: 16px;
+    line-height: 1.55;
+  }
+
+  .mission p,
+  .mission li,
+  .finish p {
+    font-size: 17px;
+    line-height: 1.58;
+  }
+
+  .instruction-box {
+    margin: 16px 0;
+    padding: 15px;
+
+    border-left: 5px solid var(--orange);
+    background: var(--panel-soft);
+  }
+
+  .boss-rule {
+    margin: 18px 0;
+    padding: 17px;
+
+    border: 3px dashed #b45b39;
+    border-radius: 7px;
+
+    background: rgba(36, 12, 9, .84);
+
+    color: #fff0d0;
+
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .file-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin: 10px 0;
+    padding: 12px 14px;
+
+    border: 3px solid #8c4e37;
+    border-radius: 6px;
+
+    background: #fff6e4;
+    color: #21110c;
+
+    font-family: Arial, sans-serif;
+  }
+
+  .file-card .icon {
+    font-size: 34px;
+  }
+
+  .file-card code {
+    font-size: 17px;
+    font-weight: bold;
+  }
+
+  kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 44px;
+    min-height: 38px;
+
+    padding: 5px 10px;
+
+    border: 3px solid #222;
+    border-radius: 5px;
+
+    background: #f4f4f4;
+    color: #111;
+
+    box-shadow: 0 4px 0 #888;
+
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .keys {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .download-link,
+  .complete-button,
+  .hint-button {
+    padding: 12px 16px;
+
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .download-link {
+    display: inline-block;
+
+    margin: 10px 0;
+
+    border: 4px solid #6d220f;
+    border-radius: 7px;
+
+    background: #ffb05e;
+    color: #2a0c05;
+
+    box-shadow: 0 5px 0 #54150b;
+
+    font-size: 11px;
+    line-height: 1.55;
+
+    text-decoration: none;
+  }
+
+  .download-link:hover {
+    background: #ffd08c;
+  }
+
+  .download-link:active {
+    transform: translateY(4px);
+    box-shadow: 0 1px 0 #54150b;
+  }
+
+  .complete-button {
+    margin-top: 12px;
+    margin-right: 8px;
+
+    border: 3px solid #527347;
+    background: #baf4aa;
+    color: #13250f;
+  }
+
+  .complete-button:hover {
+    background: #d5ffca;
+  }
+
+  .complete-button:disabled {
+    opacity: .62;
+    cursor: default;
+  }
+
+  .hint-button {
+    margin-top: 12px;
+
+    border: 3px solid #7d4a24;
+    background: #e6a85f;
+    color: #251106;
+  }
+
+  .hint {
+    display: none;
+
+    margin-top: 12px;
+    padding: 15px;
+
+    border: 3px solid #874929;
+    background: #4a1b14;
+
+    line-height: 1.6;
+  }
+
+  .hint.visible {
+    display: block;
+  }
+
+  .status {
+    min-height: 29px;
+    margin-top: 12px;
+
+    color: var(--gold);
+    font-weight: bold;
+  }
+
+  .status.success {
+    color: var(--green);
+  }
+
+  .quiz {
+    margin: 18px 0;
+    padding: 16px;
+
+    border: 3px solid #884a2c;
+    background: var(--panel-soft);
+  }
+
+  .quiz label {
+    display: block;
+
+    margin: 10px 0;
+    padding: 10px 12px;
+
+    border: 2px solid rgba(255,255,255,.18);
+    border-radius: 5px;
+
+    cursor: pointer;
+  }
+
+  .quiz input {
+    margin-right: 8px;
+  }
+
+  .finish {
+    text-align: center;
+  }
+
+  .finish h2 {
+    color: var(--green);
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  @media (max-width: 620px) {
+    .mission,
+    .finish {
+      padding: 18px;
+    }
+
+    #bossRadio {
+      width: 320px;
+      height: 200px;
+    }
+  }
+</style>
 </head>
 
 <body>
-  <div class="container">
-    <img
-      src="../assets/images/worlds/world-final.png"
-      alt="Mapa da fase final"
-      class="mapa"
-      onclick="tocarSom()"
-    >
 
-    <a
-      href="https://drive.google.com/file/d/1iw_SKB8L38kMtsEW8DsaRaULMUEIkOcG/view?usp=sharing"
-      target="_blank"
-      rel="noopener noreferrer"
+<div
+  class="start-screen"
+  id="startScreen"
+>
+  <div class="start-content">
+    <div class="world-number pixel">
+      🔥 MUNDO 5 🔥
+    </div>
+
+    <h1 class="pixel">
+      FINAL BOSS
+    </h1>
+
+    <p>
+      Você chegou ao Castelo do Bowser.
+    </p>
+
+    <p>
+      Há uma mensagem escondida no cenário.
+      Observe com atenção.
+    </p>
+
+    <button
+      id="startButton"
+      class="boss-button pixel"
+      type="button"
     >
-      <img
-        src="../assets/images/characters/mario-walking.gif"
-        class="mario"
-        style="top: 306px; left: 230px;"
-        alt="Mario caminhando"
-      >
-    </a>
+      🐲 ENTRAR NO CASTELO
+    </button>
+  </div>
+</div>
+
+<div class="world">
+
+<header>
+  <div class="world-number pixel">
+    MUNDO 5
   </div>
 
-  <script src="../assets/js/main.js"></script>
-  <script>
-    const som = new Audio('../assets/audio/final-boss-remix.mp3');
+  <h1 class="pixel">
+    FINAL BOSS
+  </h1>
 
-    function tocarSom() {
-      som.play().catch((error) => {
-        console.log('Erro ao reproduzir o som:', error);
-      });
+  <p>
+    Baixar. Extrair. Descobrir. Renomear.
+  </p>
+</header>
+
+<main>
+
+  <div class="hud">
+    <label
+      class="explorer-name"
+      for="explorerName"
+    >
+      <span aria-hidden="true">🍄</span>
+
+      <input
+        id="explorerName"
+        type="text"
+        maxlength="30"
+        autocomplete="off"
+        spellcheck="false"
+        placeholder="Olá, explorador(a), digite seu nome aqui"
+        aria-label="Nome do explorador"
+      >
+    </label>
+
+    <span
+      id="progress"
+      class="pixel"
+      style="font-size:10px; line-height:1.5;"
+    >
+      ⭐ 0 / 7
+    </span>
+  </div>
+
+  <section class="radio">
+    <div class="radio-title pixel">
+      📻 RÁDIO DO CASTELO
+    </div>
+
+    <div class="radio-body">
+      <div class="radio-player">
+        <div id="bossRadio"></div>
+      </div>
+
+      <div
+        class="radio-speaker"
+        aria-hidden="true"
+      >
+        <span>🔥</span>
+      </div>
+    </div>
+
+    <p
+      class="radio-status"
+      id="radioStatus"
+    >
+      A música começa quando você entra no castelo.
+    </p>
+  </section>
+
+  <!-- =====================================================
+       CHECKPOINT 1
+  ====================================================== -->
+
+  <section
+    class="mission"
+    id="mission1"
+  >
+    <div class="checkpoint-label pixel">
+      🚩 CHECKPOINT 1 / 7
+    </div>
+
+    <h2 class="pixel">
+      📦 O pacote do Bowser
+    </h2>
+
+    <p>
+      O material da missão está dentro de um arquivo
+      <strong>.zip</strong>.
+    </p>
+
+    <p>
+      Clique no botão abaixo.
+      O download deve começar diretamente.
+    </p>
+
+    <a
+      id="zipDownload"
+      class="download-link pixel"
+      href="https://github.com/dnncamargo/web-explorers/releases/download/renomear/r3n0m3ie.zip"
+      download
+    >
+      📦 BAIXAR r3n0m3ie.zip
+    </a>
+
+    <div
+      class="status"
+      id="status1"
+    >
+      Baixe o pacote para continuar.
+    </div>
+
+    <button
+      type="button"
+      class="hint-button"
+      data-hint="hint1"
+    >
+      🧱 Bloco de dica
+    </button>
+
+    <div
+      class="hint"
+      id="hint1"
+    >
+      O arquivo vem da release
+      <strong>Material do Final Boss — Renomear Arquivos</strong>.
+      <br><br>
+      Depois do clique, procure
+      <strong>r3n0m3ie.zip</strong>
+      em Downloads.
+    </div>
+  </section>
+
+  <!-- =====================================================
+       CHECKPOINT 2
+  ====================================================== -->
+
+  <section
+    class="mission"
+    id="mission2"
+    hidden
+  >
+    <div class="checkpoint-label pixel">
+      🚩 CHECKPOINT 2 / 7
+    </div>
+
+    <h2 class="pixel">
+      🔎 Encontre a mochila
+    </h2>
+
+    <p>
+      Abra:
+    </p>
+
+    <div class="file-card">
+      <span class="icon">📁</span>
+      <strong>Arquivos → Downloads</strong>
+    </div>
+
+    <p>
+      Encontre:
+    </p>
+
+    <div class="file-card">
+      <span class="icon">📦</span>
+      <code>r3n0m3ie.zip</code>
+    </div>
+
+    <div class="boss-rule">
+      ZIP = uma mochila que guarda vários arquivos juntos.
+    </div>
+
+    <button
+      type="button"
+      class="complete-button"
+      data-complete="2"
+    >
+      ✓ Encontrei o ZIP
+    </button>
+
+    <button
+      type="button"
+      class="hint-button"
+      data-hint="hint2"
+    >
+      🧱 Bloco de dica
+    </button>
+
+    <div
+      class="hint"
+      id="hint2"
+    >
+      Se você estiver vendo o navegador,
+      abra o aplicativo
+      <strong>Arquivos</strong>
+      e procure a pasta
+      <strong>Downloads</strong>.
+    </div>
+  </section>
+
+  <!-- =====================================================
+       CHECKPOINT 3
+  ====================================================== -->
+
+  <section
+    class="mission"
+    id="mission3"
+    hidden
+  >
+    <div class="checkpoint-label pixel">
+      🚩 CHECKPOINT 3 / 7
+    </div>
+
+    <h2 class="pixel">
+      🧳 Tire os arquivos da mochila
+    </h2>
+
+    <p>
+      Agora vem uma habilidade nova:
+      <strong>extrair</strong>.
+    </p>
+
+    <div class="instruction-box">
+      <p>
+        <strong>1.</strong>
+        Em Downloads, pressione o ZIP com
+        <strong>dois dedos</strong>.
+      </p>
+
+      <p>
+        <strong>2.</strong>
+        Escolha
+        <strong>Extrair tudo</strong>.
+      </p>
+
+      <p>
+        <strong>3.</strong>
+        Aguarde aparecer uma nova pasta.
+      </p>
+
+      <p>
+        <strong>4.</strong>
+        Abra essa pasta.
+      </p>
+    </div>
+
+    <div class="boss-rule">
+      Se aparecer “somente leitura”,
+      você provavelmente ainda está dentro do ZIP.
+      Volte e extraia o conteúdo.
+    </div>
+
+    <button
+      type="button"
+      class="complete-button"
+      data-complete="3"
+    >
+      ✓ Extraí o ZIP
+    </button>
+
+    <button
+      type="button"
+      class="hint-button"
+      data-hint="hint3"
+    >
+      🧱 Bloco de dica
+    </button>
+
+    <div
+      class="hint"
+      id="hint3"
+    >
+      Não trabalhe nos arquivos enquanto eles
+      ainda estiverem dentro da mochila.
+      <br><br>
+      <strong>Extrair</strong>
+      cria uma pasta normal com o conteúdo.
+    </div>
+  </section>
+
+  <!-- =====================================================
+       CHECKPOINT 4
+  ====================================================== -->
+
+  <section
+    class="mission"
+    id="mission4"
+    hidden
+  >
+    <div class="checkpoint-label pixel">
+      🚩 CHECKPOINT 4 / 7
+    </div>
+
+    <h2 class="pixel">
+      🧩 Quem faz parte da missão?
+    </h2>
+
+    <p>
+      Dentro da pasta existem tipos diferentes de arquivo.
+    </p>
+
+    <p>
+      Para esta missão, você deve trabalhar
+      <strong>somente com os vídeos</strong>.
+    </p>
+
+    <div class="quiz" id="extensionQuiz">
+      <label>
+        <input
+          type="checkbox"
+          value="mp4"
+        >
+        .mp4
+      </label>
+
+      <label>
+        <input
+          type="checkbox"
+          value="mov"
+        >
+        .mov
+      </label>
+
+      <label>
+        <input
+          type="checkbox"
+          value="gif"
+        >
+        .gif
+      </label>
+
+      <label>
+        <input
+          type="checkbox"
+          value="wav"
+        >
+        .wav
+      </label>
+    </div>
+
+    <p>
+      Marque apenas as extensões dos arquivos
+      que devem ser renomeados.
+    </p>
+
+    <div
+      class="status"
+      id="status4"
+    >
+      Escolha as extensões corretas.
+    </div>
+
+    <button
+      type="button"
+      class="hint-button"
+      data-hint="hint4"
+    >
+      🧱 Bloco de dica
+    </button>
+
+    <div
+      class="hint"
+      id="hint4"
+    >
+      Sua missão é com os vídeos:
+      <strong>.mp4</strong>
+      e
+      <strong>.mov</strong>.
+      <br><br>
+      Deixe os arquivos
+      <strong>.gif</strong>
+      e
+      <strong>.wav</strong>
+      exatamente como estão.
+    </div>
+  </section>
+
+  <!-- =====================================================
+       CHECKPOINT 5
+  ====================================================== -->
+
+  <section
+    class="mission"
+    id="mission5"
+    hidden
+  >
+    <div class="checkpoint-label pixel">
+      🚩 CHECKPOINT 5 / 7
+    </div>
+
+    <h2 class="pixel">
+      🎬 Descubra os animais
+    </h2>
+
+    <p>
+      Abra
+      <strong>um vídeo por vez</strong>.
+    </p>
+
+    <div class="instruction-box">
+      <p>
+        <strong>1.</strong>
+        Abra um arquivo .mp4 ou .mov.
+      </p>
+
+      <p>
+        <strong>2.</strong>
+        Observe qual animal aparece.
+      </p>
+
+      <p>
+        <strong>3.</strong>
+        Feche o vídeo.
+      </p>
+
+      <p>
+        <strong>4.</strong>
+        Volte para Arquivos.
+      </p>
+    </div>
+
+    <div class="boss-rule">
+      Não confie na posição de uma aba.
+      Confira o nome do arquivo que você abriu.
+    </div>
+
+    <button
+      type="button"
+      class="complete-button"
+      data-complete="5"
+    >
+      ✓ Identifiquei os animais
+    </button>
+
+    <button
+      type="button"
+      class="hint-button"
+      data-hint="hint5"
+    >
+      🧱 Bloco de dica
+    </button>
+
+    <div
+      class="hint"
+      id="hint5"
+    >
+      Veja um vídeo,
+      volte para Arquivos
+      e lembre qual arquivo corresponde àquele animal.
+      <br><br>
+      Faça isso com calma,
+      um de cada vez.
+    </div>
+  </section>
+
+  <!-- =====================================================
+       CHECKPOINT 6
+  ====================================================== -->
+
+  <section
+    class="mission"
+    id="mission6"
+    hidden
+  >
+    <div class="checkpoint-label pixel">
+      🚩 CHECKPOINT 6 / 7
+    </div>
+
+    <h2 class="pixel">
+      ✍️ Renomeie os arquivos
+    </h2>
+
+    <p>
+      Agora use a dica que o Lakitu trouxe.
+    </p>
+
+    <div class="instruction-box">
+      <p>
+        <strong>1.</strong>
+        Selecione um vídeo.
+      </p>
+
+      <p class="keys">
+        <strong>2.</strong>
+        <kbd>Ctrl</kbd>
+        <span>+</span>
+        <kbd>Enter ↵</kbd>
+      </p>
+
+      <p>
+        <strong>3.</strong>
+        Escreva um nome que diga qual animal aparece.
+      </p>
+
+      <p>
+        <strong>4.</strong>
+        Mantenha a extensão original no final.
+      </p>
+
+      <p>
+        <strong>5.</strong>
+        Pressione
+        <kbd>Enter ↵</kbd>
+        para confirmar.
+      </p>
+    </div>
+
+    <div class="file-card">
+      <span class="icon">🎞️</span>
+      <div>
+        <code>VID001.mp4</code>
+        <br>
+        pode virar
+        <code>gato-skatista.mp4</code>
+      </div>
+    </div>
+
+    <div class="boss-rule">
+      ⚠ Não apague .mp4 ou .mov.
+      A extensão continua fazendo parte do nome do arquivo.
+    </div>
+
+    <button
+      type="button"
+      class="complete-button"
+      data-complete="6"
+    >
+      ✓ Renomeei todos os vídeos
+    </button>
+
+    <button
+      type="button"
+      class="hint-button"
+      data-hint="hint6"
+    >
+      🧱 Bloco de dica
+    </button>
+
+    <div
+      class="hint"
+      id="hint6"
+    >
+      Se o arquivo disser
+      <strong>somente leitura</strong>,
+      volte ao Checkpoint 3.
+      <br><br>
+      Você precisa trabalhar na
+      <strong>pasta extraída</strong>,
+      e não dentro do ZIP.
+    </div>
+  </section>
+
+  <!-- =====================================================
+       CHECKPOINT 7
+  ====================================================== -->
+
+  <section
+    class="mission"
+    id="mission7"
+    hidden
+  >
+    <div class="checkpoint-label pixel">
+      🚩 CHECKPOINT 7 / 7
+    </div>
+
+    <h2 class="pixel">
+      🐲 Auditoria final
+    </h2>
+
+    <p>
+      Antes de enfrentar Bowser,
+      confira a pasta.
+    </p>
+
+    <div class="quiz">
+      <label>
+        <input
+          type="checkbox"
+          id="checkVideos"
+        >
+        Os vídeos .mp4 e .mov receberam nomes que identificam os animais.
+      </label>
+
+      <label>
+        <input
+          type="checkbox"
+          id="checkExtensions"
+        >
+        As extensões .mp4 e .mov continuam no final dos nomes.
+      </label>
+
+      <label>
+        <input
+          type="checkbox"
+          id="checkOthers"
+        >
+        Os arquivos .gif e .wav continuam sem alterações.
+      </label>
+    </div>
+
+    <div
+      class="status"
+      id="status7"
+    >
+      Marque os três itens quando conferir a pasta.
+    </div>
+
+    <button
+      type="button"
+      class="hint-button"
+      data-hint="hint7"
+    >
+      🧱 Bloco de dica
+    </button>
+
+    <div
+      class="hint"
+      id="hint7"
+    >
+      O objetivo não é mudar tudo.
+      <br><br>
+      É identificar os arquivos certos
+      e modificar somente o que faz parte da missão.
+    </div>
+  </section>
+
+  <!-- =====================================================
+       FINAL
+  ====================================================== -->
+
+  <section
+    class="finish"
+    id="finish"
+    hidden
+  >
+    <h2 class="pixel">
+      🏆 FINAL BOSS DERROTADO!
+    </h2>
+
+    <p>
+      Você baixou um ZIP,
+      extraiu seu conteúdo,
+      encontrou os vídeos,
+      identificou os animais
+      e renomeou os arquivos corretos.
+    </p>
+
+    <div class="boss-rule">
+      A mensagem escondida no castelo fazia sentido:
+      <br><br>
+      <strong>r3n0m31e o5 n0vQ5 4rqu1v0s</strong>
+    </div>
+
+    <p>
+      🍄 Missão concluída.
+    </p>
+  </section>
+
+</main>
+</div>
+
+<script>
+const TOTAL_MISSIONS = 7;
+const CHECKPOINT_KEY =
+  "web-explorers-final-boss-checkpoint";
+
+const RADIO_VIDEO_ID =
+  "AlfeowFIgNU";
+
+const RADIO_END =
+  186;
+
+const RADIO_VOLUME =
+  25;
+
+const startButton =
+  document.getElementById(
+    "startButton"
+  );
+
+const startScreen =
+  document.getElementById(
+    "startScreen"
+  );
+
+const completed =
+  new Set();
+
+let audioContext = null;
+let radioPlayer = null;
+let radioReady = false;
+let radioRequested = false;
+let radioMonitor = null;
+
+function loadYouTubeAPI() {
+  const script =
+    document.createElement(
+      "script"
+    );
+
+  script.src =
+    "https://www.youtube.com/iframe_api";
+
+  document.head
+    .appendChild(script);
+}
+
+window.onYouTubeIframeAPIReady =
+  function () {
+
+    const playerVars = {
+      controls: 1,
+      playsinline: 1,
+      rel: 0
+    };
+
+    if (
+      location.protocol === "https:" ||
+      location.protocol === "http:"
+    ) {
+      playerVars.origin =
+        location.origin;
     }
-  </script>
+
+    radioPlayer =
+      new YT.Player(
+        "bossRadio",
+        {
+          width: "360",
+          height: "203",
+
+          videoId:
+            RADIO_VIDEO_ID,
+
+          playerVars,
+
+          events: {
+            onReady() {
+              radioReady = true;
+
+              document
+                .getElementById(
+                  "radioStatus"
+                )
+                .textContent =
+                "📻 Rádio do Castelo pronta.";
+
+              if (radioRequested) {
+                startRadio();
+              }
+            },
+
+            onStateChange(event) {
+              if (
+                event.data ===
+                YT.PlayerState.PLAYING
+              ) {
+                document
+                  .getElementById(
+                    "radioStatus"
+                  )
+                  .textContent =
+                  "🔥 Música do Final Boss tocando.";
+
+                startRadioMonitor();
+              }
+
+              if (
+                event.data ===
+                YT.PlayerState.ENDED
+              ) {
+                startRadio();
+              }
+            },
+
+            onAutoplayBlocked() {
+              document
+                .getElementById(
+                  "radioStatus"
+                )
+                .textContent =
+                "▶ Clique em Play para iniciar a música.";
+            },
+
+            onError(event) {
+              document
+                .getElementById(
+                  "radioStatus"
+                )
+                .textContent =
+                "⚠ A música não conseguiu tocar. Erro: " +
+                event.data;
+            }
+          }
+        }
+      );
+  };
+
+function requestRadioStart() {
+  radioRequested = true;
+
+  if (radioReady) {
+    startRadio();
+  }
+}
+
+function startRadio() {
+  if (!radioPlayer) {
+    return;
+  }
+
+  clearInterval(
+    radioMonitor
+  );
+
+  radioPlayer.setVolume(
+    RADIO_VOLUME
+  );
+
+  radioPlayer.loadVideoById({
+    videoId:
+      RADIO_VIDEO_ID,
+    startSeconds: 0,
+    endSeconds:
+      RADIO_END
+  });
+}
+
+function startRadioMonitor() {
+  clearInterval(
+    radioMonitor
+  );
+
+  radioMonitor =
+    setInterval(
+      () => {
+
+        if (
+          !radioPlayer ||
+          typeof
+            radioPlayer
+              .getCurrentTime !==
+            "function"
+        ) {
+          return;
+        }
+
+        if (
+          radioPlayer
+            .getCurrentTime() >=
+          RADIO_END - .25
+        ) {
+          startRadio();
+        }
+      },
+      500
+    );
+}
+
+startButton.addEventListener(
+  "click",
+  () => {
+
+    startButton.disabled = true;
+
+    requestRadioStart();
+
+    startScreen
+      .classList
+      .add("leaving");
+
+    setTimeout(
+      () => {
+        startScreen.remove();
+      },
+      500
+    );
+  }
+);
+
+loadYouTubeAPI();
+
+/* ---------------------------------------------------------
+   SOM DE SUCESSO
+--------------------------------------------------------- */
+
+function successChime() {
+  if (!audioContext) {
+    audioContext =
+      new (
+        window.AudioContext ||
+        window.webkitAudioContext
+      )();
+  }
+
+  const notes = [
+    [523, 0],
+    [659, .08],
+    [784, .16]
+  ];
+
+  notes.forEach(
+    ([frequency, delay]) => {
+
+      const oscillator =
+        audioContext
+          .createOscillator();
+
+      const gain =
+        audioContext
+          .createGain();
+
+      oscillator.type =
+        "square";
+
+      oscillator
+        .frequency
+        .value =
+        frequency;
+
+      gain.gain
+        .setValueAtTime(
+          .03,
+          audioContext
+            .currentTime +
+            delay
+        );
+
+      gain.gain
+        .exponentialRampToValueAtTime(
+          .001,
+          audioContext
+            .currentTime +
+            delay +
+            .12
+        );
+
+      oscillator.connect(gain);
+
+      gain.connect(
+        audioContext.destination
+      );
+
+      oscillator.start(
+        audioContext.currentTime +
+        delay
+      );
+
+      oscillator.stop(
+        audioContext.currentTime +
+        delay +
+        .13
+      );
+    }
+  );
+}
+
+/* ---------------------------------------------------------
+   CHECKPOINTS
+--------------------------------------------------------- */
+
+function saveCheckpoint(number) {
+  try {
+    const current =
+      Number(
+        sessionStorage
+          .getItem(
+            CHECKPOINT_KEY
+          ) || 0
+      );
+
+    if (number > current) {
+      sessionStorage.setItem(
+        CHECKPOINT_KEY,
+        String(number)
+      );
+    }
+  } catch {}
+}
+
+function markMissionComplete(
+  number
+) {
+  completed.add(number);
+
+  const mission =
+    document.getElementById(
+      `mission${number}`
+    );
+
+  mission.hidden = false;
+
+  mission
+    .classList
+    .add("completed");
+
+  const completeButton =
+    mission.querySelector(
+      "[data-complete]"
+    );
+
+  if (completeButton) {
+    completeButton.disabled = true;
+    completeButton.textContent =
+      "✓ Checkpoint concluído";
+  }
+}
+
+function completeMission(number) {
+  if (
+    completed.has(number)
+  ) {
+    return;
+  }
+
+  markMissionComplete(number);
+  saveCheckpoint(number);
+
+  document
+    .getElementById("progress")
+    .textContent =
+    `⭐ ${completed.size} / ${TOTAL_MISSIONS}`;
+
+  successChime();
+
+  if (
+    number <
+    TOTAL_MISSIONS
+  ) {
+    const next =
+      document.getElementById(
+        `mission${number + 1}`
+      );
+
+    next.hidden = false;
+
+    setTimeout(
+      () => {
+        next.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      },
+      250
+    );
+  } else {
+    const finish =
+      document.getElementById(
+        "finish"
+      );
+
+    finish.hidden = false;
+
+    setTimeout(
+      () => {
+        finish.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+      },
+      250
+    );
+  }
+}
+
+function restoreCheckpoint() {
+  let highest = 0;
+
+  try {
+    highest =
+      Number(
+        sessionStorage
+          .getItem(
+            CHECKPOINT_KEY
+          ) || 0
+      );
+  } catch {
+    highest = 0;
+  }
+
+  highest =
+    Math.max(
+      0,
+      Math.min(
+        TOTAL_MISSIONS,
+        highest
+      )
+    );
+
+  for (
+    let number = 1;
+    number <= highest;
+    number++
+  ) {
+    markMissionComplete(number);
+  }
+
+  if (
+    highest > 0 &&
+    highest <
+      TOTAL_MISSIONS
+  ) {
+    document
+      .getElementById(
+        `mission${highest + 1}`
+      )
+      .hidden = false;
+  }
+
+  if (
+    highest ===
+    TOTAL_MISSIONS
+  ) {
+    document
+      .getElementById(
+        "finish"
+      )
+      .hidden = false;
+  }
+
+  document
+    .getElementById("progress")
+    .textContent =
+    `⭐ ${completed.size} / ${TOTAL_MISSIONS}`;
+}
+
+/* ---------------------------------------------------------
+   DOWNLOAD
+--------------------------------------------------------- */
+
+document
+  .getElementById(
+    "zipDownload"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      const status =
+        document.getElementById(
+          "status1"
+        );
+
+      status.textContent =
+        "⭐ Download iniciado! Agora procure r3n0m3ie.zip em Downloads.";
+
+      status
+        .classList
+        .add("success");
+
+      setTimeout(
+        () => {
+          completeMission(1);
+        },
+        250
+      );
+    }
+  );
+
+/* ---------------------------------------------------------
+   BOTÕES DE CONCLUSÃO MANUAL
+--------------------------------------------------------- */
+
+document
+  .querySelectorAll(
+    "[data-complete]"
+  )
+  .forEach(
+    button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const number =
+            Number(
+              button.dataset
+                .complete
+            );
+
+          completeMission(number);
+        }
+      );
+    }
+  );
+
+/* ---------------------------------------------------------
+   DICAS
+--------------------------------------------------------- */
+
+document
+  .querySelectorAll(
+    ".hint-button"
+  )
+  .forEach(
+    button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const hint =
+            document.getElementById(
+              button.dataset.hint
+            );
+
+          hint
+            .classList
+            .toggle("visible");
+        }
+      );
+    }
+  );
+
+/* ---------------------------------------------------------
+   QUIZ DAS EXTENSÕES
+--------------------------------------------------------- */
+
+const extensionQuiz =
+  document.getElementById(
+    "extensionQuiz"
+  );
+
+const status4 =
+  document.getElementById(
+    "status4"
+  );
+
+extensionQuiz
+  .querySelectorAll(
+    'input[type="checkbox"]'
+  )
+  .forEach(
+    option => {
+
+      option.addEventListener(
+        "change",
+        () => {
+
+          const selected =
+            [
+              ...extensionQuiz
+                .querySelectorAll(
+                  'input:checked'
+                )
+            ]
+            .map(
+              input =>
+                input.value
+            )
+            .sort();
+
+          const correct =
+            selected.length === 2 &&
+            selected[0] === "mov" &&
+            selected[1] === "mp4";
+
+          if (correct) {
+            status4.textContent =
+              "⭐ Certo! A missão é somente com .mp4 e .mov.";
+
+            status4
+              .classList
+              .add("success");
+
+            extensionQuiz
+              .querySelectorAll(
+                'input[type="checkbox"]'
+              )
+              .forEach(
+                input => {
+                  input.disabled = true;
+                }
+              );
+
+            completeMission(4);
+          } else {
+            status4.textContent =
+              "Escolha somente as extensões dos vídeos que serão renomeados.";
+
+            status4
+              .classList
+              .remove("success");
+          }
+        }
+      );
+    }
+  );
+
+/* ---------------------------------------------------------
+   AUDITORIA FINAL
+--------------------------------------------------------- */
+
+const finalChecks = [
+  document.getElementById(
+    "checkVideos"
+  ),
+  document.getElementById(
+    "checkExtensions"
+  ),
+  document.getElementById(
+    "checkOthers"
+  )
+];
+
+const status7 =
+  document.getElementById(
+    "status7"
+  );
+
+finalChecks.forEach(
+  checkbox => {
+
+    checkbox.addEventListener(
+      "change",
+      () => {
+
+        const allChecked =
+          finalChecks
+            .every(
+              item =>
+                item.checked
+            );
+
+        if (!allChecked) {
+          status7.textContent =
+            "Marque os três itens quando conferir a pasta.";
+
+          status7
+            .classList
+            .remove("success");
+
+          return;
+        }
+
+        status7.textContent =
+          "⭐ Auditoria concluída! O castelo foi vencido.";
+
+        status7
+          .classList
+          .add("success");
+
+        finalChecks.forEach(
+          item => {
+            item.disabled = true;
+          }
+        );
+
+        completeMission(7);
+      }
+    );
+  }
+);
+
+restoreCheckpoint();
+</script>
+
 </body>
 </html>
