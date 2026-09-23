@@ -1,0 +1,2179 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Mundo 4 — Casa Fantasma</title>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  :root {
+    --night: #100d1c;
+    --night-2: #1a1530;
+    --panel: rgba(19, 15, 35, .95);
+    --panel-soft: rgba(47, 38, 72, .92);
+    --lavender: #d9c9ff;
+    --violet: #9e82d9;
+    --cyan: #9cf7ef;
+    --spectral: #b7ffcd;
+    --yellow: #ffeaa6;
+    --white: #fff;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+
+    background: var(--night);
+    color: var(--white);
+
+    font-family: "Courier New", monospace;
+  }
+
+  button,
+  input {
+    font: inherit;
+  }
+
+  .world {
+    min-height: 100vh;
+
+    background:
+      radial-gradient(
+        circle at 18% 12%,
+        rgba(200, 184, 255, .13) 0 7%,
+        transparent 7.5%
+      ),
+      radial-gradient(
+        circle at 78% 26%,
+        rgba(156, 247, 239, .09) 0 6%,
+        transparent 6.5%
+      ),
+      linear-gradient(
+        to bottom,
+        #171125 0%,
+        #251a39 46%,
+        #0e0c18 100%
+      );
+
+    position: relative;
+    overflow: hidden;
+  }
+
+  .world::before,
+  .world::after {
+    content: "👻";
+    position: fixed;
+    z-index: 0;
+
+    opacity: .09;
+    filter: grayscale(1);
+
+    pointer-events: none;
+  }
+
+  .world::before {
+    top: 18vh;
+    left: 5vw;
+    font-size: 140px;
+    transform: rotate(-12deg);
+  }
+
+  .world::after {
+    right: 4vw;
+    bottom: 8vh;
+    font-size: 180px;
+    transform: rotate(10deg);
+  }
+
+  .start-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+
+    display: grid;
+    place-items: center;
+
+    padding: 24px;
+
+    background:
+      radial-gradient(
+        circle at 50% 24%,
+        rgba(217, 201, 255, .13),
+        transparent 33%
+      ),
+      linear-gradient(
+        rgba(11, 8, 21, .83),
+        rgba(8, 7, 15, .97)
+      );
+
+    text-align: center;
+
+    transition:
+      opacity .45s ease,
+      transform .45s ease;
+  }
+
+  .start-screen.leaving {
+    opacity: 0;
+    transform: scale(1.04);
+    pointer-events: none;
+  }
+
+  .start-content {
+    width: min(720px, 100%);
+  }
+
+  .world-number {
+    color: var(--lavender);
+
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 2px;
+
+    text-shadow: 2px 2px 0 #000;
+  }
+
+  .start-screen h1,
+  header h1 {
+    margin: 8px 0;
+
+    text-shadow:
+      4px 4px 0 #000,
+      0 0 18px rgba(183, 255, 205, .2);
+  }
+
+  .start-screen h1 {
+    font-size: clamp(40px, 8vw, 72px);
+  }
+
+  .start-screen p {
+    font-size: 18px;
+    line-height: 1.55;
+  }
+
+  .door-button {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+
+    margin-top: 18px;
+    padding: 18px 28px;
+
+    border: 4px solid #7d6a9f;
+    border-radius: 10px;
+
+    background:
+      linear-gradient(
+        to bottom,
+        #4e3d68,
+        #2d233e
+      );
+
+    color: white;
+
+    box-shadow:
+      0 7px 0 #171020,
+      0 0 24px rgba(156, 247, 239, .13);
+
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .door-button .ghost {
+    font-size: 48px;
+  }
+
+  .door-button:hover {
+    background:
+      linear-gradient(
+        to bottom,
+        #625080,
+        #392b4e
+      );
+  }
+
+  .door-button:active {
+    transform: translateY(5px);
+    box-shadow:
+      0 2px 0 #171020,
+      0 0 24px rgba(156, 247, 239, .13);
+  }
+
+  .door-button:focus-visible {
+    outline: 5px solid var(--cyan);
+    outline-offset: 6px;
+  }
+
+  header {
+    position: relative;
+    z-index: 1;
+
+    padding: 34px 20px 112px;
+
+    text-align: center;
+  }
+
+  header h1 {
+    font-size: clamp(34px, 6vw, 58px);
+  }
+
+  header p {
+    margin: 0;
+
+    color: #eee8ff;
+    font-size: 18px;
+
+    text-shadow: 2px 2px 0 #000;
+  }
+
+  main {
+    position: relative;
+    z-index: 1;
+
+    width: min(900px, calc(100% - 24px));
+    margin: -74px auto 70px;
+  }
+
+  .hud {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+
+    margin-bottom: 22px;
+    padding: 14px 18px;
+
+    border: 3px solid #d8cff0;
+    background: var(--panel);
+
+    font-weight: bold;
+  }
+
+  .explorer-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    flex: 1 1 560px;
+    min-width: 0;
+  }
+
+  .explorer-name input {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+
+    padding: 8px 10px;
+
+    border: 2px solid rgba(255,255,255,.72);
+    border-radius: 4px;
+
+    background: rgba(0,0,0,.32);
+    color: white;
+
+    font-weight: bold;
+  }
+
+  .explorer-name input::placeholder {
+    color: rgba(255,255,255,.72);
+  }
+
+  .explorer-name input:focus {
+    outline: 3px solid var(--cyan);
+    outline-offset: 2px;
+  }
+
+  /* -------------------------------------------------------
+     BOO FM
+  ------------------------------------------------------- */
+
+  .radio {
+    margin-bottom: 26px;
+    padding: 18px;
+
+    border: 4px solid #b9a8df;
+    border-radius: 8px;
+
+    background:
+      linear-gradient(
+        135deg,
+        #211832,
+        #3a2d50 54%,
+        #1b172a
+      );
+
+    box-shadow:
+      8px 8px 0 rgba(0,0,0,.55),
+      0 0 26px rgba(156,247,239,.18);
+  }
+
+  .radio-title {
+    margin-bottom: 12px;
+
+    color: #e9e1ff;
+
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+
+    text-shadow:
+      2px 2px 0 #000,
+      0 0 8px rgba(183,255,205,.38);
+  }
+
+  .radio-title strong {
+    color: var(--spectral);
+  }
+
+  .radio-body {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+
+  .radio-player {
+    padding: 7px;
+
+    border: 4px solid #8271a5;
+    background: #0b0910;
+  }
+
+  #booRadio {
+    width: 360px;
+    height: 203px;
+  }
+
+  .radio-speaker {
+    width: 130px;
+    min-height: 203px;
+
+    display: grid;
+    place-items: center;
+
+    border: 4px solid #81709d;
+    border-radius: 8px;
+
+    background:
+      radial-gradient(
+        circle,
+        #0e0d12 3px,
+        transparent 4px
+      )
+      0 0 / 15px 15px,
+      #342b43;
+
+    box-shadow:
+      inset 0 0 20px rgba(183,255,205,.08);
+  }
+
+  .radio-speaker span {
+    padding: 10px;
+
+    border: 2px solid #b6a7d3;
+    border-radius: 50%;
+
+    background: #16121f;
+    color: var(--spectral);
+
+    font-size: 36px;
+
+    box-shadow:
+      0 0 14px rgba(183,255,205,.18);
+  }
+
+  .radio-status {
+    margin: 13px 0 0;
+
+    color: #e0d8f2;
+
+    text-align: center;
+    font-size: 14px;
+  }
+
+  /* -------------------------------------------------------
+     DESAFIOS
+  ------------------------------------------------------- */
+
+  .mission,
+  .finish {
+    margin-bottom: 24px;
+    padding: 25px;
+
+    border: 3px solid #e0d7f5;
+    background: var(--panel);
+
+    box-shadow:
+      8px 8px 0 rgba(0,0,0,.55);
+  }
+
+  .mission.completed {
+    border-color: var(--spectral);
+  }
+
+  .checkpoint-label {
+    margin-bottom: 8px;
+
+    color: var(--cyan);
+
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+
+  .mission h2 {
+    margin-top: 0;
+
+    color: var(--yellow);
+  }
+
+  .mission p,
+  .mission li,
+  .finish p {
+    font-size: 17px;
+    line-height: 1.58;
+  }
+
+  .instruction-box {
+    margin: 16px 0;
+    padding: 15px;
+
+    border-left: 5px solid var(--violet);
+    background: var(--panel-soft);
+  }
+
+  .ghost-rule {
+    margin: 18px 0;
+    padding: 17px;
+
+    border: 3px dashed #a997d1;
+    border-radius: 7px;
+
+    background: rgba(29, 23, 45, .8);
+
+    color: #f2ecff;
+
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .file-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin: 10px 0;
+    padding: 12px 14px;
+
+    border: 3px solid #75658f;
+    border-radius: 6px;
+
+    background: #f7f4ff;
+    color: #15121c;
+
+    font-family: Arial, sans-serif;
+  }
+
+  .file-card .icon {
+    font-size: 34px;
+  }
+
+  .file-card code {
+    font-size: 17px;
+    font-weight: bold;
+  }
+
+  kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 44px;
+    min-height: 38px;
+
+    padding: 5px 10px;
+
+    border: 3px solid #222;
+    border-radius: 5px;
+
+    background: #f4f4f4;
+    color: #111;
+
+    box-shadow: 0 4px 0 #888;
+
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .keys {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .download-grid {
+    display: grid;
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+    gap: 12px;
+
+    margin: 18px 0;
+  }
+
+  .download-button,
+  .complete-button,
+  .hint-button {
+    padding: 11px 15px;
+
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .download-button {
+    min-height: 86px;
+
+    border: 3px solid #67547e;
+    border-radius: 6px;
+
+    background: #d8cbf5;
+    color: #1f1729;
+  }
+
+  .download-button:hover {
+    background: #eadfff;
+  }
+
+  .download-button:disabled {
+    opacity: .62;
+    cursor: default;
+  }
+
+  .complete-button {
+    margin-top: 12px;
+    margin-right: 8px;
+
+    border: 3px solid #426d5a;
+    background: #b9f4cf;
+    color: #10251a;
+  }
+
+  .complete-button:hover {
+    background: #d1ffe1;
+  }
+
+  .complete-button:disabled {
+    opacity: .62;
+    cursor: default;
+  }
+
+  .hint-button {
+    margin-top: 12px;
+
+    border: 3px solid #685880;
+    background: #cbb9ef;
+    color: #1b1425;
+  }
+
+  .hint {
+    display: none;
+
+    margin-top: 12px;
+    padding: 15px;
+
+    border: 3px solid #79699a;
+    background: #352945;
+
+    line-height: 1.6;
+  }
+
+  .hint.visible {
+    display: block;
+  }
+
+  .status {
+    min-height: 29px;
+    margin-top: 12px;
+
+    color: var(--yellow);
+    font-weight: bold;
+  }
+
+  .status.success {
+    color: var(--spectral);
+  }
+
+  .quiz {
+    margin: 18px 0;
+    padding: 16px;
+
+    border: 3px solid #8b7aaa;
+    background: var(--panel-soft);
+  }
+
+  .quiz label {
+    display: block;
+
+    margin: 10px 0;
+    padding: 10px 12px;
+
+    border: 2px solid rgba(255,255,255,.18);
+    border-radius: 5px;
+
+    cursor: pointer;
+  }
+
+  .quiz input {
+    margin-right: 8px;
+  }
+
+  .finish {
+    text-align: center;
+  }
+
+  .finish h2 {
+    color: var(--spectral);
+  }
+
+  .next-note {
+    margin-top: 20px;
+    padding: 16px;
+
+    border: 3px solid #7b6b99;
+    background: rgba(55, 43, 74, .9);
+
+    color: #efe8ff;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  @media (max-width: 620px) {
+    .mission,
+    .finish {
+      padding: 18px;
+    }
+
+    .download-grid {
+      grid-template-columns: 1fr;
+    }
+
+    #booRadio {
+      width: 320px;
+      height: 200px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<div
+  class="start-screen"
+  id="startScreen"
+>
+  <div class="start-content">
+    <div class="world-number">
+      👻 MUNDO 4 👻
+    </div>
+
+    <h1>CASA FANTASMA</h1>
+
+    <p>
+      Aqui, algumas coisas somem...
+      e aparecem em outro lugar.
+    </p>
+
+    <p>
+      Nem tudo que desaparece foi apagado.
+    </p>
+
+    <button
+      id="startButton"
+      class="door-button"
+      type="button"
+    >
+      <span
+        class="ghost"
+        aria-hidden="true"
+      >
+        👻
+      </span>
+
+      <span>ENTRAR NA CASA</span>
+    </button>
+  </div>
+</div>
+
+<div class="world">
+
+<header>
+  <div class="world-number">
+    MUNDO 4
+  </div>
+
+  <h1>CASA FANTASMA</h1>
+
+  <p>
+    Arquivos, pastas e janelas.
+  </p>
+</header>
+
+<main>
+
+  <div class="hud">
+    <label
+      class="explorer-name"
+      for="explorerName"
+    >
+      <span aria-hidden="true">👻</span>
+
+      <input
+        id="explorerName"
+        type="text"
+        maxlength="30"
+        autocomplete="off"
+        spellcheck="false"
+        placeholder="Olá, explorador(a), digite seu nome aqui"
+        aria-label="Nome do explorador"
+      >
+    </label>
+
+    <span id="progress">
+      ⭐ 0 / 7
+    </span>
+  </div>
+
+  <section class="radio">
+    <div class="radio-title">
+      📻 <strong>BOO FM</strong>
+      — VANILLA GHOST HOUSE
+    </div>
+
+    <div class="radio-body">
+      <div class="radio-player">
+        <div id="booRadio"></div>
+      </div>
+
+      <div
+        class="radio-speaker"
+        aria-hidden="true"
+      >
+        <span>👻</span>
+      </div>
+    </div>
+
+    <p
+      class="radio-status"
+      id="radioStatus"
+    >
+      A BOO FM começa quando você entra na casa.
+    </p>
+  </section>
+
+  <!-- =====================================================
+       CHECKPOINT 1
+  ====================================================== -->
+
+  <section
+    class="mission"
+    id="mission1"
+  >
+    <div class="checkpoint-label">
+      🚩 CHECKPOINT 1 / 7
+    </div>
+
+    <h2>
+      ⬇️ Desafio 1 — Fantasmas chegando
+    </h2>
+
+    <p>
+      Primeiro, vamos trazer três arquivos
+      para o Chromebook.
+    </p>
+
+    <div class="ghost-rule">
+      Um download faz um arquivo aparecer
+      na pasta Downloads.
+    </div>
+
+    <p>
+      Baixe os três fantasmas.
+      Use um botão de cada vez.
+    </p>
+
+    <div class="download-grid">
+      <button
+        class="download-button"
+        type="button"
+        data-download="white"
+      >
+        👻<br>
+        boo-branco.svg
+      </button>
+
+      <button
+        class="download-button"
+        type="button"
+        data-download="lilac"
+      >
+        👻<br>
+        boo-lilas.svg
+      </button>
+
+      <button
+        class="download-button"
+        type="button"
+        data-download="green"
+      >
+        👻<br>
+        boo-verde.svg
+      </button>
+    </div>
+
+    <div
+      class="status"
+      id="status1"
+    >
+      Fantasmas baixados: 0 / 3
+    </div>
+
+    <button
+      type="button"
+      class="hint-button"
+      data-hint="hint1"
+    >
+      🧱 Bloco de dica
+    </button>
+
+    <div
+      class="hint"
+      id="hint1"
+    >
+      Clique em cada botão uma vez.
+      Depois procure os arquivos no aplicativo
+      <strong>Arquivos</strong>.
+    </div>
+  </section>
+
+  <!-- =====================================================
+       CHECKPOINT 2
+  ====================================================== -->
+
+  <section
+    class="mission"
+    id="mission2"
+    hidden
+  >
+    <div class="checkpoint-label">
+      🚩 CHECKPOINT 2 / 7
+    </div>
+
+    <h2>
+      👻 Desafio 2 — O navegador sumiu?
+    </h2>
+
+    <p>
+      Abra o aplicativo
+      <strong>Arquivos</strong>
+      e entre em
+      <strong>Downloads</strong>.
+    </p>
+
+    <p>
+      Encontre:
+    </p>
+
+    <div class="file-card">
+      <span class="icon">👻</span>
+      <code>boo-branco.svg</code>
+    </div>
+
+    <div class="file-card">
+      <span class="icon">👻</span>
+      <code>boo-lilas.svg</code>
+    </div>
+
+    <div class="file-card">
+      <span class="icon">👻</span>
+      <code>boo-verde.svg</code>
+    </div>
+
+    <div class="ghost-rule">
+      Ao abrir Arquivos, esta página não foi apagada.
+      Você apenas está olhando para outra janela.
+    </div>
+
+    <p>
+      Depois volte para a Casa Fantasma
+      <strong>sem abrir outra cópia da página</strong>.
+    </p>
+
+    <button
+      type="button"
+      class="complete-button"
+      data-complete="2"
+    >
+      ✓ Voltei de Downloads
+    </button>
+
+    <button
+      type="button"
+      class="hint-button"
+      data-hint="hint2"
+    >
+      🧱 Bloco de dica
+    </button>
+
+    <div
+      class="hint"
+      id="hint2"
+    >
+      Você pode clicar no aplicativo já aberto
+      ou usar:
+      <br><br>
+
+      <span class="keys">
+        <kbd>Alt</kbd>
+        <span>+</span>
+        <kbd>Tab</kbd>
+      </span>
+
+      <br><br>
+
+      Alt + Tab troca entre janelas abertas.
+    </div>
+  </section>
+
+  <!-- =====================================================
+       CHECKPOINT 3
+  ====================================================== -->
+
+  <section
+    class="mission"
+    id="mission3"
+    hidden
+  >
+    <div class="checkpoint-label">
+      🚩 CHECKPOINT 3 / 7
+    </div>
+
+    <h2>
+      📁 Desafio 3 — Uma sala para os Boos
+    </h2>
+
+    <p>
+      Volte para
+      <strong>Arquivos → Downloads</strong>.
+    </p>
+
+    <p>
+      Crie uma pasta chamada:
+    </p>
+
+    <div class="file-card">
+      <span class="icon">📁</span>
+      <code>Casa dos Boos</code>
+    </div>
+
+    <div class="instruction-box">
+      <p>
+        Pressione com
+        <strong>dois dedos</strong>
+        em uma área vazia da pasta.
+      </p>
+
+      <p>
+        Escolha
+        <strong>Nova pasta</strong>.
+      </p>
+
+      <p>
+        Digite:
+        <strong>Casa dos Boos</strong>
+        e confirme.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="complete-button"
+      data-complete="3"
+    >
+      ✓ Criei a pasta
+    </button>
+
+    <button
+      type="button"
+      class="hint-button"
+      data-hint="hint3"
+    >
+      🧱 Bloco de dica
+    </button>
+
+    <div
+      class="hint"
+      id="hint3"
+    >
+      Uma pasta é um lugar usado
+      para guardar e organizar arquivos.
+    </div>
+  </section>
+
+  <!-- =====================================================
+       CHECKPOINT 4
+  ====================================================== -->
+
+  <section
+    class="mission"
+    id="mission4"
+    hidden
+  >
+    <div class="checkpoint-label">
+      🚩 CHECKPOINT 4 / 7
+    </div>
+
+    <h2>
+      📋 Desafio 4 — O Boo que se multiplicou
+    </h2>
+
+    <p>
+      Em Downloads, selecione:
+    </p>
+
+    <div class="file-card">
+      <span class="icon">👻</span>
+      <code>boo-branco.svg</code>
+    </div>
+
+    <p>
+      Agora copie:
+    </p>
+
+    <p class="keys">
+      <kbd>Ctrl</kbd>
+      <span>+</span>
+      <kbd>C</kbd>
+    </p>
+
+    <p>
+      Abra a pasta
+      <strong>Casa dos Boos</strong>
+      e cole:
+    </p>
+
+    <p class="keys">
+      <kbd>Ctrl</kbd>
+      <span>+</span>
+      <kbd>V</kbd>
+    </p>
+
+    <div class="ghost-rule">
+      👻 Copiar cria outro Boo.
+      O primeiro continua em Downloads.
+    </div>
+
+    <button
+      type="button"
+      class="complete-button"
+      data-complete="4"
+    >
+      ✓ Copiei o Boo branco
+    </button>
+
+    <button
+      type="button"
+      class="hint-button"
+      data-hint="hint4"
+    >
+      🧱 Bloco de dica
+    </button>
+
+    <div
+      class="hint"
+      id="hint4"
+    >
+      Primeiro selecione o arquivo.
+      <br><br>
+
+      Segure <kbd>Ctrl</kbd>
+      e pressione <kbd>C</kbd>.
+      <br><br>
+
+      Depois abra a outra pasta,
+      segure <kbd>Ctrl</kbd>
+      e pressione <kbd>V</kbd>.
+    </div>
+  </section>
+
+  <!-- =====================================================
+       CHECKPOINT 5
+  ====================================================== -->
+
+  <section
+    class="mission"
+    id="mission5"
+    hidden
+  >
+    <div class="checkpoint-label">
+      🚩 CHECKPOINT 5 / 7
+    </div>
+
+    <h2>
+      ✂️ Desafio 5 — O Boo que desapareceu
+    </h2>
+
+    <p>
+      Volte para Downloads e selecione:
+    </p>
+
+    <div class="file-card">
+      <span class="icon">👻</span>
+      <code>boo-lilas.svg</code>
+    </div>
+
+    <p>
+      Agora recorte:
+    </p>
+
+    <p class="keys">
+      <kbd>Ctrl</kbd>
+      <span>+</span>
+      <kbd>X</kbd>
+    </p>
+
+    <p>
+      Abra
+      <strong>Casa dos Boos</strong>
+      e cole:
+    </p>
+
+    <p class="keys">
+      <kbd>Ctrl</kbd>
+      <span>+</span>
+      <kbd>V</kbd>
+    </p>
+
+    <div class="ghost-rule">
+      👻 O Boo lilás sumiu de Downloads...
+      mas não foi apagado.
+      Ele apareceu na outra pasta.
+    </div>
+
+    <button
+      type="button"
+      class="complete-button"
+      data-complete="5"
+    >
+      ✓ Mudei o Boo lilás de lugar
+    </button>
+
+    <button
+      type="button"
+      class="hint-button"
+      data-hint="hint5"
+    >
+      🧱 Bloco de dica
+    </button>
+
+    <div
+      class="hint"
+      id="hint5"
+    >
+      <strong>Ctrl + X</strong>
+      prepara o arquivo para mudar de lugar.
+      <br><br>
+
+      <strong>Ctrl + V</strong>
+      faz o arquivo aparecer no novo lugar.
+    </div>
+  </section>
+
+  <!-- =====================================================
+       CHECKPOINT 6
+  ====================================================== -->
+
+  <section
+    class="mission"
+    id="mission6"
+    hidden
+  >
+    <div class="checkpoint-label">
+      🚩 CHECKPOINT 6 / 7
+    </div>
+
+    <h2>
+      🚪 Desafio 6 — Portais entre janelas
+    </h2>
+
+    <p>
+      Falta levar o último fantasma.
+    </p>
+
+    <p>
+      Mova
+      <strong>boo-verde.svg</strong>
+      de Downloads para
+      <strong>Casa dos Boos</strong>
+      usando:
+    </p>
+
+    <p class="keys">
+      <kbd>Ctrl</kbd>
+      <span>+</span>
+      <kbd>X</kbd>
+
+      <span>&nbsp; depois &nbsp;</span>
+
+      <kbd>Ctrl</kbd>
+      <span>+</span>
+      <kbd>V</kbd>
+    </p>
+
+    <p>
+      Depois pratique a troca entre as duas janelas:
+    </p>
+
+    <div class="instruction-box">
+      <p>
+        Vá para o navegador.
+      </p>
+
+      <p>
+        Volte para Arquivos.
+      </p>
+
+      <p>
+        Volte novamente para esta página.
+      </p>
+    </div>
+
+    <div class="ghost-rule">
+      Uma janela pode desaparecer da sua frente
+      e continuar aberta.
+    </div>
+
+    <button
+      type="button"
+      class="complete-button"
+      data-complete="6"
+    >
+      ✓ O Boo verde chegou e eu voltei
+    </button>
+
+    <button
+      type="button"
+      class="hint-button"
+      data-hint="hint6"
+    >
+      🧱 Bloco de dica
+    </button>
+
+    <div
+      class="hint"
+      id="hint6"
+    >
+      Use os ícones dos aplicativos
+      ou o atalho:
+      <br><br>
+
+      <span class="keys">
+        <kbd>Alt</kbd>
+        <span>+</span>
+        <kbd>Tab</kbd>
+      </span>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       CHECKPOINT 7
+  ====================================================== -->
+
+  <section
+    class="mission"
+    id="mission7"
+    hidden
+  >
+    <div class="checkpoint-label">
+      🚩 CHECKPOINT 7 / 7
+    </div>
+
+    <h2>
+      🧠 Desafio 7 — Quem está nos dois lugares?
+    </h2>
+
+    <p>
+      Você
+      <strong>copiou</strong>
+      um fantasma e
+      <strong>moveu</strong>
+      os outros.
+    </p>
+
+    <p>
+      Qual arquivo deve existir
+      em Downloads
+      <strong>e também</strong>
+      na pasta Casa dos Boos?
+    </p>
+
+    <div
+      class="quiz"
+      id="quiz"
+    >
+      <label>
+        <input
+          type="radio"
+          name="finalQuiz"
+          value="lilac"
+        >
+        boo-lilas.svg
+      </label>
+
+      <label>
+        <input
+          type="radio"
+          name="finalQuiz"
+          value="white"
+        >
+        boo-branco.svg
+      </label>
+
+      <label>
+        <input
+          type="radio"
+          name="finalQuiz"
+          value="green"
+        >
+        boo-verde.svg
+      </label>
+    </div>
+
+    <div
+      class="status"
+      id="status7"
+    >
+      Escolha uma resposta.
+    </div>
+
+    <button
+      type="button"
+      class="hint-button"
+      data-hint="hint7"
+    >
+      🧱 Bloco de dica
+    </button>
+
+    <div
+      class="hint"
+      id="hint7"
+    >
+      <strong>Copiar</strong>
+      mantém o original
+      e cria outra cópia.
+      <br><br>
+
+      <strong>Recortar + colar</strong>
+      move o arquivo para outro lugar.
+    </div>
+  </section>
+
+  <!-- =====================================================
+       FINAL
+  ====================================================== -->
+
+  <section
+    class="finish"
+    id="finish"
+    hidden
+  >
+    <h2>
+      👻 CASA FANTASMA CONCLUÍDA!
+    </h2>
+
+    <p>
+      Você descobriu que arquivos
+      também podem ser selecionados,
+      copiados e movidos.
+    </p>
+
+    <p>
+      Você também praticou
+      pastas e troca entre janelas.
+    </p>
+
+    <div class="ghost-rule">
+      Nem tudo que some foi apagado.
+      Às vezes apenas mudou de pasta
+      ou saiu da sua frente.
+    </div>
+
+    <div class="next-note">
+      📜 A próxima mensagem vai resumir
+      o novo aprendizado da Casa Fantasma
+      e mostrar o caminho para o
+      <strong>Castelo do Bowser</strong>.
+    </div>
+
+    <!--
+      Quando o novo documento estiver pronto,
+      adicione aqui o link para ele.
+    -->
+  </section>
+
+</main>
+</div>
+
+<script>
+const TOTAL_MISSIONS = 7;
+const CHECKPOINT_KEY =
+  "web-explorers-world4-checkpoint";
+
+const RADIO_VIDEO_ID =
+  "jgeSS0fjJoo";
+
+const RADIO_VOLUME = 24;
+
+const startButton =
+  document.getElementById("startButton");
+
+const startScreen =
+  document.getElementById("startScreen");
+
+const completed =
+  new Set();
+
+const downloaded =
+  new Set();
+
+let audioContext = null;
+let radioPlayer = null;
+let radioReady = false;
+let radioRequested = false;
+
+const ghostFiles = {
+  white: {
+    filename: "boo-branco.svg",
+    fill: "#f5f5ff",
+    stroke: "#7f75a8",
+    label: "BOO BRANCO"
+  },
+
+  lilac: {
+    filename: "boo-lilas.svg",
+    fill: "#d8c2ff",
+    stroke: "#72599f",
+    label: "BOO LILÁS"
+  },
+
+  green: {
+    filename: "boo-verde.svg",
+    fill: "#c8ffd7",
+    stroke: "#4e8b68",
+    label: "BOO VERDE"
+  }
+};
+
+function loadYouTubeAPI() {
+  const script =
+    document.createElement("script");
+
+  script.src =
+    "https://www.youtube.com/iframe_api";
+
+  document.head.appendChild(script);
+}
+
+window.onYouTubeIframeAPIReady =
+  function () {
+
+    const playerVars = {
+      controls: 1,
+      playsinline: 1,
+      rel: 0
+    };
+
+    if (
+      location.protocol === "https:" ||
+      location.protocol === "http:"
+    ) {
+      playerVars.origin =
+        location.origin;
+    }
+
+    radioPlayer =
+      new YT.Player(
+        "booRadio",
+        {
+          width: "360",
+          height: "203",
+
+          videoId:
+            RADIO_VIDEO_ID,
+
+          playerVars,
+
+          events: {
+            onReady() {
+              radioReady = true;
+
+              document
+                .getElementById(
+                  "radioStatus"
+                )
+                .textContent =
+                "📻 BOO FM pronta.";
+
+              if (radioRequested) {
+                startRadio();
+              }
+            },
+
+            onStateChange(event) {
+              if (
+                event.data ===
+                YT.PlayerState.PLAYING
+              ) {
+                document
+                  .getElementById(
+                    "radioStatus"
+                  )
+                  .textContent =
+                  "👻 BOO FM tocando.";
+              }
+
+              if (
+                event.data ===
+                YT.PlayerState.ENDED
+              ) {
+                startRadio();
+              }
+            },
+
+            onAutoplayBlocked() {
+              document
+                .getElementById(
+                  "radioStatus"
+                )
+                .textContent =
+                "▶ Clique em Play na BOO FM para iniciar a música.";
+            },
+
+            onError(event) {
+              document
+                .getElementById(
+                  "radioStatus"
+                )
+                .textContent =
+                "⚠ A BOO FM não conseguiu tocar. Erro: " +
+                event.data;
+            }
+          }
+        }
+      );
+  };
+
+function requestRadioStart() {
+  radioRequested = true;
+
+  if (radioReady) {
+    startRadio();
+  }
+}
+
+function startRadio() {
+  if (!radioPlayer) {
+    return;
+  }
+
+  radioPlayer.setVolume(
+    RADIO_VOLUME
+  );
+
+  radioPlayer.loadVideoById({
+    videoId:
+      RADIO_VIDEO_ID,
+    startSeconds: 0
+  });
+}
+
+startButton.addEventListener(
+  "click",
+  () => {
+
+    startButton.disabled = true;
+
+    requestRadioStart();
+
+    startScreen
+      .classList
+      .add("leaving");
+
+    setTimeout(
+      () => {
+        startScreen.remove();
+      },
+      500
+    );
+  }
+);
+
+loadYouTubeAPI();
+
+/* ---------------------------------------------------------
+   EFEITO DE SUCESSO
+--------------------------------------------------------- */
+
+function successChime() {
+  if (!audioContext) {
+    audioContext =
+      new (
+        window.AudioContext ||
+        window.webkitAudioContext
+      )();
+  }
+
+  const notes = [
+    [392, 0],
+    [523, .08],
+    [659, .16]
+  ];
+
+  notes.forEach(
+    ([frequency, delay]) => {
+
+      const oscillator =
+        audioContext
+          .createOscillator();
+
+      const gain =
+        audioContext
+          .createGain();
+
+      oscillator.type =
+        "triangle";
+
+      oscillator
+        .frequency
+        .value =
+        frequency;
+
+      gain.gain
+        .setValueAtTime(
+          .028,
+          audioContext
+            .currentTime +
+            delay
+        );
+
+      gain.gain
+        .exponentialRampToValueAtTime(
+          .001,
+          audioContext
+            .currentTime +
+            delay +
+            .16
+        );
+
+      oscillator.connect(gain);
+      gain.connect(
+        audioContext.destination
+      );
+
+      oscillator.start(
+        audioContext.currentTime +
+        delay
+      );
+
+      oscillator.stop(
+        audioContext.currentTime +
+        delay +
+        .17
+      );
+    }
+  );
+}
+
+/* ---------------------------------------------------------
+   CHECKPOINTS
+--------------------------------------------------------- */
+
+function saveCheckpoint(number) {
+  try {
+    const current =
+      Number(
+        sessionStorage
+          .getItem(
+            CHECKPOINT_KEY
+          ) || 0
+      );
+
+    if (number > current) {
+      sessionStorage.setItem(
+        CHECKPOINT_KEY,
+        String(number)
+      );
+    }
+  } catch {
+    // A atividade continua mesmo sem storage.
+  }
+}
+
+function markMissionComplete(
+  number
+) {
+  completed.add(number);
+
+  const mission =
+    document.getElementById(
+      `mission${number}`
+    );
+
+  mission.hidden = false;
+
+  mission
+    .classList
+    .add("completed");
+
+  const completeButton =
+    mission.querySelector(
+      "[data-complete]"
+    );
+
+  if (completeButton) {
+    completeButton.disabled = true;
+    completeButton.textContent =
+      "✓ Checkpoint concluído";
+  }
+}
+
+function completeMission(number) {
+  if (completed.has(number)) {
+    return;
+  }
+
+  markMissionComplete(number);
+  saveCheckpoint(number);
+
+  document
+    .getElementById("progress")
+    .textContent =
+    `⭐ ${completed.size} / ${TOTAL_MISSIONS}`;
+
+  successChime();
+
+  if (
+    number <
+    TOTAL_MISSIONS
+  ) {
+    const next =
+      document.getElementById(
+        `mission${number + 1}`
+      );
+
+    next.hidden = false;
+
+    setTimeout(
+      () => {
+        next.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      },
+      250
+    );
+  } else {
+    const finish =
+      document.getElementById(
+        "finish"
+      );
+
+    finish.hidden = false;
+
+    setTimeout(
+      () => {
+        finish.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+      },
+      250
+    );
+  }
+}
+
+function restoreCheckpoint() {
+  let highest = 0;
+
+  try {
+    highest =
+      Number(
+        sessionStorage
+          .getItem(
+            CHECKPOINT_KEY
+          ) || 0
+      );
+  } catch {
+    highest = 0;
+  }
+
+  highest =
+    Math.max(
+      0,
+      Math.min(
+        TOTAL_MISSIONS,
+        highest
+      )
+    );
+
+  for (
+    let number = 1;
+    number <= highest;
+    number++
+  ) {
+    markMissionComplete(number);
+  }
+
+  if (
+    highest > 0 &&
+    highest < TOTAL_MISSIONS
+  ) {
+    document
+      .getElementById(
+        `mission${highest + 1}`
+      )
+      .hidden = false;
+  }
+
+  if (
+    highest ===
+    TOTAL_MISSIONS
+  ) {
+    document
+      .getElementById(
+        "finish"
+      )
+      .hidden = false;
+  }
+
+  document
+    .getElementById("progress")
+    .textContent =
+    `⭐ ${completed.size} / ${TOTAL_MISSIONS}`;
+}
+
+/* ---------------------------------------------------------
+   DOWNLOAD DOS FANTASMAS
+--------------------------------------------------------- */
+
+function ghostSvg({
+  fill,
+  stroke,
+  label
+}) {
+  return `
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="640"
+  height="420"
+  viewBox="0 0 640 420"
+>
+  <rect
+    width="640"
+    height="420"
+    fill="#171225"
+  />
+
+  <circle
+    cx="320"
+    cy="180"
+    r="105"
+    fill="${fill}"
+    stroke="${stroke}"
+    stroke-width="12"
+  />
+
+  <path
+    d="
+      M215 180
+      V292
+      L250 270
+      L285 300
+      L320 270
+      L355 300
+      L390 270
+      L425 292
+      V180
+      Z
+    "
+    fill="${fill}"
+    stroke="${stroke}"
+    stroke-width="12"
+    stroke-linejoin="round"
+  />
+
+  <ellipse
+    cx="282"
+    cy="166"
+    rx="15"
+    ry="24"
+    fill="#16121f"
+  />
+
+  <ellipse
+    cx="358"
+    cy="166"
+    rx="15"
+    ry="24"
+    fill="#16121f"
+  />
+
+  <path
+    d="M286 226 Q320 250 354 226"
+    fill="none"
+    stroke="#16121f"
+    stroke-width="10"
+    stroke-linecap="round"
+  />
+
+  <text
+    x="320"
+    y="365"
+    text-anchor="middle"
+    fill="#f7f2ff"
+    font-family="Arial, sans-serif"
+    font-size="30"
+    font-weight="700"
+  >
+    ${label}
+  </text>
+</svg>
+  `;
+}
+
+function downloadGhost(kind) {
+  const config =
+    ghostFiles[kind];
+
+  if (!config) {
+    return;
+  }
+
+  const blob =
+    new Blob(
+      [ghostSvg(config)],
+      {
+        type:
+          "image/svg+xml;charset=utf-8"
+      }
+    );
+
+  const url =
+    URL.createObjectURL(
+      blob
+    );
+
+  const link =
+    document.createElement(
+      "a"
+    );
+
+  link.href = url;
+  link.download =
+    config.filename;
+
+  document.body.appendChild(
+    link
+  );
+
+  link.click();
+  link.remove();
+
+  setTimeout(
+    () => {
+      URL.revokeObjectURL(url);
+    },
+    1000
+  );
+}
+
+document
+  .querySelectorAll(
+    "[data-download]"
+  )
+  .forEach(
+    button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const kind =
+            button.dataset
+              .download;
+
+          downloadGhost(kind);
+          downloaded.add(kind);
+
+          button.disabled = true;
+          button.textContent =
+            "✓ " +
+            ghostFiles[kind]
+              .filename;
+
+          document
+            .getElementById(
+              "status1"
+            )
+            .textContent =
+            `Fantasmas baixados: ${downloaded.size} / 3`;
+
+          if (
+            downloaded.size === 3
+          ) {
+            document
+              .getElementById(
+                "status1"
+              )
+              .textContent =
+              "⭐ Os três fantasmas chegaram a Downloads!";
+
+            document
+              .getElementById(
+                "status1"
+              )
+              .classList
+              .add("success");
+
+            completeMission(1);
+          }
+        }
+      );
+    }
+  );
+
+/* ---------------------------------------------------------
+   BOTÕES DE CONCLUSÃO EXTERNA
+--------------------------------------------------------- */
+
+document
+  .querySelectorAll(
+    "[data-complete]"
+  )
+  .forEach(
+    button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const number =
+            Number(
+              button.dataset
+                .complete
+            );
+
+          completeMission(number);
+        }
+      );
+    }
+  );
+
+/* ---------------------------------------------------------
+   DICAS
+--------------------------------------------------------- */
+
+document
+  .querySelectorAll(
+    ".hint-button"
+  )
+  .forEach(
+    button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const hint =
+            document.getElementById(
+              button.dataset.hint
+            );
+
+          hint
+            .classList
+            .toggle("visible");
+        }
+      );
+    }
+  );
+
+/* ---------------------------------------------------------
+   QUIZ FINAL
+--------------------------------------------------------- */
+
+const status7 =
+  document.getElementById(
+    "status7"
+  );
+
+document
+  .querySelectorAll(
+    'input[name="finalQuiz"]'
+  )
+  .forEach(
+    option => {
+
+      option.addEventListener(
+        "change",
+        () => {
+
+          if (
+            option.value ===
+            "white"
+          ) {
+            status7.textContent =
+              "⭐ Certo! O Boo branco foi copiado, então existe nos dois lugares.";
+
+            status7
+              .classList
+              .add("success");
+
+            document
+              .querySelectorAll(
+                'input[name="finalQuiz"]'
+              )
+              .forEach(
+                radio => {
+                  radio.disabled = true;
+                }
+              );
+
+            completeMission(7);
+          } else {
+            status7.textContent =
+              "👻 Esse Boo foi movido. Tente lembrar qual foi copiado.";
+
+            status7
+              .classList
+              .remove("success");
+          }
+        }
+      );
+    }
+  );
+
+restoreCheckpoint();
+</script>
+
+</body>
+</html>
