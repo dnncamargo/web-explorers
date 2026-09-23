@@ -818,6 +818,73 @@ const missionLink =
 worldMusic.volume =
   .24;
 
+let initialAudioInteractionHandled =
+  false;
+
+function playWorldMusic() {
+  return worldMusic
+    .play()
+    .then(
+      () => {
+        setMusicButton(true);
+
+        audioStatus.textContent =
+          "Música do Mundo 1 tocando.";
+      }
+    );
+}
+
+function startMusicFromPageInteraction(
+  event
+) {
+  if (
+    initialAudioInteractionHandled
+  ) {
+    return;
+  }
+
+  if (
+    event.target.closest(
+      "#musicButton"
+    )
+  ) {
+    return;
+  }
+
+  if (
+    event.target.closest(
+      "#missionLink"
+    )
+  ) {
+    initialAudioInteractionHandled =
+      true;
+
+    return;
+  }
+
+  initialAudioInteractionHandled =
+    true;
+
+  playWorldMusic()
+    .catch(
+      () => {
+        initialAudioInteractionHandled =
+          false;
+
+        audioStatus.textContent =
+          "Toque novamente para iniciar a música.";
+      }
+    );
+}
+
+document.addEventListener(
+  "pointerdown",
+  startMusicFromPageInteraction,
+  {
+    passive: true
+  }
+);
+
 function setMusicButton(
   playing
 ) {
@@ -841,23 +908,20 @@ musicButton.addEventListener(
   "click",
   () => {
 
+    initialAudioInteractionHandled =
+      true;
+
     if (
       worldMusic.paused
     ) {
-      worldMusic
-        .play()
-        .then(
-          () => {
-            setMusicButton(true);
-
-            audioStatus.textContent =
-              "Música do Mundo 1 tocando.";
-          }
-        )
+      playWorldMusic()
         .catch(
           () => {
+            initialAudioInteractionHandled =
+              false;
+
             audioStatus.textContent =
-              "O navegador bloqueou o áudio. Tente novamente.";
+              "O navegador bloqueou o áudio. Toque novamente.";
           }
         );
 
