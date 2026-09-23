@@ -1,48 +1,77 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Exploradores do Mundo Digital</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="favicon.png" type="image/png" sizes="32x32">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="icon" href="assets/images/ui/favicon.png" type="image/png">
 </head>
 
 <body>
   <div class="container">
-    <img src="mundo1.jpg" alt="Mapa do Mundo" class="mapa" onclick="tocarSom()" />
+    <img
+      src="assets/images/worlds/world-1.jpg"
+      alt="Mapa do Mundo 1"
+      class="mapa"
+      onclick="tocarSom()"
+    >
 
-
-    <a href="https://docs.google.com/document/d/1wflAcgpV5LDLaA75kwB3InIVKpug_425OG0B3ozZwD0/edit?usp=sharing"
-      target="_blank">
-      <img src="200w_orig.gif" class="mario" style="top: 435px; left: 148px;" />
+    <a
+      href="https://docs.google.com/document/d/1wflAcgpV5LDLaA75kwB3InIVKpug_425OG0B3ozZwD0/edit?usp=sharing"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <img
+        src="assets/images/characters/mario-stage-1.gif"
+        class="mario"
+        style="top: 435px; left: 148px;"
+        alt="Mario"
+      >
     </a>
 
+    <img
+      src="assets/images/ui/hint-block.gif"
+      class="objeto"
+      style="top: 203px; left: 543px;"
+      onclick="mostrarMensagem(event, 'Ctrl + C = Copiar')"
+      alt="Bloco de dica: copiar"
+    >
 
-    <!-- Tijolos clicáveis -->
-    <img src="smw-block.gif" class="objeto" style="top: 203px; left: 543px;"
-      onclick="mostrarMensagem(event, 'Ctrl + C = Copiar')" />
+    <img
+      src="assets/images/ui/hint-block.gif"
+      class="objeto"
+      style="top: 203px; left: 589px;"
+      onclick="mostrarMensagem(event, 'Ctrl + V = Colar')"
+      alt="Bloco de dica: colar"
+    >
 
-    <img src="smw-block.gif" class="objeto" style="top: 203px; left: 589px;"
-      onclick="mostrarMensagem(event, 'Ctrl + V = Colar')" />
+    <img
+      src="assets/images/ui/hint-block.gif"
+      class="objeto"
+      style="top: 360px; left: 434px;"
+      onclick="mostrarMensagem(event, 'Ctrl + X = Recortar')"
+      alt="Bloco de dica: recortar"
+    >
 
-    <img src="smw-block.gif" class="objeto" style="top: 360px; left: 434px;"
-      onclick="mostrarMensagem(event, 'Ctrl + X = Recortar')" />
-
-    <img src="smw-block.gif" class="objeto" style="top: 360px; left: 480px;"
-      onclick="mostrarMensagem(event, 'Ctrl + V = Colar')" />
-
+    <img
+      src="assets/images/ui/hint-block.gif"
+      class="objeto"
+      style="top: 360px; left: 480px;"
+      onclick="mostrarMensagem(event, 'Ctrl + V = Colar')"
+      alt="Bloco de dica: colar"
+    >
   </div>
 
-  <script src="script.js"></script>
+  <script src="assets/js/main.js"></script>
   <script>
-    const som = new Audio('smb-techno.mp3');
+    const som = new Audio('assets/audio/stage-1-theme.mp3');
+
     function tocarSom() {
-      som.play().catch(e => {
-        console.log("Erro ao reproduzir o som:", e);
+      som.play().catch((error) => {
+        console.log('Erro ao reproduzir o som:', error);
       });
     }
   </script>
 </body>
-
 </html>
