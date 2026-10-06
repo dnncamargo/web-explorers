@@ -863,29 +863,49 @@
         </h2>
 
         <p>
-          Dentro da pasta extraída existem
-          <strong>quatro vídeos</strong>.
+          Nesta missão você trabalhou com
+          <strong>mais de um tipo de arquivo</strong>.
         </p>
 
         <p>
-          Observe o final do nome deles.
-          Qual extensão aparece nos quatro arquivos?
+          Marque <strong>todos os tipos de arquivo</strong>
+          que fazem parte da missão:
         </p>
 
         <div class="quiz" id="extensionQuiz">
           <label>
-            <input type="radio" name="extensionQuiz" value="mp4">
+            <input type="checkbox" value="jpg">
+            .jpg
+          </label>
+
+          <label>
+            <input type="checkbox" value="mp3">
+            .mp3
+          </label>
+
+          <label>
+            <input type="checkbox" value="mp4">
             .mp4
           </label>
 
           <label>
-            <input type="radio" name="extensionQuiz" value="zip">
+            <input type="checkbox" value="png">
+            .png
+          </label>
+
+          <label>
+            <input type="checkbox" value="txt">
+            .txt
+          </label>
+
+          <label>
+            <input type="checkbox" value="zip">
             .zip
           </label>
         </div>
 
         <div class="status" id="status4">
-          Escolha a extensão dos quatro vídeos.
+          Marque todos os tipos que fizeram parte da missão.
         </div>
 
         <button type="button" class="hint-button" data-hint="hint4">
@@ -893,10 +913,12 @@
         </button>
 
         <div class="hint" id="hint4">
-          Veja o que aparece depois do último ponto
-          no nome de cada vídeo.
+          Pense em dois momentos da missão:
           <br><br>
-          Os quatro terminam em
+          📦 o pacote que você baixou era um arquivo
+          <strong>.zip</strong>;
+          <br><br>
+          🎬 depois de extrair, os quatro vídeos eram arquivos
           <strong>.mp4</strong>.
         </div>
       </section>
@@ -1742,9 +1764,14 @@
         "status4"
       );
 
+    const expectedFileTypes = [
+      "mp4",
+      "zip"
+    ];
+
     extensionQuiz
       .querySelectorAll(
-        'input[type="radio"]'
+        'input[type="checkbox"]'
       )
       .forEach(
         option => {
@@ -1753,12 +1780,35 @@
             "change",
             () => {
 
-              if (
-                option.value ===
-                "mp4"
-              ) {
+              const selected =
+                [
+                  ...extensionQuiz
+                    .querySelectorAll(
+                      'input:checked'
+                    )
+                ]
+                  .map(
+                    input =>
+                      input.value
+                  )
+                  .sort();
+
+              const correct =
+                selected.length ===
+                  expectedFileTypes.length &&
+                expectedFileTypes
+                  .every(
+                    (
+                      fileType,
+                      index
+                    ) =>
+                      selected[index] ===
+                      fileType
+                  );
+
+              if (correct) {
                 status4.textContent =
-                  "⭐ Certo! Os quatro vídeos terminam em .mp4.";
+                  "⭐ Certo! A missão usou .zip para o pacote e .mp4 para os vídeos.";
 
                 status4
                   .classList
@@ -1766,7 +1816,7 @@
 
                 extensionQuiz
                   .querySelectorAll(
-                    'input[type="radio"]'
+                    'input[type="checkbox"]'
                   )
                   .forEach(
                     input => {
@@ -1777,7 +1827,7 @@
                 completeMission(4);
               } else {
                 status4.textContent =
-                  "Observe novamente o final do nome dos quatro vídeos.";
+                  "Marque somente os tipos de arquivo que realmente fizeram parte da missão.";
 
                 status4
                   .classList
