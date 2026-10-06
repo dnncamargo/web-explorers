@@ -428,6 +428,23 @@
     line-height: 1.6;
   }
 
+  .selection-play-area {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .selection-text {
+    display: inline-block;
+
+    user-select: text;
+    -webkit-user-select: text;
+  }
+
+  .selection-text[contenteditable="true"] {
+    min-width: 1ch;
+    outline: 0;
+  }
+
   .select-word {
     display: inline-block;
     margin: 7px;
@@ -1006,11 +1023,14 @@
     <h2>🪙 Desafio 4 — Multiplique a moeda</h2>
 
     <p>
-      Selecione a palavra:
+      Selecione <strong>somente a palavra</strong>:
     </p>
 
-    <div class="play-area">
-      <strong id="coinSource">MOEDA</strong>
+    <div class="play-area selection-play-area">
+      <strong
+        id="coinSource"
+        class="selection-text"
+      >MOEDA</strong>
     </div>
 
     <p>
@@ -1061,6 +1081,11 @@
 
     <div class="hint" id="hint4">
 
+      Primeiro, selecione somente o texto
+      <strong>MOEDA</strong>.
+      A caixa branca não faz parte da seleção.
+      <br><br>
+
       Para copiar:
       <br><br>
 
@@ -1104,6 +1129,26 @@
       Cole-a <strong>3 vezes</strong> na caixa.
     </p>
 
+    <div class="instruction-box">
+      <p>
+        Neste desafio você também vai usar a tecla
+        <kbd>Shift ⇧</kbd>.
+      </p>
+
+      <p>
+        Para <strong>refazer</strong>,
+        segure três teclas juntas:
+      </p>
+
+      <p class="keys">
+        <kbd>Ctrl</kbd>
+        <span>+</span>
+        <kbd>Shift ⇧</kbd>
+        <span>+</span>
+        <kbd>Z</kbd>
+      </p>
+    </div>
+
     <div
       class="play-area paste-box editable"
       id="historyArena"
@@ -1146,10 +1191,15 @@
 
       <br><br>
 
+      A tecla <kbd>Shift ⇧</kbd>
+      pode ser segurada junto com outras teclas
+      para mudar o que elas fazem.
+      <br><br>
+
       Segure
       <kbd>Ctrl</kbd>
       e
-      <kbd>Shift</kbd>
+      <kbd>Shift ⇧</kbd>
       ao mesmo tempo.
 
       <br>
@@ -1180,12 +1230,14 @@
       colocá-la em outro lugar.
     </p>
 
-    <div
-      class="play-area editable"
-      id="cutSource"
-      contenteditable="true"
-      spellcheck="false"
-    >ESTRELA</div>
+    <div class="play-area selection-play-area">
+      <span
+        id="cutSource"
+        class="selection-text editable"
+        contenteditable="true"
+        spellcheck="false"
+      >ESTRELA</span>
+    </div>
 
     <p>
       Para recortar:
@@ -1227,6 +1279,11 @@
     </button>
 
     <div class="hint" id="hint6">
+
+      Selecione somente o texto
+      <strong>ESTRELA</strong>.
+      A caixa branca não faz parte da seleção.
+      <br><br>
 
       <strong>Arraste o ponteiro</strong>
       sobre ESTRELA ou use dois toques imediatos.
@@ -2088,7 +2145,7 @@ let repeatedPastes = 0;
 
 document.addEventListener(
   "copy",
-  () => {
+  event => {
 
     if (
       completed.has(4) ||
@@ -2102,6 +2159,14 @@ document.addEventListener(
       selectedText() === "MOEDA" &&
       selectionInside(coinSource)
     ) {
+
+      event.preventDefault();
+
+      event.clipboardData
+        ?.setData(
+          "text/plain",
+          "MOEDA"
+        );
 
       coinCopied = true;
 
@@ -2358,11 +2423,26 @@ let validCutPaste = false;
 
 cutSource.addEventListener(
   "cut",
-  () => {
+  event => {
 
     if (
-      selectedText() === "ESTRELA"
+      selectedText() === "ESTRELA" &&
+      selectionInside(cutSource)
     ) {
+
+      event.preventDefault();
+
+      event.clipboardData
+        ?.setData(
+          "text/plain",
+          "ESTRELA"
+        );
+
+      cutSource.textContent = "";
+
+      window
+        .getSelection()
+        ?.removeAllRanges();
 
       validCut = true;
 
