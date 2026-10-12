@@ -120,6 +120,14 @@ for (const page of pages) {
 for (const file of ["assets/js/world-data.js", "assets/js/typing-core.js", "assets/js/audio.js", "assets/js/activity.js"]) {
   assert.doesNotThrow(() => new vm.Script(read(file), { filename: file }), `${file} parses`);
 }
+const yoshiPngUrl = "https://art.ngfiles.com/images/291000/291714_jamalmason_yoshi.png?f1393937531";
+for (const page of pages) {
+  assert.ok(read(page).includes(yoshiPngUrl), `${page} uses the selected PNG artwork`);
+  assert.ok(!read(page).includes("yoshi-companion.svg"), `${page} no longer uses the old SVG`);
+}
+assert.ok(read("assets/js/activity.js").includes(yoshiPngUrl), "dynamic completion scenes use the same PNG");
+assert.ok(!read("assets/js/activity.js").includes("yoshi-companion.svg"), "dynamic scenes do not reference the old SVG");
+
 const activity = read("assets/js/activity.js");
 assert.match(activity, /input\.addEventListener\("paste",\s*\(event\)\s*=>\s*\{\s*event\.preventDefault\(\)/, "paste is prevented in the exercise input");
 assert.match(activity, /input\.addEventListener\("drop"/, "dropped text cannot enter the exercise");

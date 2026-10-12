@@ -93,6 +93,8 @@ O progresso usa `localStorage`, com fallback para `sessionStorage` quando necess
 
 A trilha é carregada pelo YouTube IFrame API somente após uma interação do aluno. Se o serviço estiver bloqueado, o áudio pode ser ignorado e os desafios continuam funcionando. O Mundo 3 apresenta uma cena curta de Kamek com botão próprio para a mensagem musical; ao sair da cena, essa trilha para antes que a trilha das cavernas possa começar.
 
+A ilustração de Yoshi/Mario é exibida como PNG com fundo transparente, pela [URL de imagem indicada para a atividade](https://art.ngfiles.com/images/291000/291714_jamalmason_yoshi.png?f1393937531), em vez do SVG anterior. A imagem depende da disponibilidade do servidor externo (Newgrounds); seu uso e eventual redistribuição devem respeitar os direitos do autor da arte.
+
 Esta etapa não implementa acentuação. Uma expansão futura poderá ensinar acento agudo, circunflexo, til, Shift, maiúsculas acentuadas e pontuação depois de preparar exercícios específicos.
 
 ## Organização de futuras atividades

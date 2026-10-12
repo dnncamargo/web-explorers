@@ -320,7 +320,7 @@
 
   function renderLocked(world, host) {
     const required = world.id === 4 ? "Conclua os três mundos principais" : `Conclua o Mundo ${world.id - 1}`;
-    host.innerHTML = `<section class="world-finish"><img class="yoshi-art" src="assets/images/yoshi-companion.svg" alt=""><p class="eyebrow pixel">CAMINHO FECHADO POR ENQUANTO</p><h2>${world.title}</h2><p>${required} para abrir este caminho. Cada mundo tem cinco checkpoints.</p><div class="finish-actions"><a class="button" href="index.html">Voltar ao mapa</a></div></section>`;
+    host.innerHTML = `<section class="world-finish"><img class="yoshi-art" src="https://art.ngfiles.com/images/291000/291714_jamalmason_yoshi.png?f1393937531" alt=""><p class="eyebrow pixel">CAMINHO FECHADO POR ENQUANTO</p><h2>${world.title}</h2><p>${required} para abrir este caminho. Cada mundo tem cinco checkpoints.</p><div class="finish-actions"><a class="button" href="index.html">Voltar ao mapa</a></div></section>`;
   }
 
   function renderWorldFinish(world, host) {
@@ -337,7 +337,7 @@
       const nextId = world.id + 1;
       body = `<p>Este mundo está concluído. Você pode fazer uma pausa ou continuar quando quiser.</p><div class="finish-actions"><a class="button" href="${worldFiles[nextId]}">Continuar para ${DATA.worlds[nextId].name}</a><a class="button button-quiet" href="index.html">Encerrar sessão e voltar ao mapa</a></div>`;
     }
-    host.innerHTML = `<section class="world-finish"><img class="yoshi-art" src="assets/images/yoshi-companion.svg" alt=""><p class="eyebrow pixel">${isBonus ? "BÔNUS OPCIONAL CONCLUÍDO" : `MUNDO ${world.id}/3 CONCLUÍDO`}</p><h2>${isBonus ? "Ovos e estrelas encontrados!" : "Muito bem, explorador!"}</h2>${body}</section>`;
+    host.innerHTML = `<section class="world-finish"><img class="yoshi-art" src="https://art.ngfiles.com/images/291000/291714_jamalmason_yoshi.png?f1393937531" alt=""><p class="eyebrow pixel">${isBonus ? "BÔNUS OPCIONAL CONCLUÍDO" : `MUNDO ${world.id}/3 CONCLUÍDO`}</p><h2>${isBonus ? "Ovos e estrelas encontrados!" : "Muito bem, explorador!"}</h2>${body}</section>`;
   }
 
   function renderWorld() {

@@ -97,7 +97,8 @@ body[data-theme="crystal"] h1 { color: #fff4a4; }
 .lead { max-width: 680px; margin: 15px 0 0; font-size: clamp(17px, 2vw, 21px); line-height: 1.55; }
 .journey-note { max-width: 620px; margin: 12px 0 0; color: #365a4d; font-size: 15px; line-height: 1.5; }
 .hero-art { position: relative; display: grid; min-height: 190px; place-items: center; }
-.yoshi-art { position: relative; z-index: 1; width: min(170px, 45vw); height: auto; image-rendering: pixelated; filter: drop-shadow(0 8px 0 rgba(36,91,49,.19)); animation: yoshi-bob 3.2s ease-in-out infinite; }
+.yoshi-art { position: relative; z-index: 1; width: min(170px, 45vw); height: auto; image-rendering: auto; filter: drop-shadow(0 8px 0 rgba(36,91,49,.19)); animation: yoshi-bob 3.2s ease-in-out infinite; }
+.world-yoshi { display: block; width: clamp(95px, 14vw, 165px); max-width: 100%; height: auto; justify-self: end; object-fit: contain; image-rendering: auto; }
 .egg-art { position: absolute; z-index: 2; right: 8%; bottom: 4%; width: 57px; height: 57px; transform: rotate(12deg); image-rendering: pixelated; }
 .pixel-cloud { position: absolute; width: 74px; height: 24px; border-radius: 14px; background: rgba(255,255,255,.76); box-shadow: 16px -12px 0 -2px rgba(255,255,255,.76), 36px -5px 0 -4px rgba(255,255,255,.76); }
 .cloud-one { top: 18px; left: 5%; transform: scale(.72); }
