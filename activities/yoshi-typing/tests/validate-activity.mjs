@@ -128,6 +128,13 @@ for (const page of pages) {
 assert.ok(read("assets/js/activity.js").includes(yoshiPngUrl), "dynamic completion scenes use the same PNG");
 assert.ok(!read("assets/js/activity.js").includes("yoshi-companion.svg"), "dynamic scenes do not reference the old SVG");
 
+const fingerClasses = new Set(["left-pinky", "left-ring", "left-middle", "left-index", "right-index", "right-middle", "right-ring", "right-pinky", "thumb"]);
+for (const world of Object.values(worlds)) {
+  for (const key of world.taughtKeys) {
+    assert.ok(fingerClasses.has(browserWindow.YoshiWorldData.fingers[key]), `world ${world.id}: ${JSON.stringify(key)} has a finger color`);
+  }
+}
+
 const activity = read("assets/js/activity.js");
 assert.match(activity, /input\.addEventListener\("paste",\s*\(event\)\s*=>\s*\{\s*event\.preventDefault\(\)/, "paste is prevented in the exercise input");
 assert.match(activity, /input\.addEventListener\("drop"/, "dropped text cannot enter the exercise");
@@ -149,6 +156,10 @@ assert.match(audio, /playerReadyPromise/, "concurrent requests share the player 
 const css = read("assets/css/yoshi.css");
 assert.match(css, /@media \(max-width: 620px\)[\s\S]*?world-grid \{ grid-template-columns: minmax\(0,1fr\)/, "the world map becomes one column on narrow screens");
 assert.match(css, /target-row \{[^}]*flex-wrap: wrap/, "target sequences wrap instead of being hidden on narrow screens");
+assert.match(css, /\.keycap\[data-key\] \{[^}]*background: var\(--finger-color\)/, "each taught key receives its finger background");
+assert.match(css, /\.keycap\.is-next \{[^}]*background: var\(--finger-color\)/, "the active key keeps the finger background");
+assert.match(css, /\.keycap\.is-used \{[^}]*border-bottom-color:/, "the used-key state preserves the background");
+assert.match(activity, /cap\.classList\.toggle\("is-used", typedKeys\.has\(key\)\)/, "used state follows correctly typed input");
 assert.doesNotMatch(css, /(?:html|body)\s*\{[^}]*overflow-x:\s*hidden/, "horizontal overflow is not masked at the page level");
 
 console.log("OK: 4 worlds and 20 exact checkpoint sequences");

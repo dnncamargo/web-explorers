@@ -133,6 +133,15 @@ if (!browserPath) {
     assert.deepEqual(result.offenders, [], `${label}: no visible interface element crosses the content width`);
     return result;
   }
+  async function assertFingerColors(label) {
+    const info = await evaluate(`(()=>[...document.querySelectorAll(".keycap[data-key]")].map(key=>{const finger=window.YoshiWorldData.fingers[key.dataset.key];const swatch=document.querySelector(".legend-swatch."+finger);return{key:key.dataset.key,finger,background:getComputedStyle(key).backgroundColor,legend:swatch?getComputedStyle(swatch).backgroundColor:null,next:key.classList.contains("is-next"),used:key.classList.contains("is-used")}}))()`);
+    assert.ok(info.length > 0, `${label}: the keyboard has mapped keys`);
+    for (const key of info) {
+      assert.ok(key.finger && key.legend, `${label}: ${key.key} has a finger in the legend`);
+      assert.equal(key.background, key.legend, `${label}: ${key.key} matches the ${key.finger} legend for normal/active/used states`);
+    }
+    return info;
+  }
   async function setViewport(width) {
     await cdp.send("Emulation.setDeviceMetricsOverride", { width, height: 1100, deviceScaleFactor: 1, mobile: false });
     await new Promise((resolve) => setTimeout(resolve, 50));
@@ -229,6 +238,7 @@ if (!browserPath) {
           await saveScreenshot(`yoshi-bonus-${width}px`);
           screenshots.push(path.join(screenshotDir, `yoshi-bonus-${width}px.png`));
         }
+        if (state.name === "exercise" || state.name === "bonus-long") await assertFingerColors(`${width}px ${state.name}`);
         if (state.name === "exercise") {
           const allKeysShown = await evaluate(`(()=>{const a=[...document.querySelectorAll('#target-row .target-char')].map(el=>el.textContent==='␣'?' ':el.textContent).join('');return a==='ASDF'})()`);
           assert.equal(allKeysShown, true, `${width}px exercise displays its full target`);
@@ -255,6 +265,9 @@ if (!browserPath) {
     await dispatchKey("Z");
     assert.equal(await evaluate(`document.querySelector('#typed-display').textContent`), "—", "a wrong key does not erase or advance typed progress");
     await dispatchKey("A");
+    const colorsAfterA = await assertFingerColors("A typed, S next");
+    assert.equal(colorsAfterA.find((key) => key.key === "a")?.used, true, "A marked as previously used");
+    assert.equal(colorsAfterA.find((key) => key.key === "s")?.next, true, "S now highlighted in its own finger color");
     assert.equal(await evaluate(`window.__trusted`), true, "CDP key input reaches the page as a trusted browser event");
     assert.equal(await evaluate(`document.querySelector('#typed-display').textContent`), "A", "the correctly typed character is visible");
     await evaluate(`document.querySelector('#typing-box').dispatchEvent(new KeyboardEvent('keydown',{key:'S',bubbles:true}));document.querySelector('#typing-box').dispatchEvent(new Event('paste',{bubbles:true,cancelable:true}));document.querySelector('#typing-box').dispatchEvent(new Event('drop',{bubbles:true,cancelable:true}))`);
@@ -280,6 +293,7 @@ if (!browserPath) {
     await click('a[href="02-forest-path.html"]', true);
     await evaluate(`window.YoshiAudio={play(){},pause(){},changeTrack(){}}`);
     await click("#start-world");
+    await assertFingerColors("world 2 JKLÇ and space");
     await completeWorld(2);
     await click('a[href="03-crystal-caves.html"]', true);
     assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), "CHECKPOINT 1/5");
@@ -289,6 +303,7 @@ if (!browserPath) {
     await click("#story-continue");
     assert.equal(await evaluate(`document.querySelector('#audio-toggle').disabled`), false);
     await click("#start-world");
+    await assertFingerColors("world 3 upper/lower rows and space");
     await evaluate(`new Promise(resolve=>setTimeout(resolve,700))`);
     const trackLog = await evaluate(`window.__fakeAudioLog`);
     assert.equal(await evaluate(`window.__fakeAudioInstances`), 1, "concurrent audio requests share one not-yet-ready YouTube player");

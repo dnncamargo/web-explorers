@@ -229,8 +229,14 @@
       fingerLabel.innerHTML = expected
         ? `Próxima tecla: <kbd>${expected === " " ? "ESPAÇO" : expected.toLocaleUpperCase("pt-BR")}</kbd> · orientação: <strong>${finger}</strong>`
         : "Sequência completa!";
+      const nextKey = expected ? expected.toLocaleLowerCase("pt-BR") : "";
+      const typedKeys = new Set([...typedText.toLocaleLowerCase("pt-BR")]);
       const caps = host.querySelectorAll(".keycap[data-key]");
-      caps.forEach((cap) => cap.classList.toggle("is-next", cap.dataset.key.toLocaleLowerCase("pt-BR") === (expected === " " ? " " : (expected || "").toLocaleLowerCase("pt-BR"))));
+      caps.forEach((cap) => {
+        const key = cap.dataset.key.toLocaleLowerCase("pt-BR");
+        cap.classList.toggle("is-next", key === nextKey);
+        cap.classList.toggle("is-used", typedKeys.has(key));
+      });
     }
 
     updateDisplay();
