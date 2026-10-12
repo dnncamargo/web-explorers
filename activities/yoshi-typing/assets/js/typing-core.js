@@ -1,0 +1,84 @@
+(function (global) {
+  const MAIN_WORLDS = [1, 2, 3];
+
+  function createProgress() {
+    return {
+      version: 1,
+      currentWorld: 1,
+      completedWorlds: [],
+      completedBonus: false,
+      checkpoints: { 1: 0, 2: 0, 3: 0, 4: 0 },
+    };
+  }
+
+  function normalizeProgress(value) {
+    const fresh = createProgress();
+    if (!value || value.version !== 1) return fresh;
+    for (const id of [1, 2, 3, 4]) {
+      const count = Number(value.checkpoints?.[id]);
+      fresh.checkpoints[id] = Number.isInteger(count) ? Math.max(0, Math.min(5, count)) : 0;
+    }
+    fresh.completedWorlds = MAIN_WORLDS.filter((id) =>
+      Array.isArray(value.completedWorlds) && value.completedWorlds.includes(id) || fresh.checkpoints[id] === 5
+    );
+    fresh.completedBonus = value.completedBonus === true || fresh.checkpoints[4] === 5;
+    fresh.currentWorld = [1, 2, 3, 4].includes(Number(value.currentWorld)) ? Number(value.currentWorld) : 1;
+    return fresh;
+  }
+
+  function isMainComplete(progress) {
+    return MAIN_WORLDS.every((id) => progress.completedWorlds.includes(id));
+  }
+
+  function canEnterWorld(progress, worldId) {
+    if (worldId === 1) return true;
+    if (worldId === 2) return progress.completedWorlds.includes(1);
+    if (worldId === 3) return progress.completedWorlds.includes(2);
+    if (worldId === 4) return isMainComplete(progress);
+    return false;
+  }
+
+  function evaluateKey(expected, actual, isTrusted) {
+    if (!isTrusted) return { kind: "ignored", matches: false };
+    const normalize = (key) => key === " " ? " " : String(key).normalize("NFC").toLocaleLowerCase("pt-BR");
+    const matches = normalize(expected) === normalize(actual);
+    return { kind: matches ? "correct" : "incorrect", matches };
+  }
+
+  function advanceInput(target, index, actual, isTrusted) {
+    const result = evaluateKey(target[index], actual, isTrusted);
+    const nextIndex = result.matches ? index + 1 : index;
+    return { ...result, index: nextIndex, complete: nextIndex === target.length };
+  }
+
+  function enterWorld(progress, worldId) {
+    if (!canEnterWorld(progress, worldId)) return false;
+    progress.currentWorld = worldId;
+    return true;
+  }
+
+  function completeCheckpoint(progress, worldId, checkpointNumber) {
+    if (!canEnterWorld(progress, worldId)) return { ok: false, reason: "locked" };
+    const completed = progress.checkpoints[worldId] || 0;
+    if (checkpointNumber !== completed + 1 || checkpointNumber > 5) {
+      return { ok: false, reason: "out-of-order" };
+    }
+    progress.checkpoints[worldId] = checkpointNumber;
+    if (checkpointNumber === 5) {
+      if (worldId === 4) progress.completedBonus = true;
+      else if (!progress.completedWorlds.includes(worldId)) progress.completedWorlds.push(worldId);
+    }
+    return { ok: true, worldComplete: checkpointNumber === 5, mainComplete: isMainComplete(progress) };
+  }
+
+  global.YoshiTypingCore = {
+    createProgress,
+    normalizeProgress,
+    isMainComplete,
+    canEnterWorld,
+    evaluateKey,
+    advanceInput,
+    enterWorld,
+    completeCheckpoint,
+  };
+})(window);

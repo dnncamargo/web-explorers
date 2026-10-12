@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#14764b">
+  <title>Floresta do Yoshi — Exploradores do Mundo Digital</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/yoshi.css">
+  <script defer src="assets/js/world-data.js"></script>
+  <script defer src="assets/js/typing-core.js"></script>
+  <script defer src="assets/js/audio.js"></script>
+  <script defer src="assets/js/activity.js"></script>
+</head>
+<body class="home-page" data-page="home">
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand pixel" href="index.html" aria-label="Floresta do Yoshi, início">FLORESTA<br>DO YOSHI</a>
+      <p class="route-note">3 MUNDOS OBRIGATÓRIOS <span aria-hidden="true">·</span> BÔNUS OPCIONAL</p>
+      <a class="back-link" href="../../index.html">← Exploradores do Mundo Digital</a>
+    </header>
+
+    <section class="home-hero scene scene-flower">
+      <div class="hero-copy">
+        <p class="eyebrow pixel">UMA AVENTURA DE DIGITAÇÃO</p>
+        <h1>Floresta do Yoshi</h1>
+        <p class="lead">Encontre as teclas, mova os dedos com calma e ajude os amigos da floresta.</p>
+        <p class="journey-note">São 3 mundos principais, 5 checkpoints em cada mundo e uma sala de bônus opcional. Não há cronômetro.</p>
+        <div class="start-actions" id="save-actions" aria-live="polite"></div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <span class="pixel-cloud cloud-one"></span>
+        <span class="pixel-cloud cloud-two"></span>
+        <img class="yoshi-art" src="assets/images/yoshi-companion.svg" alt="">
+        <img class="egg-art" src="assets/images/bonus-egg.svg" alt="">
+        <span class="flower flower-one">✿</span><span class="flower flower-two">✿</span>
+      </div>
+    </section>
+
+    <section class="audio-panel" aria-label="Controles de trilha sonora">
+      <div class="audio-copy"><span class="pixel audio-label">TRILHA</span><span id="audio-status" class="audio-status" aria-live="polite">A trilha começa quando você escolher ouvir.</span></div>
+      <div class="audio-controls">
+        <button id="audio-toggle" class="button button-small" type="button" aria-pressed="false">♪ Ouvir trilha</button>
+        <label for="audio-volume">Volume</label><input id="audio-volume" type="range" min="0" max="100" value="35" aria-label="Volume da trilha">
+        <button id="audio-mute" class="icon-button" type="button" aria-pressed="false" aria-label="Silenciar trilha">🔊</button>
+      </div>
+      <div class="player-host" id="youtube-player" aria-hidden="true"></div>
+    </section>
+
+    <section id="ending-banner" class="ending-banner" hidden aria-live="polite"></section>
+
+    <section class="map-section" aria-labelledby="map-title">
+      <div class="section-heading"><div><p class="eyebrow pixel">SEU MAPA</p><h2 id="map-title">Escolha seu caminho</h2></div><p id="save-summary" class="save-summary"></p></div>
+      <div id="world-map" class="world-grid"></div>
+    </section>
+
+    <dialog id="reset-dialog" class="reset-dialog" aria-labelledby="reset-title">
+      <div class="dialog-art" aria-hidden="true">🥚</div>
+      <h2 id="reset-title">Começar uma nova partida?</h2>
+      <p>O progresso salvo neste navegador será apagado para abrir uma partida nova neste dispositivo.</p>
+      <div class="dialog-actions"><button id="cancel-reset" class="button button-quiet" type="button">Voltar</button><button id="confirm-reset" class="button" type="button">Nova partida</button></div>
+    </dialog>
+
+    <footer class="site-footer"><p>Seu progresso fica somente neste navegador. Nenhuma conta ou dado pessoal é necessário.</p></footer>
+  </main>
+</body>
+</html>
