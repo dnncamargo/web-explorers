@@ -128,8 +128,8 @@ if (!browserPath) {
     await new Promise((resolve) => setTimeout(resolve, 80));
   }
   async function measure(label) {
-    const result = await evaluate(`(()=>{const root=document.documentElement;const offenders=[...document.querySelectorAll('body *')].filter(el=>el.id!=='youtube-player'&&!el.closest('#youtube-player')).map(el=>{const r=el.getBoundingClientRect();return{tag:el.tagName.toLowerCase(),id:el.id,cls:typeof el.className==='string'?el.className:'',left:Math.round(r.left),right:Math.round(r.right),width:Math.round(r.width),text:(el.innerText||'').slice(0,50)}}).filter(el=>el.width>0&&(el.left < -1 || el.right > root.clientWidth+1)).slice(0,12);return{innerWidth,clientWidth:root.clientWidth,scrollWidth:root.scrollWidth,normalizedOverflow:Math.max(0,root.scrollWidth-innerWidth),offenders}})()`);
-    assert.equal(result.normalizedOverflow, 0, `${label}: document scroll width stays within the viewport (${JSON.stringify(result)})`);
+    const result = await evaluate(`(()=>{const root=document.documentElement;const offenders=[...document.querySelectorAll('body *')].filter(el=>el.id!=='youtube-player'&&!el.closest('#youtube-player')).map(el=>{const r=el.getBoundingClientRect();return{tag:el.tagName.toLowerCase(),id:el.id,cls:typeof el.className==='string'?el.className:'',left:Math.round(r.left),right:Math.round(r.right),width:Math.round(r.width),text:(el.innerText||'').slice(0,50)}}).filter(el=>el.width>0&&(el.left < -1 || el.right > root.clientWidth+1)).slice(0,12);return{innerWidth,clientWidth:root.clientWidth,scrollWidth:root.scrollWidth,overflowByClient:Math.max(0,root.scrollWidth-root.clientWidth),offenders}})()`);
+    assert.equal(result.overflowByClient, 0, `${label}: document scroll width stays within the content viewport (${JSON.stringify(result)})`);
     assert.deepEqual(result.offenders, [], `${label}: no visible interface element crosses the content width`);
     return result;
   }
@@ -333,9 +333,9 @@ if (!browserPath) {
 
     console.log(`OK: ${responsiveResults.length} Chromium viewport/state layouts; screenshots: ${screenshots.join(", ")}`);
     console.log("OK: trusted physical-key path, displayed text/space, errors, paste/drop, restart, progress header and reload");
-    console.log("OK: all three required worlds completed without the bonus; Kamek track stops before the cave track");
+    console.log("OK: all three required worlds completed without the bonus; delayed YouTube readiness cannot restart Kamek over the cave track");
     console.log("OK: reset confirmation, session-only reload continuity and truthful memory-only messaging");
-    console.log(JSON.stringify(responsiveResults.map(({ width, state, innerWidth, clientWidth, scrollWidth, normalizedOverflow }) => ({ width, state, innerWidth, clientWidth, scrollWidth, normalizedOverflow }))));
+    console.log(JSON.stringify(responsiveResults.map(({ width, state, innerWidth, clientWidth, scrollWidth, overflowByClient }) => ({ width, state, innerWidth, clientWidth, scrollWidth, overflowByClient }))));
   } finally {
     cdp?.close();
     browser?.kill();
