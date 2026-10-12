@@ -1,0 +1,954 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Mundo 1 — Overworld</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+  href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+  rel="stylesheet"
+>
+
+<link
+  rel="icon"
+  href="../assets/images/ui/favicon.png"
+  type="image/png"
+>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  :root {
+    --sky: #4ca7f7;
+    --yellow: #ffd84c;
+    --green: #57cf69;
+    --ink: #13213a;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+
+    background:
+      linear-gradient(
+        to bottom,
+        #7bc8ff 0%,
+        var(--sky) 52%,
+        #1e6cb6 100%
+      );
+
+    color: var(--ink);
+
+    font-family: Arial, sans-serif;
+  }
+
+  button {
+    font: inherit;
+  }
+
+  .pixel {
+    font-family:
+      "Press Start 2P",
+      "Courier New",
+      monospace;
+  }
+
+  .page {
+    min-height: 100vh;
+    padding: 12px;
+  }
+
+  .topbar {
+    width: min(1120px, 100%);
+    margin: 0 auto 12px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+
+    padding: 10px 12px;
+
+    border: 4px solid #fff;
+    border-radius: 9px;
+
+    background: rgba(14, 66, 132, .94);
+    color: #fff;
+
+    box-shadow:
+      0 6px 0 rgba(7, 37, 79, .55);
+  }
+
+  .world-label,
+  .power-counter {
+    font-size: 10px;
+    line-height: 1.5;
+
+    text-shadow: 2px 2px 0 #000;
+  }
+
+  .world-label {
+    color: var(--yellow);
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .music-button {
+    width: 34px;
+    height: 34px;
+
+    display: grid;
+    place-items: center;
+
+    padding: 0;
+
+    border: 2px solid rgba(255,255,255,.72);
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.12);
+    color: #fff;
+
+    cursor: pointer;
+  }
+
+  .music-button:hover,
+  .music-button:focus-visible {
+    background: rgba(255,255,255,.22);
+  }
+
+  .music-button:focus-visible {
+    outline: 3px solid var(--yellow);
+    outline-offset: 3px;
+  }
+
+  .map-wrap {
+    width: min(
+      1120px,
+      calc(100vw - 24px),
+      calc((100vh - 86px) * 1.3333)
+    );
+
+    margin: 0 auto;
+  }
+
+  .map-frame {
+    position: relative;
+
+    width: 100%;
+    aspect-ratio: 4 / 3;
+
+    overflow: hidden;
+
+    border: 6px solid #fff;
+    border-radius: 10px;
+
+    background: #000;
+
+    box-shadow:
+      0 10px 0 rgba(9, 52, 104, .42),
+      0 18px 34px rgba(0,0,0,.22);
+  }
+
+  .map-image {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .map-shade {
+    position: absolute;
+    inset: 0;
+
+    pointer-events: none;
+
+    box-shadow:
+      inset 0 0 28px rgba(0,0,0,.13);
+  }
+
+  .hint-block {
+    position: absolute;
+
+    width: 6%;
+    aspect-ratio: 1;
+
+    padding: 0;
+
+    border: 0;
+    background: transparent;
+
+    cursor: pointer;
+
+    filter:
+      drop-shadow(0 3px 0 rgba(0,0,0,.35));
+
+    transition:
+      transform .12s ease,
+      filter .12s ease;
+  }
+
+  .hint-block img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+  }
+
+  .hint-block:hover,
+  .hint-block:focus-visible {
+    transform:
+      translateY(-4px)
+      scale(1.08);
+
+    filter:
+      drop-shadow(0 5px 0 rgba(0,0,0,.36))
+      brightness(1.08);
+  }
+
+  .hint-block:focus-visible {
+    outline: 4px solid var(--yellow);
+    outline-offset: 4px;
+  }
+
+  .hint-block.found::after {
+    content: "✓";
+
+    position: absolute;
+    right: -6px;
+    top: -8px;
+
+    display: grid;
+    place-items: center;
+
+    width: 22px;
+    height: 22px;
+
+    border: 2px solid #1e642b;
+    border-radius: 50%;
+
+    background: var(--green);
+    color: #0c3615;
+
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  .hint-copy {
+    top: 33.833%;
+    left: 67.875%;
+  }
+
+  .hint-paste-copy {
+    top: 33.833%;
+    left: 73.625%;
+  }
+
+  .hint-cut {
+    top: 60%;
+    left: 54.25%;
+  }
+
+  .hint-paste-cut {
+    top: 60%;
+    left: 60%;
+  }
+
+  .mission-link {
+    position: absolute;
+
+    top: 72.5%;
+    left: 18.5%;
+
+    width: 18.75%;
+    aspect-ratio: 150 / 112;
+
+    display: block;
+
+    border-radius: 10px;
+
+    transition:
+      transform .14s ease,
+      filter .14s ease;
+  }
+
+  .mission-link img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    filter:
+      drop-shadow(0 5px 0 rgba(0,0,0,.28));
+  }
+
+  .mission-link:hover,
+  .mission-link:focus-visible {
+    transform:
+      translateY(-5px)
+      scale(1.04);
+  }
+
+  .mission-link:focus-visible {
+    outline: 5px solid var(--yellow);
+    outline-offset: 5px;
+  }
+
+  .mission-tag {
+    position: absolute;
+
+    left: 50%;
+    bottom: 100%;
+
+    transform: translateX(-50%);
+
+    margin-bottom: 3px;
+    padding: 7px 9px;
+
+    border: 3px solid #7a3b00;
+    border-radius: 5px;
+
+    background: var(--yellow);
+    color: #422000;
+
+    box-shadow: 0 4px 0 #7a3b00;
+
+    white-space: nowrap;
+
+    font-size: clamp(6px, 1vw, 9px);
+    line-height: 1.45;
+
+    pointer-events: none;
+  }
+
+  .hint-toast {
+    position: absolute;
+    left: 50%;
+    bottom: 3%;
+
+    z-index: 5;
+
+    width: min(560px, 78%);
+
+    transform:
+      translate(-50%, 15px);
+
+    padding: 13px 16px;
+
+    border: 4px solid #1b5795;
+    border-radius: 8px;
+
+    background: rgba(248, 252, 255, .96);
+    color: #12365d;
+
+    box-shadow:
+      0 6px 0 rgba(9, 52, 104, .38);
+
+    text-align: center;
+
+    opacity: 0;
+    pointer-events: none;
+
+    transition:
+      opacity .15s ease,
+      transform .15s ease;
+  }
+
+  .hint-toast.visible {
+    opacity: 1;
+
+    transform:
+      translate(-50%, 0);
+  }
+
+  .hint-toast strong {
+    color: #174f8a;
+  }
+
+  .keys {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+
+    margin-right: 8px;
+  }
+
+  kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 44px;
+    min-height: 34px;
+
+    padding: 4px 9px;
+
+    border: 3px solid #222;
+    border-radius: 5px;
+
+    background: #f4f4f4;
+    color: #111;
+
+    box-shadow: 0 4px 0 #888;
+
+    font-family: Arial, sans-serif;
+    font-size: 17px;
+    font-weight: bold;
+  }
+
+  .sr-status {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    overflow: hidden;
+
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+
+    white-space: nowrap;
+  }
+
+  @media (max-width: 620px) {
+    .topbar {
+      padding: 8px 9px;
+    }
+
+    .world-label,
+    .power-counter {
+      font-size: 8px;
+    }
+
+    .music-button {
+      width: 30px;
+      height: 30px;
+    }
+
+    .mission-tag {
+      display: none;
+    }
+
+    .hint-toast {
+      width: 88%;
+
+      padding: 10px 12px;
+
+      font-size: 14px;
+    }
+
+    kbd {
+      min-width: 38px;
+      min-height: 30px;
+
+      font-size: 15px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="page">
+
+  <div class="topbar">
+
+    <div class="world-label pixel">
+      🌍 MUNDO 1 · OVERWORLD
+    </div>
+
+    <div class="topbar-right">
+
+      <div
+        id="powerCounter"
+        class="power-counter pixel"
+      >
+        🧱 DICAS 0 / 4
+      </div>
+
+      <button
+        id="musicButton"
+        class="music-button"
+        type="button"
+        aria-label="Tocar música"
+        title="Tocar música"
+      >
+        🔊
+      </button>
+
+    </div>
+  </div>
+
+  <div class="map-wrap">
+
+    <div
+      class="map-frame"
+      id="mapFrame"
+    >
+      <img
+        src="../assets/images/worlds/world-1.jpg"
+        class="map-image"
+        alt="Mapa do Mundo 1"
+      >
+
+      <div
+        class="map-shade"
+        aria-hidden="true"
+      ></div>
+
+      <button
+        class="hint-block hint-copy"
+        type="button"
+        data-hint="copy"
+        aria-label="Dica de copiar"
+      >
+        <img
+          src="../assets/images/ui/hint-block.gif"
+          alt=""
+          aria-hidden="true"
+        >
+      </button>
+
+      <button
+        class="hint-block hint-paste-copy"
+        type="button"
+        data-hint="paste-copy"
+        aria-label="Dica de colar"
+      >
+        <img
+          src="../assets/images/ui/hint-block.gif"
+          alt=""
+          aria-hidden="true"
+        >
+      </button>
+
+      <button
+        class="hint-block hint-cut"
+        type="button"
+        data-hint="cut"
+        aria-label="Dica de recortar"
+      >
+        <img
+          src="../assets/images/ui/hint-block.gif"
+          alt=""
+          aria-hidden="true"
+        >
+      </button>
+
+      <button
+        class="hint-block hint-paste-cut"
+        type="button"
+        data-hint="paste-cut"
+        aria-label="Dica de colar"
+      >
+        <img
+          src="../assets/images/ui/hint-block.gif"
+          alt=""
+          aria-hidden="true"
+        >
+      </button>
+
+      <a
+        id="missionLink"
+        class="mission-link"
+        href="https://docs.google.com/document/d/1wflAcgpV5LDLaA75kwB3InIVKpug_425OG0B3ozZwD0/edit?usp=sharing"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Abrir a primeira missão"
+      >
+        <span class="mission-tag pixel">
+          1ª MISSÃO
+        </span>
+
+        <img
+          src="../assets/images/characters/mario-stage-1.gif"
+          alt="Mario e Luigi: abrir a primeira missão"
+        >
+      </a>
+
+      <div
+        id="hintToast"
+        class="hint-toast"
+        aria-live="polite"
+      ></div>
+
+    </div>
+  </div>
+
+  <span
+    id="audioStatus"
+    class="sr-status"
+    aria-live="polite"
+  >
+    Música do Mundo 1 pronta.
+  </span>
+
+</div>
+
+<audio
+  id="worldMusic"
+  src="../assets/audio/stage-1-theme.mp3"
+  preload="auto"
+  loop
+></audio>
+
+<script>
+const hints = {
+  copy: {
+    keys: ["Ctrl", "C"],
+    message:
+      "Copiar: faz uma cópia do que foi selecionado."
+  },
+
+  "paste-copy": {
+    keys: ["Ctrl", "V"],
+    message:
+      "Colar: coloca no lugar atual aquilo que você copiou."
+  },
+
+  cut: {
+    keys: ["Ctrl", "X"],
+    message:
+      "Recortar: prepara o que foi selecionado para mudar de lugar."
+  },
+
+  "paste-cut": {
+    keys: ["Ctrl", "V"],
+    message:
+      "Colar: faz aquilo que foi recortado aparecer no novo lugar."
+  }
+};
+
+const discovered =
+  new Set();
+
+const powerCounter =
+  document.getElementById(
+    "powerCounter"
+  );
+
+const hintToast =
+  document.getElementById(
+    "hintToast"
+  );
+
+let toastTimer = null;
+let coinAudioContext = null;
+
+function keyMarkup(keys) {
+  return (
+    '<span class="keys">' +
+    keys
+      .map(
+        key =>
+          `<kbd>${key}</kbd>`
+      )
+      .join(
+        "<span>+</span>"
+      ) +
+    "</span>"
+  );
+}
+
+function playCoinSound() {
+  if (!coinAudioContext) {
+    coinAudioContext =
+      new (
+        window.AudioContext ||
+        window.webkitAudioContext
+      )();
+  }
+
+  const now =
+    coinAudioContext.currentTime;
+
+  const notes = [
+    [988, 0, .07],
+    [1319, .055, .12]
+  ];
+
+  notes.forEach(
+    ([frequency, delay, duration]) => {
+
+      const oscillator =
+        coinAudioContext
+          .createOscillator();
+
+      const gain =
+        coinAudioContext
+          .createGain();
+
+      oscillator.type =
+        "square";
+
+      oscillator.frequency
+        .setValueAtTime(
+          frequency,
+          now + delay
+        );
+
+      gain.gain
+        .setValueAtTime(
+          .045,
+          now + delay
+        );
+
+      gain.gain
+        .exponentialRampToValueAtTime(
+          .001,
+          now + delay + duration
+        );
+
+      oscillator.connect(gain);
+
+      gain.connect(
+        coinAudioContext.destination
+      );
+
+      oscillator.start(
+        now + delay
+      );
+
+      oscillator.stop(
+        now + delay + duration
+      );
+    }
+  );
+}
+
+function showHint(hint) {
+  hintToast.innerHTML =
+    keyMarkup(
+      hint.keys
+    ) +
+    "<strong>" +
+    hint.message +
+    "</strong>";
+
+  hintToast
+    .classList
+    .add("visible");
+
+  clearTimeout(
+    toastTimer
+  );
+
+  toastTimer =
+    setTimeout(
+      () => {
+        hintToast
+          .classList
+          .remove("visible");
+      },
+      4200
+    );
+}
+
+document
+  .querySelectorAll(
+    "[data-hint]"
+  )
+  .forEach(
+    button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const id =
+            button.dataset.hint;
+
+          const hint =
+            hints[id];
+
+          playCoinSound();
+
+          discovered.add(id);
+
+          button
+            .classList
+            .add("found");
+
+          powerCounter.textContent =
+            `🧱 DICAS ${discovered.size} / 4`;
+
+          showHint(hint);
+        }
+      );
+    }
+  );
+
+const worldMusic =
+  document.getElementById(
+    "worldMusic"
+  );
+
+const musicButton =
+  document.getElementById(
+    "musicButton"
+  );
+
+const audioStatus =
+  document.getElementById(
+    "audioStatus"
+  );
+
+const missionLink =
+  document.getElementById(
+    "missionLink"
+  );
+
+worldMusic.volume =
+  .24;
+
+let initialAudioInteractionHandled =
+  false;
+
+function playWorldMusic() {
+  return worldMusic
+    .play()
+    .then(
+      () => {
+        setMusicButton(true);
+
+        audioStatus.textContent =
+          "Música do Mundo 1 tocando.";
+      }
+    );
+}
+
+function startMusicFromPageInteraction(
+  event
+) {
+  if (
+    initialAudioInteractionHandled
+  ) {
+    return;
+  }
+
+  if (
+    event.target.closest(
+      "#musicButton"
+    )
+  ) {
+    return;
+  }
+
+  if (
+    event.target.closest(
+      "#missionLink"
+    )
+  ) {
+    initialAudioInteractionHandled =
+      true;
+
+    return;
+  }
+
+  initialAudioInteractionHandled =
+    true;
+
+  playWorldMusic()
+    .catch(
+      () => {
+        initialAudioInteractionHandled =
+          false;
+
+        audioStatus.textContent =
+          "Toque novamente para iniciar a música.";
+      }
+    );
+}
+
+document.addEventListener(
+  "pointerdown",
+  startMusicFromPageInteraction,
+  {
+    passive: true
+  }
+);
+
+function setMusicButton(
+  playing
+) {
+  musicButton.textContent =
+    playing ? "🔇" : "🔊";
+
+  musicButton.setAttribute(
+    "aria-label",
+    playing
+      ? "Pausar música"
+      : "Tocar música"
+  );
+
+  musicButton.title =
+    playing
+      ? "Pausar música"
+      : "Tocar música";
+}
+
+musicButton.addEventListener(
+  "click",
+  () => {
+
+    initialAudioInteractionHandled =
+      true;
+
+    if (
+      worldMusic.paused
+    ) {
+      playWorldMusic()
+        .catch(
+          () => {
+            initialAudioInteractionHandled =
+              false;
+
+            audioStatus.textContent =
+              "O navegador bloqueou o áudio. Toque novamente.";
+          }
+        );
+
+      return;
+    }
+
+    worldMusic.pause();
+    setMusicButton(false);
+
+    audioStatus.textContent =
+      "Música pausada.";
+  }
+);
+
+missionLink.addEventListener(
+  "click",
+  () => {
+
+    if (
+      !worldMusic.paused
+    ) {
+      worldMusic.pause();
+      setMusicButton(false);
+    }
+  }
+);
+</script>
+
+</body>
+</html>
