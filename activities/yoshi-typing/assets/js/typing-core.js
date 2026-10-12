@@ -26,6 +26,40 @@
     return fresh;
   }
 
+  function readStoredProgress(getStorage, key) {
+    let firstAvailable = "memory";
+    for (const name of ["localStorage", "sessionStorage"]) {
+      try {
+        const store = getStorage(name);
+        const saved = store.getItem(key);
+        if (firstAvailable === "memory") firstAvailable = name;
+        if (saved) {
+          try { return { progress: normalizeProgress(JSON.parse(saved)), mode: name }; }
+          catch { /* ignore malformed data and check the next store */ }
+        }
+      } catch { /* storage may be disabled by browser policy */ }
+    }
+    return { progress: createProgress(), mode: firstAvailable };
+  }
+
+  function writeStoredProgress(getStorage, key, progress, preferred = "localStorage") {
+    const order = [preferred, "localStorage", "sessionStorage"].filter((name, index, all) => name !== "memory" && all.indexOf(name) === index);
+    for (const name of order) {
+      try {
+        getStorage(name).setItem(key, JSON.stringify(progress));
+        return { persisted: true, mode: name };
+      } catch { /* continue to the next available store */ }
+    }
+    return { persisted: false, mode: "memory" };
+  }
+
+  function clearStoredProgress(getStorage, key) {
+    for (const name of ["localStorage", "sessionStorage"]) {
+      try { getStorage(name).removeItem(key); }
+      catch { /* storage may be disabled by browser policy */ }
+    }
+  }
+
   function isMainComplete(progress) {
     return MAIN_WORLDS.every((id) => progress.completedWorlds.includes(id));
   }
@@ -74,6 +108,9 @@
   global.YoshiTypingCore = {
     createProgress,
     normalizeProgress,
+    readStoredProgress,
+    writeStoredProgress,
+    clearStoredProgress,
     isMainComplete,
     canEnterWorld,
     evaluateKey,

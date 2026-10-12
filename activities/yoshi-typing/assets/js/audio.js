@@ -11,10 +11,12 @@
 
   let player = null;
   let playerPromise = null;
+  let playerReadyPromise = null;
   let currentTrack = initialTrack;
   let isPlaying = false;
   let isMuted = false;
   let volumeLevel = Number(volume?.value || 35);
+  let requestVersion = 0;
 
   function setStatus(message) {
     status.textContent = message;
@@ -71,8 +73,8 @@
 
   async function ensurePlayer(track) {
     const YT = await loadApi();
-    if (player) return player;
-    return new Promise((resolve, reject) => {
+    if (playerReadyPromise) return playerReadyPromise;
+    playerReadyPromise = new Promise((resolve, reject) => {
       try {
         player = new YT.Player(host, {
           width: "200",
@@ -102,6 +104,8 @@
               reject(new Error("A trilha não está disponível"));
             },
             onStateChange(event) {
+              const playingTrack = event.target.getVideoData?.().video_id;
+              if (playingTrack && playingTrack !== currentTrack) return;
               if (event.data === YT.PlayerState.PLAYING) {
                 setPlaying(true);
                 setStatus("A trilha está tocando. Use os controles para pausar, ajustar ou silenciar.");
@@ -116,15 +120,19 @@
         reject(error);
       }
     });
+    return playerReadyPromise;
   }
 
   async function play(track = currentTrack) {
+    const version = ++requestVersion;
     currentTrack = track || initialTrack;
+    const requestedTrack = currentTrack;
     setStatus("Conectando à trilha… se o serviço não responder, você pode seguir sem música.");
     try {
-      const readyPlayer = await ensurePlayer(currentTrack);
-      if (readyPlayer.getVideoData?.().video_id !== currentTrack) {
-        readyPlayer.loadVideoById({ videoId: currentTrack, suggestedQuality: "small" });
+      const readyPlayer = await ensurePlayer(requestedTrack);
+      if (version !== requestVersion || currentTrack !== requestedTrack) return;
+      if (readyPlayer.getVideoData?.().video_id !== requestedTrack) {
+        readyPlayer.loadVideoById({ videoId: requestedTrack, suggestedQuality: "small" });
       } else {
         readyPlayer.playVideo();
       }
@@ -134,13 +142,15 @@
       if (fallback) fallback.hidden = true;
       setPlaying(true);
     } catch {
+      if (version !== requestVersion || currentTrack !== requestedTrack) return;
       setPlaying(false);
       setStatus("A trilha não está disponível agora. Os desafios continuam funcionando normalmente.");
-      addFallback(currentTrack);
+      addFallback(requestedTrack);
     }
   }
 
   function pause() {
+    requestVersion += 1;
     try { player?.pauseVideo(); } catch { /* o painel continua utilizável sem o player */ }
     setPlaying(false);
     setStatus("Trilha pausada. Os desafios continuam disponíveis.");
@@ -148,16 +158,19 @@
 
   async function changeTrack(track, start = false) {
     if (!track) return;
+    const version = ++requestVersion;
     const changed = currentTrack !== track;
     currentTrack = track;
     if (!start && !isPlaying) return;
     try {
       const readyPlayer = await ensurePlayer(track);
-      if (changed) readyPlayer.loadVideoById({ videoId: track, suggestedQuality: "small" });
+      if (version !== requestVersion || currentTrack !== track) return;
+      if (changed || readyPlayer.getVideoData?.().video_id !== track) readyPlayer.loadVideoById({ videoId: track, suggestedQuality: "small" });
       else readyPlayer.playVideo();
       if (isMuted) readyPlayer.mute();
       setPlaying(true);
     } catch {
+      if (version !== requestVersion || currentTrack !== track) return;
       setPlaying(false);
       setStatus("A trilha não está disponível agora. Os desafios continuam funcionando normalmente.");
       addFallback(track);
@@ -177,5 +190,5 @@
     try { player?.setVolume(volumeLevel); } catch { /* o áudio é opcional */ }
   });
 
-  global.YoshiAudio = { play, pause, changeTrack, get isPlaying() { return isPlaying; } };
+  global.YoshiAudio = { play, pause, stop: pause, changeTrack, get isPlaying() { return isPlaying; } };
 })(window);

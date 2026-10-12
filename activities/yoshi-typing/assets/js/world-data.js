@@ -11,7 +11,7 @@
       theme: "flower",
       file: "01-flower-garden.html",
       track: "tGukyQ10nlA",
-      intro: "Vamos acordar o jardim com as duas mãos na posição-base.",
+      intro: "Vamos acordar o jardim colocando a mão esquerda na posição-base.",
       guide: "A mão esquerda repousa em A, S, D e F. O polegar alcança a barra de espaço. Depois de cada tecla, volte com os dedos para casa.",
       taughtKeys: ["a", "s", "d", "f", " "],
       checkpoints: [

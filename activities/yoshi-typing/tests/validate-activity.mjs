@@ -36,6 +36,8 @@ for (const [idText, targets] of Object.entries(expectedTargets)) {
 }
 assert.equal(worlds[1].taughtKeys.join(""), "asdf ", "World 1 introduces only A S D F and space");
 assert.equal(worlds[2].taughtKeys.join(""), "jklç ", "World 2 introduces only J K L Ç and space");
+assert.match(worlds[1].intro, /mão esquerda/i, "World 1 introduces the left hand only");
+assert.doesNotMatch(worlds[1].intro, /duas mãos|ambas as mãos/i, "World 1 does not imply both hands are taught");
 assert.deepEqual([worlds[1].track, worlds[3].track, worlds[4].track], ["tGukyQ10nlA", "IJy7jK-TM40", "n6-JFDTC_nI"], "each world uses its requested music reference");
 assert.equal(worlds[3].storyTrack, "BEP3rdTy0-o", "Kamek's short scene has its requested music reference");
 assert.equal(worlds[2].track, worlds[1].track, "World 2 may continue the Flower Garden track");
@@ -69,6 +71,40 @@ const restoredProgress = core.normalizeProgress(JSON.parse(JSON.stringify(progre
 assert.equal(core.isMainComplete(restoredProgress), true, "saved progress restores the three required worlds");
 assert.equal(restoredProgress.completedBonus, true, "saved bonus completion also restores");
 
+const memoryStore = () => {
+  const items = new Map();
+  return {
+    getItem: (key) => items.get(key) ?? null,
+    setItem: (key, value) => items.set(key, String(value)),
+    removeItem: (key) => items.delete(key),
+  };
+};
+const localStore = memoryStore();
+const sessionStore = memoryStore();
+const allStores = { localStorage: localStore, sessionStorage: sessionStore };
+const loadedFresh = core.readStoredProgress((name) => allStores[name], "progress-test");
+assert.equal(loadedFresh.mode, "localStorage", "local storage is preferred when available");
+const sessionOnly = core.readStoredProgress((name) => {
+  if (name === "localStorage") throw new Error("blocked");
+  return sessionStore;
+}, "session-test");
+assert.equal(sessionOnly.mode, "sessionStorage", "session storage is used when local storage is blocked");
+sessionOnly.progress.checkpoints[1] = 2;
+assert.deepEqual(JSON.parse(JSON.stringify(core.writeStoredProgress((name) => {
+  if (name === "localStorage") throw new Error("blocked");
+  return sessionStore;
+}, "session-test", sessionOnly.progress, sessionOnly.mode))), { persisted: true, mode: "sessionStorage" });
+const afterReload = core.readStoredProgress((name) => {
+  if (name === "localStorage") throw new Error("blocked");
+  return sessionStore;
+}, "session-test");
+assert.equal(afterReload.progress.checkpoints[1], 2, "session progress resumes after a page reload");
+const noStorage = core.readStoredProgress(() => { throw new Error("blocked"); }, "memory-test");
+assert.equal(noStorage.mode, "memory", "the app detects when every storage is unavailable");
+assert.deepEqual(JSON.parse(JSON.stringify(core.writeStoredProgress(() => { throw new Error("blocked"); }, "memory-test", noStorage.progress))), { persisted: false, mode: "memory" }, "memory-only mode never promises persistence");
+core.clearStoredProgress((name) => allStores[name], "session-test");
+assert.equal(sessionStore.getItem("session-test"), null, "new game clears session progress after confirmation");
+
 const pages = ["index.html", ...Object.values(worlds).map(({ file }) => file)];
 for (const page of pages) {
   const html = read(page);
@@ -90,10 +126,26 @@ assert.match(activity, /input\.addEventListener\("drop"/, "dropped text cannot e
 assert.match(activity, /event\.ctrlKey \|\| event\.metaKey \|\| event\.altKey/, "global keyboard shortcuts are left alone");
 assert.match(activity, /event\.isTrusted/, "only trusted physical key events can advance the exercise");
 assert.match(activity, /showModal\(\)|global\.confirm/, "starting over asks for confirmation");
+assert.match(activity, /checkpoint-progress"\)\.textContent = `CHECKPOINT \$\{number\}\/5`/, "the permanent progress display changes as soon as a checkpoint opens");
+assert.match(activity, /target-char \$\{type\}[\s\S]*?\$\{char === " " \? "␣" : char\}/, "every future target character stays visible and spaces have a marker");
+assert.match(activity, /id="typed-display"[\s\S]*?typedDisplay\.textContent = visibleTyped \|\| "—"/, "accepted physical input is shown in a separate typed-text display");
+assert.match(activity, /typedText = "";[\s\S]*?updateDisplay\(\);[\s\S]*?Exercício reiniciado/, "restarting clears only the current exercise display");
+assert.match(activity, /story-audio[\s\S]*?YoshiAudio\?\.play\(world\.storyTrack\)/, "Kamek audio starts only from its explicit button");
+assert.match(activity, /story-continue[\s\S]*?YoshiAudio\?\.pause\(\)[\s\S]*?changeTrack\(world\.track, false\)[\s\S]*?renderGuide\(world, host\)/, "leaving the Kamek scene stops its audio before showing the cave guide");
+assert.ok(activity.indexOf('querySelector("#story-continue")') < activity.indexOf("YoshiAudio?.pause()") && activity.indexOf("YoshiAudio?.pause()") < activity.indexOf("changeTrack(world.track, false)") && activity.indexOf("changeTrack(world.track, false)") < activity.indexOf("YoshiAudio?.changeTrack(world.track, true)"), "the cave track is selected only after the Kamek message is stopped and the learner starts the world");
+assert.match(activity, /Sem armazenamento: trocar de mundo ou recarregar reinicia/, "memory-only fallback explains that progress will not continue across pages");
 const audio = read("assets/js/audio.js");
 assert.match(audio, /catch \{[\s\S]*?desafios continuam funcionando normalmente/, "audio failure leaves the activity playable");
+assert.match(audio, /requestVersion[\s\S]*?version !== requestVersion/, "late YouTube promises cannot restart a track after pause or track change");
+assert.match(audio, /playerReadyPromise/, "concurrent requests share the player readiness promise");
+const css = read("assets/css/yoshi.css");
+assert.match(css, /@media \(max-width: 620px\)[\s\S]*?world-grid \{ grid-template-columns: minmax\(0,1fr\)/, "the world map becomes one column on narrow screens");
+assert.match(css, /target-row \{[^}]*flex-wrap: wrap/, "target sequences wrap instead of being hidden on narrow screens");
+assert.doesNotMatch(css, /(?:html|body)\s*\{[^}]*overflow-x:\s*hidden/, "horizontal overflow is not masked at the page level");
 
 console.log("OK: 4 worlds and 20 exact checkpoint sequences");
 console.log("OK: ABNT2 case, Ç, space, wrong key, synthetic events, and ordered progression");
 console.log("OK: main completion is independent of the optional bonus");
-console.log("OK: routes, resources, unique IDs, JavaScript syntax, paste blocking, and audio fallback");
+console.log("OK: session-storage fallback, reload continuity, and explicit memory-only behavior");
+console.log("OK: live target, typed text, checkpoint header, Kamek audio order, and restart behavior");
+console.log("OK: routes, resources, unique IDs, JavaScript syntax, responsive layout rules, paste blocking, and audio fallback");

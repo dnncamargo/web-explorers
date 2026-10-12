@@ -4,29 +4,32 @@
   const STORAGE_KEY = "exploradores.yoshi-typing.progress.v1";
   const worldFiles = Object.fromEntries(Object.values(DATA.worlds).map((world) => [world.id, world.file]));
   const pageKind = document.body.dataset.page;
-  let storageAvailable = true;
+  let storageMode = "memory";
   let progress = loadProgress();
 
   function loadProgress() {
-    try {
-      const saved = global.localStorage.getItem(STORAGE_KEY);
-      return saved ? CORE.normalizeProgress(JSON.parse(saved)) : CORE.createProgress();
-    } catch {
-      storageAvailable = false;
-      return CORE.createProgress();
-    }
+    const loaded = CORE.readStoredProgress((name) => global[name], STORAGE_KEY);
+    storageMode = loaded.mode;
+    return loaded.progress;
   }
 
   function saveProgress() {
-    try {
-      global.localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
-      storageAvailable = true;
-      return true;
-    } catch {
-      storageAvailable = false;
-      setAudioStatus("Este navegador não salvou o progresso; a atividade continua disponível nesta página.");
-      return false;
-    }
+    const saved = CORE.writeStoredProgress((name) => global[name], STORAGE_KEY, progress, storageMode);
+    storageMode = saved.mode;
+    updatePersistenceStatus();
+    return saved.persisted;
+  }
+
+  function persistenceMessage() {
+    if (storageMode === "memory") return "Sem armazenamento: trocar de mundo ou recarregar reinicia o progresso desta página.";
+    if (storageMode === "sessionStorage") return "Progresso disponível durante esta sessão do navegador; ao fechá-la, será apagado.";
+    return "Progresso salvo neste navegador. Em dispositivo compartilhado, escolha Nova partida antes de começar.";
+  }
+
+  function updatePersistenceStatus() {
+    const message = persistenceMessage();
+    const status = document.getElementById("persistence-status");
+    if (status) status.textContent = message;
   }
 
   function setAudioStatus(message) {
@@ -66,11 +69,11 @@
         enterWorld(world);
       });
       document.getElementById("new-game").addEventListener("click", requestNewGame);
-      summary.textContent = `Mundos principais: ${progress.completedWorlds.length}/3 · Bônus: ${progress.completedBonus ? "concluído" : "opcional"}`;
+      summary.textContent = `Mundos principais: ${progress.completedWorlds.length}/3 · Bônus: ${progress.completedBonus ? "concluído" : "opcional"}. ${persistenceMessage()}`;
     } else {
       actions.innerHTML = `<button class="button" id="begin-adventure" type="button">Começar aventura</button>`;
       document.getElementById("begin-adventure").addEventListener("click", () => enterWorld(1));
-      summary.textContent = storageAvailable ? "Seu progresso será guardado neste navegador." : "O armazenamento está indisponível; você ainda pode jogar.";
+      summary.textContent = `${persistenceMessage()} Você ainda pode jogar.`;
     }
 
     map.innerHTML = Object.values(DATA.worlds).map((world) => {
@@ -93,6 +96,7 @@
     }
 
     setupResetDialog();
+    updatePersistenceStatus();
   }
 
   function requestNewGame() {
@@ -106,7 +110,8 @@
   }
 
   function resetAndStart() {
-    try { global.localStorage.removeItem(STORAGE_KEY); } catch { storageAvailable = false; }
+    CORE.clearStoredProgress((name) => global[name], STORAGE_KEY);
+    storageMode = "memory";
     progress = CORE.createProgress();
     enterWorld(1);
   }
@@ -160,9 +165,14 @@
   }
 
   function renderStory(world, host) {
-    host.innerHTML = `<article class="story-card"><div class="kamek-art" aria-hidden="true">🧙</div><div><p class="eyebrow pixel">UMA CENA CURTA · FORA DOS CHECKPOINTS</p><h2>Kamek e os cristais</h2><p>“As luzes mostram novas fileiras. Seus dedos podem sair da base e voltar para casa. Sem pressa!”</p><p class="story-note">A fala musical é opcional. O botão continua mesmo se o áudio estiver bloqueado.</p><button class="button" id="story-continue" type="button">Ver o mapa do teclado</button></div></article>`;
+    host.innerHTML = `<article class="story-card"><div class="kamek-art" aria-hidden="true">🧙</div><div><p class="eyebrow pixel">UMA CENA CURTA · FORA DOS CHECKPOINTS</p><h2>Kamek e os cristais</h2><p>“As luzes mostram novas fileiras. Seus dedos podem sair da base e voltar para casa. Sem pressa!”</p><p class="story-note">A fala musical é opcional. O botão continua mesmo se o áudio estiver bloqueado.</p><div class="story-actions"><button class="button button-quiet" id="story-audio" type="button">Ouvir mensagem musical</button><button class="button" id="story-continue" type="button">Continuar sem áudio</button></div></div></article>`;
+    host.querySelector("#story-audio").addEventListener("click", () => {
+      global.YoshiAudio?.play(world.storyTrack);
+    });
     host.querySelector("#story-continue").addEventListener("click", () => {
-      global.YoshiAudio?.changeTrack(world.storyTrack, true);
+      global.YoshiAudio?.pause();
+      global.YoshiAudio?.changeTrack(world.track, false);
+      document.getElementById("audio-toggle").disabled = false;
       renderGuide(world, host);
     });
   }
@@ -183,7 +193,7 @@
       const done = index < typed;
       const current = index === typed;
       const label = char === " " ? "ESPAÇO" : char;
-      return `<span class="target-char ${type} ${done ? "is-done" : ""} ${current ? "is-current" : ""}" aria-label="${label}">${done ? (char === " " ? "·" : char) : current ? label : (char === " " ? "□" : "○")}</span>`;
+      return `<span class="target-char ${type} ${done ? "is-done" : ""} ${current ? "is-current" : ""}" aria-label="${label}">${char === " " ? "␣" : char}</span>`;
     }).join("");
   }
 
@@ -195,12 +205,15 @@
     const completedCount = progress.checkpoints[world.id] || 0;
     if (completedCount >= 5) return renderWorldFinish(world, host);
     const number = completedCount + 1;
+    document.getElementById("checkpoint-progress").textContent = `CHECKPOINT ${number}/5`;
     const checkpoint = world.checkpoints[completedCount];
     let typed = 0;
-    host.innerHTML = `<section class="exercise-card"><div class="checkpoint-strip"><span class="checkpoint-name pixel">CHECKPOINT ${number}/5</span><span class="checkpoint-dots" aria-label="${completedCount} de 5 checkpoints concluídos">${renderDots(completedCount)}</span></div><h2>Digite a sequência</h2><p class="typing-instruction">${checkpoint.instruction}</p><div id="target-row" class="target-row" role="img" aria-label="Sequência-alvo: ${checkpoint.target.replaceAll(" ", ", espaço, ")}"></div><p class="current-finger" id="current-finger" aria-live="polite"></p>${renderKeyboard(world)}<label class="visually-hidden" for="typing-box">Área para digitar usando o teclado físico</label><textarea id="typing-box" class="typing-box" rows="2" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="Clique aqui e digite com o teclado físico"></textarea><p id="typing-feedback" class="feedback" role="status" aria-live="polite">Clique na área e digite sem pressa. Maiúsculas e minúsculas são aceitas.</p><div class="exercise-actions"><button id="show-hint" class="button button-quiet" type="button" aria-expanded="false" aria-controls="help-panel">Mostrar dica</button><button id="restart-exercise" class="button button-quiet" type="button">Reiniciar este exercício</button><button id="next-checkpoint" class="button" type="button" disabled>Concluir checkpoint ${number}/5</button></div><p id="help-panel" class="help-panel" hidden>${checkpoint.hint} Use os dedos como orientação e volte à posição-base quando possível.</p><p class="exercise-note">O progresso vem das teclas pressionadas. Colar texto não conclui o exercício. Não contamos tentativas nem velocidade.</p></section>`;
+    let typedText = "";
+    host.innerHTML = `<section class="exercise-card"><div class="checkpoint-strip"><span class="checkpoint-name pixel">CHECKPOINT ${number}/5</span><span class="checkpoint-dots" aria-label="${completedCount} de 5 checkpoints concluídos">${renderDots(completedCount)}</span></div><h2>Digite a sequência</h2><p class="typing-instruction">${checkpoint.instruction}</p><div id="target-row" class="target-row" role="img" aria-label="Sequência-alvo: ${checkpoint.target.replaceAll(" ", ", espaço, ")}"></div><div class="typed-row"><strong>Você digitou</strong><output id="typed-display" class="typed-display" aria-live="polite" aria-label="Você ainda não digitou nenhuma tecla">—</output><small>␣ indica um espaço.</small></div><p class="current-finger" id="current-finger" aria-live="polite"></p>${renderKeyboard(world)}<label class="visually-hidden" for="typing-box">Área para digitar usando o teclado físico</label><textarea id="typing-box" class="typing-box" rows="2" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="Clique aqui e digite com o teclado físico"></textarea><p id="typing-feedback" class="feedback" role="status" aria-live="polite">Clique na área e digite sem pressa. Maiúsculas e minúsculas são aceitas.</p><div class="exercise-actions"><button id="show-hint" class="button button-quiet" type="button" aria-expanded="false" aria-controls="help-panel">Mostrar dica</button><button id="restart-exercise" class="button button-quiet" type="button">Reiniciar este exercício</button><button id="next-checkpoint" class="button" type="button" disabled>Concluir checkpoint ${number}/5</button></div><p id="help-panel" class="help-panel" hidden>${checkpoint.hint} Use os dedos como orientação e volte à posição-base quando possível.</p><p class="exercise-note">O progresso vem das teclas pressionadas. Colar texto não conclui o exercício. Não contamos tentativas nem velocidade.</p></section>`;
 
     const input = host.querySelector("#typing-box");
     const targetRow = host.querySelector("#target-row");
+    const typedDisplay = host.querySelector("#typed-display");
     const fingerLabel = host.querySelector("#current-finger");
     const feedback = host.querySelector("#typing-feedback");
     const continueButton = host.querySelector("#next-checkpoint");
@@ -208,8 +221,11 @@
 
     function updateDisplay() {
       targetRow.innerHTML = targetMarkup(checkpoint.target, typed);
+      const visibleTyped = [...typedText].map((char) => char === " " ? "␣" : char).join("");
+      typedDisplay.textContent = visibleTyped || "—";
+      typedDisplay.setAttribute("aria-label", visibleTyped ? `Você digitou: ${[...typedText].map((char) => char === " " ? "espaço" : char).join(" ")}` : "Você ainda não digitou nenhuma tecla");
       const expected = checkpoint.target[typed];
-      const finger = expected === " " ? "polegares" : fingerName(DATA.fingers[expected.toLocaleLowerCase("pt-BR")]);
+      const finger = !expected ? "" : expected === " " ? "polegares" : fingerName(DATA.fingers[expected.toLocaleLowerCase("pt-BR")]);
       fingerLabel.innerHTML = expected
         ? `Próxima tecla: <kbd>${expected === " " ? "ESPAÇO" : expected.toLocaleUpperCase("pt-BR")}</kbd> · orientação: <strong>${finger}</strong>`
         : "Sequência completa!";
@@ -236,7 +252,8 @@
         return;
       }
 
-      typed = result.index;
+      typedText += event.key;
+      typed = [...typedText].length;
       feedback.className = "feedback good";
       feedback.textContent = "Boa! Continue olhando para a próxima tecla.";
       updateDisplay();
@@ -288,6 +305,7 @@
     host.querySelector("#restart-exercise").addEventListener("click", () => {
       if (finished) return;
       typed = 0;
+      typedText = "";
       feedback.className = "feedback";
       feedback.textContent = "Exercício reiniciado. Tente de novo, sem pressa.";
       updateDisplay();
@@ -344,10 +362,15 @@
     }
     CORE.enterWorld(progress, world.id);
     saveProgress();
+    updatePersistenceStatus();
     const count = progress.checkpoints[world.id] || 0;
     document.getElementById("checkpoint-progress").textContent = `CHECKPOINT ${Math.min(count + 1, 5)}/5`;
     if (count === 5) return renderWorldFinish(world, host);
-    if (world.id === 3 && count === 0) return renderStory(world, host);
+    if (world.id === 3 && count === 0) {
+      document.getElementById("audio-toggle").disabled = true;
+      return renderStory(world, host);
+    }
+    document.getElementById("audio-toggle").disabled = false;
     renderGuide(world, host);
   }
 
