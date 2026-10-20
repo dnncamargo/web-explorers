@@ -97,10 +97,10 @@ body[data-theme="crystal"] h1 { color: #fff4a4; }
 .lead { max-width: 680px; margin: 15px 0 0; font-size: clamp(17px, 2vw, 21px); line-height: 1.55; }
 .journey-note { max-width: 620px; margin: 12px 0 0; color: #365a4d; font-size: 15px; line-height: 1.5; }
 .hero-art { position: relative; display: grid; min-height: 190px; place-items: center; }
-.hero-characters { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: clamp(4px, 1vw, 12px); width: 100%; }
+.hero-characters { position: relative; z-index: 1; display: flex; flex-wrap: nowrap; align-items: center; justify-content: center; gap: clamp(4px, 1vw, 12px); width: 100%; min-width: 0; }
 .yoshi-art { position: relative; z-index: 1; width: min(170px, 45vw); height: auto; image-rendering: auto; filter: drop-shadow(0 8px 0 rgba(36,91,49,.19)); animation: yoshi-bob 3.2s ease-in-out infinite; }
-.hero-characters .yoshi-art { width: min(170px, 38vw); }
-.flower-art { display: block; flex: 0 1 auto; width: clamp(82px, 10vw, 120px); max-width: 42%; height: auto; object-fit: contain; filter: drop-shadow(0 5px 0 rgba(36,91,49,.14)); }
+.hero-characters .yoshi-art { width: min(170px, 38vw); min-width: 0; }
+.flower-art { display: block; flex: 0 0 84px; width: 84px; height: 84px; min-width: 0; max-width: 84px; max-height: 84px; object-fit: contain; filter: drop-shadow(0 5px 0 rgba(36,91,49,.14)); }
 .world-yoshi { display: block; width: clamp(95px, 14vw, 165px); max-width: 100%; height: auto; justify-self: end; object-fit: contain; image-rendering: auto; }
 .pixel-cloud { position: absolute; width: 74px; height: 24px; border-radius: 14px; background: rgba(255,255,255,.76); box-shadow: 16px -12px 0 -2px rgba(255,255,255,.76), 36px -5px 0 -4px rgba(255,255,255,.76); }
 .cloud-one { top: 18px; left: 5%; transform: scale(.72); }
@@ -237,7 +237,7 @@ body[data-theme="forest"] { background: linear-gradient(180deg,#d7f3e9,#eef2d4);
   .home-hero { grid-template-columns: minmax(0,1fr) 220px; }
   .hero-characters { gap: 4px; }
   .hero-characters .yoshi-art { width: clamp(112px, 16vw, 136px); }
-  .hero-characters .flower-art { width: clamp(68px, 9vw, 82px); max-width: 38%; }
+  .hero-characters .flower-art { flex-basis: 72px; width: 72px; height: 72px; max-width: 72px; max-height: 72px; }
   .route-note { display: none; }
 }
 @media (max-width: 620px) {
@@ -254,7 +254,7 @@ body[data-theme="forest"] { background: linear-gradient(180deg,#d7f3e9,#eef2d4);
   .hero-art { min-height: 120px; }
   .hero-characters { gap: 4px; }
   .hero-characters .yoshi-art { width: 115px; }
-  .hero-characters .flower-art { width: clamp(68px, 20vw, 100px); max-width: 40%; }
+  .hero-characters .flower-art { flex-basis: 80px; width: 80px; height: 80px; max-width: 80px; max-height: 80px; }
   .world-yoshi { width: 86px !important; grid-column: 2; grid-row: 1; justify-self: end; align-self: center; }
   .world-hero .scene-decorations { right: 65px; bottom: 0; font-size: 19px; }
   .world-heading { grid-column: 1; grid-row: 1; }
