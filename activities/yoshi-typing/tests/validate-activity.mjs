@@ -121,9 +121,10 @@ for (const file of ["assets/js/world-data.js", "assets/js/typing-core.js", "asse
   assert.doesNotThrow(() => new vm.Script(read(file), { filename: file }), `${file} parses`);
 }
 const yoshiPngUrl = "https://art.ngfiles.com/images/291000/291714_jamalmason_yoshi.png?f1393937531";
-const flowerPngUrl = "https://e1.pngegg.com/pngimages/474/981/png-clipart-super-mario-icons-white-and-yellow-flower-emoji.png";
+const flowerPngPath = "assets/images/flower.png";
 const homeHtml = read("index.html");
-assert.ok(homeHtml.includes(flowerPngUrl), "the home page displays the requested flower PNG");
+assert.ok(homeHtml.includes(`src="${flowerPngPath}"`), "the home page uses the bundled flower PNG");
+assert.equal(fs.existsSync(path.join(appRoot, flowerPngPath)), true, "the flower PNG is bundled locally, without an external image dependency");
 assert.match(homeHtml, /class="hero-characters"[\s\S]*?class="yoshi-art"[\s\S]*?class="flower-art"/, "Yoshi and the flower PNG are placed together in the home hero");
 assert.doesNotMatch(homeHtml, /bonus-egg\.svg/, "the home page no longer uses the egg SVG");
 assert.equal(fs.existsSync(path.join(appRoot, "assets/images/bonus-egg.svg")), false, "the unwanted egg SVG asset is removed");
