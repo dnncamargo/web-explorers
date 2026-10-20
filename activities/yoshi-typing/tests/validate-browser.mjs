@@ -133,6 +133,16 @@ if (!browserPath) {
     assert.deepEqual(result.offenders, [], `${label}: no visible interface element crosses the content width`);
     return result;
   }
+  async function assertHomeFlowerLayout(label, viewportWidth) {
+    const result = await evaluate(`(()=>{const yoshi=document.querySelector(".hero-characters > .yoshi-art");const flower=document.querySelector(".hero-characters > .flower-art");const hero=document.querySelector(".hero-art");if(!yoshi||!flower||!hero)return null;const y=yoshi.getBoundingClientRect(),f=flower.getBoundingClientRect(),h=hero.getBoundingClientRect();return{flower:{width:f.width,height:f.height,left:f.left,right:f.right,top:f.top,centerX:f.left+f.width/2},yoshi:{left:y.left,right:y.right,top:y.top,height:y.height,centerX:y.left+y.width/2},hero:{left:h.left,right:h.right,top:h.top,bottom:h.bottom}}})()`);
+    assert.ok(result, `${label}: Yoshi and flower exist in the hero`);
+    const expectedMax = viewportWidth <= 620 ? 30 : viewportWidth <= 850 ? 36 : 40;
+    assert.ok(result.flower.width <= expectedMax + 1 && result.flower.height <= expectedMax + 1, `${label}: flower is capped at ${expectedMax}px (${JSON.stringify(result.flower)})`);
+    assert.ok(result.flower.centerX > result.yoshi.centerX, `${label}: flower is to the right of Yoshi (${JSON.stringify(result)})`);
+    assert.ok(result.flower.top < result.yoshi.top + result.yoshi.height * 0.35, `${label}: flower is above the upper portion of Yoshi (${JSON.stringify(result)})`);
+    assert.ok(result.flower.right <= result.hero.right + 1, `${label}: flower stays inside the hero artwork area (${JSON.stringify(result)})`);
+    return result;
+  }
   async function assertFingerColors(label) {
     const info = await evaluate(`(()=>[...document.querySelectorAll(".keycap[data-key]")].map(key=>{const finger=window.YoshiWorldData.fingers[key.dataset.key];const swatch=document.querySelector(".legend-swatch."+finger);return{key:key.dataset.key,finger,background:getComputedStyle(key).backgroundColor,legend:swatch?getComputedStyle(swatch).backgroundColor:null,next:key.classList.contains("is-next"),used:key.classList.contains("is-used")}}))()`);
     assert.ok(info.length > 0, `${label}: the keyboard has mapped keys`);
@@ -232,6 +242,7 @@ if (!browserPath) {
           await click(state.action);
         }
         const metrics = await measure(`${width}px ${state.name}`);
+        if (state.name === "home") await assertHomeFlowerLayout(`${width}px home`, width);
         responsiveResults.push({ width, state: state.name, ...metrics });
         if (state.screenshot) {
           await fs.mkdir(screenshotDir, { recursive: true });
