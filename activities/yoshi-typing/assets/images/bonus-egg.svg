@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" shape-rendering="crispEdges" role="img" aria-labelledby="title">
-  <title id="title">Ovo colorido de bônus</title>
-  <ellipse cx="32" cy="34" rx="18" ry="24" fill="#fff8e7" stroke="#634e75" stroke-width="3"/>
-  <path d="M19 24h9v6h8v-6h9v8h-8v6h-9v-6h-9z" fill="#63c984"/>
-  <rect x="23" y="43" width="7" height="5" fill="#85cfff"/>
-  <rect x="34" y="43" width="7" height="5" fill="#ffcf4a"/>
-</svg>

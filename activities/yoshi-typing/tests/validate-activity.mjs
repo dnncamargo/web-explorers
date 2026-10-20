@@ -121,6 +121,12 @@ for (const file of ["assets/js/world-data.js", "assets/js/typing-core.js", "asse
   assert.doesNotThrow(() => new vm.Script(read(file), { filename: file }), `${file} parses`);
 }
 const yoshiPngUrl = "https://art.ngfiles.com/images/291000/291714_jamalmason_yoshi.png?f1393937531";
+const flowerPngUrl = "https://e1.pngegg.com/pngimages/474/981/png-clipart-super-mario-icons-white-and-yellow-flower-emoji.png";
+const homeHtml = read("index.html");
+assert.ok(homeHtml.includes(flowerPngUrl), "the home page displays the requested flower PNG");
+assert.match(homeHtml, /class="hero-characters"[\s\S]*?class="yoshi-art"[\s\S]*?class="flower-art"/, "Yoshi and the flower PNG are placed together in the home hero");
+assert.doesNotMatch(homeHtml, /bonus-egg\.svg/, "the home page no longer uses the egg SVG");
+assert.equal(fs.existsSync(path.join(appRoot, "assets/images/bonus-egg.svg")), false, "the unwanted egg SVG asset is removed");
 for (const page of pages) {
   assert.ok(read(page).includes(yoshiPngUrl), `${page} uses the selected PNG artwork`);
   assert.ok(!read(page).includes("yoshi-companion.svg"), `${page} no longer uses the old SVG`);
@@ -156,6 +162,7 @@ assert.match(audio, /playerReadyPromise/, "concurrent requests share the player 
 const css = read("assets/css/yoshi.css");
 assert.match(css, /@media \(max-width: 620px\)[\s\S]*?world-grid \{ grid-template-columns: minmax\(0,1fr\)/, "the world map becomes one column on narrow screens");
 assert.match(css, /target-row \{[^}]*flex-wrap: wrap/, "target sequences wrap instead of being hidden on narrow screens");
+assert.doesNotMatch(css, /\.egg-art\b/, "the unwanted SVG egg styling is removed");
 assert.match(css, /\.keycap\[data-key\] \{[^}]*background: var\(--finger-color\)/, "each taught key receives its finger background");
 assert.match(css, /\.keycap\.is-next \{[^}]*background: var\(--finger-color\)/, "the active key keeps the finger background");
 assert.match(css, /\.keycap\.is-used \{[^}]*border-bottom-color:/, "the used-key state preserves the background");

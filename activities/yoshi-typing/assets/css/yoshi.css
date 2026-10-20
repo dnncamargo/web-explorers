@@ -97,9 +97,11 @@ body[data-theme="crystal"] h1 { color: #fff4a4; }
 .lead { max-width: 680px; margin: 15px 0 0; font-size: clamp(17px, 2vw, 21px); line-height: 1.55; }
 .journey-note { max-width: 620px; margin: 12px 0 0; color: #365a4d; font-size: 15px; line-height: 1.5; }
 .hero-art { position: relative; display: grid; min-height: 190px; place-items: center; }
+.hero-characters { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: clamp(4px, 1vw, 12px); width: 100%; }
 .yoshi-art { position: relative; z-index: 1; width: min(170px, 45vw); height: auto; image-rendering: auto; filter: drop-shadow(0 8px 0 rgba(36,91,49,.19)); animation: yoshi-bob 3.2s ease-in-out infinite; }
+.hero-characters .yoshi-art { width: min(170px, 38vw); }
+.flower-art { display: block; flex: 0 1 auto; width: clamp(82px, 10vw, 120px); max-width: 42%; height: auto; object-fit: contain; filter: drop-shadow(0 5px 0 rgba(36,91,49,.14)); }
 .world-yoshi { display: block; width: clamp(95px, 14vw, 165px); max-width: 100%; height: auto; justify-self: end; object-fit: contain; image-rendering: auto; }
-.egg-art { position: absolute; z-index: 2; right: 8%; bottom: 4%; width: 57px; height: 57px; transform: rotate(12deg); image-rendering: pixelated; }
 .pixel-cloud { position: absolute; width: 74px; height: 24px; border-radius: 14px; background: rgba(255,255,255,.76); box-shadow: 16px -12px 0 -2px rgba(255,255,255,.76), 36px -5px 0 -4px rgba(255,255,255,.76); }
 .cloud-one { top: 18px; left: 5%; transform: scale(.72); }
 .cloud-two { top: 60px; right: -1%; transform: scale(.55); }
@@ -233,6 +235,9 @@ body[data-theme="forest"] { background: linear-gradient(180deg,#d7f3e9,#eef2d4);
 @media (max-width: 850px) {
   .world-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .home-hero { grid-template-columns: minmax(0,1fr) 220px; }
+  .hero-characters { gap: 4px; }
+  .hero-characters .yoshi-art { width: clamp(112px, 16vw, 136px); }
+  .hero-characters .flower-art { width: clamp(68px, 9vw, 82px); max-width: 38%; }
   .route-note { display: none; }
 }
 @media (max-width: 620px) {
@@ -247,7 +252,9 @@ body[data-theme="forest"] { background: linear-gradient(180deg,#d7f3e9,#eef2d4);
   .home-hero { min-height: 0; }
   .world-hero { min-height: 0; grid-template-columns: minmax(0,1fr) 100px; }
   .hero-art { min-height: 120px; }
-  .hero-art .yoshi-art { width: 115px; }
+  .hero-characters { gap: 4px; }
+  .hero-characters .yoshi-art { width: 115px; }
+  .hero-characters .flower-art { width: clamp(68px, 20vw, 100px); max-width: 40%; }
   .world-yoshi { width: 86px !important; grid-column: 2; grid-row: 1; justify-self: end; align-self: center; }
   .world-hero .scene-decorations { right: 65px; bottom: 0; font-size: 19px; }
   .world-heading { grid-column: 1; grid-row: 1; }
