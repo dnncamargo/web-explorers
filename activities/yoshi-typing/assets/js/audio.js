@@ -128,6 +128,7 @@
     currentTrack = track || initialTrack;
     const requestedTrack = currentTrack;
     setStatus("Conectando à trilha… se o serviço não responder, você pode seguir sem música.");
+    setPlaying(true);
     try {
       const readyPlayer = await ensurePlayer(requestedTrack);
       if (version !== requestVersion || currentTrack !== requestedTrack) return;

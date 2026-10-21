@@ -9,7 +9,7 @@
 
   function createProgress() {
     return {
-      version: 2,
+      version: 3,
       currentWorld: 1,
       completedWorlds: [],
       completedBonus: false,
@@ -19,14 +19,25 @@
 
   function normalizeProgress(value) {
     const fresh = createProgress();
-    if (!value || value.version !== 2) return fresh;
+    if (!value || ![2, 3].includes(value.version)) return fresh;
+    const migratingPreviousCurriculum = value.version === 2;
     for (const id of [1, 2, 3, 4]) {
+      if (migratingPreviousCurriculum && id === 3) continue;
       const count = Number(value.checkpoints?.[id]);
       fresh.checkpoints[id] = Number.isInteger(count) ? Math.max(0, Math.min(checkpointCountForWorld(id), count)) : 0;
     }
     fresh.completedWorlds = MAIN_WORLDS.filter((id) => fresh.checkpoints[id] === checkpointCountForWorld(id));
     fresh.completedBonus = fresh.checkpoints[4] === checkpointCountForWorld(4);
-    fresh.currentWorld = [1, 2, 3, 4].includes(Number(value.currentWorld)) ? Number(value.currentWorld) : 1;
+    const requestedWorld = [1, 2, 3, 4].includes(Number(value.currentWorld)) ? Number(value.currentWorld) : 1;
+    if (migratingPreviousCurriculum) {
+      if (requestedWorld === 1) fresh.currentWorld = 1;
+      else if (requestedWorld === 2 && fresh.completedWorlds.includes(1)) fresh.currentWorld = 2;
+      else if (requestedWorld >= 3 && fresh.completedWorlds.includes(2)) fresh.currentWorld = 3;
+      else if (fresh.completedWorlds.includes(1)) fresh.currentWorld = 2;
+      else fresh.currentWorld = 1;
+    } else {
+      fresh.currentWorld = requestedWorld;
+    }
     return fresh;
   }
 

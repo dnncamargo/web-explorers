@@ -1,15 +1,41 @@
 (function (global) {
   const CORE = global.YoshiTypingCore;
   const DATA = global.YoshiWorldData;
-  const STORAGE_KEY = "exploradores.yoshi-typing.progress.v2";
+  const STORAGE_KEY = "exploradores.yoshi-typing.progress.v3";
+  const LEGACY_STORAGE_KEY = "exploradores.yoshi-typing.progress.v2";
   const worldFiles = Object.fromEntries(Object.values(DATA.worlds).map((world) => [world.id, world.file]));
   const pageKind = document.body.dataset.page;
   let storageMode = "memory";
   let progress = loadProgress();
 
   function loadProgress() {
-    const loaded = CORE.readStoredProgress((name) => global[name], STORAGE_KEY);
+    const getStorage = (name) => global[name];
+    const loaded = CORE.readStoredProgress(getStorage, STORAGE_KEY);
     storageMode = loaded.mode;
+
+    let currentProgressExists = false;
+    for (const name of ["localStorage", "sessionStorage"]) {
+      try {
+        if (getStorage(name).getItem(STORAGE_KEY) !== null) {
+          currentProgressExists = true;
+          break;
+        }
+      } catch { /* storage may be disabled by browser policy */ }
+    }
+    if (currentProgressExists) return loaded.progress;
+
+    for (const name of ["localStorage", "sessionStorage"]) {
+      try {
+        const store = getStorage(name);
+        const saved = store.getItem(LEGACY_STORAGE_KEY);
+        if (!saved) continue;
+        const migrated = CORE.normalizeProgress(JSON.parse(saved));
+        const result = CORE.writeStoredProgress(getStorage, STORAGE_KEY, migrated, name);
+        storageMode = result.mode;
+        if (result.persisted) CORE.clearStoredProgress(getStorage, LEGACY_STORAGE_KEY);
+        return migrated;
+      } catch { /* invalid or unavailable legacy data is ignored */ }
+    }
     return loaded.progress;
   }
 
@@ -112,6 +138,7 @@
 
   function resetAndStart() {
     CORE.clearStoredProgress((name) => global[name], STORAGE_KEY);
+    CORE.clearStoredProgress((name) => global[name], LEGACY_STORAGE_KEY);
     storageMode = "memory";
     progress = CORE.createProgress();
     enterWorld(1);
@@ -143,10 +170,10 @@
   ];
 
   function renderKeyboard(world, activeKey = "", completedText = "") {
-    const allRows = world.id === 4;
+    const allRows = world.id >= 3;
     const upperAndHome = world.id >= 2;
     const rows = allRows ? ["qwertyuiop", "asdfghjklç", "zxcvbnm"] : upperAndHome ? ["qwertyuiop", "asdfghjklç"] : ["asdfghjklç"];
-    const keyboardCaption = world.id === 1 ? "posição-base das duas mãos" : allRows ? "todas as letras exploradas" : "fileira superior e posição-base";
+    const keyboardCaption = world.id === 1 ? "posição-base das duas mãos" : world.id === 3 ? "três fileiras em prática" : allRows ? "todas as letras exploradas" : "fileira superior e posição-base";
     const normalize = (value) => value === " " ? " " : value.toLocaleLowerCase("pt-BR");
     const rowHtml = rows.map((row) => `<div class="keyboard-row" aria-label="Fileira do teclado">${[...row].map((key) => {
       if (!world.taughtKeys.includes(normalize(key))) return `<span class="keycap key-blank" aria-hidden="true"></span>`;
@@ -162,20 +189,23 @@
   function renderFingerGuide(world) {
     let entries;
     if (world.id === 1) entries = [["A", "left-pinky"], ["S", "left-ring"], ["D", "left-middle"], ["F", "left-index"], ["J", "right-index"], ["K", "right-middle"], ["L", "right-ring"], ["Ç", "right-pinky"], ["ESPAÇO", "thumb"]];
-    else if (world.id === 2 || world.id === 3) entries = [["G", "left-index"], ["H", "right-index"], ["Q", "left-pinky"], ["W", "left-ring"], ["E", "left-middle"], ["R", "left-index"], ["T", "left-index"], ["Y", "right-index"], ["U", "right-index"], ["I", "right-middle"], ["O", "right-ring"], ["P", "right-pinky"], ["ESPAÇO", "thumb"]];
+    else if (world.id === 2) entries = [["G", "left-index"], ["H", "right-index"], ["Q", "left-pinky"], ["W", "left-ring"], ["E", "left-middle"], ["R", "left-index"], ["T", "left-index"], ["Y", "right-index"], ["U", "right-index"], ["I", "right-middle"], ["O", "right-ring"], ["P", "right-pinky"], ["ESPAÇO", "thumb"]];
+    else if (world.id === 3) entries = [["G", "left-index"], ["H", "right-index"], ["Q", "left-pinky"], ["W", "left-ring"], ["E", "left-middle"], ["R", "left-index"], ["T", "left-index"], ["Y", "right-index"], ["U", "right-index"], ["I", "right-middle"], ["O", "right-ring"], ["P", "right-pinky"], ["Z", "left-pinky"], ["X", "left-ring"], ["C", "left-middle"], ["V", "left-index"], ["B", "left-index"], ["N", "right-index"], ["M", "right-index"], ["ESPAÇO", "thumb"]];
     else entries = [["A", "left-pinky"], ["S", "left-ring"], ["D", "left-middle"], ["F", "left-index"], ["J", "right-index"], ["K", "right-middle"], ["L", "right-ring"], ["Ç", "right-pinky"], ["ESPAÇO", "thumb"]];
     return entries.map(([key,finger]) => `<div class="finger-card"><span class="finger-dot ${finger}" aria-hidden="true"></span><span><strong>${key}</strong><small>${fingerName(finger)}</small></span></div>`).join("");
   }
 
   function renderStory(world, host) {
-    host.innerHTML = `<article class="story-card"><div class="kamek-art" aria-hidden="true">🧙</div><div><p class="eyebrow pixel">UMA CENA CURTA · FORA DOS CHECKPOINTS</p><h2>Kamek e os cristais</h2><p>“A fileira-base e a superior já estão no seu mapa. Agora vamos combinar movimentos e frases mais longas. Sem pressa!”</p><p class="story-note">A fala musical é opcional. O botão continua mesmo se o áudio estiver bloqueado.</p><div class="story-actions"><button class="button button-quiet" id="story-audio" type="button">Ouvir mensagem musical</button><button class="button" id="story-continue" type="button">Continuar sem áudio</button></div></div></article>`;
-    host.querySelector("#story-audio").addEventListener("click", () => {
-      global.YoshiAudio?.play(world.storyTrack);
-    });
+    global.YoshiAudio?.changeTrack(world.storyTrack, false);
+    const audioToggle = document.getElementById("audio-toggle");
+    if (audioToggle) audioToggle.disabled = false;
+    const audioStatus = document.getElementById("audio-status");
+    if (audioStatus) audioStatus.textContent = "Use “Ouvir trilha” para ouvir ou pausar a mensagem musical de Kamek.";
+    host.innerHTML = `<article class="story-card"><div class="kamek-art" aria-hidden="true">🧙</div><div><p class="eyebrow pixel">UMA CENA CURTA · FORA DOS CHECKPOINTS</p><h2>Kamek e os cristais</h2><p>“A fileira-base e a superior já estão no seu mapa. Nas cavernas, a fileira inferior também entra no jogo. Vamos combinar as três com palavras e frases mais longas. Sem pressa!”</p><p class="story-note">A mensagem musical é opcional. Use o controle “Ouvir trilha” acima para ouvir ou pausar.</p><div class="story-actions"><button class="button" id="story-continue" type="button">Continuar</button></div></div></article>`;
     host.querySelector("#story-continue").addEventListener("click", () => {
       global.YoshiAudio?.pause();
       global.YoshiAudio?.changeTrack(world.track, false);
-      document.getElementById("audio-toggle").disabled = false;
+      setAudioStatus("Trilha das cavernas disponível; use “Ouvir trilha” quando quiser.");
       renderGuide(world, host);
     });
   }
@@ -184,9 +214,9 @@
     const count = progress.checkpoints[world.id] || 0;
     const totalCheckpoints = world.checkpoints.length;
     const rowIntro = world.id === 2
-      ? `<div class="row-teaching"><strong>Fileira-base:</strong> A S D F G H J K L Ç. <strong>Fileira superior:</strong> Q W E R T Y U I O P. Pratique as duas fileiras juntas; o espaço é pressionado com os polegares.</div>`
+      ? `<div class="row-teaching"><strong>Fileira-base:</strong> A S D F G H J K L Ç. <strong>Fileira superior:</strong> Q W E R T Y U I O P. <br><strong>Indicador esquerdo:</strong> F · G · R · T.<br><strong>Indicador direito:</strong> J · H · Y · U.<br>O mesmo indicador esquerdo que pressiona F também pressiona G; o direito que pressiona J também pressiona H. O espaço usa os polegares. A fileira inferior será apresentada nas Cavernas de Cristal; nela, o indicador esquerdo cobre V/B e o direito N/M. Volte à base em F/J depois de cada movimento.</div>`
       : world.id === 3
-        ? `<div class="row-teaching"><strong>Fileira-base:</strong> A S D F G H J K L Ç. <strong>Fileira superior:</strong> Q W E R T Y U I O P. Essas são as fileiras deste mundo; agora coordene movimentos, palavras e frases mais longas.</div>`
+        ? `<div class="row-teaching"><strong>Fileira-base:</strong> A S D F G H J K L Ç.<br><strong>Fileira superior:</strong> Q W E R T Y U I O P.<br><strong>Fileira inferior:</strong> Z X C V B N M.<br><strong>Indicador esquerdo:</strong> F/G na base, R/T na superior e V/B na inferior. O mínimo, anelar e médio esquerdos cobrem Z, X e C.<br><strong>Indicador direito:</strong> J/H na base, Y/U na superior e N/M na inferior. Use os polegares no espaço e retorne à base em F/J quando puder. Os desafios combinam as três fileiras.</div>`
         : world.id === 4
           ? `<div class="row-teaching"><strong>Fileira superior:</strong> Q W E R T Y U I O P. <strong>Fileira-base:</strong> A S D F G H J K L Ç. <strong>Fileira inferior:</strong> Z X C V B N M. Ao longo das frases, você vai praticar todas as letras e o espaço.</div>`
           : "";
@@ -289,9 +319,10 @@
         }
         saveProgress();
         document.getElementById("checkpoint-progress").textContent = `CHECKPOINT ${number}/${totalCheckpoints}`;
-        feedback.textContent = "Sequência completa! Você pode avançar quando quiser.";
         continueButton.disabled = false;
         continueButton.textContent = number < world.checkpoints.length ? `Continuar para checkpoint ${number + 1}` : "Concluir mundo";
+        feedback.textContent = "Sequência completa! Pressione Enter para continuar ou clique no botão.";
+        continueButton.focus({ preventScroll: true });
       }
     });
 
@@ -348,7 +379,7 @@
 
   function renderLocked(world, host) {
     const required = world.id === 4 ? "Conclua os três mundos principais" : `Conclua o Mundo ${world.id - 1}`;
-    host.innerHTML = `<section class="world-finish"><img class="yoshi-art" src="https://art.ngfiles.com/images/291000/291714_jamalmason_yoshi.png?f1393937531" alt=""><p class="eyebrow pixel">CAMINHO FECHADO POR ENQUANTO</p><h2>${world.title}</h2><p>${required} para abrir este caminho. Cada mundo tem sete checkpoints.</p><div class="finish-actions"><a class="button" href="index.html">Voltar ao mapa</a></div></section>`;
+    host.innerHTML = `<section class="world-finish"><img class="yoshi-art" src="https://art.ngfiles.com/images/291000/291714_jamalmason_yoshi.png?f1393937531" alt=""><p class="eyebrow pixel">CAMINHO FECHADO POR ENQUANTO</p><h2>${world.title}</h2><p>${required} para abrir este caminho. Este caminho tem ${world.checkpoints.length} checkpoints.</p><div class="finish-actions"><a class="button" href="index.html">Voltar ao mapa</a></div></section>`;
   }
 
   function renderWorldFinish(world, host) {
@@ -394,10 +425,7 @@
     const count = progress.checkpoints[world.id] || 0;
     document.getElementById("checkpoint-progress").textContent = `CHECKPOINT ${Math.min(count + 1, world.checkpoints.length)}/${world.checkpoints.length}`;
     if (count >= world.checkpoints.length) return renderWorldFinish(world, host);
-    if (world.id === 3 && count === 0) {
-      document.getElementById("audio-toggle").disabled = true;
-      return renderStory(world, host);
-    }
+    if (world.id === 3 && count === 0) return renderStory(world, host);
     document.getElementById("audio-toggle").disabled = false;
     renderGuide(world, host);
   }

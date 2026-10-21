@@ -7,11 +7,12 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const appRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const storageKey = "exploradores.yoshi-typing.progress.v2";
+const storageKey = "exploradores.yoshi-typing.progress.v3";
+const legacyStorageKey = "exploradores.yoshi-typing.progress.v2";
 const targets = {
   1: ["ASDF JKLÇ ASDF JKLÇ", "ASDF FDSA JKLÇ ÇLKJ ASDF", "FADA FALA DA SALA FADA FALA", "ASDF JKLÇ FDSA ÇLKJ ASDF JKLÇ", "A FADA FALA DA SALA FADA FALA", "ASDF FDSA JKLÇ ÇLKJ ASDF FDSA JKLÇ", "A FADA FALA DA SALA ASDF JKLÇ FADA ASDF", "ASDF JKLÇ FDSA ÇLKJ ASDF JKLÇ FDSA ÇLKJ ASDF", "A FADA FALA DA SALA ASDF JKLÇ FDSA ÇLKJ ASDF JKLÇ", "ASDF FDSA JKLÇ ÇLKJ ASDF JKLÇ A FADA FALA DA SALA ASDF"],
   2: ["ASDFGH JKLÇ ASDFGH", "QWERTY UIOP QWERTY", "ASDFGH JKLÇ QWERTY UIOP", "POIUYTREWQ ASDFGH JKLÇ", "O GATO PULA PARA O ALTO", "A TARTARUGA PULA PARA O LAGO", "O GATO QUER OLHAR PARA O PAPAGAIO", "A TARTARUGA QUER OLHAR PARA O GATO", "O PAPAGAIO OLHA A TARTARUGA E O GATO", "O GATO QUER OLHAR PARA O PAPAGAIO E A TARTARUGA"],
-  3: ["QWERTY UIOP ASDFGH JKLÇ", "O GATO PULA PARA O ALTO", "A TARTARUGA PULA PARA O LAGO", "O PAPAGAIO PULA PARA O TOPO", "O GATO OLHA O PAPAGAIO", "A TARTARUGA OLHA O PAPAGAIO", "O PAPAGAIO OLHA A TARTARUGA E O GATO", "A TARTARUGA QUER OLHAR PARA O PAPAGAIO", "O GATO QUER OLHAR PARA A TARTARUGA", "O PAPAGAIO QUER OLHAR PARA A TARTARUGA E O GATO"],
+  3: ["ZXCVBNM MNBVCXZ", "QWERTY UIOP ZXCVBNM MNBVCXZ", "ASDFGH JKLÇ QWERTY UIOP ZXCVBNM", "A ZEBRA VAI AO BOSQUE E O YOSHI", "O YOSHI VAI AO CAMPO E VOLTA COM A ZEBRA", "A ZEBRA E O YOSHI BRINCAM JUNTOS NO BOSQUE E NO CAMPO", "O YOSHI EXPLORA A CAVERNA AZUL E ENCONTRA UMA ZEBRA NO BOSQUE", "A ZEBRA VAI AO BOSQUE E O YOSHI BRINCA COM O CAVALO E VOLTA PARA A CAVERNA", "O YOSHI BRINCA COM A ZEBRA NO CAMPO E DEPOIS VOLTA AO BOSQUE PARA ENCONTRAR O CAVALO", "O YOSHI EXPLORA A CAVERNA E ENCONTRA ZEBRAS NO BOSQUE COM O CAVALO E VOLTA PARA O CAMPO"],
   4: ["O YOSHI QUER KIWI E XALE", "O JACARE VAI PARA A FLORESTA", "O CAÇADOR OBSERVA A ZEBRA NO BOSQUE", "A ZEBRA E O CAVALO BRINCAM NO BOSQUE", "A TARTARUGA E O GATO PULAM PARA O TOPO", "O PAPAGAIO ESCREVE NO QUADRO E OBSERVA A ZEBRA", "A ZEBRA E O YOSHI BRINCAM COM O CAVALO NO BOSQUE"],
 };
 
@@ -135,7 +136,7 @@ if (!browserPath) {
   }
   async function assertHomeFlowerLayout(label, viewportWidth) {
     const stylesheetUrl = await evaluate(`document.querySelector('link[rel="stylesheet"][href*="yoshi.css"]')?.getAttribute("href") || ""`);
-    assert.match(stylesheetUrl, /yoshi\.css\?v=hero-flower-2026-10-21-2/, `${label}: current flower CSS revision is loaded`);
+    assert.match(stylesheetUrl, /yoshi\.css\?v=yoshi-crystal-three-rows-2026-10-21-1/, `${label}: current flower CSS revision is loaded`);
     const result = await evaluate(`(async()=>{const flower=document.querySelector(".yoshi-with-flower > .flower-art");const yoshi=document.querySelector(".yoshi-with-flower > .yoshi-art");const container=document.querySelector(".yoshi-with-flower");const hero=document.querySelector(".hero-art");const scene=document.querySelector(".home-hero");if(!yoshi||!flower||!container||!hero||!scene)return null;if(!yoshi.complete)await Promise.race([new Promise(resolve=>yoshi.addEventListener("load",resolve,{once:true})),new Promise(resolve=>setTimeout(resolve,10000))]);const y=yoshi.getBoundingClientRect(),f=flower.getBoundingClientRect(),c=container.getBoundingClientRect(),h=hero.getBoundingClientRect(),g=scene.getBoundingClientRect(),s=getComputedStyle(flower);const canvas=document.createElement("canvas");canvas.width=flower.naturalWidth;canvas.height=flower.naturalHeight;const ctx=canvas.getContext("2d");ctx.drawImage(flower,0,0);const rgba=ctx.getImageData(0,0,canvas.width,canvas.height).data;let transparentPixels=0,opaquePixels=0;for(let i=3;i<rgba.length;i+=4){if(rgba[i]===0)transparentPixels++;if(rgba[i]===255)opaquePixels++}return{flower:{width:f.width,height:f.height,left:f.left,right:f.right,top:f.top,bottom:f.bottom,centerX:f.left+f.width/2,cssWidth:s.width,cssHeight:s.height,minWidth:s.minWidth,maxWidth:s.maxWidth,flex:s.flex,position:s.position,naturalWidth:flower.naturalWidth,naturalHeight:flower.naturalHeight,transparentPixels,opaquePixels,cornerAlpha:rgba[3]},yoshi:{left:y.left,right:y.right,top:y.top,height:y.height,centerX:y.left+y.width/2,naturalWidth:yoshi.naturalWidth,naturalHeight:yoshi.naturalHeight,complete:yoshi.complete},container:{left:c.left,right:c.right,top:c.top,bottom:c.bottom,width:c.width,height:c.height},hero:{left:h.left,right:h.right,top:h.top,bottom:h.bottom},scene:{left:g.left,right:g.right,top:g.top,bottom:g.bottom}}})()`);
     assert.ok(result, `${label}: Yoshi and flower exist in the hero`);
     const expectedSize = viewportWidth <= 620 ? 20 : viewportWidth <= 850 ? 22 : 24;
@@ -181,6 +182,11 @@ if (!browserPath) {
     await cdp.send("Input.dispatchKeyEvent", { type: "keyDown", key, code, text: char });
     await cdp.send("Input.dispatchKeyEvent", { type: "keyUp", key, code });
   }
+  async function pressEnter() {
+    await cdp.send("Input.dispatchKeyEvent", { type: "keyDown", key: "Enter", code: "Enter", windowsVirtualKeyCode: 13, nativeVirtualKeyCode: 13 });
+    await cdp.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Enter", code: "Enter", windowsVirtualKeyCode: 13, nativeVirtualKeyCode: 13 });
+    await new Promise((resolve) => setTimeout(resolve, 80));
+  }
   async function typeCurrentTarget(expected) {
     const actualTarget = await evaluate(`[...document.querySelectorAll('#target-row .target-char')].map(el=>el.textContent==='␣'?' ':el.textContent).join('')`);
     assert.equal(actualTarget, expected, `browser target is fully visible: ${expected}`);
@@ -194,13 +200,16 @@ if (!browserPath) {
     }
     const typed = await evaluate(`document.querySelector('#typed-display')?.textContent`);
     assert.equal(typed, [...expected].map((char) => char === " " ? "␣" : char).join(""), `browser accepted and displayed ${expected}`);
-    const advanceState = await evaluate(`({disabled:document.querySelector('#next-checkpoint').disabled,header:document.querySelector('#checkpoint-progress').textContent,typed:document.querySelector('#typed-display').textContent,feedback:document.querySelector('#typing-feedback').textContent,finger:document.querySelector('#current-finger').textContent,active:[...document.querySelectorAll('.target-char.is-current')].map(e=>e.textContent),target:document.querySelector('#target-row').innerText,saved:JSON.parse(localStorage.getItem(${JSON.stringify(storageKey)}))})`);
+    const advanceState = await evaluate(`({disabled:document.querySelector('#next-checkpoint').disabled,header:document.querySelector('#checkpoint-progress').textContent,typed:document.querySelector('#typed-display').textContent,feedback:document.querySelector('#typing-feedback').textContent,finger:document.querySelector('#current-finger').textContent,active:[...document.querySelectorAll('.target-char.is-current')].map(e=>e.textContent),target:document.querySelector('#target-row').innerText,saved:JSON.parse(localStorage.getItem("exploradores.yoshi-typing.progress.v2")),focusedId:document.activeElement?.id,buttonText:document.querySelector('#next-checkpoint').textContent})`);
     assert.equal(advanceState.disabled, false, `checkpoint advances only after every character is typed (${JSON.stringify(advanceState)})`);
+    assert.equal(advanceState.focusedId, "next-checkpoint", "the final character transfers focus to the continue button");
+    assert.match(advanceState.feedback, /Pressione Enter para continuar/i, "the completed exercise explains the Enter shortcut");
+    assert.match(advanceState.buttonText, /^Continuar para checkpoint \d+$|^Concluir mundo$/, "the focused button advertises the available action");
   }
   async function completeWorld(worldId) {
     for (const target of targets[worldId]) {
       await typeCurrentTarget(target);
-      await click("#next-checkpoint");
+      await pressEnter();
       if (target !== targets[worldId].at(-1)) {
         const next = await evaluate(`document.querySelector('#checkpoint-progress').textContent`);
         assert.match(next, new RegExp(`CHECKPOINT ${targets[worldId].indexOf(target) + 2}/${targets[worldId].length}`), "header updates immediately when the next checkpoint opens");
@@ -242,10 +251,10 @@ if (!browserPath) {
     const responsiveStates = [
       { name: "home", path: "index.html", state: null, action: null },
       { name: "exercise", path: "01-flower-garden.html", state: null, action: "#start-world" },
-      { name: "kamek", path: "03-crystal-caves.html", state: { version: 2, currentWorld: 3, completedWorlds: [1, 2], completedBonus: false, checkpoints: { 1: 10, 2: 10, 3: 0, 4: 0 } }, action: null },
-      { name: "bonus-long", path: "04-bonus-challenge.html", state: { version: 2, currentWorld: 4, completedWorlds: [1, 2, 3], completedBonus: false, checkpoints: { 1: 10, 2: 10, 3: 10, 4: 0 } }, action: "#start-world", screenshot: true },
-      { name: "main-finish", path: "03-crystal-caves.html", state: { version: 2, currentWorld: 3, completedWorlds: [1, 2, 3], completedBonus: false, checkpoints: { 1: 10, 2: 10, 3: 10, 4: 0 } }, action: null },
-      { name: "bonus-finish", path: "04-bonus-challenge.html", state: { version: 2, currentWorld: 4, completedWorlds: [1, 2, 3], completedBonus: true, checkpoints: { 1: 10, 2: 10, 3: 10, 4: 7 } }, action: null },
+      { name: "kamek", path: "03-crystal-caves.html", state: { version: 3, currentWorld: 3, completedWorlds: [1, 2], completedBonus: false, checkpoints: { 1: 10, 2: 10, 3: 0, 4: 0 } }, action: null },
+      { name: "bonus-long", path: "04-bonus-challenge.html", state: { version: 3, currentWorld: 4, completedWorlds: [1, 2, 3], completedBonus: false, checkpoints: { 1: 10, 2: 10, 3: 10, 4: 0 } }, action: "#start-world", screenshot: true },
+      { name: "main-finish", path: "03-crystal-caves.html", state: { version: 3, currentWorld: 3, completedWorlds: [1, 2, 3], completedBonus: false, checkpoints: { 1: 10, 2: 10, 3: 10, 4: 0 } }, action: null },
+      { name: "bonus-finish", path: "04-bonus-challenge.html", state: { version: 3, currentWorld: 4, completedWorlds: [1, 2, 3], completedBonus: true, checkpoints: { 1: 10, 2: 10, 3: 10, 4: 7 } }, action: null },
     ];
     const responsiveResults = [];
     for (const width of [320, 390, 768, 1366]) {
@@ -319,22 +328,27 @@ if (!browserPath) {
     assert.equal(await evaluate(`document.querySelector('#typed-display').textContent`), "—", "restart clears only the current exercise display");
     assert.equal(await evaluate(`JSON.parse(localStorage.getItem(${JSON.stringify(storageKey)})).checkpoints[1]`), 0, "restart leaves previously completed checkpoints intact");
     await typeCurrentTarget(targets[1][0]);
-    await click("#next-checkpoint");
-    assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), "CHECKPOINT 2/10", "the permanent indicator updates as soon as checkpoint 2 opens");
+    assert.equal(await evaluate(`document.activeElement?.id`), "next-checkpoint", "the first checkpoint completion focuses its continue button");
+    await pressEnter();
+    assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), "CHECKPOINT 2/10", "Enter opens checkpoint 2 without a mouse click");
     await navigate(`${baseUrl}01-flower-garden.html?resume=1`);
     assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), "CHECKPOINT 2/10", "reloading resumes at the correct next checkpoint");
 
     // Finish the three required worlds with browser-dispatched physical key events.
     await click("#start-world");
     await typeCurrentTarget(targets[1][1]);
-    await click("#next-checkpoint");
+    await pressEnter();
     for (let index = 2; index < targets[1].length; index += 1) {
       await typeCurrentTarget(targets[1][index]);
-      await click("#next-checkpoint");
+      await pressEnter();
     }
     assert.match(await evaluate(`document.querySelector('.world-finish').innerText`), /Este mundo está concluído/);
     await click('a[href="02-forest-path.html"]', true);
     await evaluate(`window.YoshiAudio={play(){},pause(){},changeTrack(){}}`);
+    const forestTip = await evaluate(`document.querySelector(".row-teaching")?.innerText || ""`);
+    assert.ok(forestTip.includes("F · G · R · T"), "Forest Path groups F/G and R/T under the left index finger");
+    assert.ok(forestTip.includes("J · H · Y · U"), "Forest Path groups J/H and Y/U under the right index finger");
+    assert.ok(forestTip.includes("V/B") && forestTip.includes("N/M") && forestTip.includes("Cavernas de Cristal"), "Forest Path introduces V/B/N/M as part of World 3");
     const forestKeys = await evaluate(`[...document.querySelectorAll('.guide-card .keycap[data-key]')].map(el=>el.dataset.key)`);
     for (const key of ["a", "s", "d", "f", "g", "h", "j", "k", "l", "ç", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", " "]) assert.ok(forestKeys.includes(key), `World 2 keeps taught key ${JSON.stringify(key)} visible`);
     for (const key of ["z", "x", "c", "v", "b", "n", "m"]) assert.ok(!forestKeys.includes(key), `World 2 does not present lower-row key ${key} yet`);
@@ -345,23 +359,48 @@ if (!browserPath) {
     await assertFingerColors("world 2 upper/home rows and space");
     await completeWorld(2);
     await click('a[href="03-crystal-caves.html"]', true);
-    assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), "CHECKPOINT 1/10");
-    assert.equal(await evaluate(`document.querySelector('#audio-toggle').disabled`), true, "the cave track cannot start while Kamek's scene is open");
-    await evaluate(`window.__fakeAudioLog=[];window.__fakeAudioInstances=0;window.YT={PlayerState:{PLAYING:1,PAUSED:2,ENDED:0},Player:function(host,options){const player=this;window.__fakeAudioInstances+=1;player.video=options.videoId;player.setVolume=()=>{};player.mute=()=>{};player.unMute=()=>{};player.pauseVideo=()=>window.__fakeAudioLog.push('pause:'+player.video);player.playVideo=()=>window.__fakeAudioLog.push('play:'+player.video);player.loadVideoById=({videoId})=>{player.video=videoId;window.__fakeAudioLog.push('load:'+videoId)};player.getVideoData=()=>({video_id:player.video});setTimeout(()=>options.events.onReady({target:player}),500)}}`);
-    await click("#story-audio");
+    assert.equal(await evaluate("document.querySelector('#checkpoint-progress').textContent"), "CHECKPOINT 1/10");
+    assert.equal(await evaluate("document.querySelector('#audio-toggle').disabled"), false, "the shared toolbar control is enabled during Kamek's scene");
+    assert.equal(await evaluate("!!document.querySelector('#story-audio')"), false, "Kamek has no second audio button");
+    assert.equal(await evaluate("document.querySelector('#story-continue').textContent.trim()"), "Continuar", "the lower action has only the Continue label");
+    await evaluate("window.__fakeAudioLog=[];window.__fakeAudioInstances=0;window.YT={PlayerState:{PLAYING:1,PAUSED:2,ENDED:0},Player:function(host,options){const player=this;window.__fakeAudioInstances+=1;player.video=options.videoId;player.setVolume=()=>{};player.mute=()=>{};player.unMute=()=>{};player.pauseVideo=()=>window.__fakeAudioLog.push('pause:'+player.video);player.playVideo=()=>window.__fakeAudioLog.push('play:'+player.video);player.loadVideoById=({videoId})=>{player.video=videoId;window.__fakeAudioLog.push('load:'+videoId)};player.getVideoData=()=>({video_id:player.video});setTimeout(()=>options.events.onReady({target:player}),500)}}");
+    await click("#audio-toggle");
+    await evaluate("new Promise(resolve=>setTimeout(resolve,600))");
+    let trackLog = await evaluate("window.__fakeAudioLog");
+    assert.equal(await evaluate("window.__fakeAudioInstances"), 1, "the shared toolbar creates one YouTube player for Kamek's message");
+    assert.ok(trackLog.includes("play:BEP3rdTy0-o"), "Ouvir trilha starts Kamek's music");
+    assert.equal(await evaluate("document.querySelector('#audio-toggle').textContent.trim()"), "Ⅱ Pausar trilha", "the toolbar offers pause while Kamek's music is playing");
+    await click("#audio-toggle");
+    trackLog = await evaluate("window.__fakeAudioLog");
+    assert.ok(trackLog.includes("pause:BEP3rdTy0-o"), "the same toolbar pauses Kamek's music without navigating away");
+    assert.equal(await evaluate("document.querySelector('#audio-toggle').textContent.trim()"), "♪ Ouvir trilha", "the toolbar returns to its play label after pausing");
     await click("#story-continue");
-    assert.equal(await evaluate(`document.querySelector('#audio-toggle').disabled`), false);
-    const caveKeys = await evaluate(`[...document.querySelectorAll('.guide-card .keycap[data-key]')].map(el=>el.dataset.key)`);
+    assert.equal(await evaluate("document.querySelector('#audio-toggle').disabled"), false);
+    const caveKeys = await evaluate("[...document.querySelectorAll('.guide-card .keycap[data-key]')].map(el=>el.dataset.key)");
     for (const key of ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "g", "h"]) assert.ok(caveKeys.includes(key), `Crystal Caves presents home/upper key ${key}`);
-    for (const key of ["z", "x", "c", "v", "b", "n", "m"]) assert.ok(!caveKeys.includes(key), `Crystal Caves leaves lower-row key ${key} to the bonus`);
+    for (const key of ["z", "x", "c", "v", "b", "n", "m"]) assert.ok(caveKeys.includes(key), `Crystal Caves teaches lower-row key ${key}`);
+    const caveTip = await evaluate(`document.querySelector(".row-teaching")?.innerText || ""`);
+    assert.ok(caveTip.includes("Fileira inferior") && caveTip.includes("Z X C V B N M"), "Crystal Caves explicitly names the lower row");
+    assert.ok(caveTip.includes("Indicador esquerdo") && caveTip.includes("Indicador direito"), "Crystal Caves explains lower-row finger assignments");
     await click("#start-world");
-    await assertFingerColors("world 3 upper/lower rows and space");
-    await evaluate(`new Promise(resolve=>setTimeout(resolve,700))`);
-    const trackLog = await evaluate(`window.__fakeAudioLog`);
-    assert.equal(await evaluate(`window.__fakeAudioInstances`), 1, "concurrent audio requests share one not-yet-ready YouTube player");
+    await assertFingerColors("world 3 three rows and space");
+    await evaluate("new Promise(resolve=>setTimeout(resolve,100))");
+    trackLog = await evaluate("window.__fakeAudioLog");
     assert.ok(trackLog.includes("pause:BEP3rdTy0-o"), "leaving Kamek pauses the story audio");
-    assert.ok(trackLog.includes("load:IJy7jK-TM40"), "the cave track loads after the player becomes ready");
-    assert.ok(!trackLog.includes("play:BEP3rdTy0-o"), "a late story request cannot restart after leaving the scene");
+    assert.ok(trackLog.includes("load:IJy7jK-TM40"), "the cave track loads after leaving the story");
+    assert.ok(trackLog.lastIndexOf("play:BEP3rdTy0-o") < trackLog.lastIndexOf("load:IJy7jK-TM40"), "Kamek's message does not restart after the cave track is selected");
+    await navigate(`${baseUrl}03-crystal-caves.html?shared-audio-race=1`);
+    assert.equal(await evaluate("document.querySelector('#audio-toggle').disabled"), false, "Kamek's scene enables the shared audio control after reload");
+    await evaluate("window.__fakeAudioLog=[];window.__fakeAudioInstances=0;window.YT={PlayerState:{PLAYING:1,PAUSED:2,ENDED:0},Player:function(host,options){const player=this;window.__fakeAudioInstances+=1;player.video=options.videoId;player.setVolume=()=>{};player.mute=()=>{};player.unMute=()=>{};player.pauseVideo=()=>window.__fakeAudioLog.push('pause:'+player.video);player.playVideo=()=>window.__fakeAudioLog.push('play:'+player.video);player.loadVideoById=({videoId})=>{player.video=videoId;window.__fakeAudioLog.push('load:'+videoId)};player.getVideoData=()=>({video_id:player.video});setTimeout(()=>options.events.onReady({target:player}),500)}}");
+    await click("#audio-toggle");
+    assert.equal(await evaluate("document.querySelector('#audio-toggle').textContent.trim()"), "Ⅱ Pausar trilha", "the toolbar can cancel audio while YouTube is still initializing");
+    await click("#story-continue");
+    await click("#start-world");
+    await evaluate("new Promise(resolve=>setTimeout(resolve,700))");
+    const lateTrackLog = await evaluate("window.__fakeAudioLog");
+    assert.equal(await evaluate("window.__fakeAudioInstances"), 1, "late audio requests share the same not-yet-ready player");
+    assert.ok(lateTrackLog.includes("load:IJy7jK-TM40"), "the cave track replaces the pending Kamek request");
+    assert.ok(!lateTrackLog.includes("play:BEP3rdTy0-o"), "a pending Kamek request cannot start after Continue opens the cave guide");
     await completeWorld(3);
     assert.match(await evaluate(`document.querySelector('.world-finish').innerText`), /três mundos obrigatórios/);
     assert.equal(await evaluate(`JSON.parse(localStorage.getItem(${JSON.stringify(storageKey)})).completedBonus`), false, "completing the main adventure leaves bonus optional");
@@ -376,8 +415,22 @@ if (!browserPath) {
     await click("#cancel-reset");
     assert.equal(await evaluate(`JSON.parse(localStorage.getItem(${JSON.stringify(storageKey)})).completedWorlds.length`), 3, "cancelling reset preserves the completed worlds");
 
+    // Migration from the previous release preserves unchanged worlds, while requiring the expanded World 3 again.
+    const legacyProgressState = { version: 2, currentWorld: 4, completedWorlds: [1, 2, 3], completedBonus: true, checkpoints: { 1: 10, 2: 10, 3: 10, 4: 7 } };
+    await evaluate(`localStorage.setItem(${JSON.stringify(legacyStorageKey)},${JSON.stringify(JSON.stringify(legacyProgressState))});localStorage.removeItem(${JSON.stringify(storageKey)});sessionStorage.removeItem(${JSON.stringify(storageKey)})`);
+    await navigate(`${baseUrl}index.html?curriculum-migration=1`);
+    const migrated = await evaluate(`JSON.parse(localStorage.getItem(${JSON.stringify(storageKey)}))`);
+    assert.equal(migrated.version, 3, "previous storage is migrated to progress schema v3");
+    assert.deepEqual(migrated.checkpoints, { 1: 10, 2: 10, 3: 0, 4: 7 }, "migration preserves existing worlds and bonus but resets Crystal Caves");
+    assert.deepEqual(migrated.completedWorlds, [1, 2], "the new row cannot be skipped using old completion flags");
+    assert.equal(migrated.currentWorld, 3, "the learner resumes in Crystal Caves after completing World 2");
+    assert.equal(migrated.completedBonus, true, "completed optional bonus is preserved");
+    await click("#new-game");
+    await click("#confirm-reset", true);
+    assert.equal(await evaluate(`localStorage.getItem(${JSON.stringify(legacyStorageKey)})`), null, "new game removes the old progress key after migration");
+
     // Session storage preserves progress across route changes and reloads when local storage is blocked.
-    const sessionState = { version: 2, currentWorld: 2, completedWorlds: [1], completedBonus: false, checkpoints: { 1: 10, 2: 1, 3: 0, 4: 0 } };
+    const sessionState = { version: 3, currentWorld: 2, completedWorlds: [1], completedBonus: false, checkpoints: { 1: 10, 2: 1, 3: 0, 4: 0 } };
     await evaluate(`localStorage.removeItem(${JSON.stringify(storageKey)});sessionStorage.setItem(${JSON.stringify(storageKey)},${JSON.stringify(JSON.stringify(sessionState))})`);
     const localBlock = await cdp.send("Page.addScriptToEvaluateOnNewDocument", { source: "Object.defineProperty(window,'localStorage',{configurable:true,get(){throw new DOMException('blocked','SecurityError')}})" });
     await navigate(`${baseUrl}02-forest-path.html?storage=session`);
