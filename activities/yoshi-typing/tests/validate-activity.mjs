@@ -15,10 +15,10 @@ const { worlds } = browserWindow.YoshiWorldData;
 const core = browserWindow.YoshiTypingCore;
 
 const expectedTargets = {
-  1: ["ASDF", "FDSA", "ASAS", "DFDF", "A FADA ASSA"],
-  2: ["JKLÇ", "ÇLKJ", "JKJK", "FADA FALA", "A FADA FALA"],
-  3: ["ASDF JKLÇ", "QWERT YUIOP", "ZXCV BNM", "CASA SAPO VIDA", "A FOCA PULA"],
-  4: ["A FOCA PULA", "O SAPO VAI PARA CASA", "A FOCA LEVA O SAPO", "YOSHI PULA NA CASA", "O YOSHI PULA COM A FOCA"],
+  1: ["ASDF", "FDSA", "ASAS", "DFDF", "A FADA ASSA", "FADA ASSA FADA", "A FADA ASSA FADA"],
+  2: ["JKLÇ", "ÇLKJ", "JKJK", "FADA FALA", "A FADA FALA", "FALA DA SALA", "A FADA FALA DA SALA"],
+  3: ["ASDF JKLÇ", "QWERT YUIOP", "ZXCV BNM", "CASA SAPO VIDA", "A FOCA PULA", "A FOCA LEVA O SAPO", "O SAPO VAI PARA CASA"],
+  4: ["A FOCA PULA", "O SAPO VAI PARA CASA", "A FOCA LEVA O SAPO", "YOSHI PULA NA CASA", "O YOSHI PULA COM A FOCA", "A FOCA LEVA O SAPO PARA CASA", "YOSHI E A FOCA PULAM PARA CASA"],
 };
 const upperRow = new Set([..."QWERTYUIOP".toLocaleLowerCase("pt-BR")]);
 const homeRow = new Set([..."ASDFGHJKLÇ".toLocaleLowerCase("pt-BR")]);
@@ -27,8 +27,10 @@ const lowerRow = new Set([..."ZXCVBNM".toLocaleLowerCase("pt-BR")]);
 assert.equal(Object.keys(worlds).length, 4, "four worlds are defined");
 for (const [idText, targets] of Object.entries(expectedTargets)) {
   const id = Number(idText);
-  assert.deepEqual(JSON.parse(JSON.stringify(worlds[id].checkpoints.map(({ target }) => target))), targets, `world ${id} has the requested five sequences`);
-  assert.equal(worlds[id].checkpoints.length, 5, `world ${id} has exactly five checkpoints`);
+  assert.deepEqual(JSON.parse(JSON.stringify(worlds[id].checkpoints.map(({ target }) => target))), targets, `world ${id} has the requested seven sequences`);
+  assert.equal(worlds[id].checkpoints.length, 7, `world ${id} has exactly seven checkpoints`);
+  assert.ok(targets[5].length > targets[4].length, `world ${id} checkpoint 6 is more complex than checkpoint 5`);
+  assert.ok(targets[6].length > targets[5].length, `world ${id} checkpoint 7 is more complex than checkpoint 6`);
   const permitted = new Set(worlds[id].taughtKeys);
   for (const target of targets) {
     for (const char of target.toLocaleLowerCase("pt-BR")) {
@@ -74,17 +76,25 @@ assert.equal(core.canEnterWorld(progress, 1), true);
 assert.equal(core.canEnterWorld(progress, 2), false, "World 2 is locked until World 1 is complete");
 assert.equal(core.completeCheckpoint(progress, 1, 2).reason, "out-of-order", "a checkpoint cannot be skipped");
 for (let id = 1; id <= 3; id += 1) {
-  for (let checkpoint = 1; checkpoint <= 5; checkpoint += 1) {
+  for (let checkpoint = 1; checkpoint <= 7; checkpoint += 1) {
     assert.equal(core.completeCheckpoint(progress, id, checkpoint).ok, true);
   }
   if (id < 3) assert.equal(core.canEnterWorld(progress, id + 1), true);
 }
-assert.equal(core.isMainComplete(progress), true, "the three required worlds complete the main reward");
+assert.equal(progress.checkpoints[1], 7);
+assert.equal(progress.checkpoints[2], 7);
+assert.equal(progress.checkpoints[3], 7);
+assert.equal(core.isMainComplete(progress), true, "the three required worlds complete the main reward after 7 checkpoints each");
 assert.equal(core.canEnterWorld(progress, 4), true, "the optional world unlocks after the main worlds");
-for (let checkpoint = 1; checkpoint <= 5; checkpoint += 1) assert.equal(core.completeCheckpoint(progress, 4, checkpoint).ok, true);
+for (let checkpoint = 1; checkpoint <= 7; checkpoint += 1) assert.equal(core.completeCheckpoint(progress, 4, checkpoint).ok, true);
 assert.equal(core.isMainComplete(progress), true, "the bonus does not replace or change main completion");
 assert.equal(progress.completedBonus, true);
-assert.deepEqual(JSON.parse(JSON.stringify(core.normalizeProgress({ version: 1, currentWorld: 99, checkpoints: { 1: 100, 2: -1 } }).checkpoints)), { 1: 5, 2: 0, 3: 0, 4: 0 }, "saved checkpoints are bounded");
+assert.deepEqual(JSON.parse(JSON.stringify(core.normalizeProgress({ version: 1, currentWorld: 99, checkpoints: { 1: 100, 2: -1 } }).checkpoints)), { 1: 7, 2: 0, 3: 0, 4: 0 }, "saved checkpoints are bounded to seven");
+const oldFiveCheckpointProgress = core.normalizeProgress({ version: 1, currentWorld: 3, completedWorlds: [1, 2, 3], completedBonus: true, checkpoints: { 1: 5, 2: 5, 3: 5, 4: 5 } });
+assert.deepEqual(JSON.parse(JSON.stringify(oldFiveCheckpointProgress.checkpoints)), { 1: 5, 2: 5, 3: 5, 4: 5 }, "old five-checkpoint progress is preserved");
+assert.deepEqual(JSON.parse(JSON.stringify(oldFiveCheckpointProgress.completedWorlds)), [], "old 5/5 flags do not bypass the two new checkpoints");
+assert.equal(oldFiveCheckpointProgress.completedBonus, false, "old bonus completion is not marked complete before 7/7");
+assert.equal(core.canEnterWorld(oldFiveCheckpointProgress, 2), false, "the next world stays locked until extra checkpoints are completed");
 const restoredProgress = core.normalizeProgress(JSON.parse(JSON.stringify(progress)));
 assert.equal(core.isMainComplete(restoredProgress), true, "saved progress restores the three required worlds");
 assert.equal(restoredProgress.completedBonus, true, "saved bonus completion also restores");
@@ -166,7 +176,7 @@ assert.match(activity, /input\.addEventListener\("drop"/, "dropped text cannot e
 assert.match(activity, /event\.ctrlKey \|\| event\.metaKey \|\| event\.altKey/, "global keyboard shortcuts are left alone");
 assert.match(activity, /event\.isTrusted/, "only trusted physical key events can advance the exercise");
 assert.match(activity, /showModal\(\)|global\.confirm/, "starting over asks for confirmation");
-assert.match(activity, /checkpoint-progress"\)\.textContent = `CHECKPOINT \$\{number\}\/5`/, "the permanent progress display changes as soon as a checkpoint opens");
+assert.match(activity, /checkpoint-progress"\)\.textContent = `CHECKPOINT \$\{number\}\/\$\{totalCheckpoints\}`/, "the permanent progress display changes as soon as a checkpoint opens");
 assert.match(activity, /target-char \$\{type\}[\s\S]*?\$\{char === " " \? "␣" : char\}/, "every future target character stays visible and spaces have a marker");
 assert.match(activity, /id="typed-display"[\s\S]*?typedDisplay\.textContent = visibleTyped \|\| "—"/, "accepted physical input is shown in a separate typed-text display");
 assert.match(activity, /typedText = "";[\s\S]*?updateDisplay\(\);[\s\S]*?Exercício reiniciado/, "restarting clears only the current exercise display");
@@ -196,7 +206,7 @@ assert.match(css, /\.keycap\.is-used \{[^}]*border-bottom-color:/, "the used-key
 assert.match(activity, /cap\.classList\.toggle\("is-used", typedKeys\.has\(key\)\)/, "used state follows correctly typed input");
 assert.doesNotMatch(css, /(?:html|body)\s*\{[^}]*overflow-x:\s*hidden/, "horizontal overflow is not masked at the page level");
 
-console.log("OK: 4 worlds and 20 exact checkpoint sequences");
+console.log("OK: 4 worlds and 28 exact checkpoint sequences (7 per world)");
 console.log("OK: ABNT2 case, Ç, space, wrong key, synthetic events, and ordered progression");
 console.log("OK: main completion is independent of the optional bonus");
 console.log("OK: session-storage fallback, reload continuity, and explicit memory-only behavior");
