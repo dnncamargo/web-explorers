@@ -184,10 +184,10 @@ assert.match(css, /target-row \{[^}]*flex-wrap: wrap/, "target sequences wrap in
 assert.doesNotMatch(css, /\.egg-art\b/, "the unwanted SVG egg styling is removed");
 assert.match(css, /\.yoshi-with-flower\s*\{[^}]*position:\s*relative;[^}]*width:/, "the positioning container hugs the Yoshi image");
 assert.match(css, /\.yoshi-with-flower\s*>\s*\.yoshi-art\s*\{[^}]*width:\s*100%;[^}]*max-width:\s*100%;[^}]*height:\s*auto;/, "Yoshi fills the positioning container without intrinsic width overflow");
-assert.match(css, /\.flower-art\s*\{[^}]*position:\s*absolute;[^}]*top:\s*-8px;[^}]*right:\s*14px;[^}]*width:\s*var\(--flower-size\);[^}]*height:\s*var\(--flower-size\);[^}]*min-width:\s*var\(--flower-size\);[^}]*max-width:\s*var\(--flower-size\);/, "the flower has explicit, intrinsic-size-independent dimensions anchored to Yoshi");
-assert.match(css, /--flower-size:\s*24px/, "desktop flower size is 24px");
-assert.match(css, /@media \(max-width: 850px\)[\s\S]*?--flower-size:\s*22px/, "tablet flower size is 22px");
-assert.match(css, /@media \(max-width: 620px\)[\s\S]*?--flower-size:\s*20px/, "mobile flower size is 20px");
+assert.match(css, /\.flower-art\s*\{[^}]*position:\s*absolute;[^}]*top:\s*-8px;[^}]*right:\s*14px;[^}]*width:\s*24px;[^}]*height:\s*24px;[^}]*min-width:\s*24px;[^}]*max-width:\s*24px;/, "desktop flower size is explicit and independent of the PNG's intrinsic size");
+assert.match(css, /@media \(max-width: 850px\)[\s\S]*?\.yoshi-with-flower > \.flower-art \{ width: 22px; height: 22px; min-width: 22px; min-height: 22px; max-width: 22px; max-height: 22px; \}/, "tablet flower size is explicitly 22px");
+assert.match(css, /@media \(max-width: 620px\)[\s\S]*?\.yoshi-with-flower > \.flower-art \{ width: 20px; height: 20px; min-width: 20px; min-height: 20px; max-width: 20px; max-height: 20px; \}/, "mobile flower size is explicitly 20px");
+assert.match(homeHtml, /assets\/css\/yoshi\.css\?v=hero-flower-2026-10-21-2/, "the CSS URL is versioned to bypass stale cached flower positioning");
 assert.doesNotMatch(css, /\.hero-art \.hero-characters\s*>\s*\.flower-art/, "no competing rules size or position the flower against the full hero");
 assert.match(css, /\.hero-characters \{[^}]*flex-wrap: nowrap;[^}]*min-width: 0;/, "Yoshi remains centered in its responsive hero column");
 assert.match(css, /\.keycap\[data-key\] \{[^}]*background: var\(--finger-color\)/, "each taught key receives its finger background");
