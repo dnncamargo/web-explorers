@@ -184,7 +184,7 @@
     const count = progress.checkpoints[world.id] || 0;
     const totalCheckpoints = world.checkpoints.length;
     const rowIntro = world.id === 2
-      ? `<div class="row-teaching"><strong>Fileira-base:</strong> A S D F G H J K L Ç. <strong>Fileira superior:</strong> Q W E R T Y U I O P. <strong>Indicador esquerdo:</strong> F · G · R · T. <strong>Indicador direito:</strong> J · H · Y · U.<p>Sim: o mesmo indicador esquerdo que pressiona F também pressiona G; o indicador direito que pressiona J também pressiona H. O espaço usa os polegares. Na fileira inferior (reservada ao bônus), o esquerdo cobre V/B e o direito N/M. Volte à base em F/J depois de cada movimento.</p></div>`
+      ? `<div class="row-teaching"><strong>Fileira-base:</strong> A S D F G H J K L Ç. <strong>Fileira superior:</strong> Q W E R T Y U I O P. <br><strong>Indicador esquerdo:</strong> F · G · R · T. <strong>Indicador direito:</strong> J · H · Y · U.<br>Sim: o mesmo indicador esquerdo que pressiona F também pressiona G; o indicador direito que pressiona J também pressiona H. O espaço usa os polegares. Na fileira inferior (reservada ao bônus), o esquerdo cobre V/B e o direito N/M. Volte à base em F/J depois de cada movimento.</div>`
       : world.id === 3
         ? `<div class="row-teaching"><strong>Fileira-base:</strong> A S D F G H J K L Ç. <strong>Fileira superior:</strong> Q W E R T Y U I O P. Essas são as fileiras deste mundo; agora coordene movimentos, palavras e frases mais longas.</div>`
         : world.id === 4
