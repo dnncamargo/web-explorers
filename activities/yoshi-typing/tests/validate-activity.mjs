@@ -85,7 +85,7 @@ assert.deepEqual([worlds[1].track, worlds[3].track, worlds[4].track], ["tGukyQ10
 assert.equal(worlds[3].storyTrack, "BEP3rdTy0-o", "Kamek's short scene has its requested music reference");
 assert.equal(worlds[2].track, "UKP3kPtweio", "Forest Path uses the requested new soundtrack");
 assert.match(worlds[2].guide, /indicador esquerdo.*F.*G.*indicador direito.*J.*H/i, "Forest Path explains the same-index-finger relationship between F/G and J/H");
-assert.match(worlds[2].guide, /Cavernas de Cristal.*fileira inferior/i, "Forest Path points forward to the lower row in World 3");
+assert.match(worlds[2].guide, /fileira inferior.*Cavernas de Cristal/i, "Forest Path points forward to the lower row in World 3");
 assert.match(worlds[3].guide, /fileira inferior.*Z.*X.*C.*V.*B.*N.*M/i, "Crystal Caves teaches the lower-row keys");
 const fingerMap = browserWindow.YoshiWorldData.fingers;
 for (const key of ["f", "g", "r", "t", "v", "b"]) assert.equal(fingerMap[key], "left-index", `${key.toUpperCase()} uses the left index finger`);
