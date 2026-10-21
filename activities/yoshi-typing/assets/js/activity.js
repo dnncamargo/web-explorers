@@ -348,7 +348,7 @@
 
   function renderLocked(world, host) {
     const required = world.id === 4 ? "Conclua os três mundos principais" : `Conclua o Mundo ${world.id - 1}`;
-    host.innerHTML = `<section class="world-finish"><img class="yoshi-art" src="https://art.ngfiles.com/images/291000/291714_jamalmason_yoshi.png?f1393937531" alt=""><p class="eyebrow pixel">CAMINHO FECHADO POR ENQUANTO</p><h2>${world.title}</h2><p>${required} para abrir este caminho. Cada mundo tem sete checkpoints.</p><div class="finish-actions"><a class="button" href="index.html">Voltar ao mapa</a></div></section>`;
+    host.innerHTML = `<section class="world-finish"><img class="yoshi-art" src="https://art.ngfiles.com/images/291000/291714_jamalmason_yoshi.png?f1393937531" alt=""><p class="eyebrow pixel">CAMINHO FECHADO POR ENQUANTO</p><h2>${world.title}</h2><p>${required} para abrir este caminho. Este caminho tem ${world.checkpoints.length} checkpoints.</p><div class="finish-actions"><a class="button" href="index.html">Voltar ao mapa</a></div></section>`;
   }
 
   function renderWorldFinish(world, host) {

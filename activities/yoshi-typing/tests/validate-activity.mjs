@@ -156,8 +156,13 @@ core.clearStoredProgress((name) => allStores[name], "session-test");
 assert.equal(sessionStore.getItem("session-test"), null, "new game clears session progress after confirmation");
 
 const pages = ["index.html", ...Object.values(worlds).map(({ file }) => file)];
+const currentAssetVersion = "yoshi-curriculum-2026-10-21-1";
 for (const page of pages) {
   const html = read(page);
+  for (const asset of ["world-data.js", "typing-core.js", "audio.js", "activity.js"]) {
+    assert.ok(html.includes(`src="assets/js/${asset}?v=${currentAssetVersion}"`), `${page} loads fresh ${asset} after a curriculum change`);
+  }
+  assert.ok(html.includes(`assets/css/yoshi.css?v=${currentAssetVersion}`), `${page} loads the matching current CSS`);
   const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]);
   assert.equal(ids.length, new Set(ids).size, `${page} has no duplicate HTML IDs`);
   for (const [, reference] of html.matchAll(/(?:src|href)=["']([^"']+)["']/gi)) {
@@ -209,6 +214,8 @@ assert.match(activity, /story-audio[\s\S]*?YoshiAudio\?\.play\(world\.storyTrack
 assert.match(activity, /story-continue[\s\S]*?YoshiAudio\?\.pause\(\)[\s\S]*?changeTrack\(world\.track, false\)[\s\S]*?renderGuide\(world, host\)/, "leaving the Kamek scene stops its audio before showing the cave guide");
 assert.ok(activity.indexOf('querySelector("#story-continue")') < activity.indexOf("YoshiAudio?.pause()") && activity.indexOf("YoshiAudio?.pause()") < activity.indexOf("changeTrack(world.track, false)") && activity.indexOf("changeTrack(world.track, false)") < activity.indexOf("YoshiAudio?.changeTrack(world.track, true)"), "the cave track is selected only after the Kamek message is stopped and the learner starts the world");
 assert.match(activity, /Sem armazenamento: trocar de mundo ou recarregar reinicia/, "memory-only fallback explains that progress will not continue across pages");
+assert.doesNotMatch(activity, /Cada mundo tem sete checkpoints/i, "locked-page copy does not assume every world has the same number of checkpoints");
+assert.match(activity, /Este caminho tem \$\{world\.checkpoints\.length\} checkpoints/, "locked-page copy reflects the current world's configured checkpoint count");
 const audio = read("assets/js/audio.js");
 assert.match(audio, /catch \{[\s\S]*?desafios continuam funcionando normalmente/, "audio failure leaves the activity playable");
 assert.match(audio, /requestVersion[\s\S]*?version !== requestVersion/, "late YouTube promises cannot restart a track after pause or track change");
@@ -222,7 +229,7 @@ assert.match(css, /\.yoshi-with-flower\s*>\s*\.yoshi-art\s*\{[^}]*width:\s*100%;
 assert.match(css, /\.flower-art\s*\{[^}]*position:\s*absolute;[^}]*top:\s*-8px;[^}]*right:\s*14px;[^}]*width:\s*24px;[^}]*height:\s*24px;[^}]*min-width:\s*24px;[^}]*max-width:\s*24px;/, "desktop flower size is explicit and independent of the PNG's intrinsic size");
 assert.match(css, /@media \(max-width: 850px\)[\s\S]*?\.yoshi-with-flower > \.flower-art \{ width: 22px; height: 22px; min-width: 22px; min-height: 22px; max-width: 22px; max-height: 22px; \}/, "tablet flower size is explicitly 22px");
 assert.match(css, /@media \(max-width: 620px\)[\s\S]*?\.yoshi-with-flower > \.flower-art \{ width: 20px; height: 20px; min-width: 20px; min-height: 20px; max-width: 20px; max-height: 20px; \}/, "mobile flower size is explicitly 20px");
-assert.match(homeHtml, /assets\/css\/yoshi\.css\?v=typing-curriculum-2026-10-20-1/, "the CSS URL is versioned for the hidden zero-height capture");
+assert.match(homeHtml, /assets\/css\/yoshi\.css\?v=yoshi-curriculum-2026-10-21-1/, "the CSS URL is versioned for the hidden zero-height capture");
 assert.doesNotMatch(css, /\.hero-art \.hero-characters\s*>\s*\.flower-art/, "no competing rules size or position the flower against the full hero");
 assert.match(css, /\.hero-characters \{[^}]*flex-wrap: nowrap;[^}]*min-width: 0;/, "Yoshi remains centered in its responsive hero column");
 assert.match(css, /\.keycap\[data-key\] \{[^}]*background: var\(--finger-color\)/, "each taught key receives its finger background");
