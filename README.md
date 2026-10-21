@@ -78,12 +78,12 @@ O GitHub Pages continua usando `index.html` como entrada pública. `02-entrar-no
 ## Nova atividade: Floresta do Yoshi
 
 
-A atividade independente de digitação começa em [`activities/yoshi-typing/index.html`](activities/yoshi-typing/index.html). Ela possui três mundos obrigatórios, com cinco checkpoints em cada, e um quarto mundo de bônus que só aparece como opção depois da conclusão principal:
+A atividade independente de digitação começa em [`activities/yoshi-typing/index.html`](activities/yoshi-typing/index.html). Ela possui três mundos obrigatórios, com sete checkpoints em cada, e um quarto mundo de bônus com sete checkpoints que só aparece como opção depois da conclusão principal. Em cada mundo, os checkpoints 6 e 7 são mais longos e complexos:
 
-1. **Flower Garden** — mão esquerda na fileira-base e espaço: `ASDF`, `FDSA`, `ASAS`, `DFDF`, `A FADA ASSA`.
-2. **Forest Path** — acrescenta J, K, L e Ç, mantendo disponíveis A, S, D e F: `JKLÇ`, `ÇLKJ`, `JKJK`, `FADA FALA`, `A FADA FALA`.
-3. **Crystal Caves** — revisa a base, apresenta as fileiras superior e inferior antes de cobrá-las e combina as três: `ASDF JKLÇ`, `QWERT YUIOP`, `ZXCV BNM`, `CASA SAPO VIDA`, `A FOCA PULA`.
-4. **Bonus Challenge** — opcional; cinco frases curtas misturam as três fileiras: `A FOCA PULA`, `O SAPO VAI PARA CASA`, `A FOCA LEVA O SAPO`, `YOSHI PULA NA CASA`, `O YOSHI PULA COM A FOCA`.
+1. **Flower Garden** — mão esquerda na fileira-base e espaço: `ASDF`, `FDSA`, `ASAS`, `DFDF`, `A FADA ASSA`, `FADA ASSA FADA`, `A FADA ASSA FADA`.
+2. **Forest Path** — acrescenta J, K, L e Ç, mantendo disponíveis A, S, D e F: `JKLÇ`, `ÇLKJ`, `JKJK`, `FADA FALA`, `A FADA FALA`, `FALA DA SALA`, `A FADA FALA DA SALA`.
+3. **Crystal Caves** — revisa a base, apresenta as fileiras superior e inferior antes de cobrá-las e combina as três: `ASDF JKLÇ`, `QWERT YUIOP`, `ZXCV BNM`, `CASA SAPO VIDA`, `A FOCA PULA`, `A FOCA LEVA O SAPO`, `O SAPO VAI PARA CASA`.
+4. **Bonus Challenge** — opcional; sete frases curtas misturam as três fileiras, com os dois desafios finais mais longos: `A FOCA PULA`, `O SAPO VAI PARA CASA`, `A FOCA LEVA O SAPO`, `YOSHI PULA NA CASA`, `O YOSHI PULA COM A FOCA`, `A FOCA LEVA O SAPO PARA CASA`, `YOSHI E A FOCA PULAM PARA CASA`.
 
 O conteúdo pedagógico e os alvos ficam em `activities/yoshi-typing/assets/js/world-data.js`; a lógica de progresso e correspondência fica em `typing-core.js` e `activity.js`, com estilos compartilhados em `assets/css/yoshi.css`. As páginas HTML individuais selecionam cada mundo e podem ser ampliadas sem mover ou substituir os mundos existentes.
 
