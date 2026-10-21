@@ -83,7 +83,7 @@ body[data-theme="bonus"] .scene-decorations { color: #d1892d; }
 .scene::before { inset: 0; background: linear-gradient(90deg, rgba(255,255,255,.36), transparent 68%); }
 .scene::after { right: -4%; bottom: -48px; width: 68%; height: 114px; border-radius: 50% 50% 0 0; background: rgba(49,153,86,.24); box-shadow: -280px 30px 0 rgba(25,125,74,.22); }
 .scene-flower { background: linear-gradient(150deg, #b5eaff 0%, #e7f8ca 59%, #b7e69f 100%); }
-body[data-theme="forest"] .scene { background: linear-gradient(145deg, #a9e4d2, #d9f0ae 60%, #f8edaa); }
+body[data-theme="forest"] .scene { background: linear-gradient(145deg, #62c68d 0%, #b0e783 56%, #e6f39a 100%); }
 body[data-theme="crystal"] .scene { background: linear-gradient(145deg, #292d68, #5550a1 54%, #b66db1); color: #fff; }
 body[data-theme="crystal"] .scene::after { background: rgba(117,223,236,.24); box-shadow: -280px 30px 0 rgba(78,179,217,.22); }
 body[data-theme="bonus"] .scene { background: linear-gradient(145deg, #ffedb6, #ffc6a5 58%, #f3a6ac); }
@@ -137,7 +137,7 @@ body[data-theme="crystal"] h1 { color: #fff4a4; }
 .world-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 13px; }
 .world-card { position: relative; display: flex; min-height: 192px; flex-direction: column; overflow: hidden; padding: 15px; border: 3px solid #fff; border-radius: 12px; background: linear-gradient(145deg,#fffef6,#e4f5d9); box-shadow: 0 4px 0 #b6d8bd; }
 .world-card::before { position: absolute; top: -22px; right: -16px; width: 86px; height: 86px; border-radius: 50%; background: var(--card-glow, #f9de82); opacity: .46; content: ""; }
-.world-card[data-theme="forest"] { --card-glow: #78ca7d; }
+.world-card[data-theme="forest"] { --card-glow: #34a96d; background: linear-gradient(145deg, #e5f8df, #bde8b9); }
 .world-card[data-theme="crystal"] { --card-glow: #827fe0; }
 .world-card[data-theme="bonus"] { --card-glow: #ee9c73; }
 .world-card[data-theme="crystal"] { background: linear-gradient(145deg,#eeeaff,#d9eff3); }
@@ -229,7 +229,7 @@ body[data-theme="crystal"] h1 { color: #fff4a4; }
 
 body[data-theme="crystal"] { background: linear-gradient(180deg,#dfe8ff,#eee7f4); }
 body[data-theme="bonus"] { background: linear-gradient(180deg,#fff0d2,#ffe8d6); }
-body[data-theme="forest"] { background: linear-gradient(180deg,#d7f3e9,#eef2d4); }
+body[data-theme="forest"] { background: linear-gradient(180deg,#d1f3db,#edf5c9); }
 
 @media (max-width: 850px) {
   .world-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
