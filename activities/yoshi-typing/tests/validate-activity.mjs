@@ -160,7 +160,7 @@ core.clearStoredProgress((name) => allStores[name], "session-test");
 assert.equal(sessionStore.getItem("session-test"), null, "new game clears session progress after confirmation");
 
 const pages = ["index.html", ...Object.values(worlds).map(({ file }) => file)];
-const currentAssetVersion = "yoshi-enter-continue-2026-10-21-1";
+const currentAssetVersion = "yoshi-kamek-shared-audio-2026-10-21-1";
 for (const page of pages) {
   const html = read(page);
   for (const asset of ["world-data.js", "typing-core.js", "audio.js", "activity.js"]) {
@@ -217,13 +217,15 @@ assert.match(activity, /checkpoint-progress"\)\.textContent = `CHECKPOINT \$\{nu
 assert.match(activity, /target-char \$\{type\}[\s\S]*?\$\{char === " " \? "␣" : char\}/, "every future target character stays visible and spaces have a marker");
 assert.match(activity, /id="typed-display"[\s\S]*?typedDisplay\.textContent = visibleTyped \|\| "—"/, "accepted physical input is shown in a separate typed-text display");
 assert.match(activity, /typedText = "";[\s\S]*?updateDisplay\(\);[\s\S]*?Exercício reiniciado/, "restarting clears only the current exercise display");
-assert.match(activity, /story-audio[\s\S]*?YoshiAudio\?\.play\(world\.storyTrack\)/, "Kamek audio starts only from its explicit button");
-assert.match(activity, /story-continue[\s\S]*?YoshiAudio\?\.pause\(\)[\s\S]*?changeTrack\(world\.track, false\)[\s\S]*?renderGuide\(world, host\)/, "leaving the Kamek scene stops its audio before showing the cave guide");
-assert.ok(activity.indexOf('querySelector("#story-continue")') < activity.indexOf("YoshiAudio?.pause()") && activity.indexOf("YoshiAudio?.pause()") < activity.indexOf("changeTrack(world.track, false)") && activity.indexOf("changeTrack(world.track, false)") < activity.indexOf("YoshiAudio?.changeTrack(world.track, true)"), "the cave track is selected only after the Kamek message is stopped and the learner starts the world");
+assert.match(activity, /function renderStory\(world, host\)[\s\S]*?changeTrack\(world\.storyTrack, false\)[\s\S]*?audioToggle\.disabled = false[\s\S]*?id="story-continue" type="button">Continuar<\/button>/, "Kamek message uses the shared toolbar control and the scene has a plain Continue button");
+assert.doesNotMatch(activity, /id="story-audio"|Ouvir mensagem musical|Continuar sem áudio/, "Kamek scene has no duplicate audio button or audio-specific Continue label");
+assert.match(activity, /story-continue[\s\S]*?YoshiAudio\?\.pause\(\)[\s\S]*?changeTrack\(world\.track, false\)[\s\S]*?renderGuide\(world, host\)/, "Continue pauses Kamek and returns to the cave guide");
+assert.ok(activity.indexOf("YoshiAudio?.changeTrack(world.storyTrack, false)") < activity.indexOf('querySelector("#story-continue")') && activity.indexOf('querySelector("#story-continue")') < activity.indexOf("YoshiAudio?.pause()") && activity.indexOf("YoshiAudio?.pause()") < activity.indexOf("YoshiAudio?.changeTrack(world.track, false)") && activity.indexOf("YoshiAudio?.changeTrack(world.track, false)") < activity.indexOf("YoshiAudio?.changeTrack(world.track, true)"), "the toolbar selects Kamek's message first and Continue restores the cave soundtrack selection");
 assert.match(activity, /Sem armazenamento: trocar de mundo ou recarregar reinicia/, "memory-only fallback explains that progress will not continue across pages");
 assert.doesNotMatch(activity, /Cada mundo tem sete checkpoints/i, "locked-page copy does not assume every world has the same number of checkpoints");
 assert.match(activity, /Este caminho tem \$\{world\.checkpoints\.length\} checkpoints/, "locked-page copy reflects the current world's configured checkpoint count");
 const audio = read("assets/js/audio.js");
+assert.match(audio, /function play\(track = currentTrack\)[\s\S]*?setStatus\("Conectando à trilha…[\s\S]*?setPlaying\(true\);[\s\S]*?ensurePlayer\(/, "the shared control is pauseable while YouTube initializes");
 assert.match(audio, /catch \{[\s\S]*?desafios continuam funcionando normalmente/, "audio failure leaves the activity playable");
 assert.match(audio, /requestVersion[\s\S]*?version !== requestVersion/, "late YouTube promises cannot restart a track after pause or track change");
 assert.match(audio, /playerReadyPromise/, "concurrent requests share the player readiness promise");
@@ -236,7 +238,7 @@ assert.match(css, /\.yoshi-with-flower\s*>\s*\.yoshi-art\s*\{[^}]*width:\s*100%;
 assert.match(css, /\.flower-art\s*\{[^}]*position:\s*absolute;[^}]*top:\s*-8px;[^}]*right:\s*14px;[^}]*width:\s*24px;[^}]*height:\s*24px;[^}]*min-width:\s*24px;[^}]*max-width:\s*24px;/, "desktop flower size is explicit and independent of the PNG's intrinsic size");
 assert.match(css, /@media \(max-width: 850px\)[\s\S]*?\.yoshi-with-flower > \.flower-art \{ width: 22px; height: 22px; min-width: 22px; min-height: 22px; max-width: 22px; max-height: 22px; \}/, "tablet flower size is explicitly 22px");
 assert.match(css, /@media \(max-width: 620px\)[\s\S]*?\.yoshi-with-flower > \.flower-art \{ width: 20px; height: 20px; min-width: 20px; min-height: 20px; max-width: 20px; max-height: 20px; \}/, "mobile flower size is explicitly 20px");
-assert.match(homeHtml, /assets\/css\/yoshi\.css\?v=yoshi-enter-continue-2026-10-21-1/, "the CSS URL is versioned for the hidden zero-height capture");
+assert.match(homeHtml, /assets\/css\/yoshi\.css\?v=yoshi-kamek-shared-audio-2026-10-21-1/, "the CSS URL is versioned for the hidden zero-height capture");
 assert.doesNotMatch(css, /\.hero-art \.hero-characters\s*>\s*\.flower-art/, "no competing rules size or position the flower against the full hero");
 assert.match(css, /\.hero-characters \{[^}]*flex-wrap: nowrap;[^}]*min-width: 0;/, "Yoshi remains centered in its responsive hero column");
 assert.match(css, /\.keycap\[data-key\] \{[^}]*background: var\(--finger-color\)/, "each taught key receives its finger background");

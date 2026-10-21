@@ -168,14 +168,16 @@
   }
 
   function renderStory(world, host) {
-    host.innerHTML = `<article class="story-card"><div class="kamek-art" aria-hidden="true">🧙</div><div><p class="eyebrow pixel">UMA CENA CURTA · FORA DOS CHECKPOINTS</p><h2>Kamek e os cristais</h2><p>“A fileira-base e a superior já estão no seu mapa. Agora vamos combinar movimentos e frases mais longas. Sem pressa!”</p><p class="story-note">A fala musical é opcional. O botão continua mesmo se o áudio estiver bloqueado.</p><div class="story-actions"><button class="button button-quiet" id="story-audio" type="button">Ouvir mensagem musical</button><button class="button" id="story-continue" type="button">Continuar sem áudio</button></div></div></article>`;
-    host.querySelector("#story-audio").addEventListener("click", () => {
-      global.YoshiAudio?.play(world.storyTrack);
-    });
+    global.YoshiAudio?.changeTrack(world.storyTrack, false);
+    const audioToggle = document.getElementById("audio-toggle");
+    if (audioToggle) audioToggle.disabled = false;
+    const audioStatus = document.getElementById("audio-status");
+    if (audioStatus) audioStatus.textContent = "Use “Ouvir trilha” para ouvir ou pausar a mensagem musical de Kamek.";
+    host.innerHTML = `<article class="story-card"><div class="kamek-art" aria-hidden="true">🧙</div><div><p class="eyebrow pixel">UMA CENA CURTA · FORA DOS CHECKPOINTS</p><h2>Kamek e os cristais</h2><p>“A fileira-base e a superior já estão no seu mapa. Agora vamos combinar movimentos e frases mais longas. Sem pressa!”</p><p class="story-note">A mensagem musical é opcional. Use o controle “Ouvir trilha” acima para ouvir ou pausar.</p><div class="story-actions"><button class="button" id="story-continue" type="button">Continuar</button></div></div></article>`;
     host.querySelector("#story-continue").addEventListener("click", () => {
       global.YoshiAudio?.pause();
       global.YoshiAudio?.changeTrack(world.track, false);
-      document.getElementById("audio-toggle").disabled = false;
+      setAudioStatus("Trilha das cavernas disponível; use “Ouvir trilha” quando quiser.");
       renderGuide(world, host);
     });
   }
@@ -395,10 +397,7 @@
     const count = progress.checkpoints[world.id] || 0;
     document.getElementById("checkpoint-progress").textContent = `CHECKPOINT ${Math.min(count + 1, world.checkpoints.length)}/${world.checkpoints.length}`;
     if (count >= world.checkpoints.length) return renderWorldFinish(world, host);
-    if (world.id === 3 && count === 0) {
-      document.getElementById("audio-toggle").disabled = true;
-      return renderStory(world, host);
-    }
+    if (world.id === 3 && count === 0) return renderStory(world, host);
     document.getElementById("audio-toggle").disabled = false;
     renderGuide(world, host);
   }
