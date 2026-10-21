@@ -9,10 +9,10 @@ import { fileURLToPath } from "node:url";
 const appRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const storageKey = "exploradores.yoshi-typing.progress.v1";
 const targets = {
-  1: ["ASDF", "FDSA", "ASAS", "DFDF", "ASDF FDSA"],
-  2: ["JKLÇ", "ÇLKJ", "JKJK", "LÇLÇ", "JKLÇ ÇLKJ"],
+  1: ["ASDF", "FDSA", "ASAS", "DFDF", "A FADA ASSA"],
+  2: ["JKLÇ", "ÇLKJ", "JKJK", "FADA FALA", "A FADA FALA"],
   3: ["ASDF JKLÇ", "QWERT YUIOP", "ZXCV BNM", "CASA SAPO VIDA", "A FOCA PULA"],
-  4: ["ASASDASDFFDFDSFDSA", "JKJKLJKLÇÇLÇLKÇLKJ", "QWERT ZXCV", "PATO LIVRO CAVALO", "A FOCA PULA NA SALA"],
+  4: ["A FOCA PULA", "O SAPO VAI PARA CASA", "A FOCA LEVA O SAPO", "YOSHI PULA NA CASA", "O YOSHI PULA COM A FOCA"],
 };
 
 function findBrowser() {
@@ -134,13 +134,20 @@ if (!browserPath) {
     return result;
   }
   async function assertHomeFlowerLayout(label, viewportWidth) {
-    const result = await evaluate(`(()=>{const yoshi=document.querySelector(".hero-characters > .yoshi-art");const flower=document.querySelector(".hero-characters > .flower-art");const hero=document.querySelector(".hero-art");if(!yoshi||!flower||!hero)return null;const y=yoshi.getBoundingClientRect(),f=flower.getBoundingClientRect(),h=hero.getBoundingClientRect();return{flower:{width:f.width,height:f.height,left:f.left,right:f.right,top:f.top,centerX:f.left+f.width/2},yoshi:{left:y.left,right:y.right,top:y.top,height:y.height,centerX:y.left+y.width/2},hero:{left:h.left,right:h.right,top:h.top,bottom:h.bottom}}})()`);
+    const result = await evaluate(`(async()=>{const flower=document.querySelector(".yoshi-with-flower > .flower-art");const yoshi=document.querySelector(".yoshi-with-flower > .yoshi-art");const container=document.querySelector(".yoshi-with-flower");const hero=document.querySelector(".hero-art");const scene=document.querySelector(".home-hero");if(!yoshi||!flower||!container||!hero||!scene)return null;if(!yoshi.complete)await Promise.race([new Promise(resolve=>yoshi.addEventListener("load",resolve,{once:true})),new Promise(resolve=>setTimeout(resolve,10000))]);const y=yoshi.getBoundingClientRect(),f=flower.getBoundingClientRect(),c=container.getBoundingClientRect(),h=hero.getBoundingClientRect(),g=scene.getBoundingClientRect(),s=getComputedStyle(flower);const canvas=document.createElement("canvas");canvas.width=flower.naturalWidth;canvas.height=flower.naturalHeight;const ctx=canvas.getContext("2d");ctx.drawImage(flower,0,0);const rgba=ctx.getImageData(0,0,canvas.width,canvas.height).data;let transparentPixels=0,opaquePixels=0;for(let i=3;i<rgba.length;i+=4){if(rgba[i]===0)transparentPixels++;if(rgba[i]===255)opaquePixels++}return{flower:{width:f.width,height:f.height,left:f.left,right:f.right,top:f.top,bottom:f.bottom,centerX:f.left+f.width/2,cssWidth:s.width,cssHeight:s.height,minWidth:s.minWidth,maxWidth:s.maxWidth,flex:s.flex,position:s.position,naturalWidth:flower.naturalWidth,naturalHeight:flower.naturalHeight,transparentPixels,opaquePixels,cornerAlpha:rgba[3]},yoshi:{left:y.left,right:y.right,top:y.top,height:y.height,centerX:y.left+y.width/2,naturalWidth:yoshi.naturalWidth,naturalHeight:yoshi.naturalHeight,complete:yoshi.complete},container:{left:c.left,right:c.right,top:c.top,bottom:c.bottom,width:c.width,height:c.height},hero:{left:h.left,right:h.right,top:h.top,bottom:h.bottom},scene:{left:g.left,right:g.right,top:g.top,bottom:g.bottom}}})()`);
     assert.ok(result, `${label}: Yoshi and flower exist in the hero`);
-    const expectedMax = viewportWidth <= 620 ? 30 : viewportWidth <= 850 ? 36 : 40;
-    assert.ok(result.flower.width <= expectedMax + 1 && result.flower.height <= expectedMax + 1, `${label}: flower is capped at ${expectedMax}px (${JSON.stringify(result.flower)})`);
+    const expectedSize = viewportWidth <= 620 ? 20 : viewportWidth <= 850 ? 22 : 24;
+    assert.ok(result.yoshi.complete && result.yoshi.naturalWidth > 0, `${label}: the Yoshi artwork loaded for visual comparison (${JSON.stringify(result.yoshi)})`);
+    assert.equal(result.flower.position, "absolute", `${label}: flower uses absolute positioning inside its dedicated container`);
+    assert.equal(result.flower.width, expectedSize, `${label}: rendered flower width is ${expectedSize}px, independent of the ${result.flower.naturalWidth}px source`);
+    assert.equal(result.flower.height, expectedSize, `${label}: rendered flower height is ${expectedSize}px`);
+    assert.equal(result.flower.cssWidth, `${expectedSize}px`, `${label}: computed CSS width agrees with the rendered dimensions`);
+    assert.equal(result.flower.cssHeight, `${expectedSize}px`, `${label}: computed CSS height agrees with the rendered dimensions`);
+    assert.ok(result.flower.transparentPixels > 0 && result.flower.opaquePixels > 0 && result.flower.cornerAlpha === 0, `${label}: bundled PNG uses transparent pixels rather than a checkerboard background`);
     assert.ok(result.flower.centerX > result.yoshi.centerX, `${label}: flower is to the right of Yoshi (${JSON.stringify(result)})`);
-    assert.ok(result.flower.top < result.yoshi.top + result.yoshi.height * 0.35, `${label}: flower is above the upper portion of Yoshi (${JSON.stringify(result)})`);
-    assert.ok(result.flower.right <= result.hero.right + 1, `${label}: flower stays inside the hero artwork area (${JSON.stringify(result)})`);
+    assert.ok(result.flower.top < result.yoshi.top, `${label}: flower is above Yoshi (${JSON.stringify(result)})`);
+    assert.ok(result.flower.left >= result.container.left && result.flower.right <= result.container.right, `${label}: flower remains within the Yoshi illustration area (${JSON.stringify(result)})`);
+    assert.ok(result.flower.top >= result.scene.top && result.flower.bottom <= result.scene.bottom, `${label}: flower is not clipped by the home hero section (${JSON.stringify(result)})`);
     return result;
   }
   async function assertFingerColors(label) {
@@ -158,6 +165,12 @@ if (!browserPath) {
   }
   async function saveScreenshot(name) {
     const result = await cdp.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: true, fromSurface: true });
+    await fs.writeFile(path.join(screenshotDir, `${name}.png`), Buffer.from(result.data, "base64"));
+  }
+  async function saveHeroScreenshot(name) {
+    await fs.mkdir(screenshotDir, { recursive: true });
+    const clip = await evaluate(`(()=>{const r=document.querySelector('.home-hero').getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height}})()`);
+    const result = await cdp.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: true, fromSurface: true, clip: { ...clip, scale: 1 } });
     await fs.writeFile(path.join(screenshotDir, `${name}.png`), Buffer.from(result.data, "base64"));
   }
   async function dispatchKey(char) {
@@ -222,6 +235,8 @@ if (!browserPath) {
 
     // Check the responsive views in home, exercise, narrative, bonus and final-reward states.
     const screenshots = [];
+    const heroScreenshots = [];
+    const flowerMeasurements = [];
     const responsiveStates = [
       { name: "home", path: "index.html", state: null, action: null },
       { name: "exercise", path: "01-flower-garden.html", state: null, action: "#start-world" },
@@ -242,8 +257,16 @@ if (!browserPath) {
           await click(state.action);
         }
         const metrics = await measure(`${width}px ${state.name}`);
-        if (state.name === "home") await assertHomeFlowerLayout(`${width}px home`, width);
-        responsiveResults.push({ width, state: state.name, ...metrics });
+        let flowerLayout;
+        if (state.name === "home") {
+          flowerLayout = await assertHomeFlowerLayout(`${width}px home`, width);
+          flowerMeasurements.push({ viewport: width, flower: flowerLayout.flower, yoshi: flowerLayout.yoshi, container: flowerLayout.container });
+          if (width === 320 || width === 1366) {
+            await saveHeroScreenshot(`yoshi-hero-${width}px`);
+            heroScreenshots.push(path.join(screenshotDir, `yoshi-hero-${width}px.png`));
+          }
+        }
+        responsiveResults.push({ width, state: state.name, ...metrics, ...(flowerLayout ? { flower: flowerLayout.flower } : {}) });
         if (state.screenshot) {
           await fs.mkdir(screenshotDir, { recursive: true });
           await saveScreenshot(`yoshi-bonus-${width}px`);
@@ -270,6 +293,7 @@ if (!browserPath) {
     await evaluate(`localStorage.removeItem(${JSON.stringify(storageKey)})`);
     await navigate(`${baseUrl}01-flower-garden.html`);
     await evaluate(`window.YoshiAudio={play(){},pause(){},changeTrack(){}}`);
+    assert.deepEqual(await evaluate(`[...document.querySelectorAll('.guide-card .keycap[data-key]')].map(el=>el.dataset.key)`), ["a", "s", "d", "f", " "], "World 1 visually introduces only the left home keys and space");
     await click("#start-world");
     assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), "CHECKPOINT 1/5");
     await evaluate(`window.__trusted=false;document.querySelector('#typing-box').addEventListener('keydown',e=>window.__trusted=e.isTrusted,{capture:true})`);
@@ -303,6 +327,9 @@ if (!browserPath) {
     assert.match(await evaluate(`document.querySelector('.world-finish').innerText`), /Este mundo está concluído/);
     await click('a[href="02-forest-path.html"]', true);
     await evaluate(`window.YoshiAudio={play(){},pause(){},changeTrack(){}}`);
+    const forestKeys = await evaluate(`[...document.querySelectorAll('.guide-card .keycap[data-key]')].map(el=>el.dataset.key)`);
+    for (const key of ["a", "s", "d", "f", "j", "k", "l", "ç", " "]) assert.ok(forestKeys.includes(key), `World 2 keeps taught key ${JSON.stringify(key)} visible`);
+    assert.ok(!forestKeys.includes("g") && !forestKeys.includes("h"), "World 2 does not present the unintroduced G and H as learned");
     await click("#start-world");
     await assertFingerColors("world 2 JKLÇ and space");
     await completeWorld(2);
@@ -313,6 +340,8 @@ if (!browserPath) {
     await click("#story-audio");
     await click("#story-continue");
     assert.equal(await evaluate(`document.querySelector('#audio-toggle').disabled`), false);
+    const caveKeys = await evaluate(`[...document.querySelectorAll('.guide-card .keycap[data-key]')].map(el=>el.dataset.key)`);
+    for (const key of ["q", "g", "h", "z", "m"]) assert.ok(caveKeys.includes(key), `Crystal Caves presents new row key ${key} before its checkpoint`);
     await click("#start-world");
     await assertFingerColors("world 3 upper/lower rows and space");
     await evaluate(`new Promise(resolve=>setTimeout(resolve,700))`);
@@ -358,6 +387,8 @@ if (!browserPath) {
     assert.match(await evaluate(`document.querySelector('#persistence-status').textContent`), /trocar de mundo ou recarregar reinicia/i);
 
     console.log(`OK: ${responsiveResults.length} Chromium viewport/state layouts; screenshots: ${screenshots.join(", ")}`);
+    console.log(`OK: measured flower and Yoshi boxes; hero screenshots: ${heroScreenshots.join(", ")}`);
+    console.log(JSON.stringify(flowerMeasurements));
     console.log("OK: trusted physical-key path, displayed text/space, errors, paste/drop, restart, progress header and reload");
     console.log("OK: all three required worlds completed without the bonus; delayed YouTube readiness cannot restart Kamek over the cave track");
     console.log("OK: reset confirmation, session-only reload continuity and truthful memory-only messaging");

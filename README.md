@@ -80,10 +80,10 @@ O GitHub Pages continua usando `index.html` como entrada pública. `02-entrar-no
 
 A atividade independente de digitação começa em [`activities/yoshi-typing/index.html`](activities/yoshi-typing/index.html). Ela possui três mundos obrigatórios, com cinco checkpoints em cada, e um quarto mundo de bônus que só aparece como opção depois da conclusão principal:
 
-1. **Flower Garden** — posição-base da mão esquerda em A, S, D e F, mais espaço.
-2. **Forest Path** — posição-base da mão direita em J, K, L e Ç, mais espaço.
-3. **Crystal Caves** — combinação das mãos, fileiras superior e inferior e palavras/frases curtas.
-4. **Bonus Challenge** — sequências opcionais para praticar as teclas já apresentadas.
+1. **Flower Garden** — mão esquerda na fileira-base e espaço: `ASDF`, `FDSA`, `ASAS`, `DFDF`, `A FADA ASSA`.
+2. **Forest Path** — acrescenta J, K, L e Ç, mantendo disponíveis A, S, D e F: `JKLÇ`, `ÇLKJ`, `JKJK`, `FADA FALA`, `A FADA FALA`.
+3. **Crystal Caves** — revisa a base, apresenta as fileiras superior e inferior antes de cobrá-las e combina as três: `ASDF JKLÇ`, `QWERT YUIOP`, `ZXCV BNM`, `CASA SAPO VIDA`, `A FOCA PULA`.
+4. **Bonus Challenge** — opcional; cinco frases curtas misturam as três fileiras: `A FOCA PULA`, `O SAPO VAI PARA CASA`, `A FOCA LEVA O SAPO`, `YOSHI PULA NA CASA`, `O YOSHI PULA COM A FOCA`.
 
 O conteúdo pedagógico e os alvos ficam em `activities/yoshi-typing/assets/js/world-data.js`; a lógica de progresso e correspondência fica em `typing-core.js` e `activity.js`, com estilos compartilhados em `assets/css/yoshi.css`. As páginas HTML individuais selecionam cada mundo e podem ser ampliadas sem mover ou substituir os mundos existentes.
 
@@ -93,7 +93,7 @@ O progresso usa `localStorage`, com fallback para `sessionStorage` quando necess
 
 A trilha é carregada pelo YouTube IFrame API somente após uma interação do aluno. Se o serviço estiver bloqueado, o áudio pode ser ignorado e os desafios continuam funcionando. O Mundo 3 apresenta uma cena curta de Kamek com botão próprio para a mensagem musical; ao sair da cena, essa trilha para antes que a trilha das cavernas possa começar.
 
-A ilustração de Yoshi/Mario é exibida como PNG com fundo transparente, pela [URL de imagem indicada para a atividade](https://art.ngfiles.com/images/291000/291714_jamalmason_yoshi.png?f1393937531), em vez do SVG anterior. A imagem depende da disponibilidade do servidor externo (Newgrounds); seu uso e eventual redistribuição devem respeitar os direitos do autor da arte.
+A ilustração de Yoshi/Mario é exibida como PNG, pela [URL de imagem indicada para a atividade](https://art.ngfiles.com/images/291000/291714_jamalmason_yoshi.png?f1393937531), em vez do SVG anterior. A flor usa o PNG local `activities/yoshi-typing/assets/images/flower.png`, dimensionado em CSS e ancorado ao contêiner de Yoshi. A imagem de Yoshi depende da disponibilidade do servidor externo (Newgrounds); seu uso e eventual redistribuição devem respeitar os direitos do autor da arte.
 
 Esta etapa não implementa acentuação. Uma expansão futura poderá ensinar acento agudo, circunflexo, til, Shift, maiúsculas acentuadas e pontuação depois de preparar exercícios específicos.
 

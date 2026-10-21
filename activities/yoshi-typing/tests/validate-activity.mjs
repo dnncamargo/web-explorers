@@ -15,11 +15,14 @@ const { worlds } = browserWindow.YoshiWorldData;
 const core = browserWindow.YoshiTypingCore;
 
 const expectedTargets = {
-  1: ["ASDF", "FDSA", "ASAS", "DFDF", "ASDF FDSA"],
-  2: ["JKLÇ", "ÇLKJ", "JKJK", "LÇLÇ", "JKLÇ ÇLKJ"],
+  1: ["ASDF", "FDSA", "ASAS", "DFDF", "A FADA ASSA"],
+  2: ["JKLÇ", "ÇLKJ", "JKJK", "FADA FALA", "A FADA FALA"],
   3: ["ASDF JKLÇ", "QWERT YUIOP", "ZXCV BNM", "CASA SAPO VIDA", "A FOCA PULA"],
-  4: ["ASASDASDFFDFDSFDSA", "JKJKLJKLÇÇLÇLKÇLKJ", "QWERT ZXCV", "PATO LIVRO CAVALO", "A FOCA PULA NA SALA"],
+  4: ["A FOCA PULA", "O SAPO VAI PARA CASA", "A FOCA LEVA O SAPO", "YOSHI PULA NA CASA", "O YOSHI PULA COM A FOCA"],
 };
+const upperRow = new Set([..."QWERTYUIOP".toLocaleLowerCase("pt-BR")]);
+const homeRow = new Set([..."ASDFGHJKLÇ".toLocaleLowerCase("pt-BR")]);
+const lowerRow = new Set([..."ZXCVBNM".toLocaleLowerCase("pt-BR")]);
 
 assert.equal(Object.keys(worlds).length, 4, "four worlds are defined");
 for (const [idText, targets] of Object.entries(expectedTargets)) {
@@ -35,7 +38,22 @@ for (const [idText, targets] of Object.entries(expectedTargets)) {
   }
 }
 assert.equal(worlds[1].taughtKeys.join(""), "asdf ", "World 1 introduces only A S D F and space");
-assert.equal(worlds[2].taughtKeys.join(""), "jklç ", "World 2 introduces only J K L Ç and space");
+assert.equal(worlds[2].taughtKeys.join(""), "asdf jklç", "World 2 keeps the left hand taught and adds J K L Ç");
+for (const id of [1, 2]) {
+  for (const checkpoint of worlds[id].checkpoints) {
+    for (const char of checkpoint.target.toLocaleLowerCase("pt-BR")) {
+      assert.ok(char === " " || homeRow.has(char), `World ${id} stays on the home row`);
+      assert.ok(!upperRow.has(char) && !lowerRow.has(char), `World ${id} does not require upper/lower row keys`);
+    }
+  }
+}
+assert.ok([...worlds[1].checkpoints[4].target.toLocaleLowerCase("pt-BR")].every((char) => char === " " || new Set([..."asdf"]).has(char)), "World 1's final phrase only uses A S D F and space");
+for (const { target } of worlds[4].checkpoints) {
+  const chars = new Set([...target.toLocaleLowerCase("pt-BR")]);
+  assert.ok([...chars].some((char) => upperRow.has(char)), `bonus phrase ${target} uses upper-row keys`);
+  assert.ok([...chars].some((char) => homeRow.has(char)), `bonus phrase ${target} uses home-row keys`);
+  assert.ok([...chars].some((char) => lowerRow.has(char)), `bonus phrase ${target} uses lower-row keys`);
+}
 assert.match(worlds[1].intro, /mão esquerda/i, "World 1 introduces the left hand only");
 assert.doesNotMatch(worlds[1].intro, /duas mãos|ambas as mãos/i, "World 1 does not imply both hands are taught");
 assert.deepEqual([worlds[1].track, worlds[3].track, worlds[4].track], ["tGukyQ10nlA", "IJy7jK-TM40", "n6-JFDTC_nI"], "each world uses its requested music reference");
@@ -125,7 +143,7 @@ const flowerPngPath = "assets/images/flower.png";
 const homeHtml = read("index.html");
 assert.ok(homeHtml.includes(`src="${flowerPngPath}"`), "the home page uses the bundled flower PNG");
 assert.equal(fs.existsSync(path.join(appRoot, flowerPngPath)), true, "the flower PNG is bundled locally, without an external image dependency");
-assert.match(homeHtml, /class="hero-characters"[\s\S]*?class="yoshi-art"[\s\S]*?class="flower-art"/, "Yoshi and the flower PNG are placed together in the home hero");
+assert.match(homeHtml, /class="hero-characters"[\s\S]*?<div class="yoshi-with-flower">[\s\S]*?class="yoshi-art"[\s\S]*?class="flower-art"[\s\S]*?<\/div>/, "the flower is grouped with Yoshi inside its own positioning container");
 assert.doesNotMatch(homeHtml, /bonus-egg\.svg/, "the home page no longer uses the egg SVG");
 assert.equal(fs.existsSync(path.join(appRoot, "assets/images/bonus-egg.svg")), false, "the unwanted egg SVG asset is removed");
 for (const page of pages) {
@@ -164,10 +182,14 @@ const css = read("assets/css/yoshi.css");
 assert.match(css, /@media \(max-width: 620px\)[\s\S]*?world-grid \{ grid-template-columns: minmax\(0,1fr\)/, "the world map becomes one column on narrow screens");
 assert.match(css, /target-row \{[^}]*flex-wrap: wrap/, "target sequences wrap instead of being hidden on narrow screens");
 assert.doesNotMatch(css, /\.egg-art\b/, "the unwanted SVG egg styling is removed");
-assert.match(css, /\.hero-art \.hero-characters > \.flower-art \{[^}]*position: absolute;[^}]*top: -10px; right: 3%;[^}]*width: 40px; height: 40px;[^}]*max-width: 40px; max-height: 40px;/, "the flower is small and positioned at the upper right of Yoshi on desktop");
-assert.match(css, /\.hero-art \.hero-characters > \.flower-art \{ top: -8px; right: 3%; width: 36px; height: 36px; min-width: 36px; min-height: 36px; max-width: 36px; max-height: 36px; \}/, "the flower stays compact on tablet layouts");
-assert.match(css, /\.hero-art \.hero-characters > \.flower-art \{ top: -6px; right: 2%; width: 30px; height: 30px; min-width: 30px; min-height: 30px; max-width: 30px; max-height: 30px; \}/, "the flower stays compact on mobile layouts");
-assert.match(css, /\.hero-characters \{[^}]*flex-wrap: nowrap;[^}]*min-width: 0;/, "Yoshi and the flower stay in one row without intrinsic image overflow");
+assert.match(css, /\.yoshi-with-flower\s*\{[^}]*position:\s*relative;[^}]*width:/, "the positioning container hugs the Yoshi image");
+assert.match(css, /\.yoshi-with-flower\s*>\s*\.yoshi-art\s*\{[^}]*width:\s*100%;[^}]*max-width:\s*100%;[^}]*height:\s*auto;/, "Yoshi fills the positioning container without intrinsic width overflow");
+assert.match(css, /\.flower-art\s*\{[^}]*position:\s*absolute;[^}]*top:\s*-8px;[^}]*right:\s*14px;[^}]*width:\s*var\(--flower-size\);[^}]*height:\s*var\(--flower-size\);[^}]*min-width:\s*var\(--flower-size\);[^}]*max-width:\s*var\(--flower-size\);/, "the flower has explicit, intrinsic-size-independent dimensions anchored to Yoshi");
+assert.match(css, /--flower-size:\s*24px/, "desktop flower size is 24px");
+assert.match(css, /@media \(max-width: 850px\)[\s\S]*?--flower-size:\s*22px/, "tablet flower size is 22px");
+assert.match(css, /@media \(max-width: 620px\)[\s\S]*?--flower-size:\s*20px/, "mobile flower size is 20px");
+assert.doesNotMatch(css, /\.hero-art \.hero-characters\s*>\s*\.flower-art/, "no competing rules size or position the flower against the full hero");
+assert.match(css, /\.hero-characters \{[^}]*flex-wrap: nowrap;[^}]*min-width: 0;/, "Yoshi remains centered in its responsive hero column");
 assert.match(css, /\.keycap\[data-key\] \{[^}]*background: var\(--finger-color\)/, "each taught key receives its finger background");
 assert.match(css, /\.keycap\.is-next \{[^}]*background: var\(--finger-color\)/, "the active key keeps the finger background");
 assert.match(css, /\.keycap\.is-used \{[^}]*border-bottom-color:/, "the used-key state preserves the background");

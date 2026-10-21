@@ -9,6 +9,7 @@
   --pink: #f17a9a;
   --blue: #65bfe0;
   --line: #b8d8c5;
+  --flower-size: 24px;
   --pixel: "Press Start 2P", "Courier New", monospace;
   --body: "Trebuchet MS", Arial, sans-serif;
   font-family: var(--body);
@@ -98,10 +99,10 @@ body[data-theme="crystal"] h1 { color: #fff4a4; }
 .journey-note { max-width: 620px; margin: 12px 0 0; color: #365a4d; font-size: 15px; line-height: 1.5; }
 .hero-art { position: relative; display: grid; min-height: 190px; place-items: center; }
 .hero-characters { position: relative; z-index: 1; display: flex; flex-wrap: nowrap; align-items: center; justify-content: center; gap: clamp(4px, 1vw, 12px); width: 100%; min-width: 0; }
+.yoshi-with-flower { position: relative; flex: 0 0 auto; width: min(170px, 38vw); min-width: 0; }
 .yoshi-art { position: relative; z-index: 1; width: min(170px, 45vw); height: auto; image-rendering: auto; filter: drop-shadow(0 8px 0 rgba(36,91,49,.19)); animation: yoshi-bob 3.2s ease-in-out infinite; }
-.hero-characters .yoshi-art { width: min(170px, 38vw); min-width: 0; }
-.flower-art { display: block; object-fit: contain; filter: drop-shadow(0 3px 0 rgba(36,91,49,.14)); }
-.hero-art .hero-characters > .flower-art { position: absolute; z-index: 2; top: -10px; right: 3%; flex: none; width: 40px; height: 40px; min-width: 40px; min-height: 40px; max-width: 40px; max-height: 40px; }
+.yoshi-with-flower > .yoshi-art { display: block; width: 100%; max-width: 100%; min-width: 0; height: auto; }
+.flower-art { display: block; position: absolute; z-index: 2; top: -8px; right: 14px; flex: 0 0 var(--flower-size); width: var(--flower-size); height: var(--flower-size); min-width: var(--flower-size); min-height: var(--flower-size); max-width: var(--flower-size); max-height: var(--flower-size); object-fit: contain; filter: drop-shadow(0 3px 0 rgba(36,91,49,.14)); }
 .world-yoshi { display: block; width: clamp(95px, 14vw, 165px); max-width: 100%; height: auto; justify-self: end; object-fit: contain; image-rendering: auto; }
 .pixel-cloud { position: absolute; width: 74px; height: 24px; border-radius: 14px; background: rgba(255,255,255,.76); box-shadow: 16px -12px 0 -2px rgba(255,255,255,.76), 36px -5px 0 -4px rgba(255,255,255,.76); }
 .cloud-one { top: 18px; left: 5%; transform: scale(.72); }
@@ -237,8 +238,8 @@ body[data-theme="forest"] { background: linear-gradient(180deg,#d7f3e9,#eef2d4);
   .world-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .home-hero { grid-template-columns: minmax(0,1fr) 220px; }
   .hero-characters { gap: 4px; }
-  .hero-characters .yoshi-art { width: clamp(112px, 16vw, 136px); }
-  .hero-art .hero-characters > .flower-art { top: -8px; right: 3%; width: 36px; height: 36px; min-width: 36px; min-height: 36px; max-width: 36px; max-height: 36px; }
+  :root { --flower-size: 22px; }
+  .yoshi-with-flower { width: clamp(112px, 16vw, 136px); }
   .route-note { display: none; }
 }
 @media (max-width: 620px) {
@@ -254,8 +255,8 @@ body[data-theme="forest"] { background: linear-gradient(180deg,#d7f3e9,#eef2d4);
   .world-hero { min-height: 0; grid-template-columns: minmax(0,1fr) 100px; }
   .hero-art { min-height: 120px; }
   .hero-characters { gap: 4px; }
-  .hero-characters .yoshi-art { width: 115px; }
-  .hero-art .hero-characters > .flower-art { top: -6px; right: 2%; width: 30px; height: 30px; min-width: 30px; min-height: 30px; max-width: 30px; max-height: 30px; }
+  :root { --flower-size: 20px; }
+  .yoshi-with-flower { width: 115px; }
   .world-yoshi { width: 86px !important; grid-column: 2; grid-row: 1; justify-self: end; align-self: center; }
   .world-hero .scene-decorations { right: 65px; bottom: 0; font-size: 19px; }
   .world-heading { grid-column: 1; grid-row: 1; }

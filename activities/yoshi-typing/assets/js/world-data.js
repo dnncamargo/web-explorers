@@ -1,5 +1,8 @@
 (function (global) {
-  const homeKeys = ["a", "s", "d", "f", "j", "k", "l", "ç", " "];
+  const leftHomeKeys = ["a", "s", "d", "f", " "];
+  const rightHomeKeys = ["j", "k", "l", "ç"];
+  const taughtBaseKeys = [...leftHomeKeys, ...rightHomeKeys];
+  const fullHomeRowKeys = ["a", "s", "d", "f", "g", "h", "j", "k", "l", "ç", " "];
   const upperKeys = [..."qwertyuiop"];
   const lowerKeys = [..."zxcvbnm"];
 
@@ -13,13 +16,13 @@
       track: "tGukyQ10nlA",
       intro: "Vamos acordar o jardim colocando a mão esquerda na posição-base.",
       guide: "A mão esquerda repousa em A, S, D e F. O polegar alcança a barra de espaço. Depois de cada tecla, volte com os dedos para casa.",
-      taughtKeys: ["a", "s", "d", "f", " "],
+      taughtKeys: leftHomeKeys,
       checkpoints: [
         { target: "ASDF", instruction: "Use os quatro dedos da mão esquerda, um de cada vez.", hint: "Comece no dedo mínimo em A e avance até o indicador em F." },
         { target: "FDSA", instruction: "Percorra as mesmas teclas de volta à posição-base.", hint: "Comece pelo indicador em F e volte até A." },
         { target: "ASAS", instruction: "Alterne entre as teclas A e S.", hint: "A fica sob o dedo mínimo; S fica sob o dedo anelar." },
         { target: "DFDF", instruction: "Alterne entre D e F sem pressa.", hint: "D fica sob o dedo médio; F fica sob o indicador." },
-        { target: "ASDF FDSA", instruction: "Faça o caminho de ida, use o espaço e retorne.", hint: "O polegar toca a barra de espaço entre as duas sequências." },
+        { target: "A FADA ASSA", instruction: "Leia a frase e use apenas a fileira-base esquerda.", hint: "Use A, F, D, S e a barra de espaço para escrever A FADA ASSA." },
       ],
     },
     2: {
@@ -30,14 +33,14 @@
       file: "02-forest-path.html",
       track: "tGukyQ10nlA",
       intro: "As frutas estão na trilha. Agora vamos conhecer a posição-base da mão direita.",
-      guide: "A mão direita repousa em J, K, L e Ç. O indicador fica em J; o polegar também alcança a barra de espaço. Volte à posição-base depois de cada tecla.",
-      taughtKeys: ["j", "k", "l", "ç", " "],
+      guide: "Você já conhece A, S, D e F na mão esquerda. Agora, a mão direita repousa em J, K, L e Ç. O indicador fica em J; o polegar também alcança a barra de espaço. Volte à posição-base depois de cada tecla.",
+      taughtKeys: taughtBaseKeys,
       checkpoints: [
         { target: "JKLÇ", instruction: "Caminhe pelas quatro teclas da mão direita.", hint: "Comece no indicador em J e termine no dedo mínimo em Ç." },
         { target: "ÇLKJ", instruction: "Volte pelas teclas até a posição-base.", hint: "Comece pelo dedo mínimo em Ç e retorne até J." },
         { target: "JKJK", instruction: "Alterne entre J e K.", hint: "J usa o indicador; K usa o dedo médio." },
-        { target: "LÇLÇ", instruction: "Alterne entre L e Ç.", hint: "L usa o anelar; Ç usa o dedo mínimo." },
-        { target: "JKLÇ ÇLKJ", instruction: "Percorra as teclas, use espaço e retorne.", hint: "Use o polegar na barra de espaço entre as duas sequências." },
+        { target: "FADA FALA", instruction: "Combine as duas mãos sem sair da fileira-base.", hint: "As letras da mão esquerda foram ensinadas no primeiro mundo; pratique FADA FALA." },
+        { target: "A FADA FALA", instruction: "Leia a frase curta usando somente a fileira-base.", hint: "Combine A, F e D da esquerda com L da direita e use os espaços." },
       ],
     },
     3: {
@@ -50,7 +53,7 @@
       storyTrack: "BEP3rdTy0-o",
       intro: "Os cristais guardam caminhos novos. Kamek tem uma mensagem rápida.",
       guide: "A posição-base continua em A S D F e J K L Ç. Veja as fileiras de cima e de baixo: mova os dedos até a tecla indicada e retorne à base.",
-      taughtKeys: [...homeKeys, ...upperKeys, ...lowerKeys],
+      taughtKeys: [...fullHomeRowKeys, ...upperKeys, ...lowerKeys],
       checkpoints: [
         { target: "ASDF JKLÇ", instruction: "Prepare as duas mãos na posição-base.", hint: "Esquerda: A S D F. Direita: J K L Ç. O espaço fica sob os polegares." },
         { target: "QWERT YUIOP", instruction: "Suba os dedos até a fileira superior e retorne à base.", hint: "A fileira superior foi apresentada no mapa do teclado. Siga da esquerda para a direita." },
@@ -68,13 +71,13 @@
       track: "n6-JFDTC_nI",
       intro: "Este mundo é opcional. As estrelas esperam por quem quiser brincar mais.",
       guide: "Você já conhece as fileiras e a posição-base. Continue usando os dedos orientados e o polegar para os espaços.",
-      taughtKeys: [...homeKeys, ...upperKeys, ...lowerKeys],
+      taughtKeys: [...fullHomeRowKeys, ...upperKeys, ...lowerKeys],
       checkpoints: [
-        { target: "ASASDASDFFDFDSFDSA", instruction: "Faça uma sequência longa com a mão esquerda.", hint: "Use A, S, D e F. As cores mostram a orientação de dedos." },
-        { target: "JKJKLJKLÇÇLÇLKÇLKJ", instruction: "Faça uma sequência longa com a mão direita.", hint: "Use J, K, L e Ç. Volte à posição-base quando quiser." },
-        { target: "QWERT ZXCV", instruction: "Combine as fileiras superior e inferior.", hint: "Digite QWERT, espaço, ZXCV." },
-        { target: "PATO LIVRO CAVALO", instruction: "Digite os nomes dos animais e do livro.", hint: "P, A, T, O, L, I, V, R e C foram apresentados nos mundos anteriores." },
-        { target: "A FOCA PULA NA SALA", instruction: "Complete a brincadeira com uma frase.", hint: "Use espaços entre as palavras. Não há cronômetro." },
+        { target: "A FOCA PULA", instruction: "Leia uma frase curta que combina as três fileiras.", hint: "Mova os dedos entre a posição-base e as fileiras superior e inferior." },
+        { target: "O SAPO VAI PARA CASA", instruction: "Pratique outra frase com letras das três fileiras.", hint: "As teclas novas aparecem no mapa antes dos exercícios deste mundo." },
+        { target: "A FOCA LEVA O SAPO", instruction: "Continue combinando movimentos de todas as fileiras.", hint: "Volte à posição-base sempre que mudar de região do teclado." },
+        { target: "YOSHI PULA NA CASA", instruction: "Escreva a frase usando as três fileiras.", hint: "Olhe a próxima tecla, mova o dedo e depois retorne à base." },
+        { target: "O YOSHI PULA COM A FOCA", instruction: "Encerre o bônus com uma frase que combina o teclado todo.", hint: "Use os espaços entre as palavras. Não há cronômetro." },
       ],
     },
   };

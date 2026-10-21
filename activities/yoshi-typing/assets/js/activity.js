@@ -179,7 +179,7 @@
 
   function renderGuide(world, host) {
     const count = progress.checkpoints[world.id] || 0;
-    const rowIntro = world.id === 3 ? `<div class="row-teaching"><strong>Fileira superior:</strong> Q W E R T Y U I O P. <strong>Fileira inferior:</strong> Z X C V B N M. Olhe para a tecla, mova o dedo e retorne à posição-base. Estas fileiras são apresentadas antes de aparecerem nos exercícios.</div>` : "";
+    const rowIntro = world.id === 3 ? `<div class="row-teaching"><strong>Fileira-base:</strong> A S D F G H J K L Ç. <strong>Fileira superior:</strong> Q W E R T Y U I O P. <strong>Fileira inferior:</strong> Z X C V B N M. Olhe para a tecla, mova o dedo e retorne à posição-base. As fileiras novas são apresentadas antes de aparecerem nos exercícios.</div>` : "";
     host.innerHTML = `<section class="guide-card"><p class="eyebrow pixel">${world.id === 4 ? "OPCIONAL · 5 CHECKPOINTS" : `MUNDO ${world.id}/3 · 5 CHECKPOINTS`}</p><h2>Antes de começar</h2><p>${world.guide}</p><div class="guide-steps">${renderFingerGuide(world)}</div>${rowIntro}${renderKeyboard(world)}<p class="keyboard-tip">As cores orientam sobre os dedos. O navegador não consegue verificar qual dedo você usou.</p><div class="guide-actions"><button id="start-world" class="button" type="button">${count ? `Continuar do checkpoint ${count + 1}` : "Começar os checkpoints"}</button><a class="button button-quiet" href="index.html">Fazer uma pausa no mapa</a></div></section>`;
     host.querySelector("#start-world").addEventListener("click", () => {
       global.YoshiAudio?.changeTrack(world.track, true);
