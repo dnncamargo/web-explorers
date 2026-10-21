@@ -1,5 +1,6 @@
 (function (global) {
   const MAIN_WORLDS = [1, 2, 3];
+  const CHECKPOINTS_PER_WORLD = 7;
 
   function createProgress() {
     return {
@@ -16,12 +17,10 @@
     if (!value || value.version !== 1) return fresh;
     for (const id of [1, 2, 3, 4]) {
       const count = Number(value.checkpoints?.[id]);
-      fresh.checkpoints[id] = Number.isInteger(count) ? Math.max(0, Math.min(5, count)) : 0;
+      fresh.checkpoints[id] = Number.isInteger(count) ? Math.max(0, Math.min(CHECKPOINTS_PER_WORLD, count)) : 0;
     }
-    fresh.completedWorlds = MAIN_WORLDS.filter((id) =>
-      Array.isArray(value.completedWorlds) && value.completedWorlds.includes(id) || fresh.checkpoints[id] === 5
-    );
-    fresh.completedBonus = value.completedBonus === true || fresh.checkpoints[4] === 5;
+    fresh.completedWorlds = MAIN_WORLDS.filter((id) => fresh.checkpoints[id] === CHECKPOINTS_PER_WORLD);
+    fresh.completedBonus = fresh.checkpoints[4] === CHECKPOINTS_PER_WORLD;
     fresh.currentWorld = [1, 2, 3, 4].includes(Number(value.currentWorld)) ? Number(value.currentWorld) : 1;
     return fresh;
   }
@@ -94,15 +93,15 @@
   function completeCheckpoint(progress, worldId, checkpointNumber) {
     if (!canEnterWorld(progress, worldId)) return { ok: false, reason: "locked" };
     const completed = progress.checkpoints[worldId] || 0;
-    if (checkpointNumber !== completed + 1 || checkpointNumber > 5) {
+    if (checkpointNumber !== completed + 1 || checkpointNumber > CHECKPOINTS_PER_WORLD) {
       return { ok: false, reason: "out-of-order" };
     }
     progress.checkpoints[worldId] = checkpointNumber;
-    if (checkpointNumber === 5) {
+    if (checkpointNumber === CHECKPOINTS_PER_WORLD) {
       if (worldId === 4) progress.completedBonus = true;
       else if (!progress.completedWorlds.includes(worldId)) progress.completedWorlds.push(worldId);
     }
-    return { ok: true, worldComplete: checkpointNumber === 5, mainComplete: isMainComplete(progress) };
+    return { ok: true, worldComplete: checkpointNumber === CHECKPOINTS_PER_WORLD, mainComplete: isMainComplete(progress) };
   }
 
   global.YoshiTypingCore = {
