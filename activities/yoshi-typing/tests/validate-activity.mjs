@@ -77,6 +77,10 @@ assert.match(worlds[1].guide, /J, K, L e Ç/i, "Flower Garden guide names the ri
 assert.deepEqual([worlds[1].track, worlds[3].track, worlds[4].track], ["tGukyQ10nlA", "IJy7jK-TM40", "n6-JFDTC_nI"], "each world uses its requested music reference");
 assert.equal(worlds[3].storyTrack, "BEP3rdTy0-o", "Kamek's short scene has its requested music reference");
 assert.equal(worlds[2].track, "UKP3kPtweio", "Forest Path uses the requested new soundtrack");
+assert.match(worlds[2].guide, /indicador esquerdo.*F.*G.*indicador direito.*J.*H/i, "Forest Path explains the same-index-finger relationship between F/G and J/H");
+const fingerMap = browserWindow.YoshiWorldData.fingers;
+for (const key of ["f", "g", "r", "t", "v", "b"]) assert.equal(fingerMap[key], "left-index", `${key.toUpperCase()} uses the left index finger`);
+for (const key of ["j", "h", "y", "u", "n", "m"]) assert.equal(fingerMap[key], "right-index", `${key.toUpperCase()} uses the right index finger`);
 
 assert.equal(core.evaluateKey("a", "A", true).matches, true, "case does not matter");
 assert.equal(core.evaluateKey("ç", "Ç", true).matches, true, "ABNT2 Ç is matched");
@@ -202,6 +206,9 @@ assert.match(activity, /input\.addEventListener\("paste",\s*\(event\)\s*=>\s*\{\
 assert.match(activity, /input\.addEventListener\("drop"/, "dropped text cannot enter the exercise");
 assert.match(activity, /event\.ctrlKey \|\| event\.metaKey \|\| event\.altKey/, "global keyboard shortcuts are left alone");
 assert.match(activity, /event\.isTrusted/, "only trusted physical key events can advance the exercise");
+assert.match(activity, /continueButton\.focus\(\{ preventScroll: true \}\)/, "completion transfers focus to the continue button");
+assert.match(activity, /Pressione Enter para continuar/i, "completion tells the learner Enter advances");
+assert.match(activity, /Indicador esquerdo:[\s\S]*F · G · R · T[\s\S]*Indicador direito:[\s\S]*J · H · Y · U[\s\S]*Volte à base em F\/J/, "Forest Path visibly explains the ABNT2 central-key finger zones");
 assert.match(activity, /exerciseCard\.addEventListener\("click"/, "clicking the visible exercise area focuses the hidden capture textarea");
 assert.match(css, /\.typing-box \{[^}]*position: fixed;[^}]*left: -10000px;[^}]*width: 1px; height: 0; min-height: 0; max-height: 0;[^}]*opacity: 0;[^}]*pointer-events: none;/, "the capture textarea is invisible, offscreen and zero-height while remaining focusable");
 assert.doesNotMatch(css, /\.typing-box\s*\{[^}]*display:\s*none|\.typing-box\s*\{[^}]*visibility:\s*hidden/, "the capture textarea is not removed from the focus system");
