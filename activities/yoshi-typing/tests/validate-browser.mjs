@@ -7,12 +7,12 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const appRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const storageKey = "exploradores.yoshi-typing.progress.v1";
+const storageKey = "exploradores.yoshi-typing.progress.v2";
 const targets = {
-  1: ["ASDF", "FDSA", "ASAS", "DFDF", "A FADA ASSA", "FADA ASSA FADA", "A FADA ASSA FADA", "ASDF FADA ASSA FADA", "ASDF FDSA FADA ASSA FADA", "ASDF FDSA ASDF FDSA FADA ASSA FADA"],
-  2: ["JKLÇ", "ÇLKJ", "JKJK", "FADA FALA", "A FADA FALA", "FALA DA SALA", "A FADA FALA DA SALA"],
-  3: ["ASDF JKLÇ", "QWERT YUIOP", "ZXCV BNM", "CASA SAPO VIDA", "A FOCA PULA", "A FOCA LEVA O SAPO", "O SAPO VAI PARA CASA"],
-  4: ["A FOCA PULA", "O SAPO VAI PARA CASA", "A FOCA LEVA O SAPO", "YOSHI PULA NA CASA", "O YOSHI PULA COM A FOCA", "A FOCA LEVA O SAPO PARA CASA", "YOSHI E A FOCA PULAM PARA CASA"],
+  1: ["ASDF JKLÇ ASDF JKLÇ", "ASDF FDSA JKLÇ ÇLKJ ASDF", "FADA FALA DA SALA FADA FALA", "ASDF JKLÇ FDSA ÇLKJ ASDF JKLÇ", "A FADA FALA DA SALA FADA FALA", "ASDF FDSA JKLÇ ÇLKJ ASDF FDSA JKLÇ", "A FADA FALA DA SALA ASDF JKLÇ FADA ASDF", "ASDF JKLÇ FDSA ÇLKJ ASDF JKLÇ FDSA ÇLKJ ASDF", "A FADA FALA DA SALA ASDF JKLÇ FDSA ÇLKJ ASDF JKLÇ", "ASDF FDSA JKLÇ ÇLKJ ASDF JKLÇ A FADA FALA DA SALA ASDF"],
+  2: ["ASDFGH JKLÇ ASDFGH", "QWERTY UIOP QWERTY", "ASDFGH JKLÇ QWERTY UIOP", "POIUYTREWQ ASDFGH JKLÇ", "O GATO PULA PARA O ALTO", "A TARTARUGA PULA PARA O LAGO", "O GATO QUER OLHAR PARA O PAPAGAIO", "A TARTARUGA QUER OLHAR PARA O GATO", "O PAPAGAIO OLHA A TARTARUGA E O GATO", "O GATO QUER OLHAR PARA O PAPAGAIO E A TARTARUGA"],
+  3: ["QWERTY UIOP ASDFGH JKLÇ", "O GATO PULA PARA O ALTO", "A TARTARUGA PULA PARA O LAGO", "O PAPAGAIO PULA PARA O TOPO", "O GATO OLHA O PAPAGAIO", "A TARTARUGA OLHA O PAPAGAIO", "O PAPAGAIO OLHA A TARTARUGA E O GATO", "A TARTARUGA QUER OLHAR PARA O PAPAGAIO", "O GATO QUER OLHAR PARA A TARTARUGA", "O PAPAGAIO QUER OLHAR PARA A TARTARUGA E O GATO"],
+  4: ["O YOSHI QUER KIWI E XALE", "O JACARE VAI PARA A FLORESTA", "O CAÇADOR OBSERVA A ZEBRA NO BOSQUE", "A ZEBRA E O CAVALO BRINCAM NO BOSQUE", "A TARTARUGA E O GATO PULAM PARA O TOPO", "O PAPAGAIO ESCREVE NO QUADRO E OBSERVA A ZEBRA", "A ZEBRA E O YOSHI BRINCAM COM O CAVALO NO BOSQUE"],
 };
 
 function findBrowser() {
@@ -242,10 +242,10 @@ if (!browserPath) {
     const responsiveStates = [
       { name: "home", path: "index.html", state: null, action: null },
       { name: "exercise", path: "01-flower-garden.html", state: null, action: "#start-world" },
-      { name: "kamek", path: "03-crystal-caves.html", state: { version: 1, currentWorld: 3, completedWorlds: [1, 2], completedBonus: false, checkpoints: { 1: 10, 2: 7, 3: 0, 4: 0 } }, action: null },
-      { name: "bonus-long", path: "04-bonus-challenge.html", state: { version: 1, currentWorld: 4, completedWorlds: [1, 2, 3], completedBonus: false, checkpoints: { 1: 10, 2: 7, 3: 7, 4: 0 } }, action: "#start-world", screenshot: true },
-      { name: "main-finish", path: "03-crystal-caves.html", state: { version: 1, currentWorld: 3, completedWorlds: [1, 2, 3], completedBonus: false, checkpoints: { 1: 10, 2: 7, 3: 7, 4: 0 } }, action: null },
-      { name: "bonus-finish", path: "04-bonus-challenge.html", state: { version: 1, currentWorld: 4, completedWorlds: [1, 2, 3], completedBonus: true, checkpoints: { 1: 10, 2: 7, 3: 7, 4: 7 } }, action: null },
+      { name: "kamek", path: "03-crystal-caves.html", state: { version: 2, currentWorld: 3, completedWorlds: [1, 2], completedBonus: false, checkpoints: { 1: 10, 2: 10, 3: 0, 4: 0 } }, action: null },
+      { name: "bonus-long", path: "04-bonus-challenge.html", state: { version: 2, currentWorld: 4, completedWorlds: [1, 2, 3], completedBonus: false, checkpoints: { 1: 10, 2: 10, 3: 10, 4: 0 } }, action: "#start-world", screenshot: true },
+      { name: "main-finish", path: "03-crystal-caves.html", state: { version: 2, currentWorld: 3, completedWorlds: [1, 2, 3], completedBonus: false, checkpoints: { 1: 10, 2: 10, 3: 10, 4: 0 } }, action: null },
+      { name: "bonus-finish", path: "04-bonus-challenge.html", state: { version: 2, currentWorld: 4, completedWorlds: [1, 2, 3], completedBonus: true, checkpoints: { 1: 10, 2: 10, 3: 10, 4: 7 } }, action: null },
     ];
     const responsiveResults = [];
     for (const width of [320, 390, 768, 1366]) {
@@ -276,7 +276,7 @@ if (!browserPath) {
         }
         if (state.name === "exercise" || state.name === "bonus-long") await assertFingerColors(`${width}px ${state.name}`);
         if (state.name === "exercise") {
-          const allKeysShown = await evaluate(`(()=>{const a=[...document.querySelectorAll('#target-row .target-char')].map(el=>el.textContent==='␣'?' ':el.textContent).join('');return a==='ASDF'})()`);
+          const allKeysShown = await evaluate(`(()=>{const a=[...document.querySelectorAll('#target-row .target-char')].map(el=>el.textContent==='␣'?' ':el.textContent).join('');return a==='ASDF JKLÇ ASDF JKLÇ'})()`);
           assert.equal(allKeysShown, true, `${width}px exercise displays its full target`);
         }
         if (state.name === "bonus-long") {
@@ -284,7 +284,7 @@ if (!browserPath) {
           assert.equal(target, targets[4][0], `${width}px bonus displays every target character`);
         }
         if (state.name === "main-finish") {
-          assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), "CHECKPOINT 7/7");
+          assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), "CHECKPOINT 10/10");
           assert.equal(await evaluate(`JSON.parse(localStorage.getItem(${JSON.stringify(storageKey)})).completedBonus`), false, "main reward does not require the bonus");
         }
       }
@@ -295,7 +295,7 @@ if (!browserPath) {
     await evaluate(`localStorage.removeItem(${JSON.stringify(storageKey)})`);
     await navigate(`${baseUrl}01-flower-garden.html`);
     await evaluate(`window.YoshiAudio={play(){},pause(){},changeTrack(){}}`);
-    assert.deepEqual(await evaluate(`[...document.querySelectorAll('.guide-card .keycap[data-key]')].map(el=>el.dataset.key)`), ["a", "s", "d", "f", " "], "World 1 visually introduces only the left home keys and space");
+    assert.deepEqual(await evaluate(`[...document.querySelectorAll('.guide-card .keycap[data-key]')].map(el=>el.dataset.key)`), ["a", "s", "d", "f", "j", "k", "l", "ç", " "], "World 1 visually introduces both hands on the home row and space");
     await click("#start-world");
     assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), "CHECKPOINT 1/10");
     const captureState = await evaluate(`(()=>{const input=document.getElementById('typing-box');const rect=input.getBoundingClientRect();const style=getComputedStyle(input);return{height:rect.height,computedHeight:style.height,opacity:style.opacity,left:rect.left,active:document.activeElement===input}})()`);
@@ -336,20 +336,24 @@ if (!browserPath) {
     await click('a[href="02-forest-path.html"]', true);
     await evaluate(`window.YoshiAudio={play(){},pause(){},changeTrack(){}}`);
     const forestKeys = await evaluate(`[...document.querySelectorAll('.guide-card .keycap[data-key]')].map(el=>el.dataset.key)`);
-    for (const key of ["a", "s", "d", "f", "j", "k", "l", "ç", " "]) assert.ok(forestKeys.includes(key), `World 2 keeps taught key ${JSON.stringify(key)} visible`);
-    assert.ok(!forestKeys.includes("g") && !forestKeys.includes("h"), "World 2 does not present the unintroduced G and H as learned");
+    for (const key of ["a", "s", "d", "f", "g", "h", "j", "k", "l", "ç", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", " "]) assert.ok(forestKeys.includes(key), `World 2 keeps taught key ${JSON.stringify(key)} visible`);
+    for (const key of ["z", "x", "c", "v", "b", "n", "m"]) assert.ok(!forestKeys.includes(key), `World 2 does not present lower-row key ${key} yet`);
+    await evaluate(`window.__forestTracks=[];window.YoshiAudio={play(){},pause(){},changeTrack(id,play){window.__forestTracks.push({id,play})}}`);
     await click("#start-world");
-    await assertFingerColors("world 2 JKLÇ and space");
+    const forestTracks = await evaluate(`window.__forestTracks`);
+    assert.ok(forestTracks.some(track => track.id === "UKP3kPtweio" && track.play === true), "Forest Path starts its requested soundtrack");
+    await assertFingerColors("world 2 upper/home rows and space");
     await completeWorld(2);
     await click('a[href="03-crystal-caves.html"]', true);
-    assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), "CHECKPOINT 1/7");
+    assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), "CHECKPOINT 1/10");
     assert.equal(await evaluate(`document.querySelector('#audio-toggle').disabled`), true, "the cave track cannot start while Kamek's scene is open");
     await evaluate(`window.__fakeAudioLog=[];window.__fakeAudioInstances=0;window.YT={PlayerState:{PLAYING:1,PAUSED:2,ENDED:0},Player:function(host,options){const player=this;window.__fakeAudioInstances+=1;player.video=options.videoId;player.setVolume=()=>{};player.mute=()=>{};player.unMute=()=>{};player.pauseVideo=()=>window.__fakeAudioLog.push('pause:'+player.video);player.playVideo=()=>window.__fakeAudioLog.push('play:'+player.video);player.loadVideoById=({videoId})=>{player.video=videoId;window.__fakeAudioLog.push('load:'+videoId)};player.getVideoData=()=>({video_id:player.video});setTimeout(()=>options.events.onReady({target:player}),500)}}`);
     await click("#story-audio");
     await click("#story-continue");
     assert.equal(await evaluate(`document.querySelector('#audio-toggle').disabled`), false);
     const caveKeys = await evaluate(`[...document.querySelectorAll('.guide-card .keycap[data-key]')].map(el=>el.dataset.key)`);
-    for (const key of ["q", "g", "h", "z", "m"]) assert.ok(caveKeys.includes(key), `Crystal Caves presents new row key ${key} before its checkpoint`);
+    for (const key of ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "g", "h"]) assert.ok(caveKeys.includes(key), `Crystal Caves presents home/upper key ${key}`);
+    for (const key of ["z", "x", "c", "v", "b", "n", "m"]) assert.ok(!caveKeys.includes(key), `Crystal Caves leaves lower-row key ${key} to the bonus`);
     await click("#start-world");
     await assertFingerColors("world 3 upper/lower rows and space");
     await evaluate(`new Promise(resolve=>setTimeout(resolve,700))`);
@@ -361,7 +365,7 @@ if (!browserPath) {
     await completeWorld(3);
     assert.match(await evaluate(`document.querySelector('.world-finish').innerText`), /três mundos obrigatórios/);
     assert.equal(await evaluate(`JSON.parse(localStorage.getItem(${JSON.stringify(storageKey)})).completedBonus`), false, "completing the main adventure leaves bonus optional");
-    assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), "CHECKPOINT 7/7");
+    assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), "CHECKPOINT 10/10");
 
     // The end of the main adventure offers a true stop and keeps the bonus optional.
     await click('a[href="index.html?ending=main"]', true);
@@ -373,16 +377,16 @@ if (!browserPath) {
     assert.equal(await evaluate(`JSON.parse(localStorage.getItem(${JSON.stringify(storageKey)})).completedWorlds.length`), 3, "cancelling reset preserves the completed worlds");
 
     // Session storage preserves progress across route changes and reloads when local storage is blocked.
-    const sessionState = { version: 1, currentWorld: 2, completedWorlds: [1], completedBonus: false, checkpoints: { 1: 10, 2: 1, 3: 0, 4: 0 } };
+    const sessionState = { version: 2, currentWorld: 2, completedWorlds: [1], completedBonus: false, checkpoints: { 1: 10, 2: 1, 3: 0, 4: 0 } };
     await evaluate(`localStorage.removeItem(${JSON.stringify(storageKey)});sessionStorage.setItem(${JSON.stringify(storageKey)},${JSON.stringify(JSON.stringify(sessionState))})`);
     const localBlock = await cdp.send("Page.addScriptToEvaluateOnNewDocument", { source: "Object.defineProperty(window,'localStorage',{configurable:true,get(){throw new DOMException('blocked','SecurityError')}})" });
     await navigate(`${baseUrl}02-forest-path.html?storage=session`);
-    assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), "CHECKPOINT 2/7", "session storage resumes the next open checkpoint");
+    assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), "CHECKPOINT 2/10", "session storage resumes the next open checkpoint");
     assert.match(await evaluate(`document.querySelector('#persistence-status').textContent`), /sessionStorage|sessão do navegador/i);
     await evaluate(`window.YoshiAudio={play(){},pause(){},changeTrack(){}}`);
     await click("#start-world");
     await navigate(`${baseUrl}02-forest-path.html?storage=reload`);
-    assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), "CHECKPOINT 2/7", "session progress survives reload");
+    assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), "CHECKPOINT 2/10", "session progress survives reload");
     await cdp.send("Page.removeScriptToEvaluateOnNewDocument", { identifier: localBlock.identifier });
 
     // If both stores are unavailable, the page states the limit instead of promising continuity.
