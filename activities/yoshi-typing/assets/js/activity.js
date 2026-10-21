@@ -1,7 +1,7 @@
 (function (global) {
   const CORE = global.YoshiTypingCore;
   const DATA = global.YoshiWorldData;
-  const STORAGE_KEY = "exploradores.yoshi-typing.progress.v1";
+  const STORAGE_KEY = "exploradores.yoshi-typing.progress.v2";
   const worldFiles = Object.fromEntries(Object.values(DATA.worlds).map((world) => [world.id, world.file]));
   const pageKind = document.body.dataset.page;
   let storageMode = "memory";
@@ -143,8 +143,10 @@
   ];
 
   function renderKeyboard(world, activeKey = "", completedText = "") {
-    const full = world.id >= 3;
-    const rows = full ? ["qwertyuiop", "asdfghjklç", "zxcvbnm"] : ["asdfghjklç"];
+    const allRows = world.id === 4;
+    const upperAndHome = world.id >= 2;
+    const rows = allRows ? ["qwertyuiop", "asdfghjklç", "zxcvbnm"] : upperAndHome ? ["qwertyuiop", "asdfghjklç"] : ["asdfghjklç"];
+    const keyboardCaption = world.id === 1 ? "posição-base das duas mãos" : allRows ? "todas as letras exploradas" : "fileira superior e posição-base";
     const normalize = (value) => value === " " ? " " : value.toLocaleLowerCase("pt-BR");
     const rowHtml = rows.map((row) => `<div class="keyboard-row" aria-label="Fileira do teclado">${[...row].map((key) => {
       if (!world.taughtKeys.includes(normalize(key))) return `<span class="keycap key-blank" aria-hidden="true"></span>`;
@@ -154,19 +156,19 @@
       return `<span class="keycap ${finger} ${next ? "is-next" : ""} ${used ? "is-used" : ""}" data-key="${key}" ${next ? 'aria-current="true"' : ""}>${key.toLocaleUpperCase("pt-BR")}</span>`;
     }).join("")}</div>`).join("");
     const spaceNext = activeKey === " ";
-    return `<div class="keyboard-wrap"><p class="keyboard-caption">Teclado ABNT2 · ${full ? "fileiras exploradas" : "posição-base"}</p><div class="keyboard" aria-label="Ilustração do teclado ABNT2">${rowHtml}<div class="keyboard-row"><span class="keycap key-space thumb ${spaceNext ? "is-next" : ""}" data-key=" " ${spaceNext ? 'aria-current="true"' : ""}>ESPAÇO · POLEGARES</span></div></div><div class="keyboard-legend">${legendFingers.map(([finger,label]) => `<span class="legend-item"><span class="legend-swatch ${finger}"></span>${label}</span>`).join("")}</div></div>`;
+    return `<div class="keyboard-wrap"><p class="keyboard-caption">Teclado ABNT2 · ${keyboardCaption}</p><div class="keyboard" aria-label="Ilustração do teclado ABNT2">${rowHtml}<div class="keyboard-row"><span class="keycap key-space thumb ${spaceNext ? "is-next" : ""}" data-key=" " ${spaceNext ? 'aria-current="true"' : ""}>ESPAÇO · POLEGARES</span></div></div><div class="keyboard-legend">${legendFingers.map(([finger,label]) => `<span class="legend-item"><span class="legend-swatch ${finger}"></span>${label}</span>`).join("")}</div></div>`;
   }
 
   function renderFingerGuide(world) {
     let entries;
-    if (world.id === 1) entries = [["A", "left-pinky"], ["S", "left-ring"], ["D", "left-middle"], ["F", "left-index"], ["ESPAÇO", "thumb"]];
-    else if (world.id === 2) entries = [["J", "right-index"], ["K", "right-middle"], ["L", "right-ring"], ["Ç", "right-pinky"], ["ESPAÇO", "thumb"]];
+    if (world.id === 1) entries = [["A", "left-pinky"], ["S", "left-ring"], ["D", "left-middle"], ["F", "left-index"], ["J", "right-index"], ["K", "right-middle"], ["L", "right-ring"], ["Ç", "right-pinky"], ["ESPAÇO", "thumb"]];
+    else if (world.id === 2 || world.id === 3) entries = [["G", "left-index"], ["H", "right-index"], ["Q", "left-pinky"], ["W", "left-ring"], ["E", "left-middle"], ["R", "left-index"], ["T", "left-index"], ["Y", "right-index"], ["U", "right-index"], ["I", "right-middle"], ["O", "right-ring"], ["P", "right-pinky"], ["ESPAÇO", "thumb"]];
     else entries = [["A", "left-pinky"], ["S", "left-ring"], ["D", "left-middle"], ["F", "left-index"], ["J", "right-index"], ["K", "right-middle"], ["L", "right-ring"], ["Ç", "right-pinky"], ["ESPAÇO", "thumb"]];
     return entries.map(([key,finger]) => `<div class="finger-card"><span class="finger-dot ${finger}" aria-hidden="true"></span><span><strong>${key}</strong><small>${fingerName(finger)}</small></span></div>`).join("");
   }
 
   function renderStory(world, host) {
-    host.innerHTML = `<article class="story-card"><div class="kamek-art" aria-hidden="true">🧙</div><div><p class="eyebrow pixel">UMA CENA CURTA · FORA DOS CHECKPOINTS</p><h2>Kamek e os cristais</h2><p>“As luzes mostram novas fileiras. Seus dedos podem sair da base e voltar para casa. Sem pressa!”</p><p class="story-note">A fala musical é opcional. O botão continua mesmo se o áudio estiver bloqueado.</p><div class="story-actions"><button class="button button-quiet" id="story-audio" type="button">Ouvir mensagem musical</button><button class="button" id="story-continue" type="button">Continuar sem áudio</button></div></div></article>`;
+    host.innerHTML = `<article class="story-card"><div class="kamek-art" aria-hidden="true">🧙</div><div><p class="eyebrow pixel">UMA CENA CURTA · FORA DOS CHECKPOINTS</p><h2>Kamek e os cristais</h2><p>“A fileira-base e a superior já estão no seu mapa. Agora vamos combinar movimentos e frases mais longas. Sem pressa!”</p><p class="story-note">A fala musical é opcional. O botão continua mesmo se o áudio estiver bloqueado.</p><div class="story-actions"><button class="button button-quiet" id="story-audio" type="button">Ouvir mensagem musical</button><button class="button" id="story-continue" type="button">Continuar sem áudio</button></div></div></article>`;
     host.querySelector("#story-audio").addEventListener("click", () => {
       global.YoshiAudio?.play(world.storyTrack);
     });
@@ -181,7 +183,13 @@
   function renderGuide(world, host) {
     const count = progress.checkpoints[world.id] || 0;
     const totalCheckpoints = world.checkpoints.length;
-    const rowIntro = world.id === 3 ? `<div class="row-teaching"><strong>Fileira-base:</strong> A S D F G H J K L Ç. <strong>Fileira superior:</strong> Q W E R T Y U I O P. <strong>Fileira inferior:</strong> Z X C V B N M. Olhe para a tecla, mova o dedo e retorne à posição-base. As fileiras novas são apresentadas antes de aparecerem nos exercícios.</div>` : "";
+    const rowIntro = world.id === 2
+      ? `<div class="row-teaching"><strong>Fileira-base:</strong> A S D F G H J K L Ç. <strong>Fileira superior:</strong> Q W E R T Y U I O P. Pratique as duas fileiras juntas; o espaço é pressionado com os polegares.</div>`
+      : world.id === 3
+        ? `<div class="row-teaching"><strong>Fileira-base:</strong> A S D F G H J K L Ç. <strong>Fileira superior:</strong> Q W E R T Y U I O P. Essas são as fileiras deste mundo; agora coordene movimentos, palavras e frases mais longas.</div>`
+        : world.id === 4
+          ? `<div class="row-teaching"><strong>Fileira superior:</strong> Q W E R T Y U I O P. <strong>Fileira-base:</strong> A S D F G H J K L Ç. <strong>Fileira inferior:</strong> Z X C V B N M. Ao longo das frases, você vai praticar todas as letras e o espaço.</div>`
+          : "";
     host.innerHTML = `<section class="guide-card"><p class="eyebrow pixel">${world.id === 4 ? `OPCIONAL · ${totalCheckpoints} CHECKPOINTS` : `MUNDO ${world.id}/3 · ${totalCheckpoints} CHECKPOINTS`}</p><h2>Antes de começar</h2><p>${world.guide}</p><div class="guide-steps">${renderFingerGuide(world)}</div>${rowIntro}${renderKeyboard(world)}<p class="keyboard-tip">As cores orientam sobre os dedos. O navegador não consegue verificar qual dedo você usou.</p><div class="guide-actions"><button id="start-world" class="button" type="button">${count ? `Continuar do checkpoint ${count + 1}` : "Começar os checkpoints"}</button><a class="button button-quiet" href="index.html">Fazer uma pausa no mapa</a></div></section>`;
     host.querySelector("#start-world").addEventListener("click", () => {
       global.YoshiAudio?.changeTrack(world.track, true);
