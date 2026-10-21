@@ -77,6 +77,10 @@ assert.match(worlds[1].guide, /J, K, L e Ç/i, "Flower Garden guide names the ri
 assert.deepEqual([worlds[1].track, worlds[3].track, worlds[4].track], ["tGukyQ10nlA", "IJy7jK-TM40", "n6-JFDTC_nI"], "each world uses its requested music reference");
 assert.equal(worlds[3].storyTrack, "BEP3rdTy0-o", "Kamek's short scene has its requested music reference");
 assert.equal(worlds[2].track, "UKP3kPtweio", "Forest Path uses the requested new soundtrack");
+assert.match(worlds[2].guide, /indicador esquerdo.*F.*G.*indicador direito.*J.*H/i, "Forest Path explains the same-index-finger relationship between F/G and J/H");
+const fingerMap = browserWindow.YoshiWorldData.fingers;
+for (const key of ["f", "g", "r", "t", "v", "b"]) assert.equal(fingerMap[key], "left-index", `${key.toUpperCase()} uses the left index finger`);
+for (const key of ["j", "h", "y", "u", "n", "m"]) assert.equal(fingerMap[key], "right-index", `${key.toUpperCase()} uses the right index finger`);
 
 assert.equal(core.evaluateKey("a", "A", true).matches, true, "case does not matter");
 assert.equal(core.evaluateKey("ç", "Ç", true).matches, true, "ABNT2 Ç is matched");
@@ -156,7 +160,7 @@ core.clearStoredProgress((name) => allStores[name], "session-test");
 assert.equal(sessionStore.getItem("session-test"), null, "new game clears session progress after confirmation");
 
 const pages = ["index.html", ...Object.values(worlds).map(({ file }) => file)];
-const currentAssetVersion = "yoshi-curriculum-2026-10-21-1";
+const currentAssetVersion = "yoshi-enter-continue-2026-10-21-1";
 for (const page of pages) {
   const html = read(page);
   for (const asset of ["world-data.js", "typing-core.js", "audio.js", "activity.js"]) {
@@ -202,6 +206,9 @@ assert.match(activity, /input\.addEventListener\("paste",\s*\(event\)\s*=>\s*\{\
 assert.match(activity, /input\.addEventListener\("drop"/, "dropped text cannot enter the exercise");
 assert.match(activity, /event\.ctrlKey \|\| event\.metaKey \|\| event\.altKey/, "global keyboard shortcuts are left alone");
 assert.match(activity, /event\.isTrusted/, "only trusted physical key events can advance the exercise");
+assert.match(activity, /continueButton\.focus\(\{ preventScroll: true \}\)/, "completion transfers focus to the continue button");
+assert.match(activity, /Pressione Enter para continuar/i, "completion tells the learner Enter advances");
+assert.match(activity, /Indicador esquerdo:[\s\S]*F · G · R · T[\s\S]*Indicador direito:[\s\S]*J · H · Y · U[\s\S]*Volte à base em F\/J/, "Forest Path visibly explains the ABNT2 central-key finger zones");
 assert.match(activity, /exerciseCard\.addEventListener\("click"/, "clicking the visible exercise area focuses the hidden capture textarea");
 assert.match(css, /\.typing-box \{[^}]*position: fixed;[^}]*left: -10000px;[^}]*width: 1px; height: 0; min-height: 0; max-height: 0;[^}]*opacity: 0;[^}]*pointer-events: none;/, "the capture textarea is invisible, offscreen and zero-height while remaining focusable");
 assert.doesNotMatch(css, /\.typing-box\s*\{[^}]*display:\s*none|\.typing-box\s*\{[^}]*visibility:\s*hidden/, "the capture textarea is not removed from the focus system");
@@ -229,7 +236,7 @@ assert.match(css, /\.yoshi-with-flower\s*>\s*\.yoshi-art\s*\{[^}]*width:\s*100%;
 assert.match(css, /\.flower-art\s*\{[^}]*position:\s*absolute;[^}]*top:\s*-8px;[^}]*right:\s*14px;[^}]*width:\s*24px;[^}]*height:\s*24px;[^}]*min-width:\s*24px;[^}]*max-width:\s*24px;/, "desktop flower size is explicit and independent of the PNG's intrinsic size");
 assert.match(css, /@media \(max-width: 850px\)[\s\S]*?\.yoshi-with-flower > \.flower-art \{ width: 22px; height: 22px; min-width: 22px; min-height: 22px; max-width: 22px; max-height: 22px; \}/, "tablet flower size is explicitly 22px");
 assert.match(css, /@media \(max-width: 620px\)[\s\S]*?\.yoshi-with-flower > \.flower-art \{ width: 20px; height: 20px; min-width: 20px; min-height: 20px; max-width: 20px; max-height: 20px; \}/, "mobile flower size is explicitly 20px");
-assert.match(homeHtml, /assets\/css\/yoshi\.css\?v=yoshi-curriculum-2026-10-21-1/, "the CSS URL is versioned for the hidden zero-height capture");
+assert.match(homeHtml, /assets\/css\/yoshi\.css\?v=yoshi-enter-continue-2026-10-21-1/, "the CSS URL is versioned for the hidden zero-height capture");
 assert.doesNotMatch(css, /\.hero-art \.hero-characters\s*>\s*\.flower-art/, "no competing rules size or position the flower against the full hero");
 assert.match(css, /\.hero-characters \{[^}]*flex-wrap: nowrap;[^}]*min-width: 0;/, "Yoshi remains centered in its responsive hero column");
 assert.match(css, /\.keycap\[data-key\] \{[^}]*background: var\(--finger-color\)/, "each taught key receives its finger background");

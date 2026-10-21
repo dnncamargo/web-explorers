@@ -135,7 +135,7 @@ if (!browserPath) {
   }
   async function assertHomeFlowerLayout(label, viewportWidth) {
     const stylesheetUrl = await evaluate(`document.querySelector('link[rel="stylesheet"][href*="yoshi.css"]')?.getAttribute("href") || ""`);
-    assert.match(stylesheetUrl, /yoshi\.css\?v=hero-flower-2026-10-21-2/, `${label}: current flower CSS revision is loaded`);
+    assert.match(stylesheetUrl, /yoshi\.css\?v=yoshi-enter-continue-2026-10-21-1/, `${label}: current flower CSS revision is loaded`);
     const result = await evaluate(`(async()=>{const flower=document.querySelector(".yoshi-with-flower > .flower-art");const yoshi=document.querySelector(".yoshi-with-flower > .yoshi-art");const container=document.querySelector(".yoshi-with-flower");const hero=document.querySelector(".hero-art");const scene=document.querySelector(".home-hero");if(!yoshi||!flower||!container||!hero||!scene)return null;if(!yoshi.complete)await Promise.race([new Promise(resolve=>yoshi.addEventListener("load",resolve,{once:true})),new Promise(resolve=>setTimeout(resolve,10000))]);const y=yoshi.getBoundingClientRect(),f=flower.getBoundingClientRect(),c=container.getBoundingClientRect(),h=hero.getBoundingClientRect(),g=scene.getBoundingClientRect(),s=getComputedStyle(flower);const canvas=document.createElement("canvas");canvas.width=flower.naturalWidth;canvas.height=flower.naturalHeight;const ctx=canvas.getContext("2d");ctx.drawImage(flower,0,0);const rgba=ctx.getImageData(0,0,canvas.width,canvas.height).data;let transparentPixels=0,opaquePixels=0;for(let i=3;i<rgba.length;i+=4){if(rgba[i]===0)transparentPixels++;if(rgba[i]===255)opaquePixels++}return{flower:{width:f.width,height:f.height,left:f.left,right:f.right,top:f.top,bottom:f.bottom,centerX:f.left+f.width/2,cssWidth:s.width,cssHeight:s.height,minWidth:s.minWidth,maxWidth:s.maxWidth,flex:s.flex,position:s.position,naturalWidth:flower.naturalWidth,naturalHeight:flower.naturalHeight,transparentPixels,opaquePixels,cornerAlpha:rgba[3]},yoshi:{left:y.left,right:y.right,top:y.top,height:y.height,centerX:y.left+y.width/2,naturalWidth:yoshi.naturalWidth,naturalHeight:yoshi.naturalHeight,complete:yoshi.complete},container:{left:c.left,right:c.right,top:c.top,bottom:c.bottom,width:c.width,height:c.height},hero:{left:h.left,right:h.right,top:h.top,bottom:h.bottom},scene:{left:g.left,right:g.right,top:g.top,bottom:g.bottom}}})()`);
     assert.ok(result, `${label}: Yoshi and flower exist in the hero`);
     const expectedSize = viewportWidth <= 620 ? 20 : viewportWidth <= 850 ? 22 : 24;
@@ -181,6 +181,11 @@ if (!browserPath) {
     await cdp.send("Input.dispatchKeyEvent", { type: "keyDown", key, code, text: char });
     await cdp.send("Input.dispatchKeyEvent", { type: "keyUp", key, code });
   }
+  async function pressEnter() {
+    await cdp.send("Input.dispatchKeyEvent", { type: "keyDown", key: "Enter", code: "Enter", windowsVirtualKeyCode: 13, nativeVirtualKeyCode: 13 });
+    await cdp.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Enter", code: "Enter", windowsVirtualKeyCode: 13, nativeVirtualKeyCode: 13 });
+    await new Promise((resolve) => setTimeout(resolve, 80));
+  }
   async function typeCurrentTarget(expected) {
     const actualTarget = await evaluate(`[...document.querySelectorAll('#target-row .target-char')].map(el=>el.textContent==='␣'?' ':el.textContent).join('')`);
     assert.equal(actualTarget, expected, `browser target is fully visible: ${expected}`);
@@ -194,13 +199,16 @@ if (!browserPath) {
     }
     const typed = await evaluate(`document.querySelector('#typed-display')?.textContent`);
     assert.equal(typed, [...expected].map((char) => char === " " ? "␣" : char).join(""), `browser accepted and displayed ${expected}`);
-    const advanceState = await evaluate(`({disabled:document.querySelector('#next-checkpoint').disabled,header:document.querySelector('#checkpoint-progress').textContent,typed:document.querySelector('#typed-display').textContent,feedback:document.querySelector('#typing-feedback').textContent,finger:document.querySelector('#current-finger').textContent,active:[...document.querySelectorAll('.target-char.is-current')].map(e=>e.textContent),target:document.querySelector('#target-row').innerText,saved:JSON.parse(localStorage.getItem(${JSON.stringify(storageKey)}))})`);
+    const advanceState = await evaluate(`({disabled:document.querySelector('#next-checkpoint').disabled,header:document.querySelector('#checkpoint-progress').textContent,typed:document.querySelector('#typed-display').textContent,feedback:document.querySelector('#typing-feedback').textContent,finger:document.querySelector('#current-finger').textContent,active:[...document.querySelectorAll('.target-char.is-current')].map(e=>e.textContent),target:document.querySelector('#target-row').innerText,saved:JSON.parse(localStorage.getItem("exploradores.yoshi-typing.progress.v2")),focusedId:document.activeElement?.id,buttonText:document.querySelector('#next-checkpoint').textContent})`);
     assert.equal(advanceState.disabled, false, `checkpoint advances only after every character is typed (${JSON.stringify(advanceState)})`);
+    assert.equal(advanceState.focusedId, "next-checkpoint", "the final character transfers focus to the continue button");
+    assert.match(advanceState.feedback, /Pressione Enter para continuar/i, "the completed exercise explains the Enter shortcut");
+    assert.match(advanceState.buttonText, /^Continuar para checkpoint \d+$|^Concluir mundo$/, "the focused button advertises the available action");
   }
   async function completeWorld(worldId) {
     for (const target of targets[worldId]) {
       await typeCurrentTarget(target);
-      await click("#next-checkpoint");
+      await pressEnter();
       if (target !== targets[worldId].at(-1)) {
         const next = await evaluate(`document.querySelector('#checkpoint-progress').textContent`);
         assert.match(next, new RegExp(`CHECKPOINT ${targets[worldId].indexOf(target) + 2}/${targets[worldId].length}`), "header updates immediately when the next checkpoint opens");
@@ -319,22 +327,27 @@ if (!browserPath) {
     assert.equal(await evaluate(`document.querySelector('#typed-display').textContent`), "—", "restart clears only the current exercise display");
     assert.equal(await evaluate(`JSON.parse(localStorage.getItem(${JSON.stringify(storageKey)})).checkpoints[1]`), 0, "restart leaves previously completed checkpoints intact");
     await typeCurrentTarget(targets[1][0]);
-    await click("#next-checkpoint");
-    assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), "CHECKPOINT 2/10", "the permanent indicator updates as soon as checkpoint 2 opens");
+    assert.equal(await evaluate(`document.activeElement?.id`), "next-checkpoint", "the first checkpoint completion focuses its continue button");
+    await pressEnter();
+    assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), "CHECKPOINT 2/10", "Enter opens checkpoint 2 without a mouse click");
     await navigate(`${baseUrl}01-flower-garden.html?resume=1`);
     assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), "CHECKPOINT 2/10", "reloading resumes at the correct next checkpoint");
 
     // Finish the three required worlds with browser-dispatched physical key events.
     await click("#start-world");
     await typeCurrentTarget(targets[1][1]);
-    await click("#next-checkpoint");
+    await pressEnter();
     for (let index = 2; index < targets[1].length; index += 1) {
       await typeCurrentTarget(targets[1][index]);
-      await click("#next-checkpoint");
+      await pressEnter();
     }
     assert.match(await evaluate(`document.querySelector('.world-finish').innerText`), /Este mundo está concluído/);
     await click('a[href="02-forest-path.html"]', true);
     await evaluate(`window.YoshiAudio={play(){},pause(){},changeTrack(){}}`);
+    const forestTip = await evaluate(`document.querySelector(".row-teaching")?.innerText || ""`);
+    assert.ok(forestTip.includes("F · G · R · T"), "Forest Path groups F/G and R/T under the left index finger");
+    assert.ok(forestTip.includes("J · H · Y · U"), "Forest Path groups J/H and Y/U under the right index finger");
+    assert.ok(forestTip.includes("V/B") && forestTip.includes("N/M"), "Forest Path states that V/B/N/M are reserved for the bonus");
     const forestKeys = await evaluate(`[...document.querySelectorAll('.guide-card .keycap[data-key]')].map(el=>el.dataset.key)`);
     for (const key of ["a", "s", "d", "f", "g", "h", "j", "k", "l", "ç", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", " "]) assert.ok(forestKeys.includes(key), `World 2 keeps taught key ${JSON.stringify(key)} visible`);
     for (const key of ["z", "x", "c", "v", "b", "n", "m"]) assert.ok(!forestKeys.includes(key), `World 2 does not present lower-row key ${key} yet`);
