@@ -48,10 +48,11 @@
   }
 
   function cardProgress(world) {
+    const total = world.checkpoints.length;
     const completed = progress.checkpoints[world.id] || 0;
-    if (world.id === 4 && progress.completedBonus) return "Bônus concluído · 5/5";
-    if (world.id < 4 && progress.completedWorlds.includes(world.id)) return "Mundo concluído · 5/5";
-    return completed ? `${completed}/5 checkpoints concluídos` : "5 checkpoints";
+    if (world.id === 4 && progress.completedBonus) return `Bônus concluído · ${total}/${total}`;
+    if (world.id < 4 && progress.completedWorlds.includes(world.id)) return `Mundo concluído · ${total}/${total}`;
+    return completed ? `${completed}/${total} checkpoints concluídos` : `${total} checkpoints`;
   }
 
   function renderHome() {
@@ -80,7 +81,7 @@
       const unlocked = CORE.canEnterWorld(progress, world.id);
       const complete = world.id === 4 ? progress.completedBonus : progress.completedWorlds.includes(world.id);
       const buttonText = !unlocked ? "Conclua o mundo anterior" : complete ? "Ver conquista" : world.id === 4 ? "Jogar bônus" : "Entrar no mundo";
-      const description = world.id === 4 ? "Opcional · ovos, moedas e estrelas" : `${world.id}/3 · 5 checkpoints`;
+      const description = world.id === 4 ? `Opcional · ${world.checkpoints.length} checkpoints · ovos, moedas e estrelas` : `${world.id}/3 · ${world.checkpoints.length} checkpoints`;
       return `<article class="world-card ${unlocked ? "" : "is-locked"}" data-theme="${world.theme}"><p class="card-kicker pixel">${world.id === 4 ? "EXTRA" : `MUNDO ${world.id}/3`}</p><h3>${world.name}</h3><p>${description}</p><p class="card-progress">${cardProgress(world)}</p><button type="button" data-enter-world="${world.id}" ${unlocked ? "" : "disabled"} aria-label="${unlocked ? `${buttonText}: ${world.name}` : `${world.name} bloqueado até concluir o mundo anterior`}">${buttonText}</button></article>`;
     }).join("");
     map.querySelectorAll("[data-enter-world]").forEach((button) => button.addEventListener("click", () => enterWorld(Number(button.dataset.enterWorld))));
@@ -179,8 +180,9 @@
 
   function renderGuide(world, host) {
     const count = progress.checkpoints[world.id] || 0;
+    const totalCheckpoints = world.checkpoints.length;
     const rowIntro = world.id === 3 ? `<div class="row-teaching"><strong>Fileira-base:</strong> A S D F G H J K L Ç. <strong>Fileira superior:</strong> Q W E R T Y U I O P. <strong>Fileira inferior:</strong> Z X C V B N M. Olhe para a tecla, mova o dedo e retorne à posição-base. As fileiras novas são apresentadas antes de aparecerem nos exercícios.</div>` : "";
-    host.innerHTML = `<section class="guide-card"><p class="eyebrow pixel">${world.id === 4 ? "OPCIONAL · 5 CHECKPOINTS" : `MUNDO ${world.id}/3 · 5 CHECKPOINTS`}</p><h2>Antes de começar</h2><p>${world.guide}</p><div class="guide-steps">${renderFingerGuide(world)}</div>${rowIntro}${renderKeyboard(world)}<p class="keyboard-tip">As cores orientam sobre os dedos. O navegador não consegue verificar qual dedo você usou.</p><div class="guide-actions"><button id="start-world" class="button" type="button">${count ? `Continuar do checkpoint ${count + 1}` : "Começar os checkpoints"}</button><a class="button button-quiet" href="index.html">Fazer uma pausa no mapa</a></div></section>`;
+    host.innerHTML = `<section class="guide-card"><p class="eyebrow pixel">${world.id === 4 ? `OPCIONAL · ${totalCheckpoints} CHECKPOINTS` : `MUNDO ${world.id}/3 · ${totalCheckpoints} CHECKPOINTS`}</p><h2>Antes de começar</h2><p>${world.guide}</p><div class="guide-steps">${renderFingerGuide(world)}</div>${rowIntro}${renderKeyboard(world)}<p class="keyboard-tip">As cores orientam sobre os dedos. O navegador não consegue verificar qual dedo você usou.</p><div class="guide-actions"><button id="start-world" class="button" type="button">${count ? `Continuar do checkpoint ${count + 1}` : "Começar os checkpoints"}</button><a class="button button-quiet" href="index.html">Fazer uma pausa no mapa</a></div></section>`;
     host.querySelector("#start-world").addEventListener("click", () => {
       global.YoshiAudio?.changeTrack(world.track, true);
       renderCheckpoint(world, host);
@@ -197,19 +199,20 @@
     }).join("");
   }
 
-  function renderDots(completeCount) {
-    return Array.from({ length: 5 }, (_, index) => `<span class="checkpoint-dot ${index < completeCount ? "done" : ""}" aria-hidden="true"></span>`).join("");
+  function renderDots(completeCount, totalCheckpoints) {
+    return Array.from({ length: totalCheckpoints }, (_, index) => `<span class="checkpoint-dot ${index < completeCount ? "done" : ""}" aria-hidden="true"></span>`).join("");
   }
 
   function renderCheckpoint(world, host) {
     const completedCount = progress.checkpoints[world.id] || 0;
-    if (completedCount >= 5) return renderWorldFinish(world, host);
+    const totalCheckpoints = world.checkpoints.length;
+    if (completedCount >= totalCheckpoints) return renderWorldFinish(world, host);
     const number = completedCount + 1;
-    document.getElementById("checkpoint-progress").textContent = `CHECKPOINT ${number}/5`;
+    document.getElementById("checkpoint-progress").textContent = `CHECKPOINT ${number}/${totalCheckpoints}`;
     const checkpoint = world.checkpoints[completedCount];
     let typed = 0;
     let typedText = "";
-    host.innerHTML = `<section class="exercise-card"><div class="checkpoint-strip"><span class="checkpoint-name pixel">CHECKPOINT ${number}/5</span><span class="checkpoint-dots" aria-label="${completedCount} de 5 checkpoints concluídos">${renderDots(completedCount)}</span></div><h2>Digite a sequência</h2><p class="typing-instruction">${checkpoint.instruction}</p><div id="target-row" class="target-row" role="img" aria-label="Sequência-alvo: ${checkpoint.target.replaceAll(" ", ", espaço, ")}"></div><div class="typed-row"><strong>Você digitou</strong><output id="typed-display" class="typed-display" aria-live="polite" aria-label="Você ainda não digitou nenhuma tecla">—</output><small>␣ indica um espaço.</small></div><p class="current-finger" id="current-finger" aria-live="polite"></p>${renderKeyboard(world)}<label class="visually-hidden" for="typing-box">Área para digitar usando o teclado físico</label><textarea id="typing-box" class="typing-box" rows="2" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="Clique aqui e digite com o teclado físico"></textarea><p id="typing-feedback" class="feedback" role="status" aria-live="polite">Clique na área e digite sem pressa. Maiúsculas e minúsculas são aceitas.</p><div class="exercise-actions"><button id="show-hint" class="button button-quiet" type="button" aria-expanded="false" aria-controls="help-panel">Mostrar dica</button><button id="restart-exercise" class="button button-quiet" type="button">Reiniciar este exercício</button><button id="next-checkpoint" class="button" type="button" disabled>Concluir checkpoint ${number}/5</button></div><p id="help-panel" class="help-panel" hidden>${checkpoint.hint} Use os dedos como orientação e volte à posição-base quando possível.</p><p class="exercise-note">O progresso vem das teclas pressionadas. Colar texto não conclui o exercício. Não contamos tentativas nem velocidade.</p></section>`;
+    host.innerHTML = `<section class="exercise-card"><div class="checkpoint-strip"><span class="checkpoint-name pixel">CHECKPOINT ${number}/${totalCheckpoints}</span><span class="checkpoint-dots" aria-label="${completedCount} de ${totalCheckpoints} checkpoints concluídos">${renderDots(completedCount, totalCheckpoints)}</span></div><h2>Digite a sequência</h2><p class="typing-instruction">${checkpoint.instruction}</p><div id="target-row" class="target-row" role="img" aria-label="Sequência-alvo: ${checkpoint.target.replaceAll(" ", ", espaço, ")}"></div><div class="typed-row"><strong>Você digitou</strong><output id="typed-display" class="typed-display" aria-live="polite" aria-label="Você ainda não digitou nenhuma tecla">—</output><small>␣ indica um espaço.</small></div><p class="current-finger" id="current-finger" aria-live="polite"></p>${renderKeyboard(world)}<label class="visually-hidden" for="typing-box">Área para digitar usando o teclado físico</label><textarea id="typing-box" class="typing-box" rows="2" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="Clique aqui e digite com o teclado físico"></textarea><p id="typing-feedback" class="feedback" role="status" aria-live="polite">Clique na área e digite sem pressa. Maiúsculas e minúsculas são aceitas.</p><div class="exercise-actions"><button id="show-hint" class="button button-quiet" type="button" aria-expanded="false" aria-controls="help-panel">Mostrar dica</button><button id="restart-exercise" class="button button-quiet" type="button">Reiniciar este exercício</button><button id="next-checkpoint" class="button" type="button" disabled>Concluir checkpoint ${number}/${totalCheckpoints}</button></div><p id="help-panel" class="help-panel" hidden>${checkpoint.hint} Use os dedos como orientação e volte à posição-base quando possível.</p><p class="exercise-note">O progresso vem das teclas pressionadas. Colar texto não conclui o exercício. Não contamos tentativas nem velocidade.</p></section>`;
 
     const input = host.querySelector("#typing-box");
     const targetRow = host.querySelector("#target-row");
@@ -274,10 +277,10 @@
           return;
         }
         saveProgress();
-        document.getElementById("checkpoint-progress").textContent = `CHECKPOINT ${number}/5`;
+        document.getElementById("checkpoint-progress").textContent = `CHECKPOINT ${number}/${totalCheckpoints}`;
         feedback.textContent = "Sequência completa! Você pode avançar quando quiser.";
         continueButton.disabled = false;
-        continueButton.textContent = number < 5 ? `Continuar para checkpoint ${number + 1}` : "Concluir mundo";
+        continueButton.textContent = number < world.checkpoints.length ? `Continuar para checkpoint ${number + 1}` : "Concluir mundo";
       }
     });
 
@@ -319,19 +322,19 @@
     });
     continueButton.addEventListener("click", () => {
       if (continueButton.disabled || !finished) return;
-      if (progress.checkpoints[world.id] === 5) renderWorldFinish(world, host);
+      if (progress.checkpoints[world.id] >= world.checkpoints.length) renderWorldFinish(world, host);
       else renderCheckpoint(world, host);
     });
   }
 
   function renderLocked(world, host) {
     const required = world.id === 4 ? "Conclua os três mundos principais" : `Conclua o Mundo ${world.id - 1}`;
-    host.innerHTML = `<section class="world-finish"><img class="yoshi-art" src="https://art.ngfiles.com/images/291000/291714_jamalmason_yoshi.png?f1393937531" alt=""><p class="eyebrow pixel">CAMINHO FECHADO POR ENQUANTO</p><h2>${world.title}</h2><p>${required} para abrir este caminho. Cada mundo tem cinco checkpoints.</p><div class="finish-actions"><a class="button" href="index.html">Voltar ao mapa</a></div></section>`;
+    host.innerHTML = `<section class="world-finish"><img class="yoshi-art" src="https://art.ngfiles.com/images/291000/291714_jamalmason_yoshi.png?f1393937531" alt=""><p class="eyebrow pixel">CAMINHO FECHADO POR ENQUANTO</p><h2>${world.title}</h2><p>${required} para abrir este caminho. Cada mundo tem sete checkpoints.</p><div class="finish-actions"><a class="button" href="index.html">Voltar ao mapa</a></div></section>`;
   }
 
   function renderWorldFinish(world, host) {
     global.YoshiAudio?.pause();
-    document.getElementById("checkpoint-progress").textContent = "CHECKPOINT 5/5";
+    document.getElementById("checkpoint-progress").textContent = `CHECKPOINT ${world.checkpoints.length}/${world.checkpoints.length}`;
     const isBonus = world.id === 4;
     const mainComplete = CORE.isMainComplete(progress);
     let body;
@@ -370,8 +373,8 @@
     saveProgress();
     updatePersistenceStatus();
     const count = progress.checkpoints[world.id] || 0;
-    document.getElementById("checkpoint-progress").textContent = `CHECKPOINT ${Math.min(count + 1, 5)}/5`;
-    if (count === 5) return renderWorldFinish(world, host);
+    document.getElementById("checkpoint-progress").textContent = `CHECKPOINT ${Math.min(count + 1, world.checkpoints.length)}/${world.checkpoints.length}`;
+    if (count >= world.checkpoints.length) return renderWorldFinish(world, host);
     if (world.id === 3 && count === 0) {
       document.getElementById("audio-toggle").disabled = true;
       return renderStory(world, host);
