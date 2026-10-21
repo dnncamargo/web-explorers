@@ -15,7 +15,7 @@ const { worlds } = browserWindow.YoshiWorldData;
 const core = browserWindow.YoshiTypingCore;
 
 const expectedTargets = {
-  1: ["ASDF", "FDSA", "ASAS", "DFDF", "A FADA ASSA", "FADA ASSA FADA", "A FADA ASSA FADA"],
+  1: ["ASDF", "FDSA", "ASAS", "DFDF", "A FADA ASSA", "FADA ASSA FADA", "A FADA ASSA FADA", "ASDF FADA ASSA FADA", "ASDF FDSA FADA ASSA FADA", "ASDF FDSA ASDF FDSA FADA ASSA FADA"],
   2: ["JKLÇ", "ÇLKJ", "JKJK", "FADA FALA", "A FADA FALA", "FALA DA SALA", "A FADA FALA DA SALA"],
   3: ["ASDF JKLÇ", "QWERT YUIOP", "ZXCV BNM", "CASA SAPO VIDA", "A FOCA PULA", "A FOCA LEVA O SAPO", "O SAPO VAI PARA CASA"],
   4: ["A FOCA PULA", "O SAPO VAI PARA CASA", "A FOCA LEVA O SAPO", "YOSHI PULA NA CASA", "O YOSHI PULA COM A FOCA", "A FOCA LEVA O SAPO PARA CASA", "YOSHI E A FOCA PULAM PARA CASA"],
@@ -28,9 +28,14 @@ assert.equal(Object.keys(worlds).length, 4, "four worlds are defined");
 for (const [idText, targets] of Object.entries(expectedTargets)) {
   const id = Number(idText);
   assert.deepEqual(JSON.parse(JSON.stringify(worlds[id].checkpoints.map(({ target }) => target))), targets, `world ${id} has the requested seven sequences`);
-  assert.equal(worlds[id].checkpoints.length, 7, `world ${id} has exactly seven checkpoints`);
+  assert.equal(worlds[id].checkpoints.length, targets.length, `world ${id} has its expected checkpoint count`);
   assert.ok(targets[5].length > targets[4].length, `world ${id} checkpoint 6 is more complex than checkpoint 5`);
   assert.ok(targets[6].length > targets[5].length, `world ${id} checkpoint 7 is more complex than checkpoint 6`);
+  if (id === 1) {
+    for (let checkpoint = 7; checkpoint < targets.length; checkpoint += 1) {
+      assert.ok(targets[checkpoint].length > targets[checkpoint - 1].length, `Flower Garden checkpoint ${checkpoint + 1} is longer than its predecessor`);
+    }
+  }
   const permitted = new Set(worlds[id].taughtKeys);
   for (const target of targets) {
     for (const char of target.toLocaleLowerCase("pt-BR")) {
@@ -39,6 +44,7 @@ for (const [idText, targets] of Object.entries(expectedTargets)) {
     }
   }
 }
+assert.equal(worlds[1].checkpoints.length, 10, "Flower Garden has ten checkpoints");
 assert.equal(worlds[1].taughtKeys.join(""), "asdf ", "World 1 introduces only A S D F and space");
 assert.equal(worlds[2].taughtKeys.join(""), "asdf jklç", "World 2 keeps the left hand taught and adds J K L Ç");
 for (const id of [1, 2]) {
@@ -76,25 +82,32 @@ assert.equal(core.canEnterWorld(progress, 1), true);
 assert.equal(core.canEnterWorld(progress, 2), false, "World 2 is locked until World 1 is complete");
 assert.equal(core.completeCheckpoint(progress, 1, 2).reason, "out-of-order", "a checkpoint cannot be skipped");
 for (let id = 1; id <= 3; id += 1) {
-  for (let checkpoint = 1; checkpoint <= 7; checkpoint += 1) {
+  for (let checkpoint = 1; checkpoint <= worlds[id].checkpoints.length; checkpoint += 1) {
     assert.equal(core.completeCheckpoint(progress, id, checkpoint).ok, true);
   }
+  assert.equal(progress.checkpoints[id], worlds[id].checkpoints.length, `world ${id} reaches its configured final checkpoint`);
   if (id < 3) assert.equal(core.canEnterWorld(progress, id + 1), true);
 }
-assert.equal(progress.checkpoints[1], 7);
+assert.equal(progress.checkpoints[1], 10);
 assert.equal(progress.checkpoints[2], 7);
 assert.equal(progress.checkpoints[3], 7);
 assert.equal(core.isMainComplete(progress), true, "the three required worlds complete the main reward after 7 checkpoints each");
 assert.equal(core.canEnterWorld(progress, 4), true, "the optional world unlocks after the main worlds");
-for (let checkpoint = 1; checkpoint <= 7; checkpoint += 1) assert.equal(core.completeCheckpoint(progress, 4, checkpoint).ok, true);
+for (let checkpoint = 1; checkpoint <= worlds[4].checkpoints.length; checkpoint += 1) assert.equal(core.completeCheckpoint(progress, 4, checkpoint).ok, true);
 assert.equal(core.isMainComplete(progress), true, "the bonus does not replace or change main completion");
 assert.equal(progress.completedBonus, true);
-assert.deepEqual(JSON.parse(JSON.stringify(core.normalizeProgress({ version: 1, currentWorld: 99, checkpoints: { 1: 100, 2: -1 } }).checkpoints)), { 1: 7, 2: 0, 3: 0, 4: 0 }, "saved checkpoints are bounded to seven");
+assert.deepEqual(JSON.parse(JSON.stringify(core.normalizeProgress({ version: 1, currentWorld: 99, checkpoints: { 1: 100, 2: -1 } }).checkpoints)), { 1: 10, 2: 0, 3: 0, 4: 0 }, "saved checkpoints are bounded to each world total");
 const oldFiveCheckpointProgress = core.normalizeProgress({ version: 1, currentWorld: 3, completedWorlds: [1, 2, 3], completedBonus: true, checkpoints: { 1: 5, 2: 5, 3: 5, 4: 5 } });
 assert.deepEqual(JSON.parse(JSON.stringify(oldFiveCheckpointProgress.checkpoints)), { 1: 5, 2: 5, 3: 5, 4: 5 }, "old five-checkpoint progress is preserved");
 assert.deepEqual(JSON.parse(JSON.stringify(oldFiveCheckpointProgress.completedWorlds)), [], "old 5/5 flags do not bypass the two new checkpoints");
 assert.equal(oldFiveCheckpointProgress.completedBonus, false, "old bonus completion is not marked complete before 7/7");
 assert.equal(core.canEnterWorld(oldFiveCheckpointProgress, 2), false, "the next world stays locked until extra checkpoints are completed");
+const previousSevenCheckpointProgress = core.normalizeProgress({ version: 1, currentWorld: 4, completedWorlds: [1, 2, 3], completedBonus: true, checkpoints: { 1: 7, 2: 7, 3: 7, 4: 7 } });
+assert.deepEqual(JSON.parse(JSON.stringify(previousSevenCheckpointProgress.checkpoints)), { 1: 7, 2: 7, 3: 7, 4: 7 }, "previous 7/7 progress is preserved");
+assert.deepEqual(JSON.parse(JSON.stringify(previousSevenCheckpointProgress.completedWorlds)), [2, 3], "later worlds stay complete while Flower Garden awaits 10/10");
+assert.equal(previousSevenCheckpointProgress.completedBonus, true, "the seven-checkpoint bonus remains complete");
+assert.equal(core.canEnterWorld(previousSevenCheckpointProgress, 2), false, "Flower Garden must reach 10/10 before Forest Path unlocks");
+assert.equal(core.isMainComplete(previousSevenCheckpointProgress), false, "the main reward waits for Flower Garden 10/10");
 const restoredProgress = core.normalizeProgress(JSON.parse(JSON.stringify(progress)));
 assert.equal(core.isMainComplete(restoredProgress), true, "saved progress restores the three required worlds");
 assert.equal(restoredProgress.completedBonus, true, "saved bonus completion also restores");
@@ -175,6 +188,9 @@ assert.match(activity, /input\.addEventListener\("paste",\s*\(event\)\s*=>\s*\{\
 assert.match(activity, /input\.addEventListener\("drop"/, "dropped text cannot enter the exercise");
 assert.match(activity, /event\.ctrlKey \|\| event\.metaKey \|\| event\.altKey/, "global keyboard shortcuts are left alone");
 assert.match(activity, /event\.isTrusted/, "only trusted physical key events can advance the exercise");
+assert.match(activity, /exerciseCard\.addEventListener\("click"/, "clicking the visible exercise area focuses the hidden capture textarea");
+assert.match(css, /\.typing-box \{[^}]*position: fixed;[^}]*left: -10000px;[^}]*width: 1px; height: 0; min-height: 0; max-height: 0;[^}]*opacity: 0;[^}]*pointer-events: none;/, "the capture textarea is invisible, offscreen and zero-height while remaining focusable");
+assert.doesNotMatch(css, /\.typing-box\s*\{[^}]*display:\s*none|\.typing-box\s*\{[^}]*visibility:\s*hidden/, "the capture textarea is not removed from the focus system");
 assert.match(activity, /showModal\(\)|global\.confirm/, "starting over asks for confirmation");
 assert.match(activity, /checkpoint-progress"\)\.textContent = `CHECKPOINT \$\{number\}\/\$\{totalCheckpoints\}`/, "the permanent progress display changes as soon as a checkpoint opens");
 assert.match(activity, /target-char \$\{type\}[\s\S]*?\$\{char === " " \? "␣" : char\}/, "every future target character stays visible and spaces have a marker");
@@ -197,7 +213,7 @@ assert.match(css, /\.yoshi-with-flower\s*>\s*\.yoshi-art\s*\{[^}]*width:\s*100%;
 assert.match(css, /\.flower-art\s*\{[^}]*position:\s*absolute;[^}]*top:\s*-8px;[^}]*right:\s*14px;[^}]*width:\s*24px;[^}]*height:\s*24px;[^}]*min-width:\s*24px;[^}]*max-width:\s*24px;/, "desktop flower size is explicit and independent of the PNG's intrinsic size");
 assert.match(css, /@media \(max-width: 850px\)[\s\S]*?\.yoshi-with-flower > \.flower-art \{ width: 22px; height: 22px; min-width: 22px; min-height: 22px; max-width: 22px; max-height: 22px; \}/, "tablet flower size is explicitly 22px");
 assert.match(css, /@media \(max-width: 620px\)[\s\S]*?\.yoshi-with-flower > \.flower-art \{ width: 20px; height: 20px; min-width: 20px; min-height: 20px; max-width: 20px; max-height: 20px; \}/, "mobile flower size is explicitly 20px");
-assert.match(homeHtml, /assets\/css\/yoshi\.css\?v=hero-flower-2026-10-21-2/, "the CSS URL is versioned to bypass stale cached flower positioning");
+assert.match(homeHtml, /assets\/css\/yoshi\.css\?v=typing-capture-zero-2026-10-21-1/, "the CSS URL is versioned for the hidden zero-height capture");
 assert.doesNotMatch(css, /\.hero-art \.hero-characters\s*>\s*\.flower-art/, "no competing rules size or position the flower against the full hero");
 assert.match(css, /\.hero-characters \{[^}]*flex-wrap: nowrap;[^}]*min-width: 0;/, "Yoshi remains centered in its responsive hero column");
 assert.match(css, /\.keycap\[data-key\] \{[^}]*background: var\(--finger-color\)/, "each taught key receives its finger background");
@@ -206,7 +222,7 @@ assert.match(css, /\.keycap\.is-used \{[^}]*border-bottom-color:/, "the used-key
 assert.match(activity, /cap\.classList\.toggle\("is-used", typedKeys\.has\(key\)\)/, "used state follows correctly typed input");
 assert.doesNotMatch(css, /(?:html|body)\s*\{[^}]*overflow-x:\s*hidden/, "horizontal overflow is not masked at the page level");
 
-console.log("OK: 4 worlds and 28 exact checkpoint sequences (7 per world)");
+console.log("OK: 31 exact checkpoint sequences (10 in Flower Garden, 7 in each other world)");
 console.log("OK: ABNT2 case, Ç, space, wrong key, synthetic events, and ordered progression");
 console.log("OK: main completion is independent of the optional bonus");
 console.log("OK: session-storage fallback, reload continuity, and explicit memory-only behavior");
