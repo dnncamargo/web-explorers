@@ -212,7 +212,7 @@
     const checkpoint = world.checkpoints[completedCount];
     let typed = 0;
     let typedText = "";
-    host.innerHTML = `<section class="exercise-card"><div class="checkpoint-strip"><span class="checkpoint-name pixel">CHECKPOINT ${number}/${totalCheckpoints}</span><span class="checkpoint-dots" aria-label="${completedCount} de ${totalCheckpoints} checkpoints concluídos">${renderDots(completedCount, totalCheckpoints)}</span></div><h2>Digite a sequência</h2><p class="typing-instruction">${checkpoint.instruction}</p><div id="target-row" class="target-row" role="img" aria-label="Sequência-alvo: ${checkpoint.target.replaceAll(" ", ", espaço, ")}"></div><div class="typed-row"><strong>Você digitou</strong><output id="typed-display" class="typed-display" aria-live="polite" aria-label="Você ainda não digitou nenhuma tecla">—</output><small>␣ indica um espaço.</small></div><p class="current-finger" id="current-finger" aria-live="polite"></p>${renderKeyboard(world)}<label class="visually-hidden" for="typing-box">Área para digitar usando o teclado físico</label><textarea id="typing-box" class="typing-box" rows="2" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="Clique aqui e digite com o teclado físico"></textarea><p id="typing-feedback" class="feedback" role="status" aria-live="polite">Clique na área e digite sem pressa. Maiúsculas e minúsculas são aceitas.</p><div class="exercise-actions"><button id="show-hint" class="button button-quiet" type="button" aria-expanded="false" aria-controls="help-panel">Mostrar dica</button><button id="restart-exercise" class="button button-quiet" type="button">Reiniciar este exercício</button><button id="next-checkpoint" class="button" type="button" disabled>Concluir checkpoint ${number}/${totalCheckpoints}</button></div><p id="help-panel" class="help-panel" hidden>${checkpoint.hint} Use os dedos como orientação e volte à posição-base quando possível.</p><p class="exercise-note">O progresso vem das teclas pressionadas. Colar texto não conclui o exercício. Não contamos tentativas nem velocidade.</p></section>`;
+    host.innerHTML = `<section class="exercise-card"><div class="checkpoint-strip"><span class="checkpoint-name pixel">CHECKPOINT ${number}/${totalCheckpoints}</span><span class="checkpoint-dots" aria-label="${completedCount} de ${totalCheckpoints} checkpoints concluídos">${renderDots(completedCount, totalCheckpoints)}</span></div><h2>Digite a sequência</h2><p class="typing-instruction">${checkpoint.instruction}</p><div id="target-row" class="target-row" role="img" aria-label="Sequência-alvo: ${checkpoint.target.replaceAll(" ", ", espaço, ")}"></div><div class="typed-row"><strong>Você digitou</strong><output id="typed-display" class="typed-display" aria-live="polite" aria-label="Você ainda não digitou nenhuma tecla">—</output><small>␣ indica um espaço.</small></div><p class="current-finger" id="current-finger" aria-live="polite"></p>${renderKeyboard(world)}<label class="visually-hidden" for="typing-box">Área para digitar usando o teclado físico</label><textarea id="typing-box" class="typing-box" rows="1" aria-label="Captura de teclas do exercício" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea><p id="typing-feedback" class="feedback" role="status" aria-live="polite">Clique na sequência ou na área “Você digitou” para focar o exercício. Digite no teclado físico, sem pressa.</p><div class="exercise-actions"><button id="show-hint" class="button button-quiet" type="button" aria-expanded="false" aria-controls="help-panel">Mostrar dica</button><button id="restart-exercise" class="button button-quiet" type="button">Reiniciar este exercício</button><button id="next-checkpoint" class="button" type="button" disabled>Concluir checkpoint ${number}/${totalCheckpoints}</button></div><p id="help-panel" class="help-panel" hidden>${checkpoint.hint} Use os dedos como orientação e volte à posição-base quando possível.</p><p class="exercise-note">O progresso vem das teclas pressionadas. Colar texto não conclui o exercício. Não contamos tentativas nem velocidade.</p></section>`;
 
     const input = host.querySelector("#typing-box");
     const targetRow = host.querySelector("#target-row");
@@ -221,6 +221,10 @@
     const feedback = host.querySelector("#typing-feedback");
     const continueButton = host.querySelector("#next-checkpoint");
     let finished = false;
+
+    function focusTypingCapture() {
+      if (!finished && !input.disabled) input.focus({ preventScroll: true });
+    }
 
     function updateDisplay() {
       targetRow.innerHTML = targetMarkup(checkpoint.target, typed);
@@ -243,7 +247,6 @@
     }
 
     updateDisplay();
-    input.focus({ preventScroll: true });
 
     input.addEventListener("keydown", (event) => {
       if (finished || event.isComposing || event.ctrlKey || event.metaKey || event.altKey || event.key.length !== 1) return;
@@ -310,6 +313,7 @@
       panel.hidden = !isHidden;
       event.currentTarget.setAttribute("aria-expanded", String(isHidden));
       event.currentTarget.textContent = isHidden ? "Ocultar dica" : "Mostrar dica";
+      focusTypingCapture();
     });
     host.querySelector("#restart-exercise").addEventListener("click", () => {
       if (finished) return;
@@ -325,6 +329,13 @@
       if (progress.checkpoints[world.id] >= world.checkpoints.length) renderWorldFinish(world, host);
       else renderCheckpoint(world, host);
     });
+
+    const exerciseCard = host.querySelector(".exercise-card");
+    exerciseCard.addEventListener("click", (event) => {
+      if (event.target.closest("button, a, input, textarea, label, summary")) return;
+      focusTypingCapture();
+    });
+    focusTypingCapture();
   }
 
   function renderLocked(world, host) {
