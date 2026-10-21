@@ -2,14 +2,40 @@
   const CORE = global.YoshiTypingCore;
   const DATA = global.YoshiWorldData;
   const STORAGE_KEY = "exploradores.yoshi-typing.progress.v3";
+  const LEGACY_STORAGE_KEY = "exploradores.yoshi-typing.progress.v2";
   const worldFiles = Object.fromEntries(Object.values(DATA.worlds).map((world) => [world.id, world.file]));
   const pageKind = document.body.dataset.page;
   let storageMode = "memory";
   let progress = loadProgress();
 
   function loadProgress() {
-    const loaded = CORE.readStoredProgress((name) => global[name], STORAGE_KEY);
+    const getStorage = (name) => global[name];
+    const loaded = CORE.readStoredProgress(getStorage, STORAGE_KEY);
     storageMode = loaded.mode;
+
+    let currentProgressExists = false;
+    for (const name of ["localStorage", "sessionStorage"]) {
+      try {
+        if (getStorage(name).getItem(STORAGE_KEY) !== null) {
+          currentProgressExists = true;
+          break;
+        }
+      } catch { /* storage may be disabled by browser policy */ }
+    }
+    if (currentProgressExists) return loaded.progress;
+
+    for (const name of ["localStorage", "sessionStorage"]) {
+      try {
+        const store = getStorage(name);
+        const saved = store.getItem(LEGACY_STORAGE_KEY);
+        if (!saved) continue;
+        const migrated = CORE.normalizeProgress(JSON.parse(saved));
+        const result = CORE.writeStoredProgress(getStorage, STORAGE_KEY, migrated, name);
+        storageMode = result.mode;
+        if (result.persisted) CORE.clearStoredProgress(getStorage, LEGACY_STORAGE_KEY);
+        return migrated;
+      } catch { /* invalid or unavailable legacy data is ignored */ }
+    }
     return loaded.progress;
   }
 
@@ -112,6 +138,7 @@
 
   function resetAndStart() {
     CORE.clearStoredProgress((name) => global[name], STORAGE_KEY);
+    CORE.clearStoredProgress((name) => global[name], LEGACY_STORAGE_KEY);
     storageMode = "memory";
     progress = CORE.createProgress();
     enterWorld(1);

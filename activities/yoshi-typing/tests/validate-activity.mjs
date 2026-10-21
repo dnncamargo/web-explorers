@@ -125,8 +125,10 @@ assert.deepEqual(JSON.parse(JSON.stringify(legacyProgress.checkpoints)), { 1: 0,
 assert.deepEqual(JSON.parse(JSON.stringify(legacyProgress.completedWorlds)), [], "legacy completion flags are not carried into the new curriculum");
 assert.equal(legacyProgress.completedBonus, false, "legacy bonus completion is reset after the curriculum change");
 const previousCurriculumProgress = core.normalizeProgress({ version: 2, currentWorld: 4, completedWorlds: [1, 2, 3], completedBonus: true, checkpoints: { 1: 10, 2: 10, 3: 10, 4: 7 } });
-assert.deepEqual(JSON.parse(JSON.stringify(previousCurriculumProgress.checkpoints)), { 1: 0, 2: 0, 3: 0, 4: 0 }, "version 2 progress resets after Crystal Caves introduces a new row");
-assert.deepEqual(JSON.parse(JSON.stringify(previousCurriculumProgress.completedWorlds)), [], "old completion flags cannot skip the three-row curriculum");
+assert.deepEqual(JSON.parse(JSON.stringify(previousCurriculumProgress.checkpoints)), { 1: 10, 2: 10, 3: 0, 4: 7 }, "migration keeps unchanged worlds and bonus but resets the expanded Crystal Caves curriculum");
+assert.deepEqual(JSON.parse(JSON.stringify(previousCurriculumProgress.completedWorlds)), [1, 2], "previous completion remains for worlds 1 and 2 only");
+assert.equal(previousCurriculumProgress.completedBonus, true, "the unchanged bonus completion is retained");
+assert.equal(previousCurriculumProgress.currentWorld, 3, "learners who finished World 2 resume at the beginning of Crystal Caves");
 const previousSevenCheckpointProgress = core.normalizeProgress({ version: 3, currentWorld: 4, completedWorlds: [], completedBonus: false, checkpoints: { 1: 7, 2: 7, 3: 7, 4: 7 } });
 assert.deepEqual(JSON.parse(JSON.stringify(previousSevenCheckpointProgress.checkpoints)), { 1: 7, 2: 7, 3: 7, 4: 7 }, "partial progress in the new schema remains intact");
 assert.deepEqual(JSON.parse(JSON.stringify(previousSevenCheckpointProgress.completedWorlds)), [], "7/10 does not mark any main world complete");

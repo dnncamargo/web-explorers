@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 
 const appRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const storageKey = "exploradores.yoshi-typing.progress.v3";
+const legacyStorageKey = "exploradores.yoshi-typing.progress.v2";
 const targets = {
   1: ["ASDF JKLÇ ASDF JKLÇ", "ASDF FDSA JKLÇ ÇLKJ ASDF", "FADA FALA DA SALA FADA FALA", "ASDF JKLÇ FDSA ÇLKJ ASDF JKLÇ", "A FADA FALA DA SALA FADA FALA", "ASDF FDSA JKLÇ ÇLKJ ASDF FDSA JKLÇ", "A FADA FALA DA SALA ASDF JKLÇ FADA ASDF", "ASDF JKLÇ FDSA ÇLKJ ASDF JKLÇ FDSA ÇLKJ ASDF", "A FADA FALA DA SALA ASDF JKLÇ FDSA ÇLKJ ASDF JKLÇ", "ASDF FDSA JKLÇ ÇLKJ ASDF JKLÇ A FADA FALA DA SALA ASDF"],
   2: ["ASDFGH JKLÇ ASDFGH", "QWERTY UIOP QWERTY", "ASDFGH JKLÇ QWERTY UIOP", "POIUYTREWQ ASDFGH JKLÇ", "O GATO PULA PARA O ALTO", "A TARTARUGA PULA PARA O LAGO", "O GATO QUER OLHAR PARA O PAPAGAIO", "A TARTARUGA QUER OLHAR PARA O GATO", "O PAPAGAIO OLHA A TARTARUGA E O GATO", "O GATO QUER OLHAR PARA O PAPAGAIO E A TARTARUGA"],
@@ -413,6 +414,20 @@ if (!browserPath) {
     assert.equal(await evaluate(`document.querySelector('#reset-dialog').open`), true, "new game requires confirmation when progress is saved");
     await click("#cancel-reset");
     assert.equal(await evaluate(`JSON.parse(localStorage.getItem(${JSON.stringify(storageKey)})).completedWorlds.length`), 3, "cancelling reset preserves the completed worlds");
+
+    // Migration from the previous release preserves unchanged worlds, while requiring the expanded World 3 again.
+    const legacyProgressState = { version: 2, currentWorld: 4, completedWorlds: [1, 2, 3], completedBonus: true, checkpoints: { 1: 10, 2: 10, 3: 10, 4: 7 } };
+    await evaluate(`localStorage.setItem(${JSON.stringify(legacyStorageKey)},${JSON.stringify(JSON.stringify(legacyProgressState))});localStorage.removeItem(${JSON.stringify(storageKey)});sessionStorage.removeItem(${JSON.stringify(storageKey)})`);
+    await navigate(`${baseUrl}index.html?curriculum-migration=1`);
+    const migrated = await evaluate(`JSON.parse(localStorage.getItem(${JSON.stringify(storageKey)}))`);
+    assert.equal(migrated.version, 3, "previous storage is migrated to progress schema v3");
+    assert.deepEqual(migrated.checkpoints, { 1: 10, 2: 10, 3: 0, 4: 7 }, "migration preserves existing worlds and bonus but resets Crystal Caves");
+    assert.deepEqual(migrated.completedWorlds, [1, 2], "the new row cannot be skipped using old completion flags");
+    assert.equal(migrated.currentWorld, 3, "the learner resumes in Crystal Caves after completing World 2");
+    assert.equal(migrated.completedBonus, true, "completed optional bonus is preserved");
+    await click("#new-game");
+    await click("#confirm-reset", true);
+    assert.equal(await evaluate(`localStorage.getItem(${JSON.stringify(legacyStorageKey)})`), null, "new game removes the old progress key after migration");
 
     // Session storage preserves progress across route changes and reloads when local storage is blocked.
     const sessionState = { version: 3, currentWorld: 2, completedWorlds: [1], completedBonus: false, checkpoints: { 1: 10, 2: 1, 3: 0, 4: 0 } };
