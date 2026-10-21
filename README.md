@@ -78,7 +78,12 @@ O GitHub Pages continua usando `index.html` como entrada pública. `02-entrar-no
 ## Nova atividade: Floresta do Yoshi
 
 
-A atividade independente de digitação começa em [`activities/yoshi-typing/index.html`](activities/yoshi-typing/index.html). Ela possui três mundos obrigatórios, com sete checkpoints em cada, e um quarto mundo de bônus com sete checkpoints que só aparece como opção depois da conclusão principal. Em cada mundo, os checkpoints 6 e 7 são mais longos e complexos:
+A atividade independente de digitação começa em [`activities/yoshi-typing/index.html`](activities/yoshi-typing/index.html). Ela possui três mundos obrigatórios e um quarto mundo de bônus opcional. **Flower Garden tem dez checkpoints; Forest Path, Crystal Caves e Bonus Challenge têm sete cada.** Os exercícios finais de cada mundo ampliam progressivamente o número de teclas pressionadas:
+
+1. **Flower Garden** — somente A, S, D, F e espaço: `ASDF`, `FDSA`, `ASAS`, `DFDF`, `A FADA ASSA`, `FADA ASSA FADA`, `A FADA ASSA FADA`, `ASDF FADA ASSA FADA`, `ASDF FDSA FADA ASSA FADA`, `ASDF FDSA ASDF FDSA FADA ASSA FADA`.
+2. **Forest Path** — acrescenta J, K, L e Ç, mantendo disponíveis A, S, D e F: `JKLÇ`, `ÇLKJ`, `JKJK`, `FADA FALA`, `A FADA FALA`, `FALA DA SALA`, `A FADA FALA DA SALA`.
+3. **Crystal Caves** — revisa a base, apresenta as fileiras superior e inferior antes de cobrá-las e combina as três: `ASDF JKLÇ`, `QWERT YUIOP`, `ZXCV BNM`, `CASA SAPO VIDA`, `A FOCA PULA`, `A FOCA LEVA O SAPO`, `O SAPO VAI PARA CASA`.
+4. **Bonus Challenge** — opcional; sete frases curtas misturam as três fileiras, com os dois desafios finais mais longos: `A FOCA PULA`, `O SAPO VAI PARA CASA`, `A FOCA LEVA O SAPO`, `YOSHI PULA NA CASA`, `O YOSHI PULA COM A FOCA`, `A FOCA LEVA O SAPO PARA CASA`, `YOSHI E A FOCA PULAM PARA CASA`.
 
 1. **Flower Garden** — mão esquerda na fileira-base e espaço: `ASDF`, `FDSA`, `ASAS`, `DFDF`, `A FADA ASSA`, `FADA ASSA FADA`, `A FADA ASSA FADA`.
 2. **Forest Path** — acrescenta J, K, L e Ç, mantendo disponíveis A, S, D e F: `JKLÇ`, `ÇLKJ`, `JKJK`, `FADA FALA`, `A FADA FALA`, `FALA DA SALA`, `A FADA FALA DA SALA`.
