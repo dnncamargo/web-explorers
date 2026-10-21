@@ -160,7 +160,7 @@ core.clearStoredProgress((name) => allStores[name], "session-test");
 assert.equal(sessionStore.getItem("session-test"), null, "new game clears session progress after confirmation");
 
 const pages = ["index.html", ...Object.values(worlds).map(({ file }) => file)];
-const currentAssetVersion = "yoshi-curriculum-2026-10-21-1";
+const currentAssetVersion = "yoshi-enter-continue-2026-10-21-1";
 for (const page of pages) {
   const html = read(page);
   for (const asset of ["world-data.js", "typing-core.js", "audio.js", "activity.js"]) {
@@ -236,7 +236,7 @@ assert.match(css, /\.yoshi-with-flower\s*>\s*\.yoshi-art\s*\{[^}]*width:\s*100%;
 assert.match(css, /\.flower-art\s*\{[^}]*position:\s*absolute;[^}]*top:\s*-8px;[^}]*right:\s*14px;[^}]*width:\s*24px;[^}]*height:\s*24px;[^}]*min-width:\s*24px;[^}]*max-width:\s*24px;/, "desktop flower size is explicit and independent of the PNG's intrinsic size");
 assert.match(css, /@media \(max-width: 850px\)[\s\S]*?\.yoshi-with-flower > \.flower-art \{ width: 22px; height: 22px; min-width: 22px; min-height: 22px; max-width: 22px; max-height: 22px; \}/, "tablet flower size is explicitly 22px");
 assert.match(css, /@media \(max-width: 620px\)[\s\S]*?\.yoshi-with-flower > \.flower-art \{ width: 20px; height: 20px; min-width: 20px; min-height: 20px; max-width: 20px; max-height: 20px; \}/, "mobile flower size is explicitly 20px");
-assert.match(homeHtml, /assets\/css\/yoshi\.css\?v=yoshi-curriculum-2026-10-21-1/, "the CSS URL is versioned for the hidden zero-height capture");
+assert.match(homeHtml, /assets\/css\/yoshi\.css\?v=yoshi-enter-continue-2026-10-21-1/, "the CSS URL is versioned for the hidden zero-height capture");
 assert.doesNotMatch(css, /\.hero-art \.hero-characters\s*>\s*\.flower-art/, "no competing rules size or position the flower against the full hero");
 assert.match(css, /\.hero-characters \{[^}]*flex-wrap: nowrap;[^}]*min-width: 0;/, "Yoshi remains centered in its responsive hero column");
 assert.match(css, /\.keycap\[data-key\] \{[^}]*background: var\(--finger-color\)/, "each taught key receives its finger background");
