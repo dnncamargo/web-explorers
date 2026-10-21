@@ -17,7 +17,7 @@ const core = browserWindow.YoshiTypingCore;
 const expectedTargets = {
   1: ["ASDF JKLÇ ASDF JKLÇ", "ASDF FDSA JKLÇ ÇLKJ ASDF", "FADA FALA DA SALA FADA FALA", "ASDF JKLÇ FDSA ÇLKJ ASDF JKLÇ", "A FADA FALA DA SALA FADA FALA", "ASDF FDSA JKLÇ ÇLKJ ASDF FDSA JKLÇ", "A FADA FALA DA SALA ASDF JKLÇ FADA ASDF", "ASDF JKLÇ FDSA ÇLKJ ASDF JKLÇ FDSA ÇLKJ ASDF", "A FADA FALA DA SALA ASDF JKLÇ FDSA ÇLKJ ASDF JKLÇ", "ASDF FDSA JKLÇ ÇLKJ ASDF JKLÇ A FADA FALA DA SALA ASDF"],
   2: ["ASDFGH JKLÇ ASDFGH", "QWERTY UIOP QWERTY", "ASDFGH JKLÇ QWERTY UIOP", "POIUYTREWQ ASDFGH JKLÇ", "O GATO PULA PARA O ALTO", "A TARTARUGA PULA PARA O LAGO", "O GATO QUER OLHAR PARA O PAPAGAIO", "A TARTARUGA QUER OLHAR PARA O GATO", "O PAPAGAIO OLHA A TARTARUGA E O GATO", "O GATO QUER OLHAR PARA O PAPAGAIO E A TARTARUGA"],
-  3: ["QWERTY UIOP ASDFGH JKLÇ", "O GATO PULA PARA O ALTO", "A TARTARUGA PULA PARA O LAGO", "O PAPAGAIO PULA PARA O TOPO", "O GATO OLHA O PAPAGAIO", "A TARTARUGA OLHA O PAPAGAIO", "O PAPAGAIO OLHA A TARTARUGA E O GATO", "A TARTARUGA QUER OLHAR PARA O PAPAGAIO", "O GATO QUER OLHAR PARA A TARTARUGA", "O PAPAGAIO QUER OLHAR PARA A TARTARUGA E O GATO"],
+  3: ["ZXCVBNM MNBVCXZ", "QWERTY UIOP ZXCVBNM MNBVCXZ", "ASDFGH JKLÇ QWERTY UIOP ZXCVBNM", "A ZEBRA VAI AO BOSQUE E O YOSHI", "O YOSHI VAI AO CAMPO E VOLTA COM A ZEBRA", "A ZEBRA E O YOSHI BRINCAM JUNTOS NO BOSQUE E NO CAMPO", "O YOSHI EXPLORA A CAVERNA AZUL E ENCONTRA UMA ZEBRA NO BOSQUE", "A ZEBRA VAI AO BOSQUE E O YOSHI BRINCA COM O CAVALO E VOLTA PARA A CAVERNA", "O YOSHI BRINCA COM A ZEBRA NO CAMPO E DEPOIS VOLTA AO BOSQUE PARA ENCONTRAR O CAVALO", "O YOSHI EXPLORA A CAVERNA E ENCONTRA ZEBRAS NO BOSQUE COM O CAVALO E VOLTA PARA O CAMPO"],
   4: ["O YOSHI QUER KIWI E XALE", "O JACARE VAI PARA A FLORESTA", "O CAÇADOR OBSERVA A ZEBRA NO BOSQUE", "A ZEBRA E O CAVALO BRINCAM NO BOSQUE", "A TARTARUGA E O GATO PULAM PARA O TOPO", "O PAPAGAIO ESCREVE NO QUADRO E OBSERVA A ZEBRA", "A ZEBRA E O YOSHI BRINCAM COM O CAVALO NO BOSQUE"],
 };
 const upperRow = new Set([..."QWERTYUIOP".toLocaleLowerCase("pt-BR")]);
@@ -47,7 +47,7 @@ for (const [idText, targets] of Object.entries(expectedTargets)) {
 assert.equal(worlds[1].checkpoints.length, 10, "Flower Garden has ten checkpoints");
 assert.equal(worlds[1].taughtKeys.join(""), "asdf jklç", "Flower Garden introduces both hands on the home row and space");
 assert.equal(worlds[2].taughtKeys.join(""), "asdfghjklç qwertyuiop", "Forest Path adds G/H and the upper row to the home row");
-assert.equal(worlds[3].taughtKeys.join(""), "asdfghjklç qwertyuiop", "Crystal Caves keeps the same key range as Forest Path");
+assert.equal(worlds[3].taughtKeys.join(""), "asdfghjklç qwertyuiop zxcvbnm", "Crystal Caves adds the lower row to the home and upper rows");
 const flowerKeys = new Set([..."asdfjklç"]);
 for (const checkpoint of worlds[1].checkpoints) {
   for (const char of checkpoint.target.toLocaleLowerCase("pt-BR")) {
@@ -56,7 +56,7 @@ for (const checkpoint of worlds[1].checkpoints) {
     assert.ok(!upperRow.has(char) && !lowerRow.has(char), "Flower Garden does not require the upper or lower row");
   }
 }
-for (const id of [2, 3]) {
+for (const id of [2]) {
   for (const checkpoint of worlds[id].checkpoints) {
     for (const char of checkpoint.target.toLocaleLowerCase("pt-BR")) {
       assert.ok(char === " " || homeRow.has(char) || upperRow.has(char), `World ${id} uses only the home and upper rows`);
@@ -64,6 +64,13 @@ for (const id of [2, 3]) {
     }
   }
 }
+for (const checkpoint of worlds[3].checkpoints) {
+  const chars = new Set([...checkpoint.target.toLocaleLowerCase("pt-BR")]);
+  assert.ok([...chars].some((char) => lowerRow.has(char)), `Crystal Caves checkpoint ${checkpoint.target} practices the lower row`);
+  for (const char of chars) assert.ok(char === " " || homeRow.has(char) || upperRow.has(char) || lowerRow.has(char), `Crystal Caves uses a taught key ${JSON.stringify(char)}`);
+}
+const crystalChars = new Set([...worlds[3].checkpoints.map(({ target }) => target.toLocaleLowerCase("pt-BR")).join("")]);
+for (const char of lowerRow) assert.ok(crystalChars.has(char), `Crystal Caves practices lower-row key ${char.toUpperCase()}`);
 const allBonusChars = new Set([...worlds[4].checkpoints.map(({ target }) => target.toLocaleLowerCase()).join("").replaceAll(" ", "")]);
 for (const char of [..."abcdefghijklmnopqrstuvwxyzç"]) assert.ok(allBonusChars.has(char), `Bonus Challenge uses letter key ${char.toUpperCase()} at least once`);
 for (const { target } of worlds[4].checkpoints) {
@@ -78,6 +85,8 @@ assert.deepEqual([worlds[1].track, worlds[3].track, worlds[4].track], ["tGukyQ10
 assert.equal(worlds[3].storyTrack, "BEP3rdTy0-o", "Kamek's short scene has its requested music reference");
 assert.equal(worlds[2].track, "UKP3kPtweio", "Forest Path uses the requested new soundtrack");
 assert.match(worlds[2].guide, /indicador esquerdo.*F.*G.*indicador direito.*J.*H/i, "Forest Path explains the same-index-finger relationship between F/G and J/H");
+assert.match(worlds[2].guide, /Cavernas de Cristal.*fileira inferior/i, "Forest Path points forward to the lower row in World 3");
+assert.match(worlds[3].guide, /fileira inferior.*Z.*X.*C.*V.*B.*N.*M/i, "Crystal Caves teaches the lower-row keys");
 const fingerMap = browserWindow.YoshiWorldData.fingers;
 for (const key of ["f", "g", "r", "t", "v", "b"]) assert.equal(fingerMap[key], "left-index", `${key.toUpperCase()} uses the left index finger`);
 for (const key of ["j", "h", "y", "u", "n", "m"]) assert.equal(fingerMap[key], "right-index", `${key.toUpperCase()} uses the right index finger`);
@@ -110,12 +119,15 @@ assert.equal(core.canEnterWorld(progress, 4), true, "the optional world unlocks 
 for (let checkpoint = 1; checkpoint <= worlds[4].checkpoints.length; checkpoint += 1) assert.equal(core.completeCheckpoint(progress, 4, checkpoint).ok, true);
 assert.equal(core.isMainComplete(progress), true, "the bonus does not replace or change main completion");
 assert.equal(progress.completedBonus, true);
-assert.deepEqual(JSON.parse(JSON.stringify(core.normalizeProgress({ version: 2, currentWorld: 99, checkpoints: { 1: 100, 2: -1 } }).checkpoints)), { 1: 10, 2: 0, 3: 0, 4: 0 }, "saved checkpoints are bounded to each world total");
+assert.deepEqual(JSON.parse(JSON.stringify(core.normalizeProgress({ version: 3, currentWorld: 99, checkpoints: { 1: 100, 2: -1 } }).checkpoints)), { 1: 10, 2: 0, 3: 0, 4: 0 }, "saved checkpoints are bounded to each world total");
 const legacyProgress = core.normalizeProgress({ version: 1, currentWorld: 4, completedWorlds: [1, 2, 3], completedBonus: true, checkpoints: { 1: 10, 2: 10, 3: 10, 4: 7 } });
 assert.deepEqual(JSON.parse(JSON.stringify(legacyProgress.checkpoints)), { 1: 0, 2: 0, 3: 0, 4: 0 }, "the old curriculum progress schema is reset instead of skipping new lessons");
 assert.deepEqual(JSON.parse(JSON.stringify(legacyProgress.completedWorlds)), [], "legacy completion flags are not carried into the new curriculum");
 assert.equal(legacyProgress.completedBonus, false, "legacy bonus completion is reset after the curriculum change");
-const previousSevenCheckpointProgress = core.normalizeProgress({ version: 2, currentWorld: 4, completedWorlds: [], completedBonus: false, checkpoints: { 1: 7, 2: 7, 3: 7, 4: 7 } });
+const previousCurriculumProgress = core.normalizeProgress({ version: 2, currentWorld: 4, completedWorlds: [1, 2, 3], completedBonus: true, checkpoints: { 1: 10, 2: 10, 3: 10, 4: 7 } });
+assert.deepEqual(JSON.parse(JSON.stringify(previousCurriculumProgress.checkpoints)), { 1: 0, 2: 0, 3: 0, 4: 0 }, "version 2 progress resets after Crystal Caves introduces a new row");
+assert.deepEqual(JSON.parse(JSON.stringify(previousCurriculumProgress.completedWorlds)), [], "old completion flags cannot skip the three-row curriculum");
+const previousSevenCheckpointProgress = core.normalizeProgress({ version: 3, currentWorld: 4, completedWorlds: [], completedBonus: false, checkpoints: { 1: 7, 2: 7, 3: 7, 4: 7 } });
 assert.deepEqual(JSON.parse(JSON.stringify(previousSevenCheckpointProgress.checkpoints)), { 1: 7, 2: 7, 3: 7, 4: 7 }, "partial progress in the new schema remains intact");
 assert.deepEqual(JSON.parse(JSON.stringify(previousSevenCheckpointProgress.completedWorlds)), [], "7/10 does not mark any main world complete");
 assert.equal(previousSevenCheckpointProgress.completedBonus, true, "the seven-checkpoint bonus is complete at 7/7");
@@ -160,7 +172,7 @@ core.clearStoredProgress((name) => allStores[name], "session-test");
 assert.equal(sessionStore.getItem("session-test"), null, "new game clears session progress after confirmation");
 
 const pages = ["index.html", ...Object.values(worlds).map(({ file }) => file)];
-const currentAssetVersion = "yoshi-kamek-shared-audio-2026-10-21-1";
+const currentAssetVersion = "yoshi-crystal-three-rows-2026-10-21-1";
 for (const page of pages) {
   const html = read(page);
   for (const asset of ["world-data.js", "typing-core.js", "audio.js", "activity.js"]) {
@@ -238,7 +250,7 @@ assert.match(css, /\.yoshi-with-flower\s*>\s*\.yoshi-art\s*\{[^}]*width:\s*100%;
 assert.match(css, /\.flower-art\s*\{[^}]*position:\s*absolute;[^}]*top:\s*-8px;[^}]*right:\s*14px;[^}]*width:\s*24px;[^}]*height:\s*24px;[^}]*min-width:\s*24px;[^}]*max-width:\s*24px;/, "desktop flower size is explicit and independent of the PNG's intrinsic size");
 assert.match(css, /@media \(max-width: 850px\)[\s\S]*?\.yoshi-with-flower > \.flower-art \{ width: 22px; height: 22px; min-width: 22px; min-height: 22px; max-width: 22px; max-height: 22px; \}/, "tablet flower size is explicitly 22px");
 assert.match(css, /@media \(max-width: 620px\)[\s\S]*?\.yoshi-with-flower > \.flower-art \{ width: 20px; height: 20px; min-width: 20px; min-height: 20px; max-width: 20px; max-height: 20px; \}/, "mobile flower size is explicitly 20px");
-assert.match(homeHtml, /assets\/css\/yoshi\.css\?v=yoshi-kamek-shared-audio-2026-10-21-1/, "the CSS URL is versioned for the hidden zero-height capture");
+assert.match(homeHtml, /assets\/css\/yoshi\.css\?v=yoshi-crystal-three-rows-2026-10-21-1/, "the CSS URL is versioned for the hidden zero-height capture");
 assert.doesNotMatch(css, /\.hero-art \.hero-characters\s*>\s*\.flower-art/, "no competing rules size or position the flower against the full hero");
 assert.match(css, /\.hero-characters \{[^}]*flex-wrap: nowrap;[^}]*min-width: 0;/, "Yoshi remains centered in its responsive hero column");
 assert.match(css, /\.keycap\[data-key\] \{[^}]*background: var\(--finger-color\)/, "each taught key receives its finger background");

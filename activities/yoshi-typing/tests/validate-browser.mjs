@@ -7,11 +7,11 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const appRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const storageKey = "exploradores.yoshi-typing.progress.v2";
+const storageKey = "exploradores.yoshi-typing.progress.v3";
 const targets = {
   1: ["ASDF JKLÇ ASDF JKLÇ", "ASDF FDSA JKLÇ ÇLKJ ASDF", "FADA FALA DA SALA FADA FALA", "ASDF JKLÇ FDSA ÇLKJ ASDF JKLÇ", "A FADA FALA DA SALA FADA FALA", "ASDF FDSA JKLÇ ÇLKJ ASDF FDSA JKLÇ", "A FADA FALA DA SALA ASDF JKLÇ FADA ASDF", "ASDF JKLÇ FDSA ÇLKJ ASDF JKLÇ FDSA ÇLKJ ASDF", "A FADA FALA DA SALA ASDF JKLÇ FDSA ÇLKJ ASDF JKLÇ", "ASDF FDSA JKLÇ ÇLKJ ASDF JKLÇ A FADA FALA DA SALA ASDF"],
   2: ["ASDFGH JKLÇ ASDFGH", "QWERTY UIOP QWERTY", "ASDFGH JKLÇ QWERTY UIOP", "POIUYTREWQ ASDFGH JKLÇ", "O GATO PULA PARA O ALTO", "A TARTARUGA PULA PARA O LAGO", "O GATO QUER OLHAR PARA O PAPAGAIO", "A TARTARUGA QUER OLHAR PARA O GATO", "O PAPAGAIO OLHA A TARTARUGA E O GATO", "O GATO QUER OLHAR PARA O PAPAGAIO E A TARTARUGA"],
-  3: ["QWERTY UIOP ASDFGH JKLÇ", "O GATO PULA PARA O ALTO", "A TARTARUGA PULA PARA O LAGO", "O PAPAGAIO PULA PARA O TOPO", "O GATO OLHA O PAPAGAIO", "A TARTARUGA OLHA O PAPAGAIO", "O PAPAGAIO OLHA A TARTARUGA E O GATO", "A TARTARUGA QUER OLHAR PARA O PAPAGAIO", "O GATO QUER OLHAR PARA A TARTARUGA", "O PAPAGAIO QUER OLHAR PARA A TARTARUGA E O GATO"],
+  3: ["ZXCVBNM MNBVCXZ", "QWERTY UIOP ZXCVBNM MNBVCXZ", "ASDFGH JKLÇ QWERTY UIOP ZXCVBNM", "A ZEBRA VAI AO BOSQUE E O YOSHI", "O YOSHI VAI AO CAMPO E VOLTA COM A ZEBRA", "A ZEBRA E O YOSHI BRINCAM JUNTOS NO BOSQUE E NO CAMPO", "O YOSHI EXPLORA A CAVERNA AZUL E ENCONTRA UMA ZEBRA NO BOSQUE", "A ZEBRA VAI AO BOSQUE E O YOSHI BRINCA COM O CAVALO E VOLTA PARA A CAVERNA", "O YOSHI BRINCA COM A ZEBRA NO CAMPO E DEPOIS VOLTA AO BOSQUE PARA ENCONTRAR O CAVALO", "O YOSHI EXPLORA A CAVERNA E ENCONTRA ZEBRAS NO BOSQUE COM O CAVALO E VOLTA PARA O CAMPO"],
   4: ["O YOSHI QUER KIWI E XALE", "O JACARE VAI PARA A FLORESTA", "O CAÇADOR OBSERVA A ZEBRA NO BOSQUE", "A ZEBRA E O CAVALO BRINCAM NO BOSQUE", "A TARTARUGA E O GATO PULAM PARA O TOPO", "O PAPAGAIO ESCREVE NO QUADRO E OBSERVA A ZEBRA", "A ZEBRA E O YOSHI BRINCAM COM O CAVALO NO BOSQUE"],
 };
 
@@ -135,7 +135,7 @@ if (!browserPath) {
   }
   async function assertHomeFlowerLayout(label, viewportWidth) {
     const stylesheetUrl = await evaluate(`document.querySelector('link[rel="stylesheet"][href*="yoshi.css"]')?.getAttribute("href") || ""`);
-    assert.match(stylesheetUrl, /yoshi\.css\?v=yoshi-kamek-shared-audio-2026-10-21-1/, `${label}: current flower CSS revision is loaded`);
+    assert.match(stylesheetUrl, /yoshi\.css\?v=yoshi-crystal-three-rows-2026-10-21-1/, `${label}: current flower CSS revision is loaded`);
     const result = await evaluate(`(async()=>{const flower=document.querySelector(".yoshi-with-flower > .flower-art");const yoshi=document.querySelector(".yoshi-with-flower > .yoshi-art");const container=document.querySelector(".yoshi-with-flower");const hero=document.querySelector(".hero-art");const scene=document.querySelector(".home-hero");if(!yoshi||!flower||!container||!hero||!scene)return null;if(!yoshi.complete)await Promise.race([new Promise(resolve=>yoshi.addEventListener("load",resolve,{once:true})),new Promise(resolve=>setTimeout(resolve,10000))]);const y=yoshi.getBoundingClientRect(),f=flower.getBoundingClientRect(),c=container.getBoundingClientRect(),h=hero.getBoundingClientRect(),g=scene.getBoundingClientRect(),s=getComputedStyle(flower);const canvas=document.createElement("canvas");canvas.width=flower.naturalWidth;canvas.height=flower.naturalHeight;const ctx=canvas.getContext("2d");ctx.drawImage(flower,0,0);const rgba=ctx.getImageData(0,0,canvas.width,canvas.height).data;let transparentPixels=0,opaquePixels=0;for(let i=3;i<rgba.length;i+=4){if(rgba[i]===0)transparentPixels++;if(rgba[i]===255)opaquePixels++}return{flower:{width:f.width,height:f.height,left:f.left,right:f.right,top:f.top,bottom:f.bottom,centerX:f.left+f.width/2,cssWidth:s.width,cssHeight:s.height,minWidth:s.minWidth,maxWidth:s.maxWidth,flex:s.flex,position:s.position,naturalWidth:flower.naturalWidth,naturalHeight:flower.naturalHeight,transparentPixels,opaquePixels,cornerAlpha:rgba[3]},yoshi:{left:y.left,right:y.right,top:y.top,height:y.height,centerX:y.left+y.width/2,naturalWidth:yoshi.naturalWidth,naturalHeight:yoshi.naturalHeight,complete:yoshi.complete},container:{left:c.left,right:c.right,top:c.top,bottom:c.bottom,width:c.width,height:c.height},hero:{left:h.left,right:h.right,top:h.top,bottom:h.bottom},scene:{left:g.left,right:g.right,top:g.top,bottom:g.bottom}}})()`);
     assert.ok(result, `${label}: Yoshi and flower exist in the hero`);
     const expectedSize = viewportWidth <= 620 ? 20 : viewportWidth <= 850 ? 22 : 24;
@@ -250,10 +250,10 @@ if (!browserPath) {
     const responsiveStates = [
       { name: "home", path: "index.html", state: null, action: null },
       { name: "exercise", path: "01-flower-garden.html", state: null, action: "#start-world" },
-      { name: "kamek", path: "03-crystal-caves.html", state: { version: 2, currentWorld: 3, completedWorlds: [1, 2], completedBonus: false, checkpoints: { 1: 10, 2: 10, 3: 0, 4: 0 } }, action: null },
-      { name: "bonus-long", path: "04-bonus-challenge.html", state: { version: 2, currentWorld: 4, completedWorlds: [1, 2, 3], completedBonus: false, checkpoints: { 1: 10, 2: 10, 3: 10, 4: 0 } }, action: "#start-world", screenshot: true },
-      { name: "main-finish", path: "03-crystal-caves.html", state: { version: 2, currentWorld: 3, completedWorlds: [1, 2, 3], completedBonus: false, checkpoints: { 1: 10, 2: 10, 3: 10, 4: 0 } }, action: null },
-      { name: "bonus-finish", path: "04-bonus-challenge.html", state: { version: 2, currentWorld: 4, completedWorlds: [1, 2, 3], completedBonus: true, checkpoints: { 1: 10, 2: 10, 3: 10, 4: 7 } }, action: null },
+      { name: "kamek", path: "03-crystal-caves.html", state: { version: 3, currentWorld: 3, completedWorlds: [1, 2], completedBonus: false, checkpoints: { 1: 10, 2: 10, 3: 0, 4: 0 } }, action: null },
+      { name: "bonus-long", path: "04-bonus-challenge.html", state: { version: 3, currentWorld: 4, completedWorlds: [1, 2, 3], completedBonus: false, checkpoints: { 1: 10, 2: 10, 3: 10, 4: 0 } }, action: "#start-world", screenshot: true },
+      { name: "main-finish", path: "03-crystal-caves.html", state: { version: 3, currentWorld: 3, completedWorlds: [1, 2, 3], completedBonus: false, checkpoints: { 1: 10, 2: 10, 3: 10, 4: 0 } }, action: null },
+      { name: "bonus-finish", path: "04-bonus-challenge.html", state: { version: 3, currentWorld: 4, completedWorlds: [1, 2, 3], completedBonus: true, checkpoints: { 1: 10, 2: 10, 3: 10, 4: 7 } }, action: null },
     ];
     const responsiveResults = [];
     for (const width of [320, 390, 768, 1366]) {
@@ -347,7 +347,7 @@ if (!browserPath) {
     const forestTip = await evaluate(`document.querySelector(".row-teaching")?.innerText || ""`);
     assert.ok(forestTip.includes("F · G · R · T"), "Forest Path groups F/G and R/T under the left index finger");
     assert.ok(forestTip.includes("J · H · Y · U"), "Forest Path groups J/H and Y/U under the right index finger");
-    assert.ok(forestTip.includes("V/B") && forestTip.includes("N/M"), "Forest Path states that V/B/N/M are reserved for the bonus");
+    assert.ok(forestTip.includes("V/B") && forestTip.includes("N/M") && forestTip.includes("Cavernas de Cristal"), "Forest Path introduces V/B/N/M as part of World 3");
     const forestKeys = await evaluate(`[...document.querySelectorAll('.guide-card .keycap[data-key]')].map(el=>el.dataset.key)`);
     for (const key of ["a", "s", "d", "f", "g", "h", "j", "k", "l", "ç", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", " "]) assert.ok(forestKeys.includes(key), `World 2 keeps taught key ${JSON.stringify(key)} visible`);
     for (const key of ["z", "x", "c", "v", "b", "n", "m"]) assert.ok(!forestKeys.includes(key), `World 2 does not present lower-row key ${key} yet`);
@@ -377,9 +377,12 @@ if (!browserPath) {
     assert.equal(await evaluate("document.querySelector('#audio-toggle').disabled"), false);
     const caveKeys = await evaluate("[...document.querySelectorAll('.guide-card .keycap[data-key]')].map(el=>el.dataset.key)");
     for (const key of ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "g", "h"]) assert.ok(caveKeys.includes(key), `Crystal Caves presents home/upper key ${key}`);
-    for (const key of ["z", "x", "c", "v", "b", "n", "m"]) assert.ok(!caveKeys.includes(key), `Crystal Caves leaves lower-row key ${key} to the bonus`);
+    for (const key of ["z", "x", "c", "v", "b", "n", "m"]) assert.ok(caveKeys.includes(key), `Crystal Caves teaches lower-row key ${key}`);
+    const caveTip = await evaluate(`document.querySelector(".row-teaching")?.innerText || ""`);
+    assert.ok(caveTip.includes("Fileira inferior") && caveTip.includes("Z X C V B N M"), "Crystal Caves explicitly names the lower row");
+    assert.ok(caveTip.includes("Indicador esquerdo") && caveTip.includes("Indicador direito"), "Crystal Caves explains lower-row finger assignments");
     await click("#start-world");
-    await assertFingerColors("world 3 upper/lower rows and space");
+    await assertFingerColors("world 3 three rows and space");
     await evaluate("new Promise(resolve=>setTimeout(resolve,100))");
     trackLog = await evaluate("window.__fakeAudioLog");
     assert.ok(trackLog.includes("pause:BEP3rdTy0-o"), "leaving Kamek pauses the story audio");
@@ -412,7 +415,7 @@ if (!browserPath) {
     assert.equal(await evaluate(`JSON.parse(localStorage.getItem(${JSON.stringify(storageKey)})).completedWorlds.length`), 3, "cancelling reset preserves the completed worlds");
 
     // Session storage preserves progress across route changes and reloads when local storage is blocked.
-    const sessionState = { version: 2, currentWorld: 2, completedWorlds: [1], completedBonus: false, checkpoints: { 1: 10, 2: 1, 3: 0, 4: 0 } };
+    const sessionState = { version: 3, currentWorld: 2, completedWorlds: [1], completedBonus: false, checkpoints: { 1: 10, 2: 1, 3: 0, 4: 0 } };
     await evaluate(`localStorage.removeItem(${JSON.stringify(storageKey)});sessionStorage.setItem(${JSON.stringify(storageKey)},${JSON.stringify(JSON.stringify(sessionState))})`);
     const localBlock = await cdp.send("Page.addScriptToEvaluateOnNewDocument", { source: "Object.defineProperty(window,'localStorage',{configurable:true,get(){throw new DOMException('blocked','SecurityError')}})" });
     await navigate(`${baseUrl}02-forest-path.html?storage=session`);

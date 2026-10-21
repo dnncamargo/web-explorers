@@ -9,7 +9,7 @@
 
   function createProgress() {
     return {
-      version: 2,
+      version: 3,
       currentWorld: 1,
       completedWorlds: [],
       completedBonus: false,
@@ -19,7 +19,7 @@
 
   function normalizeProgress(value) {
     const fresh = createProgress();
-    if (!value || value.version !== 2) return fresh;
+    if (!value || value.version !== 3) return fresh;
     for (const id of [1, 2, 3, 4]) {
       const count = Number(value.checkpoints?.[id]);
       fresh.checkpoints[id] = Number.isInteger(count) ? Math.max(0, Math.min(checkpointCountForWorld(id), count)) : 0;
