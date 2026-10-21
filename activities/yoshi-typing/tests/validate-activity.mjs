@@ -47,7 +47,7 @@ for (const [idText, targets] of Object.entries(expectedTargets)) {
 assert.equal(worlds[1].checkpoints.length, 10, "Flower Garden has ten checkpoints");
 assert.equal(worlds[1].taughtKeys.join(""), "asdf jklç", "Flower Garden introduces both hands on the home row and space");
 assert.equal(worlds[2].taughtKeys.join(""), "asdfghjklç qwertyuiop", "Forest Path adds G/H and the upper row to the home row");
-assert.equal(worlds[3].taughtKeys.join(""), "asdfghjklç qwertyuiop zxcvbnm", "Crystal Caves adds the lower row to the home and upper rows");
+assert.equal(worlds[3].taughtKeys.join(""), "asdfghjklç qwertyuiopzxcvbnm", "Crystal Caves adds the lower row to the home and upper rows");
 const flowerKeys = new Set([..."asdfjklç"]);
 for (const checkpoint of worlds[1].checkpoints) {
   for (const char of checkpoint.target.toLocaleLowerCase("pt-BR")) {
