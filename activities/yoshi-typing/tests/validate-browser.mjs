@@ -339,7 +339,7 @@ if (!browserPath) {
     await pressEnter();
     for (let index = 2; index < targets[1].length; index += 1) {
       await typeCurrentTarget(targets[1][index]);
-      await click("#next-checkpoint");
+      await pressEnter();
     }
     assert.match(await evaluate(`document.querySelector('.world-finish').innerText`), /Este mundo está concluído/);
     await click('a[href="02-forest-path.html"]', true);
