@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 const appRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const storageKey = "exploradores.yoshi-typing.progress.v1";
 const targets = {
-  1: ["ASDF", "FDSA", "ASAS", "DFDF", "A FADA ASSA", "FADA ASSA FADA", "A FADA ASSA FADA"],
+  1: ["ASDF", "FDSA", "ASAS", "DFDF", "A FADA ASSA", "FADA ASSA FADA", "A FADA ASSA FADA", "ASDF FADA ASSA FADA", "ASDF FDSA FADA ASSA FADA", "ASDF FDSA ASDF FDSA FADA ASSA FADA"],
   2: ["JKLÇ", "ÇLKJ", "JKJK", "FADA FALA", "A FADA FALA", "FALA DA SALA", "A FADA FALA DA SALA"],
   3: ["ASDF JKLÇ", "QWERT YUIOP", "ZXCV BNM", "CASA SAPO VIDA", "A FOCA PULA", "A FOCA LEVA O SAPO", "O SAPO VAI PARA CASA"],
   4: ["A FOCA PULA", "O SAPO VAI PARA CASA", "A FOCA LEVA O SAPO", "YOSHI PULA NA CASA", "O YOSHI PULA COM A FOCA", "A FOCA LEVA O SAPO PARA CASA", "YOSHI E A FOCA PULAM PARA CASA"],
@@ -206,7 +206,7 @@ if (!browserPath) {
         assert.match(next, new RegExp(`CHECKPOINT ${targets[worldId].indexOf(target) + 2}/${targets[worldId].length}`), "header updates immediately when the next checkpoint opens");
       }
     }
-    assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), "CHECKPOINT 7/7", "fifth checkpoint remains in the header on completion");
+    assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), `CHECKPOINT ${targets[worldId].length}/${targets[worldId].length}`, "last checkpoint remains in the header on completion");
   }
 
   try {
@@ -242,10 +242,10 @@ if (!browserPath) {
     const responsiveStates = [
       { name: "home", path: "index.html", state: null, action: null },
       { name: "exercise", path: "01-flower-garden.html", state: null, action: "#start-world" },
-      { name: "kamek", path: "03-crystal-caves.html", state: { version: 1, currentWorld: 3, completedWorlds: [1, 2], completedBonus: false, checkpoints: { 1: 7, 2: 7, 3: 0, 4: 0 } }, action: null },
-      { name: "bonus-long", path: "04-bonus-challenge.html", state: { version: 1, currentWorld: 4, completedWorlds: [1, 2, 3], completedBonus: false, checkpoints: { 1: 7, 2: 7, 3: 7, 4: 0 } }, action: "#start-world", screenshot: true },
-      { name: "main-finish", path: "03-crystal-caves.html", state: { version: 1, currentWorld: 3, completedWorlds: [1, 2, 3], completedBonus: false, checkpoints: { 1: 7, 2: 7, 3: 7, 4: 0 } }, action: null },
-      { name: "bonus-finish", path: "04-bonus-challenge.html", state: { version: 1, currentWorld: 4, completedWorlds: [1, 2, 3], completedBonus: true, checkpoints: { 1: 7, 2: 7, 3: 7, 4: 7 } }, action: null },
+      { name: "kamek", path: "03-crystal-caves.html", state: { version: 1, currentWorld: 3, completedWorlds: [1, 2], completedBonus: false, checkpoints: { 1: 10, 2: 7, 3: 0, 4: 0 } }, action: null },
+      { name: "bonus-long", path: "04-bonus-challenge.html", state: { version: 1, currentWorld: 4, completedWorlds: [1, 2, 3], completedBonus: false, checkpoints: { 1: 10, 2: 7, 3: 7, 4: 0 } }, action: "#start-world", screenshot: true },
+      { name: "main-finish", path: "03-crystal-caves.html", state: { version: 1, currentWorld: 3, completedWorlds: [1, 2, 3], completedBonus: false, checkpoints: { 1: 10, 2: 7, 3: 7, 4: 0 } }, action: null },
+      { name: "bonus-finish", path: "04-bonus-challenge.html", state: { version: 1, currentWorld: 4, completedWorlds: [1, 2, 3], completedBonus: true, checkpoints: { 1: 10, 2: 7, 3: 7, 4: 7 } }, action: null },
     ];
     const responsiveResults = [];
     for (const width of [320, 390, 768, 1366]) {
@@ -297,7 +297,13 @@ if (!browserPath) {
     await evaluate(`window.YoshiAudio={play(){},pause(){},changeTrack(){}}`);
     assert.deepEqual(await evaluate(`[...document.querySelectorAll('.guide-card .keycap[data-key]')].map(el=>el.dataset.key)`), ["a", "s", "d", "f", " "], "World 1 visually introduces only the left home keys and space");
     await click("#start-world");
-    assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), "CHECKPOINT 1/7");
+    assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), "CHECKPOINT 1/10");
+    const captureState = await evaluate(`(()=>{const input=document.getElementById('typing-box');const rect=input.getBoundingClientRect();const style=getComputedStyle(input);return{height:rect.height,computedHeight:style.height,opacity:style.opacity,left:rect.left,active:document.activeElement===input}})()`);
+    assert.equal(captureState.height, 0, `typing-box has zero rendered height: ${JSON.stringify(captureState)}`);
+    assert.equal(captureState.computedHeight, '0px', 'typing-box computes to exactly zero height');
+    assert.equal(captureState.opacity, '0', 'typing-box is visually transparent');
+    assert.ok(captureState.left < -1000, 'typing-box is positioned offscreen');
+    assert.equal(captureState.active, true, 'typing-box remains focused to receive physical keyboard events');
     await evaluate(`window.__trusted=false;document.querySelector('#typing-box').addEventListener('keydown',e=>window.__trusted=e.isTrusted,{capture:true})`);
     await dispatchKey("Z");
     assert.equal(await evaluate(`document.querySelector('#typed-display').textContent`), "—", "a wrong key does not erase or advance typed progress");
@@ -314,9 +320,9 @@ if (!browserPath) {
     assert.equal(await evaluate(`JSON.parse(localStorage.getItem(${JSON.stringify(storageKey)})).checkpoints[1]`), 0, "restart leaves previously completed checkpoints intact");
     await typeCurrentTarget(targets[1][0]);
     await click("#next-checkpoint");
-    assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), "CHECKPOINT 2/7", "the permanent indicator updates as soon as checkpoint 2 opens");
+    assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), "CHECKPOINT 2/10", "the permanent indicator updates as soon as checkpoint 2 opens");
     await navigate(`${baseUrl}01-flower-garden.html?resume=1`);
-    assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), "CHECKPOINT 2/7", "reloading resumes at the correct next checkpoint");
+    assert.equal(await evaluate(`document.querySelector('#checkpoint-progress').textContent`), "CHECKPOINT 2/10", "reloading resumes at the correct next checkpoint");
 
     // Finish the three required worlds with browser-dispatched physical key events.
     await click("#start-world");
@@ -367,7 +373,7 @@ if (!browserPath) {
     assert.equal(await evaluate(`JSON.parse(localStorage.getItem(${JSON.stringify(storageKey)})).completedWorlds.length`), 3, "cancelling reset preserves the completed worlds");
 
     // Session storage preserves progress across route changes and reloads when local storage is blocked.
-    const sessionState = { version: 1, currentWorld: 2, completedWorlds: [1], completedBonus: false, checkpoints: { 1: 7, 2: 1, 3: 0, 4: 0 } };
+    const sessionState = { version: 1, currentWorld: 2, completedWorlds: [1], completedBonus: false, checkpoints: { 1: 10, 2: 1, 3: 0, 4: 0 } };
     await evaluate(`localStorage.removeItem(${JSON.stringify(storageKey)});sessionStorage.setItem(${JSON.stringify(storageKey)},${JSON.stringify(JSON.stringify(sessionState))})`);
     const localBlock = await cdp.send("Page.addScriptToEvaluateOnNewDocument", { source: "Object.defineProperty(window,'localStorage',{configurable:true,get(){throw new DOMException('blocked','SecurityError')}})" });
     await navigate(`${baseUrl}02-forest-path.html?storage=session`);
