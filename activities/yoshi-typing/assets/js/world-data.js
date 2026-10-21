@@ -25,6 +25,9 @@
         { target: "A FADA ASSA", instruction: "Leia a frase e use apenas a fileira-base esquerda.", hint: "Use A, F, D, S e a barra de espaço para escrever A FADA ASSA." },
         { target: "FADA ASSA FADA", instruction: "Checkpoint 6: digite três palavras, mantendo a mão esquerda na posição-base.", hint: "Digite FADA, espaço, ASSA, espaço, FADA. Use somente A, S, D, F e espaço." },
         { target: "A FADA ASSA FADA", instruction: "Checkpoint 7: conclua o jardim com uma frase mais longa usando a fileira-base esquerda.", hint: "Use apenas A, S, D, F e o polegar na barra de espaço." },
+        { target: "ASDF FADA ASSA FADA", instruction: "Checkpoint 8: combine a sequência da fileira-base com a frase já conhecida.", hint: "Digite ASDF, espaço, FADA, espaço, ASSA, espaço, FADA." },
+        { target: "ASDF FDSA FADA ASSA FADA", instruction: "Checkpoint 9: alterne a ida e a volta pela fileira-base antes de escrever a frase.", hint: "Complete ASDF e FDSA antes de continuar com FADA ASSA FADA." },
+        { target: "ASDF FDSA ASDF FDSA FADA ASSA FADA", instruction: "Checkpoint 10: desafio final do jardim — uma sequência longa sem sair da fileira-base.", hint: "Use somente A, S, D, F e espaço. Divida a sequência em blocos e siga sem pressa." },
       ],
     },
     2: {
