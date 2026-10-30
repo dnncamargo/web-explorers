@@ -1,5 +1,6 @@
 (function (global) {
-  const KEY = "exploradores.donkey-kong.progress.v1";
+  const KEY = "exploradores.donkey-kong.progress.v2";
+  const LEGACY_KEY = "exploradores.donkey-kong.progress.v1";
   const TOTALS = { jungle: 8, mine: 7, camp: 6 };
   const memory = { raw: null };
 
@@ -63,14 +64,19 @@
     for (const name of ["localStorage", "sessionStorage"]) {
       try {
         const store = storage(name);
-        const saved = store.getItem(KEY);
+        const currentSaved = store.getItem(KEY);
+        const legacySaved = store.getItem(LEGACY_KEY);
+        const saved = currentSaved || legacySaved;
         if (firstAvailable === "memory") firstAvailable = name;
         if (saved) {
           try {
             const parsed = JSON.parse(saved);
             if (parsed && [1, 2].includes(parsed.version)) {
               const progress = normalize(parsed);
-              if (parsed.version === 1) save(progress, name);
+              if (parsed.version === 1 || !currentSaved) {
+                save(progress, name);
+                try { store.removeItem(LEGACY_KEY); } catch { /* legacy data is already migrated */ }
+              }
               return { progress, mode: name };
             }
           } catch { /* try the next available store */ }
@@ -82,7 +88,10 @@
 
   function reset() {
     for (const name of ["localStorage", "sessionStorage", "memory"]) {
-      try { storage(name).removeItem(KEY); } catch { /* ignore unavailable storage */ }
+      try {
+        storage(name).removeItem(KEY);
+        storage(name).removeItem(LEGACY_KEY);
+      } catch { /* ignore unavailable storage */ }
     }
     return fresh();
   }
@@ -94,5 +103,5 @@
     return true;
   }
 
-  global.DonkeyKongProgress = { KEY, TOTALS, fresh, normalize, load, save, reset, completeCheckpoint };
+  global.DonkeyKongProgress = { KEY, LEGACY_KEY, TOTALS, fresh, normalize, load, save, reset, completeCheckpoint };
 })(window);
