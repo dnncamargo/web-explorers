@@ -565,8 +565,8 @@
         area.querySelector("#integrated-instruction").textContent = "Etapa 1: digite exatamente " + checkpoint.accents + ". Use as teclas mortas e as vogais maiúsculas.";
       } else {
         if (stage === 1) input.value = checkpoint.initial;
-        else if (stage === 2) input.value = "Os kongs\\nchegaram a mina?\\ntraga bananas!";
-        else input.value = "Os kongs\\nchegaram à mina?\\ntraga bananas!";
+        else if (stage === 2) input.value = "Os kongs\nchegaram a mina?\ntraga bananas!";
+        else input.value = "Os kongs\nchegaram à mina?\ntraga bananas!";
         area.querySelector("#integrated-instruction").textContent = stage === 1 ?
           "Etapa 2: corrija o primeiro o para O usando Shift." :
           stage === 2 ? "Etapa 3: corrija a antes de mina para à." :
