@@ -623,7 +623,7 @@
         if (index >= 0) target.setSelectionRange(index + 1, index + 2);
       }
       if (currentStage === 3) {
-        const lineStart = target.value.indexOf("\\ntraga");
+        const lineStart = target.value.indexOf("\ntraga");
         if (lineStart >= 0) target.setSelectionRange(lineStart + 1, lineStart + 2);
       }
       if (currentStage === 4) {
