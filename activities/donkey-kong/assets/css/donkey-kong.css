@@ -151,12 +151,12 @@ button, a, input, textarea { outline-offset: 3px; }
 .clipboard-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
 .clipboard-grid > div { min-width:0; }
 .poem-layout { display:grid; grid-template-columns:minmax(0,1.25fr) minmax(250px,.75fr); gap:18px; align-items:start; }
-.poem-editor { width:100%; min-height:570px; padding:14px; border:2px solid #a9b8a0; border-radius:5px; background:white; color:#28392f; font:16px/1.65 Georgia,serif; resize:vertical; }
+.poem-editor { width:100%; min-height:570px; padding:14px; border:2px solid #a9b8a0; border-radius:5px; background:white; color:#28392f; font:16px/1.65 "Trebuchet MS",Arial,sans-serif; resize:vertical; }
 .poem-editor:focus { outline:3px solid rgba(86,134,90,.2); border-color:#56865a; }
 .poem-editor::selection { background:#f3c85f; color:#24392c; }
 .poem-reference { position:sticky; top:12px; border:1px solid #d4dfc9; border-radius:6px; background:#f7f8ef; }
 .poem-reference summary { padding:12px; cursor:pointer; color:#31583c; font-weight:900; }
-.poem-reference-content { max-height:510px; overflow:auto; padding:0 12px 12px; white-space:pre-wrap; font:14px/1.7 Georgia,serif; color:#47584a; }
+.poem-reference-content { max-height:510px; overflow:auto; padding:0 12px 12px; white-space:pre-wrap; font:14px/1.7 "Trebuchet MS",Arial,sans-serif; color:#47584a; }
 .poem-progress { margin:0 0 12px; color:#466c4b; font-weight:900; }
 .boss-step { margin:14px 0; padding:14px; border:1px solid #e0d9bd; background:#fbf6e7; }
 .boss-step strong { color:#5b4a22; }
