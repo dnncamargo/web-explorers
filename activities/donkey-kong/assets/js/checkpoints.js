@@ -33,7 +33,7 @@
       intro: "Use Shift, selecione trechos, apague, escreva símbolos e pratique os acentos.",
       guide: "Nesta mina, você vai selecionar letras e palavras com Shift e as setas, apagar com Backspace e escrever palavras com acentos. O campo de texto precisa estar focado para que as teclas atuem nele.",
       checkpoints: [
-        { title: "O poder do Shift", instruction: "Digite DK! usando Shift para escrever as letras maiúsculas e o sinal de exclamação.", hint: "Segure Shift enquanto pressiona D e K. Para !, use a combinação que produz esse sinal no teclado ABNT2.", kind: "typing", target: "DK!" },
+        { title: "O poder do Shift", instruction: "Digite DK! usando Shift para escrever as letras maiúsculas e o sinal de exclamação.", hint: "Segure Shift enquanto pressiona D e K. Para !, use a combinação que produz esse sinal no teclado ABNT2.", kind: "typing", target: "DK!", requireShift: true },
         { title: "Barris selecionados", instruction: "O cursor já está depois do D. Segure Shift e pressione ← uma vez para selecionar D. Depois, o cursor será posicionado depois do K: use Shift+← duas vezes para selecionar DK.", hint: "A seleção real aparece destacada no campo. Mantenha Shift pressionado enquanto usa a seta.", kind: "selection", source: "DK BANANA", stages: [
           { name: "Selecione D", caret: 1, direction: "ArrowLeft", presses: 1, start: 0, end: 1, expected: "D" },
           { name: "Selecione DK", caret: 2, direction: "ArrowLeft", presses: 2, start: 0, end: 2, expected: "DK" }
