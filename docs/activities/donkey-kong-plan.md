@@ -356,3 +356,19 @@ Os 22 checkpoints especificam contexto, habilidade, instrução, demonstração,
 - AltGr+Q/W não foi confirmado; o exercício pede os símbolos `/` e `?` sem exigir uma combinação específica. Arte de personagens não foi incluída por falta de licença de redistribuição confirmada.
 - Validação executada nesta sessão: análise sintática dos scripts JS/MJS (após remover imports e a expressão import.meta.url para a checagem de parsing), carregamento dos dados/progresso em runtime, contagem 9+7+6, oito passos do poema, reconstrução exata da referência e progressão sequencial de checkpoints. Não foram executados os arquivos de teste Node no repositório nem o Chromium automatizado; testes físicos e visuais continuam necessários.
 - Branch `codex/donkey-kong-planning`, PR #21 permanece draft e sem merge: https://github.com/dnncamargo/web-explorers/pull/21.
+### Como executar a prévia local
+
+Na raiz do repositório, inicie um servidor HTTP estático:
+
+```powershell
+py -m http.server 8000
+```
+
+Depois abra `http://localhost:8000/activities/donkey-kong/index.html`. Em macOS/Linux/ChromeOS Linux, use `python3 -m http.server 8000`. Não abra a página via `file://`, porque o player do YouTube e as políticas de origem precisam de uma origem HTTP.
+
+### Ajustes de validação após os testes do teclado
+
+- A próxima tecla fica destacada no teclado ABNT2 durante cada exercício de digitação; as cores do alvo indicam o dedo sugerido.
+- O checkpoint de Shift exige o modificador Shift, não apenas uma letra maiúscula produzida por Caps Lock.
+- O checkpoint Delete só aceita o evento de apagar à frente (`Delete`/`deleteContentForward`), não um Backspace comum.
+- A validação de “à noite” está ancorada à primeira ocorrência incorreta, não à segunda ocorrência que já estava correta.
