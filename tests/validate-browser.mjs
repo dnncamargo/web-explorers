@@ -147,7 +147,7 @@ if (!browserPath) {
     await navigate(`${baseUrl}index.html?viewport=${width}`, "/index.html");
     const result = await evaluate(`(()=>({width:innerWidth,clientWidth:document.documentElement.clientWidth,scrollWidth:document.documentElement.scrollWidth,cards:[...document.querySelectorAll('.activity-card')].map(a=>({href:a.getAttribute('href'),left:a.getBoundingClientRect().left,right:a.getBoundingClientRect().right}))}))()`);
     assert.equal(result.scrollWidth, result.clientWidth, `${width}px catalog has no horizontal overflow: ${JSON.stringify(result)}`);
-    assert.deepEqual(result.cards.map(({ href }) => href), ["activities/digital-explorers/index.html", "activities/yoshi-typing/index.html"], `${width}px catalog lists only the two existing activity entries`);
+    assert.deepEqual(result.cards.map(({ href }) => href), ["activities/digital-explorers/index.html", "activities/yoshi-typing/index.html", "activities/donkey-kong/index.html"], `${width}px catalog lists all three independent activities`);
     for (const card of result.cards) assert.ok(card.left >= 0 && card.right <= result.clientWidth, `${width}px activity card stays within the viewport`);
     if (width === 390 || width === 1366) await saveCatalogScreenshot(width);
   }
@@ -212,10 +212,30 @@ if (!browserPath) {
     await clickAndWait(".back-link", "/index.html");
     assert.match(await evaluate("document.title"), /Atividades/);
 
+    // Donkey Kong remains independent and exposes its map and four activity routes.
+    await clickAndWait('.activity-card[href="activities/donkey-kong/index.html"]', "/activities/donkey-kong/index.html");
+    assert.match(await evaluate("document.title"), /Donkey Kong Country/);
+    assert.equal(await evaluate('document.querySelectorAll("#world-map .world-card").length'), 4, "Donkey Kong map offers three worlds and the final boss");
+    for (const [route, titlePattern, selector] of [
+      ["jungle.html", /Selva dos Kongs/, "#typing-input"],
+      ["mine.html", /Mina dos Barris/, "#typing-input"],
+      ["camp.html", /Acampamento dos Kongs/, "#native-edit-input"],
+      ["king-k-rool.html", /King K. Rool/, "#poem-editor"],
+    ]) {
+      await navigate(baseUrl + "activities/donkey-kong/" + route, "/activities/donkey-kong/" + route);
+      assert.match(await evaluate("document.title"), titlePattern);
+      if (route === "king-k-rool.html") {
+        assert.equal(await evaluate('!!document.querySelector("#poem-editor")'), true, "the final poem editor renders");
+      } else {
+        await evaluate('document.querySelector("#start-world")?.click()');
+        assert.equal(await evaluate('!!document.querySelector(' + JSON.stringify(selector) + ')'), true, route + " opens its expected exercise control");
+      }
+    }
+
     assert.deepEqual(missing, [], `browser requested only existing local files: ${missing.join(", ")}`);
     console.log("OK: Chromium/Edge navigated from the catalog to World 1, Submundo material, World 2, Water, Ghost House, Final Boss and completion");
-    console.log("OK: activity aliases redirect correctly; Yoshi opens and returns to the root catalog");
-    console.log("OK: catalog fits 320, 390, 768 and 1366 px; moved local maps, character art and audio paths load");
+    console.log("OK: activity aliases redirect correctly; Yoshi and Donkey Kong open from the root catalog");
+    console.log("OK: catalog fits 320, 390, 768 and 1366 px; existing and Donkey Kong local activity paths load");
     if (screenshotDir) console.log(`Menu screenshots: ${path.join(screenshotDir, "web-explorers-menu-390px.png")}, ${path.join(screenshotDir, "web-explorers-menu-1366px.png")}`);
   } finally {
     cdp?.close();
