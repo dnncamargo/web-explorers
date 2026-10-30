@@ -72,11 +72,12 @@
     const screen = document.getElementById("start-screen");
     const button = document.getElementById("start-button");
     const status = document.getElementById("start-status");
-    if (!screen || !button || !status) return;
+    const buttonLabel = document.getElementById("start-button-label");
+    if (!screen || !button || !status || !buttonLabel) return;
 
     function allowEntry(withMusic) {
       button.disabled = false;
-      button.textContent = withMusic ? "ENTRAR" : "ENTRAR SEM MÚSICA";
+      buttonLabel.textContent = withMusic ? "ENTRAR" : "SEM MÚSICA";
       status.textContent = withMusic
         ? "Rádio pronta. Clique no barril para entrar e iniciar a trilha."
         : "A rádio não respondeu. Você pode entrar sem música; a trilha também pode ser aberta no controle do YouTube.";
@@ -84,7 +85,7 @@
     }
 
     button.disabled = true;
-    button.textContent = "PREPARANDO RÁDIO…";
+    buttonLabel.textContent = "AGUARDE…";
     status.textContent = "Conectando à trilha da Ilha dos Kongs…";
 
     global.addEventListener("donkeykong:radio-ready", () => allowEntry(true), { once: true });
@@ -140,7 +141,7 @@
       '<p>Os indicadores encontram as marcas tácteis em <strong>F</strong> e <strong>J</strong>. Na fileira-base, esquerda: A S D F. Direita: J K L Ç. Os polegares usam a barra de espaço.</p>' +
       '<div class="keyboard-guide"><h3>Teclado ABNT2 · três fileiras</h3>' + keyRows() +
       '<div class="finger-legend">' +
-      '<span style="--swatch:#f4c4b6">mínimos</span><span style="--swatch:#f2d5a0">anelares</span><span style="--swatch:#f0e5a7">médios</span><span style="--swatch:#b9d9bc">indicador esquerdo</span><span style="--swatch:#b7d4f2">indicador direito</span><span style="--swatch:#e0c7e6">anelares direitos</span><span style="--swatch:#f2bfd7">mínimo direito</span></div></div>' +
+      '<span style="--swatch:#f2a6a1">mínimos</span><span style="--swatch:#ffc47d">anelares</span><span style="--swatch:#ffe27d">médios</span><span style="--swatch:#99d994">indicador esquerdo</span><span style="--swatch:#89dcd3">indicador direito</span><span style="--swatch:#c2a7ef">anelar direito</span><span style="--swatch:#f0a6cd">mínimo direito</span></div></div>' +
       '<p><strong>Importante:</strong> as cores e o desenho são uma orientação. O aplicativo não consegue identificar qual dedo pressionou uma tecla; o professor observa a posição das mãos.</p></section>';
   }
 
