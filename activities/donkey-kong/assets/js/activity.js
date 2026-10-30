@@ -60,6 +60,7 @@
       if (!global.confirm("Apagar somente o progresso de Donkey Kong Country neste navegador?")) return;
       progress = STORE.reset();
       persistenceMode = "localStorage";
+      saveProgress();
       renderMap();
       updatePersistence();
     });
@@ -604,7 +605,11 @@
         const index = lineStart < 0 ? -1 : target.value.indexOf(" a mina", lineStart);
         if (index >= 0) target.setSelectionRange(index + 1, index + 2);
       }
-      if (currentStage === 3) target.setSelectionRange(target.value.length - 1, target.value.length);
+      if (currentStage === 3) {
+        const lineStart = target.value.indexOf("chegaram");
+        const question = lineStart < 0 ? -1 : target.value.indexOf("?", lineStart);
+        if (question >= 0) target.setSelectionRange(question, question + 1);
+      }
       target.focus();
     }
     prepare();
