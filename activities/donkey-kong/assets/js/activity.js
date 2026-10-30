@@ -53,7 +53,8 @@
       '<h2>King K. Rool</h2><p>Recupere a Canção do Exílio com seleção, edição, acentuação, pontuação e atalhos.</p>' +
       '<span class="world-progress">' + bossCount + '</span><span class="world-action"><span>' + (progress.boss.passed ? "Rever missão" : "Entrar no desafio") + '</span><span aria-hidden="true">→</span></span></a>';
     const summary = document.getElementById("map-summary");
-    if (summary) summary.innerHTML = '<span>' + countComplete() + ' de 22 checkpoints concluídos</span><span>' +
+    const totalCheckpoints = Object.values(DATA.worlds).reduce((sum, item) => sum + item.checkpoints.length, 0);
+    if (summary) summary.innerHTML = '<span>' + countComplete() + ' de ' + totalCheckpoints + ' checkpoints concluídos</span><span>' +
       (progress.boss.passed ? "Chefe final derrotado" : "Missão final disponível") + '</span><span>Sem cronômetro</span>';
     const reset = document.getElementById("reset-progress");
     if (reset) reset.onclick = () => {
@@ -67,6 +68,40 @@
     updatePersistence();
   }
 
+  function setupMapEntryOverlay() {
+    const screen = document.getElementById("start-screen");
+    const button = document.getElementById("start-button");
+    const status = document.getElementById("start-status");
+    if (!screen || !button || !status) return;
+
+    function allowEntry(withMusic) {
+      button.disabled = false;
+      button.textContent = withMusic ? "ENTRAR" : "ENTRAR SEM MÚSICA";
+      status.textContent = withMusic
+        ? "Rádio pronta. Clique no barril para entrar e iniciar a trilha."
+        : "A rádio não respondeu. Você pode entrar sem música; a trilha também pode ser aberta no controle do YouTube.";
+    }
+
+    button.disabled = true;
+    button.textContent = "PREPARANDO RÁDIO…";
+    status.textContent = "Conectando à trilha da Ilha dos Kongs…";
+
+    global.addEventListener("donkeykong:radio-ready", () => allowEntry(true), { once: true });
+    global.addEventListener("donkeykong:radio-error", () => allowEntry(false), { once: true });
+
+    if (global.DonkeyKongRadio?.isReady()) allowEntry(true);
+    else if (global.DonkeyKongRadio?.hasFailed()) allowEntry(false);
+
+    button.addEventListener("click", () => {
+      if (button.disabled) return;
+      if (global.DonkeyKongRadio?.isReady()) global.DonkeyKongRadio.playFromGesture();
+      button.disabled = true;
+      button.classList.add("entering");
+      screen.classList.add("leaving");
+      global.setTimeout(() => screen.remove(), 600);
+    });
+  }
+
   function fingerName(finger) {
     return ({
       "left-pinky": "mínimo esquerdo", "left-ring": "anelar esquerdo", "left-middle": "médio esquerdo", "left-index": "indicador esquerdo",
@@ -76,7 +111,7 @@
   function keyFinger(key) {
     return DATA.fingers[String(key).toLocaleLowerCase("pt-BR")] || "";
   }
-  function keyRows(currentKey) {
+  function keyRows(currentKey, completedText = "") {
     const rows = ["qwertyuiop", "asdfghjklç", "zxcvbnm"];
     const activeKey = typeof currentKey === "string" ? currentKey.toLocaleLowerCase("pt-BR") : "";
     return rows.map((row, rowIndex) => '<div class="keyboard-row">' + Array.from(row).map((key) => {
@@ -84,7 +119,8 @@
       const home = rowIndex === 1 && "asdfghjklç".includes(key);
       const bump = key === "f" || key === "j";
       const active = activeKey && activeKey === key;
-      return '<span class="keycap ' + finger + (home ? " home" : "") + (bump ? " bump" : "") + (active ? " is-current" : "") + '">' + key.toLocaleUpperCase("pt-BR") + '</span>';
+      const used = completedText.toLocaleLowerCase("pt-BR").includes(key);
+      return '<span class="keycap ' + finger + (home ? " home" : "") + (bump ? " bump" : "") + (active ? " is-next" : "") + (used ? " is-used" : "") + '" data-key="' + key + '">' + key.toLocaleUpperCase("pt-BR") + '</span>';
     }).join("") + '</div>').join("") +
       '<div class="keyboard-row"><span class="keycap thumb' + (activeKey === " " ? " is-current" : "") + '">ESPAÇO · polegares</span></div>';
   }
@@ -94,7 +130,7 @@
     ];
     function hand(side, label) {
       const shapes = side === "left" ? fingers : fingers.slice().reverse();
-      return '<div class="hand"><span class="hand-label">' + label + '</span><div class="finger-shapes">' +
+      return '<div class="hand ' + side + '"><span class="hand-label">' + label + '</span><div class="finger-shapes">' +
         shapes.map((item) => '<span class="finger-shape ' + item[1] + '" aria-label="' + item[0] + '"></span>').join("") +
         '</div></div>';
     }
@@ -193,7 +229,7 @@
     let typed = 0;
     const target = checkpoint.target;
     area.innerHTML = '<div class="target-row" aria-label="Sequência que será digitada">' + renderTarget(target, 0) + '</div>' +
-      '<div id="typing-keyboard" class="keyboard-guide"><h3>Teclado ABNT2 · tecla em destaque</h3>' + keyRows(Array.from(target)[0]) + '</div>' +
+      '<div id="typing-keyboard" class="keyboard-guide"><h3>Teclado ABNT2 · próxima tecla em destaque</h3>' + keyRows(Array.from(target)[0], "") + '</div>' +
       '<label class="input-label" for="typing-input">Digite aqui com o teclado físico</label>' +
       '<textarea id="typing-input" class="exercise-area single-line" rows="1" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Digite a sequência do checkpoint"></textarea>';
     const input = area.querySelector("#typing-input");
@@ -227,11 +263,12 @@
       area.querySelector(".target-row").innerHTML = renderTarget(target, typed);
       const nextKey = Array.from(target)[typed];
       const keyboard = area.querySelector("#typing-keyboard");
-      if (keyboard) keyboard.innerHTML = '<h3>Teclado ABNT2 · próxima tecla em destaque</h3>' + keyRows(nextKey);
+      if (keyboard) keyboard.innerHTML = '<h3>Teclado ABNT2 · próxima tecla em destaque</h3>' + keyRows(nextKey, input.value);
       if (compareTyping(input.value, target)) {
         input.disabled = true;
         setFeedback(feedback, "Sequência completa. Muito bem!", "good");
         complete();
+        continueButton.focus({ preventScroll: true });
       }
     });
     input.addEventListener("paste", (event) => {
@@ -782,7 +819,10 @@
   }
 
   const page = document.body.dataset.page;
-  if (page === "map") renderMap();
+  if (page === "map") {
+    renderMap();
+    setupMapEntryOverlay();
+  }
   else if (page === "world") renderWorldPage();
   else if (page === "boss") renderBoss();
   updatePersistence();
