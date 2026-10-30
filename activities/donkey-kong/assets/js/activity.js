@@ -80,6 +80,7 @@
       status.textContent = withMusic
         ? "Rádio pronta. Clique no barril para entrar e iniciar a trilha."
         : "A rádio não respondeu. Você pode entrar sem música; a trilha também pode ser aberta no controle do YouTube.";
+      button.focus({ preventScroll: true });
     }
 
     button.disabled = true;
@@ -122,7 +123,7 @@
       const used = completedText.toLocaleLowerCase("pt-BR").includes(key);
       return '<span class="keycap ' + finger + (home ? " home" : "") + (bump ? " bump" : "") + (active ? " is-next" : "") + (used ? " is-used" : "") + '" data-key="' + key + '">' + key.toLocaleUpperCase("pt-BR") + '</span>';
     }).join("") + '</div>').join("") +
-      '<div class="keyboard-row"><span class="keycap thumb' + (activeKey === " " ? " is-current" : "") + '">ESPAÇO · polegares</span></div>';
+      '<div class="keyboard-row"><span class="keycap thumb key-space' + (activeKey === " " ? " is-next" : "") + (completedText.includes(" ") ? " is-used" : "") + '" data-key=" ">ESPAÇO · polegares</span></div>';
   }
   function keyboardGuide() {
     const fingers = [
