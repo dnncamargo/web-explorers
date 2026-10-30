@@ -33,7 +33,7 @@ assert.equal(
 assert.equal(data.worlds.jungle.checkpoints[0].target, "ASDF FDSA", "the first checkpoint practices the complete left home row");
 assert.equal(data.worlds.jungle.checkpoints[0].title, "Mão esquerda", "the old second checkpoint is now the first exercise");
 assert.equal(data.worlds.mine.checkpoints[0].requireShift, true, "the introductory Shift checkpoint requires the Shift key");
-assert.equal(data.worlds.jungle.checkpoints[2].target, "JKLÇ ÇLKJ", "the right home row includes Ç");
+assert.equal(data.worlds.jungle.checkpoints[1].target, "JKLÇ ÇLKJ", "the right home row includes Ç");
 assert.ok(data.worlds.jungle.checkpoints.every(({ target }) => !/[áàâãéêíóôõú,;.!?]/i.test(target)), "Jungle targets do not demand accents or punctuation");
 assert.ok(data.worlds.mine.checkpoints.some(({ target }) => target === "café irmã água"), "Mine practices real accented words");
 assert.equal(data.worlds.camp.checkpoints[1].key, "Delete", "Camp teaches forward delete");
