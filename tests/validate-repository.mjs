@@ -86,6 +86,7 @@ for (const target of [
   "activities/donkey-kong/assets/js/radio.js",
   "activities/donkey-kong/assets/js/activity.js",
   "activities/donkey-kong/tests/validate-activity.mjs",
+  "activities/donkey-kong/tests/validate-radio.mjs",
 ]) assert.ok(fs.existsSync(path.join(root, target)), `${target} exists`);
 
 for (const obsolete of ["assets", "stages", "index2.html", "index3.html", "index_final.html", "02-entrar-no-submundo.html"]) {
@@ -126,6 +127,7 @@ const donkeyHome = read("activities/donkey-kong/index.html");
 assert.ok(donkeyHome.includes('href="../../index.html"'), "Donkey Kong's return link opens the root catalog");
 assert.ok(donkeyHome.includes('data-page="map"'), "Donkey Kong opens on its own world map");
 assert.ok(read("activities/donkey-kong/tests/validate-activity.mjs").includes("21 ordered checkpoints"), "Donkey Kong has a dedicated activity validation suite");
+assert.ok(read("activities/donkey-kong/tests/validate-radio.mjs").includes("muted fallback"), "Donkey Kong has a dedicated radio autoplay regression suite");
 
 
 assert.ok(read("activities/yoshi-typing/tests/validate-activity.mjs").includes("assets/js/world-data.js"), "the independent Yoshi validation suite remains in place");
