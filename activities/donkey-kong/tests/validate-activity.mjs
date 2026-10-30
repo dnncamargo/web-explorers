@@ -31,6 +31,7 @@ assert.equal(
 );
 
 assert.equal(data.worlds.jungle.checkpoints[0].target, "FJ", "the first checkpoint practices the F/J tactile landmarks");
+assert.equal(data.worlds.mine.checkpoints[0].requireShift, true, "the introductory Shift checkpoint requires the Shift key");
 assert.equal(data.worlds.jungle.checkpoints[2].target, "JKLÇ ÇLKJ", "the right home row includes Ç");
 assert.ok(data.worlds.jungle.checkpoints.every(({ target }) => !/[áàâãéêíóôõú,;.!?]/i.test(target)), "Jungle targets do not demand accents or punctuation");
 assert.ok(data.worlds.mine.checkpoints.some(({ target }) => target === "café irmã água"), "Mine practices real accented words");
