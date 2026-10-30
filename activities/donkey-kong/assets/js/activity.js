@@ -56,14 +56,14 @@
     if (summary) summary.innerHTML = '<span>' + countComplete() + ' de 22 checkpoints concluídos</span><span>' +
       (progress.boss.passed ? "Chefe final derrotado" : "Missão final disponível") + '</span><span>Sem cronômetro</span>';
     const reset = document.getElementById("reset-progress");
-    if (reset) reset.addEventListener("click", () => {
+    if (reset) reset.onclick = () => {
       if (!global.confirm("Apagar somente o progresso de Donkey Kong Country neste navegador?")) return;
       progress = STORE.reset();
       persistenceMode = "localStorage";
       saveProgress();
       renderMap();
       updatePersistence();
-    });
+    };
     updatePersistence();
   }
 
