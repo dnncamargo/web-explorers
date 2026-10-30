@@ -124,7 +124,7 @@ button, a, input, textarea { outline-offset: 3px; }
 .keyboard-guide { margin:18px 0; padding:15px; border:1px solid #d2dcc8; border-radius:7px; background:#f3f6e9; }
 .keyboard-guide h3 { margin:0 0 10px; color:#2c563c; font-size:16px; }
 .keyboard-row { display:flex; justify-content:center; gap:5px; margin:6px 0; }
-.keycap { position:relative; display:grid; min-width:0; min-height:39px; max-width:54px; flex:1 1 0; align-items:center; justify-content:center; border:2px solid #9eb9a7; border-bottom-width:5px; border-radius:6px; background:#fff; color:#193b32; font-family:"Press Start 2P","Courier New",monospace; font-size:clamp(10px,1.6vw,15px); font-weight:400; transition:transform .1s ease, background .1s ease, box-shadow .1s ease; }
+.keycap { position:relative; display:grid; min-width:0; min-height:39px; max-width:54px; flex:1 1 0; place-items:center; border:2px solid #9eb9a7; border-bottom-width:5px; border-radius:6px; background:#fff; color:#193b32; font-family:"Press Start 2P","Courier New",monospace; font-size:clamp(10px,1.6vw,15px); font-weight:400; transition:transform .1s ease, background .1s ease, box-shadow .1s ease; }
 .keycap[data-key] { border-color:#728979; color:#193b32; }
 .keycap.home { outline:2px solid #b28b32; outline-offset:1px; }
 .keycap.is-current, .keycap.is-next { z-index:1; border-color:#244e3b; box-shadow:0 0 0 4px rgba(36,78,59,.26), 0 0 0 6px rgba(255,255,255,.85); transform:translateY(-3px) scale(1.06); }
@@ -140,7 +140,15 @@ button, a, input, textarea { outline-offset: 3px; }
 .keycap.right-pinky { background:#f0a6cd; }
 .keycap.thumb { min-width:210px; max-width:240px; height:39px; flex:0 1 38%; font-family:"Trebuchet MS",Arial,sans-serif; font-size:12px; font-weight:800; }
 .keycap.key-space { height:39px; }
+.keycap.key-space { height:39px; }
 .finger-legend { display:flex; flex-wrap:wrap; gap:7px 12px; margin:13px 0 0; font-size:11px; color:#526357; }
+.finger-legend span:nth-child(1) { --swatch:#f2a6a1; }
+.finger-legend span:nth-child(2) { --swatch:#ffc47d; }
+.finger-legend span:nth-child(3) { --swatch:#ffe27d; }
+.finger-legend span:nth-child(4) { --swatch:#99d994; }
+.finger-legend span:nth-child(5) { --swatch:#89dcd3; }
+.finger-legend span:nth-child(6) { --swatch:#c2a7ef; }
+.finger-legend span:nth-child(7) { --swatch:#f0a6cd; }
 .finger-legend span::before { display:inline-block; width:10px; height:10px; margin-right:5px; border-radius:2px; background:var(--swatch); content:""; }
 .checkpoint-strip { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:10px; margin-bottom:18px; padding-bottom:12px; border-bottom:1px solid #dce4d3; }
 .checkpoint-name { color:#5a805c; font-size:9px; line-height:1.8; }
