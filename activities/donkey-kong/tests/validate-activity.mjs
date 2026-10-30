@@ -32,7 +32,7 @@ assert.equal(
 
 assert.equal(data.worlds.jungle.checkpoints[0].target, "FJ", "the first checkpoint practices the F/J tactile landmarks");
 assert.equal(data.worlds.jungle.checkpoints[2].target, "JKLÇ ÇLKJ", "the right home row includes Ç");
-assert.ok(data.worlds.jungle.checkpoints.every(({ target }) => !/[áàâãéêíóôõúç,;.!?]/i.test(target)), "Jungle targets do not demand accents or punctuation");
+assert.ok(data.worlds.jungle.checkpoints.every(({ target }) => !/[áàâãéêíóôõú,;.!?]/i.test(target)), "Jungle targets do not demand accents or punctuation");
 assert.ok(data.worlds.mine.checkpoints.some(({ target }) => target === "café irmã água"), "Mine practices real accented words");
 assert.equal(data.worlds.camp.checkpoints[1].key, "Delete", "Camp teaches forward delete");
 assert.ok(data.worlds.camp.checkpoints[1].instruction.includes("Lupa (Launcher) + Backspace"), "Delete instruction uses the Chromebook shortcut confirmed by the teacher");
@@ -58,7 +58,7 @@ lines[3] = "Não gorjeiam como lá.";
 lines[5] = "Nosso céu tem mais estrelas,";
 lines[6] = "Nossas várzeas têm mais flores,";
 lines[10] = "Em cismar, sozinho, à noite,";
-lines[21] = "Sem que eu volte para lá;";
+lines[22] = "Sem que eu volte para lá;";
 assert.equal(lines.join("\n"), data.poemReference, "the eight corrections reconstruct the canonical poem exactly");
 
 const fresh = store.fresh();
