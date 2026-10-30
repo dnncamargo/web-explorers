@@ -216,6 +216,8 @@ if (!browserPath) {
     await clickAndWait('.activity-card[href="activities/donkey-kong/index.html"]', "/activities/donkey-kong/index.html");
     assert.match(await evaluate("document.title"), /Donkey Kong Country/);
     assert.equal(await evaluate('document.querySelectorAll("#world-map .world-card").length'), 4, "Donkey Kong map offers three worlds and the final boss");
+    assert.equal(await evaluate('!!document.querySelector("#start-screen")'), true, "the Kong barrel entrance overlay is visible on the island map");
+    assert.equal(await evaluate('!!document.querySelector("#start-button")'), true, "the barrel entrance control is available");
     for (const [route, titlePattern, selector] of [
       ["jungle.html", /Selva dos Kongs/, "#typing-input"],
       ["mine.html", /Mina dos Barris/, "#typing-input"],
