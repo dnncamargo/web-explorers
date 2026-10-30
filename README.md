@@ -2,25 +2,23 @@
 
 Atividade de exploração informática em formato de fases.
 
-## Estrutura
+## Menu principal e organização
 
 ```text
 web-explorers/
-├── index.html                    # entrada pública; redireciona para o Mundo 1
-├── index2.html                   # compatibilidade; redireciona para o Mundo 2
-├── index3.html                   # compatibilidade; redireciona para o Mundo 3
-├── index_final.html              # compatibilidade; redireciona para o Final Boss
-├── 02-entrar-no-submundo.html     # material de atividade e asset da release submundo
-├── stages/
-│   ├── 01-overworld.html          # página canônica do Mundo 1
-│   ├── 02-submundo.html           # página canônica do Mundo 2
-│   ├── 03-water.html
-│   ├── 04-ghost-house.html
-│   ├── 04-final-boss.html         # compatibilidade; redireciona para a página seguinte
-│   ├── 05-final-boss.html
-│   └── game-complete.html
+├── index.html                    # catálogo principal das atividades
+├── public/
+│   ├── 02-entrar-no-submundo.html # material de download; segue para o Mundo 2
+│   └── flower.png                # asset público existente, preservado
 ├── activities/
-│   └── yoshi-typing/
+│   ├── digital-explorers/        # Exploradores do Mundo Digital
+│   │   ├── index.html            # entrada da atividade; abre o Mundo 1
+│   │   ├── index2.html           # compatibilidade; abre o Mundo 2
+│   │   ├── index3.html           # compatibilidade; abre o Mundo 3
+│   │   ├── index_final.html      # compatibilidade; abre o Final Boss
+│   │   ├── assets/               # mídia, estilos, áudio e scripts da atividade
+│   │   └── stages/               # páginas canônicas dos mundos
+│   └── yoshi-typing/             # Floresta do Yoshi
 │       ├── index.html
 │       ├── 01-flower-garden.html
 │       ├── 02-forest-path.html
@@ -33,38 +31,34 @@ web-explorers/
 │       └── tests/
 │           ├── validate-activity.mjs
 │           └── validate-browser.mjs
-└── assets/
-    ├── audio/
-    ├── css/
-    ├── images/
-    │   ├── characters/
-    │   ├── ui/
-    │   └── worlds/
-    └── js/
+└── tests/
+    └── validate-repository.mjs   # links e estrutura entre atividades
 ```
 
-## Páginas canônicas e compatibilidade
+O `index.html` da raiz apresenta somente as atividades existentes. **Exploradores do Mundo Digital** abre `activities/digital-explorers/index.html`; **Floresta do Yoshi** abre `activities/yoshi-typing/index.html`.
 
-As páginas principais dos mundos ficam em `stages/`:
+## Páginas canônicas e compatibilidade da primeira atividade
 
-- Mundo 1 — Overworld: `stages/01-overworld.html`.
-- Mundo 2 — Submundo: `stages/02-submundo.html`.
-- Mundo 3 — Fase da Água: `stages/03-water.html`.
-- Mundo 4 — Casa Fantasma: `stages/04-ghost-house.html`.
-- Final Boss: `stages/05-final-boss.html`.
-- Conclusão: `stages/game-complete.html`.
+As páginas principais dos mundos ficam em `activities/digital-explorers/stages/`:
 
-Os caminhos antigos continuam disponíveis como páginas de redirecionamento HTML, com atualização automática e um link acessível para navegação manual:
+- Entrada: `activities/digital-explorers/index.html`, que redireciona ao Mundo 1.
+- Mundo 1 — Overworld: `activities/digital-explorers/stages/01-overworld.html`.
+- Mundo 2 — Submundo: `activities/digital-explorers/stages/02-submundo.html`.
+- Mundo 3 — Fase da Água: `activities/digital-explorers/stages/03-water.html`.
+- Mundo 4 — Casa Fantasma: `activities/digital-explorers/stages/04-ghost-house.html`.
+- Final Boss: `activities/digital-explorers/stages/05-final-boss.html`.
+- Conclusão: `activities/digital-explorers/stages/game-complete.html`.
 
-| Caminho antigo | Destino canônico |
+Os aliases de compatibilidade permanecem dentro da primeira atividade. Seus redirecionamentos e links manuais levam às páginas canônicas:
+
+| Alias de compatibilidade | Destino canônico |
 | --- | --- |
-| `index.html` | `stages/01-overworld.html` |
-| `index2.html` | `stages/02-submundo.html` |
-| `index3.html` | `stages/03-water.html` |
-| `index_final.html` | `stages/05-final-boss.html` |
-| `stages/04-final-boss.html` | `stages/05-final-boss.html` |
+| `activities/digital-explorers/index2.html` | `activities/digital-explorers/stages/02-submundo.html` |
+| `activities/digital-explorers/index3.html` | `activities/digital-explorers/stages/03-water.html` |
+| `activities/digital-explorers/index_final.html` | `activities/digital-explorers/stages/05-final-boss.html` |
+| `activities/digital-explorers/stages/04-final-boss.html` | `activities/digital-explorers/stages/05-final-boss.html` |
 
-O GitHub Pages continua usando `index.html` como entrada pública. `02-entrar-no-submundo.html` permanece na raiz porque é material usado na atividade de download e também é publicado como asset da release `submundo`.
+O GitHub Pages usa o `index.html` da raiz como catálogo. O material de download do Submundo está em `public/02-entrar-no-submundo.html`; seu botão segue para o Mundo 2 canônico. A pasta `public/` também conserva `flower.png`, que já era publicado nesse caminho.
 
 ## Progressão atual
 
@@ -75,7 +69,7 @@ O GitHub Pages continua usando `index.html` como entrada pública. `02-entrar-no
 - Mundo 5 — Final Boss: extração de ZIP e renomeação de arquivos.
 - Conclusão: página de parabéns, tema de encerramento e recompensa final.
 
-## Nova atividade: Floresta do Yoshi
+## Atividade independente: Floresta do Yoshi
 
 
 A atividade independente de digitação começa em [`activities/yoshi-typing/index.html`](activities/yoshi-typing/index.html). Ela possui três mundos obrigatórios, com dez checkpoints cada, e um quarto mundo de bônus opcional com sete checkpoints. Os exercícios praticam sequências mais longas e frases progressivamente mais complexas.
@@ -85,7 +79,7 @@ A atividade independente de digitação começa em [`activities/yoshi-typing/ind
 3. **Crystal Caves** — mantém a mesma faixa de teclas de Forest Path, sem exigir a fileira inferior antes do bônus: `QWERTY UIOP ASDFGH JKLÇ`, `O GATO PULA PARA O ALTO`, `A TARTARUGA PULA PARA O LAGO`, `O PAPAGAIO PULA PARA O TOPO`, `O GATO OLHA O PAPAGAIO`, `A TARTARUGA OLHA O PAPAGAIO`, `O PAPAGAIO OLHA A TARTARUGA E O GATO`, `A TARTARUGA QUER OLHAR PARA O PAPAGAIO`, `O GATO QUER OLHAR PARA A TARTARUGA`, `O PAPAGAIO QUER OLHAR PARA A TARTARUGA E O GATO`.
 4. **Bonus Challenge** — opcional; as sete frases misturam as três fileiras e, em conjunto, praticam todas as letras de A a Z, além de Ç: `O YOSHI QUER KIWI E XALE`, `O JACARE VAI PARA A FLORESTA`, `O CAÇADOR OBSERVA A ZEBRA NO BOSQUE`, `A ZEBRA E O CAVALO BRINCAM NO BOSQUE`, `A TARTARUGA E O GATO PULAM PARA O TOPO`, `O PAPAGAIO ESCREVE NO QUADRO E OBSERVA A ZEBRA`, `A ZEBRA E O YOSHI BRINCAM COM O CAVALO NO BOSQUE`.
 
-O conteúdo pedagógico e os alvos ficam em `activities/yoshi-typing/assets/js/world-data.js`; a lógica de progresso e correspondência fica em `typing-core.js` e `activity.js`, com estilos compartilhados em `assets/css/yoshi.css`. As páginas HTML individuais selecionam cada mundo e podem ser ampliadas sem mover ou substituir os mundos existentes.
+O conteúdo pedagógico e os alvos ficam em `activities/yoshi-typing/assets/js/world-data.js`; a lógica de progresso e correspondência fica em `activities/yoshi-typing/assets/js/typing-core.js` e `activity.js`, com estilos em `activities/yoshi-typing/assets/css/yoshi.css`. As páginas HTML individuais selecionam cada mundo.
 
 Os desafios usam teclado físico ABNT2. Maiúsculas/minúsculas são equivalentes; Ç e espaço são reconhecidos. Colar ou soltar texto não avança um exercício. O painel dá orientações sobre dedos, mas não tenta inferir qual dedo foi usado. Não há cronômetro nem contagem de tentativas.
 
@@ -99,9 +93,10 @@ Esta etapa não implementa acentuação. Uma expansão futura poderá ensinar ac
 
 ## Organização de futuras atividades
 
-- Para atividades independentes, use uma área própria em `activities/<nome-da-atividade>/`, mantendo recursos e testes específicos isolados.
-- Coloque cada nova página principal de mundo em `stages/`, usando um número de sequência e um nome descritivo em minúsculas com hífens, como `06-nome-do-mundo.html`.
-- Mantenha imagens, áudio, CSS e JavaScript compartilhados em `assets/`, organizados por tipo. Ao referenciar esses arquivos de uma página em `stages/`, use caminhos relativos a partir de `stages/` (por exemplo, `../assets/images/...`).
+- Para atividades independentes, use uma pasta em `activities/<nome-da-atividade>/`, mantendo páginas, recursos e testes específicos juntos.
+- Coloque páginas canônicas de mundos em `activities/<nome-da-atividade>/stages/` quando a atividade usar fases; mantenha aliases de compatibilidade junto ao ponto de entrada dessa atividade.
+- Mantenha imagens, áudio, CSS e JavaScript dentro de `activities/<nome-da-atividade>/assets/`, organizados por tipo. Em páginas dentro de `stages/`, use caminhos relativos para os assets da mesma atividade (por exemplo, `../assets/images/...`).
+- Use `public/` para materiais que precisam de um caminho público próprio, preservando os caminhos dos assets de release já existentes.
 - Se um endereço antigo precisar continuar funcionando, mantenha-o como uma página HTML pequena com redirecionamento automático e link manual para o caminho canônico.
 - Preserve materiais de atividade e assets publicados em releases nos caminhos que já são usados por essas atividades e releases.
 - Defina o conteúdo pedagógico de cada atividade quando ela for criada; esta estrutura não determina exercícios ou regras.

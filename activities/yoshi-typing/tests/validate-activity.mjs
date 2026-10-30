@@ -216,6 +216,7 @@ for (const world of Object.values(worlds)) {
 }
 
 const activity = read("assets/js/activity.js");
+const css = read("assets/css/yoshi.css");
 assert.match(activity, /input\.addEventListener\("paste",\s*\(event\)\s*=>\s*\{\s*event\.preventDefault\(\)/, "paste is prevented in the exercise input");
 assert.match(activity, /input\.addEventListener\("drop"/, "dropped text cannot enter the exercise");
 assert.match(activity, /event\.ctrlKey \|\| event\.metaKey \|\| event\.altKey/, "global keyboard shortcuts are left alone");
@@ -243,7 +244,6 @@ assert.match(audio, /function play\(track = currentTrack\)[\s\S]*?setStatus\("Co
 assert.match(audio, /catch \{[\s\S]*?desafios continuam funcionando normalmente/, "audio failure leaves the activity playable");
 assert.match(audio, /requestVersion[\s\S]*?version !== requestVersion/, "late YouTube promises cannot restart a track after pause or track change");
 assert.match(audio, /playerReadyPromise/, "concurrent requests share the player readiness promise");
-const css = read("assets/css/yoshi.css");
 assert.match(css, /@media \(max-width: 620px\)[\s\S]*?world-grid \{ grid-template-columns: minmax\(0,1fr\)/, "the world map becomes one column on narrow screens");
 assert.match(css, /target-row \{[^}]*flex-wrap: wrap/, "target sequences wrap instead of being hidden on narrow screens");
 assert.doesNotMatch(css, /\.egg-art\b/, "the unwanted SVG egg styling is removed");
