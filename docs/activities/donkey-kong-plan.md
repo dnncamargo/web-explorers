@@ -1,7 +1,7 @@
 # Donkey Kong Country — planejamento da atividade de consolidação
 
 **Repositório:** `dnncamargo/web-explorers` · **Base auditada:** código de `main`, 30/10/2026 · **Branch:** `codex/donkey-kong-planning`
-**Escopo:** auditoria, evidências, decisões e especificação. Nenhuma atividade foi implementada.
+**Escopo:** auditoria, especificação e registro da implementação inicial. A atividade foi adicionada nesta branch; validação visual e de sala ainda estão pendentes.
 
 ## 1. Proposta pedagógica
 
@@ -91,11 +91,11 @@ Não embutir/baixar os sete até confirmar permissão. Registrar crédito/licen�
 
 ChromiumOS lista Brazil (ABNT2), `xkb:br::por`, e diferencia ABNT1; o Google avisa que a tabela genérica de atalhos de Chromebook é US QWERTY e que teclas podem ser reconfiguradas. Usar o mapa do Yoshi: esquerda A/Q/Z mínimo, S/W/X anelar, D/E/C médio, F/R/T/G/V/B indicador; direita J/Y/U/H/N/M indicador, K/I médio, L/O anelar, Ç/P mínimo; espaço com polegares. Fileiras `QWERTYUIOP`, `ASDFGHJKLÇ`, `ZXCVBNM`. Ilustração com duas mãos, dez dedos, marcas F/J e espaço. Cor/dedo é orientação visual; só professor acompanha dedo real.
 
-**AltGr:** mapeamento XKB brasileiro `br`: AltGr+Q→`/`, AltGr+W→`?`. São os únicos exemplos propostos. Confirmar texto/eventos nos Chromebooks da escola antes de ensinar; se layout/configuração não casar, atualizar o exercício.
+**AltGr/símbolos:** o mapeamento XKB brasileiro sugere AltGr+Q→`/` e AltGr+W→`?`, mas o professor ainda não confirmou essas combinações no Chromebook. Por isso o checkpoint pede que o aluno produza `/` e `?` com o teclado ABNT2, sem impor nem simular uma combinação AltGr não verificada.
 
-**Acentos:** ABNT2 tradicional tem agudo `´`, til `~`, circunflexo `^` e grave como teclas mortas; acento, depois vogal. Hipóteses de produção: `´`+`a`→á; `´` e depois Shift+`a`→Á; `^`+`e`→ê; `~`+`o`→õ; grave+`a`→à. Testar as sequências físicas (inclusive `Á É Ê Õ Ú`) e eventos Web no Chromebook antes de publicar. Não descartar composição `key="Dead"`; validar o valor final por `input`/NFC.
+**Acentos:** o professor testou e confirmou a acentuação no Chromebook usado. A atividade trabalha acentos como teclas mortas, inclusive maiúsculas acentuadas; a sequência completa `Á É Ê Õ Ú` ainda deve ser confirmada manualmente no checkpoint integrado. O resultado final é validado por `input` e NFC, sem depender do `keydown` intermediário da tecla morta.
 
-**Backspace/Delete:** Backspace apaga antes do cursor. Search/Launcher+Backspace é a equivalência comum de Delete no ChromeOS, mas a tecla, modelo, policy e layout variam. Confirmar no notebook escolar, em texto e perfil gerenciado; documentação genérica Google é US-QWERTY. Não interceptar ou simular em JS uma tecla que o aluno deve aprender como Delete.
+**Backspace/Delete:** Backspace apaga antes do cursor. No Chromebook testado pelo professor, Lupa (Launcher) + Backspace apaga o caractere à direita. A atividade ensina essa combinação no Mundo 3 e exige o efeito no texto; confirmar em outros modelos/perfis antes de usar em toda a frota. Não interceptar ou simular em JS uma tecla que o aluno deve aprender como Delete.
 
 ### Edição, seleção e atalhos
 
@@ -105,24 +105,22 @@ Textarea não estiliza várias palavras independentemente; seleção nativa com 
 
 Não capturar atalhos globalmente. Atalhos são testados somente quando editor está focado; navegador/sistema (Ctrl+T/W/L/R/F/zoom/acessibilidade) continuam disponíveis. Não impedir Ctrl/Alt/Shift nativos. Usar `input`, `beforeinput`, `copy/cut/paste` para observar efeitos quando disponível. Não ler/gravar clipboard programaticamente. Se gesto não puder ser observado, validar resultado e registrar esse limite.
 
-### Progresso e arquitetura proposta (não criada)
+### Progresso e arquitetura implementada
 
-Novo namespace, p.ex. `exploradores.donkey-kong.progress.v1`: `{version, checkpoints:{jungle,mine,camp}, lastWorld, finalDraft, finalFixIndex}`. Salvar texto final parcial e próximo alvo junto; validar schema na leitura. localStorage→sessionStorage→memória com indicação de modo. Reiniciar tentativa restaura só etapa; apagar aventura confirma e limpa chave DK isolada.
+Namespace implementado: `exploradores.donkey-kong.progress.v1`, com `{version, checkpoints:{jungle,mine,camp}, boss:{draft,passed}, updatedAt}`. O schema é normalizado; contadores são limitados ao total de cada mundo. A persistência tenta localStorage, sessionStorage e memória, e a interface informa o modo. O rascunho do poema é persistido junto ao progresso do chefe. O comando de reiniciar limpa apenas a chave DK e grava o estado inicial.
 
 ```text
 activities/donkey-kong/
   index.html  jungle.html  mine.html  camp.html  king-k-rool.html
   assets/css/donkey-kong.css
-  assets/js/checkpoints.js   # textos/demonstrações
-  assets/js/progress.js      # schema/persistência
-  assets/js/activity.js      # cartões, fluxo e validação
-  assets/js/radio.js         # uma integração IFrame API adaptada
-  assets/images/             # apenas arte licenciada/original + créditos
-  tests/validate-plan-data.mjs
-  tests/validate-browser.mjs
+  assets/js/checkpoints.js
+  assets/js/progress.js
+  assets/js/activity.js
+  assets/js/radio.js
+  tests/validate-activity.mjs
 ```
 
-Cinco páginas estáticas seguem a organização que já existe sem SPA/biblioteca nova. Separar conteúdo, progresso e fluxo porque Yoshi demonstra essa divisão em prática. Player uma vez, parametrizado por página. Nenhuma alteração nas atividades antigas, no índice raiz ou nos seus testes.
+Cinco páginas estáticas implementadas, sem SPA ou biblioteca adicional. Conteúdo, progresso e fluxo ficam separados. O player é parametrizado por página, com controles visíveis, tentativa de autoplay, volume inicial 25/100, status e fallback. Nenhuma implementação das atividades antigas foi alterada; o catálogo raiz e os testes de integração foram atualizados para registrar Donkey Kong.
 
 ## 6. Comportamento comum dos checkpoints
 
@@ -293,9 +291,9 @@ A reordenação 2 deixará linha das aves sem vírgula, de forma que o alvo 8 fa
 
 Digitação valida evento de teclado confiável e texto-alvo, NFC e espaçamento definido. Teclas mortas são julgadas pelo resultado de texto, não pelo `keydown` intermediário. Seleção valida range real e texto selecionado. Edição/clipboard/undo observa `input` e eventos disponíveis e estado final. Ações que o browser não expõe com confiabilidade devem ser relatadas como não observadas; não fingir medição. “Continuar” só habilita pelo critério, mas repetir/demonstração sempre permanecem possíveis. Concluir mundo salva evidência, não um juízo sobre dedo/velocidade.
 
-## 13. Plano de testes futuro
+## 13. Plano de testes e evidências disponíveis
 
-Testes não foram executados: esta branch é planejamento e implementação ainda não autorizada. Separar verificações automatizadas de observação humana/teclado físico.
+A implementação inclui testes de dados/progresso e amplia os testes de repositório e navegador. Nesta sessão, a sintaxe dos quatro scripts de runtime e dos três scripts de teste foi verificada; os dados em runtime foram carregados para conferir a contagem dos checkpoints, a progressão e a reconstrução exata do poema. Os testes Node completos e o navegador automatizado ainda não foram executados. Separar verificações automatizadas de observação humana/teclado físico.
 
 | Área | Automatizado depois da implementação | Humano / teclado físico |
 |---|---|---|
@@ -321,7 +319,7 @@ Testes não foram executados: esta branch é planejamento e implementação aind
 | Offsets do poema mudam com edição Unicode. | Recalcular no valor corrente com linha/contexto, atualizar estado do draft junto ao próximo alvo. |
 | Software não mede dedo nem postura. | Professor acompanha técnica; mostrar no app só resultado de digitação. |
 
-Pendências pré-implementação: (1) modelos/versão/layout e tecla Search/Launcher da escola; (2) confirmar AltGr+Q/W, as quatro teclas mortas e maiúsculas acentuadas, inclusive Á/É/Ê/Õ/Ú; (3) verificar Delete e Ctrl+Shift+Z no campo; (4) selecionar segmentos dos vídeos após audição e testar na rede; (5) decidir licenças/arte; (6) validar texto modernizado e mapa que permite entrada em qualquer mundo (proposto). Essas pendências não invalidam o planejamento, mas as teclas condicionadas não devem ser implementadas sem confirmação.
+Pendências antes da liberação para a turma: (1) confirmar a combinação Lupa/Launcher + Backspace em cada modelo/perfil de Chromebook; (2) testar AltGr+Q/W no equipamento e manter o checkpoint baseado no resultado do símbolo enquanto não houver confirmação; (3) concluir a observação de Á É Ê Õ Ú, Ctrl+Shift+Z e clipboard no campo real da atividade; (4) ouvir os cinco vídeos, escolher eventuais segmentos e testar a reprodução na rede escolar; (5) decidir sobre licenças/arte — esta implementação não inclui imagens extraídas de wikis; (6) realizar teste visual e pedagógico com alunos/professor. O poema e o mapa com entrada em qualquer mundo já estão implementados.
 
 ## 15. Fontes de evidência
 
@@ -345,4 +343,16 @@ Pendências pré-implementação: (1) modelos/versão/layout e tecla Search/Laun
 
 Os 22 checkpoints especificam contexto, habilidade, instrução, demonstração, texto exato, ação, resultado, critério, erros, feedback, dica/repetição e evidência de aprendizagem. Mundo 1 ensina mãos/fileiras antes das frases; Mundo 2 apresenta Shift, setas, AltGr, Backspace, acentos e pontuação sem Ctrl; Mundo 3 introduz Enter, Delete e Ctrl em sequência. O chefe fixa referência integral, variante, oito alvos, seleção real, painel consultivo e sincronização. Arquitetura reusa padrões com evidência sem mudar as atividades antigas. Direitos, áudio, layout escolar e combinações ChromeOS permanecem riscos declarados.
 
-**Entrega do incremento D:** planejamento consolidado neste arquivo. Nenhum teste foi executado e nenhuma atividade antiga mudou. Implementação depende de autorização posterior e validação do teclado escolar.
+**Entrega:** planejamento e primeira implementação completos nesta branch. A atividade possui mapa, três mundos, 22 checkpoints, chefe final com oito correções, progresso local isolado e rádio em todas as páginas. A validação de sintaxe e de dados foi executada nesta sessão; o teste de navegador e a validação completa em Chromebook permanecem pendentes. Não houve merge. A implementação não inclui personagens/arte Nintendo sem licença confirmada.
+
+## 17. Registro da implementação inicial — 30/10/2026
+
+- Criadas as cinco páginas estáticas, estilos e módulos de dados, progresso, fluxo e rádio em `activities/donkey-kong/`.
+- O catálogo raiz apresenta agora três atividades. O progresso DK usa chave própria e não lê nem altera o progresso de Yoshi.
+- Mundo 1 implementa nove exercícios de digitação com orientação de F/J, mãos, fileiras e frases; Mundo 2 implementa sete tarefas de Shift, seleção, Backspace, símbolos, acentos e revisão; Mundo 3 implementa seis tarefas de Enter, Delete, Ctrl, clipboard, undo/redo e texto integrado.
+- Chefe final implementa textarea editável, referência separada e oito correções da versão modernizada de *Canção do Exílio*. A missão só conclui com igualdade integral do texto e das quebras de linha.
+- Os cinco rádios YouTube usam IFrame API; controles ficam visíveis, o player tenta autoplay, inicia em 25/100 e mantém link de fallback. A reprodução depende da disponibilidade do YouTube e da política do navegador/rede escolar.
+- Evidência relatada pelo professor: acentuação funciona; Lupa (Launcher) + Backspace apaga à direita; Ctrl+Z, Ctrl+X, Ctrl+C e Ctrl+V funcionaram na atividade Exploradores; Ctrl+Shift+Z funcionou na atividade de navegador, mas não no aplicativo Text. O exercício usa os atalhos nativos dentro dos campos e não generaliza o comportamento de Text.
+- AltGr+Q/W não foi confirmado; o exercício pede os símbolos `/` e `?` sem exigir uma combinação específica. Arte de personagens não foi incluída por falta de licença de redistribuição confirmada.
+- Validação executada nesta sessão: análise sintática dos scripts JS/MJS (após remover imports e a expressão import.meta.url para a checagem de parsing), carregamento dos dados/progresso em runtime, contagem 9+7+6, oito passos do poema, reconstrução exata da referência e progressão sequencial de checkpoints. Não foram executados os arquivos de teste Node no repositório nem o Chromium automatizado; testes físicos e visuais continuam necessários.
+- Branch `codex/donkey-kong-planning`, PR #21 permanece draft e sem merge: https://github.com/dnncamargo/web-explorers/pull/21.
