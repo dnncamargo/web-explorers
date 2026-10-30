@@ -107,7 +107,7 @@ Não capturar atalhos globalmente. Atalhos são testados somente quando editor e
 
 ### Progresso e arquitetura implementada
 
-Namespace implementado: `exploradores.donkey-kong.progress.v1`, com `{version, checkpoints:{jungle,mine,camp}, boss:{draft,passed}, updatedAt}`. O schema é normalizado; contadores são limitados ao total de cada mundo. A persistência tenta localStorage, sessionStorage e memória, e a interface informa o modo. O rascunho do poema é persistido junto ao progresso do chefe. O comando de reiniciar limpa apenas a chave DK e grava o estado inicial.
+Namespace implementado: `exploradores.donkey-kong.progress.v2` (migra dados v1), com `{version, checkpoints:{jungle,mine,camp}, boss:{draft,passed}, updatedAt}`. O schema é normalizado; contadores são limitados ao total de cada mundo. A persistência tenta localStorage, sessionStorage e memória, e a interface informa o modo. O rascunho do poema é persistido junto ao progresso do chefe. O comando de reiniciar limpa apenas a chave DK e grava o estado inicial.
 
 ```text
 activities/donkey-kong/
