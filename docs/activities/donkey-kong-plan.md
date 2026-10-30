@@ -369,6 +369,7 @@ Depois abra `http://localhost:8000/activities/donkey-kong/index.html`. Em macOS/
 ### Ajustes de validação após os testes do teclado
 
 - A próxima tecla fica destacada no teclado ABNT2 durante cada exercício de digitação; as cores do alvo indicam o dedo sugerido.
+- O checkpoint integrado de Cranky separa maiúsculas acentuadas, primeira letra da primeira frase, acento grave, maiúscula da segunda frase e pontuação em cinco etapas verificáveis.
 - O checkpoint de Shift exige o modificador Shift, não apenas uma letra maiúscula produzida por Caps Lock.
 - O checkpoint Delete só aceita o evento de apagar à frente (`Delete`/`deleteContentForward`), não um Backspace comum.
 - A validação de “à noite” está ancorada à primeira ocorrência incorreta, não à segunda ocorrência que já estava correta.
