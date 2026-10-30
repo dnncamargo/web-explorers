@@ -49,7 +49,7 @@
         { title: "A oficina de palavras", instruction: "Digite as três palavras com seus acentos: café, irmã e água.", hint: "Em muitas teclas ABNT2, o acento é uma tecla morta: pressione o acento e depois a vogal. A composição final é o que vale.", kind: "typing", target: "café irmã água" },
         { title: "A mensagem dos Kongs", instruction: "Revise a mensagem em três etapas: transforme o primeiro o em O; corrija a para à; troque ? por !.", hint: "Use Shift para a maiúscula e para !. Para à, use a tecla de acento grave e depois a vogal a. A seleção atual está destacada; digite a correção no lugar.", kind: "edit-sequence", initial: "os kongs chegaram a selva?", stages: [
           { name: "Comece com maiúscula", range: { type: "literal", value: "o", occurrence: 0 }, expected: "Os kongs chegaram a selva?", instruction: "O primeiro o está selecionado. Digite O usando Shift." },
-          { name: "Acento grave", range: { type: "literal", value: "a", occurrence: 0, context: "chegaram a selva" }, expected: "Os kongs chegaram à selva?", instruction: "A letra a antes de selva está selecionada. Faça o acento grave e depois digite a." },
+          { name: "Acento grave", range: { type: "literal", value: "a", occurrence: 0, context: " a selva" }, expected: "Os kongs chegaram à selva?", instruction: "A letra a antes de selva está selecionada. Faça o acento grave e depois digite a." },
           { name: "Pontuação", range: { type: "literal", value: "?", occurrence: 0 }, expected: "Os kongs chegaram à selva!", instruction: "O ponto de interrogação está selecionado. Digite ! usando Shift." }
         ] }
       ]
