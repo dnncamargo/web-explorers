@@ -106,6 +106,22 @@ function boot(page, world = "") {
   assert.ok(app.player.calls.some(([name]) => name === "playVideo"), "muted fallback starts after onReady");
 }
 
+for (const [world, expectedVideoId] of [
+  ["jungle", "eAm9fk39c50"],
+  ["mine", "cBK2YIrY62I"],
+  ["camp", "wxAZfLenfa0"]
+]) {
+  const app = boot("world", world);
+  assert.equal(app.player.options.videoId, expectedVideoId, world + " page selects its own soundtrack");
+  assert.equal(app.player.options.playerVars.autoplay, 1, world + " page requests autoplay");
+}
+
+{
+  const app = boot("boss");
+  assert.equal(app.player.options.videoId, "i3qYmvTq6uI", "boss page selects its soundtrack");
+  assert.equal(app.player.options.playerVars.autoplay, 1, "boss page requests autoplay");
+}
+
 {
   const app = boot("map");
   assert.equal(app.player.options.playerVars.autoplay, 0, "map page waits for its barrel click");
