@@ -141,7 +141,7 @@
       '<p>Os indicadores encontram as marcas tácteis em <strong>F</strong> e <strong>J</strong>. Na fileira-base, esquerda: A S D F. Direita: J K L Ç. Os polegares usam a barra de espaço.</p>' +
       '<div class="keyboard-guide"><h3>Teclado ABNT2 · três fileiras</h3>' + keyRows() +
       '<div class="finger-legend">' +
-      '<span style="--swatch:#f2a6a1">mínimos</span><span style="--swatch:#ffc47d">anelares</span><span style="--swatch:#ffe27d">médios</span><span style="--swatch:#99d994">indicador esquerdo</span><span style="--swatch:#89dcd3">indicador direito</span><span style="--swatch:#c2a7ef">anelar direito</span><span style="--swatch:#f0a6cd">mínimo direito</span></div></div>' +
+      '<span style="--swatch:#f2a6a1">mínimo E</span><span style="--swatch:#ffc47d">anelar E</span><span style="--swatch:#ffe27d">médio E</span><span style="--swatch:#99d994">indicador E</span><span style="--swatch:#89dcd3">indicador D</span><span style="--swatch:#92b9ef">médio D</span><span style="--swatch:#c2a7ef">anelar D</span><span style="--swatch:#f0a6cd">mínimo D</span><span style="--swatch:#b9c9c7">polegares</span></div></div>' +
       '<p><strong>Importante:</strong> as cores e o desenho são uma orientação. O aplicativo não consegue identificar qual dedo pressionou uma tecla; o professor observa a posição das mãos.</p></section>';
   }
 
