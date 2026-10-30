@@ -727,7 +727,7 @@
       setFeedback(feedback, "Trecho selecionado no editor. Faça a correção usando o teclado.", "");
     }
     editor.addEventListener("blur", saveDraft);
-    editor.addEventListener("pagehide", saveDraft);
+    global.addEventListener("pagehide", saveDraft);
     editor.addEventListener("input", () => {
       progress.boss.draft = editor.value;
       progress.boss.passed = false;
