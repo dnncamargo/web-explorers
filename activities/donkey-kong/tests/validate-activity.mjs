@@ -21,16 +21,17 @@ assert.deepEqual(
   ["camp", "jungle", "mine"],
   "the three independent worlds are defined"
 );
-assert.equal(data.worlds.jungle.checkpoints.length, 9, "Jungle has nine checkpoints");
+assert.equal(data.worlds.jungle.checkpoints.length, 8, "Jungle has eight checkpoints");
 assert.equal(data.worlds.mine.checkpoints.length, 7, "Mine has seven checkpoints");
 assert.equal(data.worlds.camp.checkpoints.length, 6, "Camp has six checkpoints");
 assert.equal(
   Object.values(data.worlds).reduce((sum, world) => sum + world.checkpoints.length, 0),
-  22,
-  "the three worlds contain 22 checkpoints"
+  21,
+  "the three worlds contain 21 checkpoints"
 );
 
-assert.equal(data.worlds.jungle.checkpoints[0].target, "FJ", "the first checkpoint practices the F/J tactile landmarks");
+assert.equal(data.worlds.jungle.checkpoints[0].target, "ASDF FDSA", "the first checkpoint practices the complete left home row");
+assert.equal(data.worlds.jungle.checkpoints[0].title, "Mão esquerda", "the old second checkpoint is now the first exercise");
 assert.equal(data.worlds.mine.checkpoints[0].requireShift, true, "the introductory Shift checkpoint requires the Shift key");
 assert.equal(data.worlds.jungle.checkpoints[2].target, "JKLÇ ÇLKJ", "the right home row includes Ç");
 assert.ok(data.worlds.jungle.checkpoints.every(({ target }) => !/[áàâãéêíóôõú,;.!?]/i.test(target)), "Jungle targets do not demand accents or punctuation");
@@ -73,9 +74,15 @@ assert.equal(store.completeCheckpoint(fresh, "jungle", 2), false, "a checkpoint 
 assert.equal(store.completeCheckpoint(fresh, "jungle", 1), true, "the first checkpoint can be completed");
 assert.equal(store.completeCheckpoint(fresh, "jungle", 1), false, "a completed checkpoint cannot be counted twice");
 assert.equal(store.completeCheckpoint(fresh, "mine", 1), true, "worlds can be entered independently");
-assert.equal(store.normalize({ version: 1, checkpoints: { jungle: 99, mine: -4, camp: "x" } }).checkpoints.jungle, 9, "stored checkpoint counts are bounded");
-assert.equal(store.normalize({ version: 1, checkpoints: { jungle: 99, mine: -4, camp: "x" } }).checkpoints.mine, 0, "negative progress is rejected");
+assert.equal(store.normalize({ version: 2, checkpoints: { jungle: 99, mine: -4, camp: "x" } }).checkpoints.jungle, 8, "stored checkpoint counts are bounded");
+assert.equal(store.normalize({ version: 2, checkpoints: { jungle: 99, mine: -4, camp: "x" } }).checkpoints.mine, 0, "negative progress is rejected");
 assert.equal(store.normalize({ version: 9 }).checkpoints.jungle, 0, "unknown storage versions reset safely");
+const migratedFjOnly = store.normalize({ version: 1, checkpoints: { jungle: 1, mine: 2, camp: 3 }, boss: { draft: "rascunho", passed: false } });
+assert.equal(migratedFjOnly.checkpoints.jungle, 0, "old FJ-only progress is not mistaken for the new left-hand checkpoint");
+assert.equal(migratedFjOnly.checkpoints.mine, 2, "migration preserves other world progress");
+assert.equal(migratedFjOnly.boss.draft, "rascunho", "migration preserves the final poem draft");
+const migratedLeftHand = store.normalize({ version: 1, checkpoints: { jungle: 2, mine: 0, camp: 0 } });
+assert.equal(migratedLeftHand.checkpoints.jungle, 1, "migration retains completion of the old left-hand exercise");
 
 const calls = [];
 const memoryOnlyWindow = {};
@@ -89,4 +96,4 @@ assert.equal(memorySave.mode, "memory", "memory fallback is reported");
 assert.equal(memorySave.persisted, false, "memory fallback does not claim durable storage");
 assert.equal(memoryStore.load().progress.checkpoints.camp, 0, "new memory-only store starts clean");
 
-console.log("OK: 22 ordered checkpoints, ABNT2 finger map, Delete/undo/redo targets, eight poem corrections and isolated progress schema");
+console.log("OK: 21 ordered checkpoints, ABNT2 finger map, progress migration, Delete/undo/redo targets, and eight poem corrections");
