@@ -2,15 +2,114 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="refresh" content="0; url=stages/01-overworld.html">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mundo 1 — Overworld</title>
-  <link rel="canonical" href="stages/01-overworld.html">
+  <meta name="theme-color" content="#0c694b">
+  <meta name="description" content="Escolha uma atividade dos Exploradores do Mundo Digital.">
+  <title>Exploradores do Mundo Digital — Atividades</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #173d37;
+      --muted: #4e6860;
+      --green: #0c694b;
+      --green-dark: #084b39;
+      --cream: #fff8df;
+      --line: #b9d7bd;
+      font-family: "Trebuchet MS", Arial, sans-serif;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+    }
+    * { box-sizing: border-box; }
+    body {
+      min-width: 0;
+      min-height: 100vh;
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 10%, rgba(255,255,255,.8) 0 4px, transparent 5px),
+        radial-gradient(circle at 91% 16%, rgba(255,255,255,.7) 0 6px, transparent 7px),
+        linear-gradient(160deg, #c7f0e7, #eff4cc 58%, #d2edbf);
+    }
+    a { color: inherit; }
+    a:focus-visible { outline: 4px solid #f1b72d; outline-offset: 4px; }
+    .pixel { font-family: "Press Start 2P", "Courier New", monospace; }
+    .shell { width: min(1040px, calc(100% - 32px)); margin: 0 auto; padding: 24px 0 28px; }
+    .masthead { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 13px 17px; border: 3px solid #fff; border-radius: 13px; background: var(--green); color: #fff; box-shadow: 0 5px 0 var(--green-dark); }
+    .brand { display: flex; align-items: center; gap: 12px; color: #fff2a8; font-size: 10px; line-height: 1.8; text-decoration: none; }
+    .brand-icon { font-size: 27px; }
+    .world-label { margin: 0; color: #e6f7d9; font-size: 11px; font-weight: 800; text-align: right; }
+    .intro { max-width: 750px; margin: 62px auto 36px; text-align: center; }
+    .eyebrow { margin: 0 0 15px; color: #16724f; font-size: 10px; line-height: 1.8; }
+    h1 { margin: 0; color: #164b3a; font-size: clamp(32px, 6vw, 58px); line-height: 1.12; }
+    .intro-copy { max-width: 640px; margin: 17px auto 0; color: var(--muted); font-size: 18px; line-height: 1.6; }
+    .activity-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .activity-card { position: relative; display: flex; min-height: 330px; flex-direction: column; overflow: hidden; padding: 23px; border: 3px solid #fff; border-radius: 16px; background: linear-gradient(145deg, rgba(255,255,255,.95), rgba(240,250,219,.95)); box-shadow: 0 5px 0 #a8c8aa; text-decoration: none; transition: transform .15s ease, box-shadow .15s ease; }
+    .activity-card:hover { transform: translateY(-3px); box-shadow: 0 8px 0 #a8c8aa; }
+    .activity-card::after { position: absolute; right: -26px; bottom: -39px; width: 170px; height: 115px; border-radius: 50%; background: rgba(107,200,124,.2); content: ""; pointer-events: none; }
+    .yoshi-card::after { background: rgba(255,201,77,.25); }
+    .card-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .badge { padding: 8px 10px; border: 2px solid #a9cdb2; border-radius: 5px; color: #176b4a; font-size: 9px; font-weight: 900; letter-spacing: .06em; }
+    .number { color: #6e9c79; font-size: 13px; font-weight: 900; }
+    .activity-icon { margin: 27px 0 14px; font-size: 42px; line-height: 1; }
+    h2 { max-width: 440px; margin: 0; color: #17513d; font-size: clamp(23px, 3vw, 31px); line-height: 1.18; }
+    .activity-description { max-width: 440px; margin: 12px 0 22px; color: #4c675c; font-size: 16px; line-height: 1.6; }
+    .card-action { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 9px; margin-top: auto; color: #0d694b; font-weight: 900; }
+    .card-action span { font-size: 21px; }
+    .footer { margin: 32px 0 0; color: #48685c; font-size: 13px; line-height: 1.6; text-align: center; }
+    @media (max-width: 640px) {
+      .shell { width: min(100% - 22px, 520px); padding-top: 11px; }
+      .masthead { align-items: flex-start; padding: 10px; }
+      .brand { gap: 7px; font-size: 8px; }
+      .brand-icon { font-size: 22px; }
+      .world-label { max-width: 130px; font-size: 9px; line-height: 1.5; }
+      .intro { margin: 44px auto 25px; }
+      .eyebrow { font-size: 8px; }
+      .intro-copy { font-size: 16px; }
+      .activity-grid { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+      .activity-card { min-height: 285px; padding: 19px; }
+      .activity-icon { margin-top: 21px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+  </style>
 </head>
 <body>
-  <p>
-    Esta página mudou.
-    <a href="stages/01-overworld.html">Abrir o Mundo 1 — Overworld</a>.
-  </p>
+  <main class="shell">
+    <header class="masthead">
+      <a class="brand pixel" href="index.html" aria-label="Exploradores do Mundo Digital, início">
+        <span class="brand-icon" aria-hidden="true">🍄</span>
+        <span>EXPLORADORES<br>DO MUNDO DIGITAL</span>
+      </a>
+      <p class="world-label">SELECIONE UMA ATIVIDADE</p>
+    </header>
+
+    <section class="intro" aria-labelledby="page-title">
+      <p class="eyebrow pixel">DUAS AVENTURAS · SEU PRÓXIMO MUNDO</p>
+      <h1 id="page-title">Por onde vamos explorar?</h1>
+      <p class="intro-copy">Escolha uma atividade para começar. Cada aventura abre no seu próprio mapa inicial.</p>
+    </section>
+
+    <nav class="activity-grid" aria-label="Atividades disponíveis">
+      <a class="activity-card" href="activities/digital-explorers/index.html">
+        <span class="card-meta"><span class="badge">FASES DE EXPLORAÇÃO</span><span class="number">01</span></span>
+        <span class="activity-icon" aria-hidden="true">🧱⭐</span>
+        <h2>Exploradores do Mundo Digital</h2>
+        <p class="activity-description">Uma aventura de exploração informática inspirada em Super Mario Bros. e Super Mario World, com fases, mapas e missões.</p>
+        <span class="card-action">Abrir atividade <span aria-hidden="true">→</span></span>
+      </a>
+
+      <a class="activity-card yoshi-card" href="activities/yoshi-typing/index.html">
+        <span class="card-meta"><span class="badge">DIGITAÇÃO · ABNT2</span><span class="number">02</span></span>
+        <span class="activity-icon" aria-hidden="true">🥚🌼</span>
+        <h2>Floresta do Yoshi</h2>
+        <p class="activity-description">Explore mundos temáticos enquanto pratica o teclado físico, aprende as fileiras e acompanha seu progresso sem cronômetro.</p>
+        <span class="card-action">Abrir atividade <span aria-hidden="true">→</span></span>
+      </a>
+    </nav>
+
+    <footer class="footer">As atividades abrem em seus mapas iniciais e podem ser usadas em telas grandes ou Chromebooks.</footer>
+  </main>
 </body>
 </html>
