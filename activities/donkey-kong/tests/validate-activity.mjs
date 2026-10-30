@@ -84,6 +84,40 @@ assert.equal(migratedFjOnly.boss.draft, "rascunho", "migration preserves the fin
 const migratedLeftHand = store.normalize({ version: 1, checkpoints: { jungle: 2, mine: 0, camp: 0 } });
 assert.equal(migratedLeftHand.checkpoints.jungle, 1, "migration retains completion of the old left-hand exercise");
 
+class TestStorage {
+  constructor() { this.values = new Map(); }
+  getItem(key) { return this.values.has(key) ? this.values.get(key) : null; }
+  setItem(key, value) { this.values.set(key, String(value)); }
+  removeItem(key) { this.values.delete(key); }
+}
+const legacyLocalStorage = new TestStorage();
+legacyLocalStorage.setItem(store.LEGACY_KEY, JSON.stringify({
+  version: 1,
+  checkpoints: { jungle: 1, mine: 3, camp: 4 },
+  boss: { draft: "rascunho antigo", passed: false }
+}));
+const migrationWindow = { localStorage: legacyLocalStorage, sessionStorage: new TestStorage() };
+const migrationContext = vm.createContext({ window: migrationWindow });
+vm.runInContext(read("assets/js/progress.js"), migrationContext, { filename: "progress-migration.js" });
+const migrationStore = migrationWindow.DonkeyKongProgress;
+const migrated = migrationStore.load();
+assert.equal(migrated.progress.version, 2, "stored progress is upgraded to schema version 2");
+assert.equal(migrated.progress.checkpoints.jungle, 0, "old FJ-only completion is removed during migration");
+assert.equal(migrated.progress.checkpoints.mine, 3, "Mine progress survives migration");
+assert.equal(migrated.progress.checkpoints.camp, 4, "Camp progress survives migration");
+assert.equal(migrated.progress.boss.draft, "rascunho antigo", "the poem draft survives migration");
+assert.equal(legacyLocalStorage.getItem(migrationStore.LEGACY_KEY), null, "legacy storage is removed after migration");
+assert.equal(JSON.parse(legacyLocalStorage.getItem(migrationStore.KEY)).version, 2, "the migrated progress is written under the v2 key");
+
+const mapHtml = read("index.html");
+const activitySource = read("assets/js/activity.js");
+const activityCss = read("assets/css/donkey-kong.css");
+assert.ok(mapHtml.includes('id="start-screen"') && mapHtml.includes('id="start-button-label"'), "map has a Kong barrel entrance overlay");
+assert.ok(activitySource.includes("playFromGesture()"), "barrel interaction calls the radio gesture method");
+assert.ok(activitySource.includes('continueButton.focus({ preventScroll: true })'), "typing completion moves focus to the continue button");
+assert.ok(activityCss.includes(".hand.left .finger-shape.thumb { transform:rotate(28deg); }"), "left thumb illustration angles inward");
+assert.ok(activityCss.includes(".keycap.is-next"), "keyboard next-key treatment is defined");
+
 const calls = [];
 const memoryOnlyWindow = {};
 const memoryContext = vm.createContext({ window: memoryOnlyWindow });
