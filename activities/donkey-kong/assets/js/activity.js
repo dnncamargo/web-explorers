@@ -577,31 +577,35 @@
       } else {
         if (stage === 1) input.value = checkpoint.initial;
         else if (stage === 2) input.value = "Os kongs\nchegaram a mina?\ntraga bananas!";
-        else input.value = "Os kongs\nchegaram à mina?\ntraga bananas!";
-        area.querySelector("#integrated-instruction").textContent = stage === 1 ?
-          "Etapa 2: corrija o primeiro o para O usando Shift." :
+        else if (stage === 3) input.value = "Os kongs\nchegaram à mina?\ntraga bananas!";
+        else input.value = "Os kongs\nchegaram à mina?\nTraga bananas!";
+        area.querySelector("#integrated-instruction").textContent =
+          stage === 1 ? "Etapa 2: corrija o primeiro o para O usando Shift." :
           stage === 2 ? "Etapa 3: corrija a antes de mina para à." :
-            "Etapa 4: troque ? por ! usando Shift.";
+          stage === 3 ? "Etapa 4: coloque T maiúsculo no início da segunda frase usando Shift." :
+          "Etapa 5: troque ? por ! usando Shift.";
         selectIntegratedTarget(input, stage);
       }
     }
     input.addEventListener("keydown", (event) => {
       if (!event.isTrusted) return;
       if (stage === 1 && event.shiftKey && event.key.toLowerCase() === "o") observed = true;
-      if (stage === 3 && event.shiftKey && (event.key === "1" || event.key === "!" || event.code === "Digit1")) observed = true;
+      if (stage === 3 && event.shiftKey && event.key.toLowerCase() === "t") observed = true;
+      if (stage === 4 && event.shiftKey && (event.key === "1" || event.key === "!" || event.code === "Digit1")) observed = true;
     });
     checkButton.addEventListener("click", () => {
       let expected;
       if (stage === 0) expected = checkpoint.accents;
       else if (stage === 1) expected = "Os kongs\nchegaram a mina?\ntraga bananas!";
       else if (stage === 2) expected = "Os kongs\nchegaram à mina?\ntraga bananas!";
+      else if (stage === 3) expected = "Os kongs\nchegaram à mina?\nTraga bananas!";
       else expected = checkpoint.expected;
-      const actionOkay = (stage !== 1 && stage !== 3) || observed;
+      const actionOkay = ![1, 3, 4].includes(stage) || observed;
       if (input.value !== expected || !actionOkay) {
         setFeedback(feedback, "Confira as letras, os acentos e a pontuação. A correção ainda não está completa.", "gentle");
         return;
       }
-      if (stage < 3) {
+      if (stage < 4) {
         stage += 1;
         prepare();
         setFeedback(feedback, "Etapa correta. Continue a revisão.", "good");
@@ -619,6 +623,10 @@
         if (index >= 0) target.setSelectionRange(index + 1, index + 2);
       }
       if (currentStage === 3) {
+        const lineStart = target.value.indexOf("\\ntraga");
+        if (lineStart >= 0) target.setSelectionRange(lineStart + 1, lineStart + 2);
+      }
+      if (currentStage === 4) {
         const lineStart = target.value.indexOf("chegaram");
         const question = lineStart < 0 ? -1 : target.value.indexOf("?", lineStart);
         if (question >= 0) target.setSelectionRange(question, question + 1);
