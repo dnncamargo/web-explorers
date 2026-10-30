@@ -210,6 +210,11 @@
       const expected = Array.from(target)[typed];
       if (expected === undefined) return;
       const actual = normalize(event.key).toLocaleLowerCase("pt-BR");
+      if (checkpoint.requireShift && !event.shiftKey) {
+        event.preventDefault();
+        setFeedback(feedback, "Segure Shift enquanto pressiona esta tecla.", "gentle");
+        return;
+      }
       if (actual !== normalize(expected).toLocaleLowerCase("pt-BR")) {
         event.preventDefault();
         setFeedback(feedback, "Confira a próxima tecla no teclado e tente novamente. Sem pressa.", "gentle");
@@ -396,7 +401,7 @@
     input.addEventListener("keydown", (event) => {
       if (!event.isTrusted) return;
       if (checkpoint.key === "Enter" && event.key === "Enter") observed = true;
-      if (checkpoint.key === "Delete" && (event.key === "Delete" || event.key === "Backspace")) observed = true;
+      if (checkpoint.key === "Delete" && event.key === "Delete") observed = true;
     });
     input.addEventListener("beforeinput", (event) => {
       if (checkpoint.key === "Delete" && event.inputType === "deleteContentForward") observed = true;
