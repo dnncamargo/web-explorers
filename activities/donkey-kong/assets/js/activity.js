@@ -76,15 +76,17 @@
   function keyFinger(key) {
     return DATA.fingers[String(key).toLocaleLowerCase("pt-BR")] || "";
   }
-  function keyRows() {
+  function keyRows(currentKey) {
     const rows = ["qwertyuiop", "asdfghjklç", "zxcvbnm"];
+    const activeKey = typeof currentKey === "string" ? currentKey.toLocaleLowerCase("pt-BR") : "";
     return rows.map((row, rowIndex) => '<div class="keyboard-row">' + Array.from(row).map((key) => {
       const finger = keyFinger(key);
       const home = rowIndex === 1 && "asdfghjklç".includes(key);
       const bump = key === "f" || key === "j";
-      return '<span class="keycap ' + finger + (home ? " home" : "") + (bump ? " bump" : "") + '">' + key.toLocaleUpperCase("pt-BR") + '</span>';
+      const active = activeKey && activeKey === key;
+      return '<span class="keycap ' + finger + (home ? " home" : "") + (bump ? " bump" : "") + (active ? " is-current" : "") + '">' + key.toLocaleUpperCase("pt-BR") + '</span>';
     }).join("") + '</div>').join("") +
-      '<div class="keyboard-row"><span class="keycap thumb">ESPAÇO · polegares</span></div>';
+      '<div class="keyboard-row"><span class="keycap thumb' + (activeKey === " " ? " is-current" : "") + '">ESPAÇO · polegares</span></div>';
   }
   function keyboardGuide() {
     const fingers = [
@@ -119,7 +121,7 @@
   }
   function renderTarget(target, typed) {
     const chars = Array.from(target);
-    return chars.map((char, index) => '<span class="target-char ' + (char === " " ? "space-char " : "") +
+    return chars.map((char, index) => '<span class="target-char ' + keyFinger(char) + " " + (char === " " ? "space-char " : "") +
       (index < typed ? "is-done " : "") + (index === typed ? "is-current" : "") + '">' +
       (char === " " ? "␣" : escapeHTML(char)) + '</span>').join("");
   }
@@ -191,6 +193,7 @@
     let typed = 0;
     const target = checkpoint.target;
     area.innerHTML = '<div class="target-row" aria-label="Sequência que será digitada">' + renderTarget(target, 0) + '</div>' +
+      '<div id="typing-keyboard" class="keyboard-guide"><h3>Teclado ABNT2 · tecla em destaque</h3>' + keyRows(Array.from(target)[0]) + '</div>' +
       '<label class="input-label" for="typing-input">Digite aqui com o teclado físico</label>' +
       '<textarea id="typing-input" class="exercise-area single-line" rows="1" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Digite a sequência do checkpoint"></textarea>';
     const input = area.querySelector("#typing-input");
@@ -217,6 +220,9 @@
     input.addEventListener("input", () => {
       typed = Array.from(input.value).length;
       area.querySelector(".target-row").innerHTML = renderTarget(target, typed);
+      const nextKey = Array.from(target)[typed];
+      const keyboard = area.querySelector("#typing-keyboard");
+      if (keyboard) keyboard.innerHTML = '<h3>Teclado ABNT2 · próxima tecla em destaque</h3>' + keyRows(nextKey);
       if (compareTyping(input.value, target)) {
         input.disabled = true;
         setFeedback(feedback, "Sequência completa. Muito bem!", "good");
@@ -647,7 +653,10 @@
     if (key === "question-to-period") return lines[3] === "Não gorjeiam como lá.";
     if (key === "sky-accent") return lines.includes("Nosso céu tem mais estrelas,");
     if (key === "plural-circumflex") return lines.includes("Nossas várzeas têm mais flores,");
-    if (key === "grave-accent") return lines.includes("Em cismar, sozinho, à noite,");
+    if (key === "grave-accent") {
+      const firstEmCismar = lines.find((line) => line.startsWith("Em cismar, sozinho,"));
+      return firstEmCismar === "Em cismar, sozinho, à noite,";
+    }
     if (key === "there-accent") return lines.includes("Sem que eu volte para lá;");
     if (key === "birds-comma") return lines.includes("As aves, que aqui gorjeiam,");
     return false;
@@ -717,6 +726,8 @@
       editor.setSelectionRange(range.start, range.end);
       setFeedback(feedback, "Trecho selecionado no editor. Faça a correção usando o teclado.", "");
     }
+    editor.addEventListener("blur", saveDraft);
+    editor.addEventListener("pagehide", saveDraft);
     editor.addEventListener("input", () => {
       progress.boss.draft = editor.value;
       progress.boss.passed = false;
