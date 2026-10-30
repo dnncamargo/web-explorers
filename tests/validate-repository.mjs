@@ -75,6 +75,17 @@ for (const target of [
   "public/02-entrar-no-submundo.html",
   "public/flower.png",
   "activities/yoshi-typing/index.html",
+  "activities/donkey-kong/index.html",
+  "activities/donkey-kong/jungle.html",
+  "activities/donkey-kong/mine.html",
+  "activities/donkey-kong/camp.html",
+  "activities/donkey-kong/king-k-rool.html",
+  "activities/donkey-kong/assets/css/donkey-kong.css",
+  "activities/donkey-kong/assets/js/checkpoints.js",
+  "activities/donkey-kong/assets/js/progress.js",
+  "activities/donkey-kong/assets/js/radio.js",
+  "activities/donkey-kong/assets/js/activity.js",
+  "activities/donkey-kong/tests/validate-activity.mjs",
 ]) assert.ok(fs.existsSync(path.join(root, target)), `${target} exists`);
 
 for (const obsolete of ["assets", "stages", "index2.html", "index3.html", "index_final.html", "02-entrar-no-submundo.html"]) {
@@ -110,6 +121,10 @@ assert.ok(!files.some((file) => /dnncamargo\.github\.io\/web-explorers\/(?:index
 
 const yoshiHome = read("activities/yoshi-typing/index.html");
 assert.ok(yoshiHome.includes('href="../../index.html"'), "Yoshi's return link opens the new root catalog");
+const donkeyHome = read("activities/donkey-kong/index.html");
+assert.ok(donkeyHome.includes('href="../../index.html"'), "Donkey Kong's return link opens the root catalog");
+assert.ok(donkeyHome.includes('data-page="map"'), "Donkey Kong opens on its own world map");
+assert.ok(read("activities/donkey-kong/tests/validate-activity.mjs").includes("22 ordered checkpoints"), "Donkey Kong has a dedicated activity validation suite");
 assert.ok(read("activities/yoshi-typing/tests/validate-activity.mjs").includes("assets/js/world-data.js"), "the independent Yoshi validation suite remains in place");
 
 console.log(`OK: ${htmlFiles.length} HTML pages and ${cssFiles.length} stylesheets have valid local references`);
