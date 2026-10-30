@@ -42,5 +42,18 @@
     <div class="reset-row"><button id="reset-progress" class="button secondary small" type="button">Reiniciar progresso</button></div>
     <footer class="site-footer"><p id="persistence-status" class="persistence"></p><p>Atividade independente · Teclado Português (Brasil) ABNT2</p></footer>
   </main>
+    <div id="start-screen" class="start-screen" role="dialog" aria-modal="true" aria-labelledby="start-title">
+      <div class="start-content">
+        <p class="start-world-number pixel">DONKEY KONG COUNTRY</p>
+        <h1 id="start-title">A ILHA DOS KONGS</h1>
+        <p>O mapa está pronto. Entre pelo barril para começar a aventura e ouvir a trilha da ilha.</p>
+        <p id="start-status" class="start-status" role="status" aria-live="polite">Conectando à trilha da Ilha dos Kongs…</p>
+        <button id="start-button" class="barrel-button" type="button" disabled aria-label="Entrar pelo barril e iniciar a música">
+          <span class="barrel-shell" aria-hidden="true"></span>
+          <span class="barrel-logo" aria-hidden="true">DK</span>
+          <span class="barrel-enter-label">ENTRAR</span>
+        </button>
+      </div>
+    </div>
 </body>
 </html>
