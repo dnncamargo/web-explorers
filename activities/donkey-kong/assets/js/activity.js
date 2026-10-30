@@ -220,8 +220,6 @@
         input.disabled = true;
         setFeedback(feedback, "Sequência completa. Muito bem!", "good");
         complete();
-      } else if (Array.from(input.value).length < typed) {
-        setFeedback(feedback, "Continue até completar a sequência.", "");
       }
     });
     input.addEventListener("paste", (event) => {
@@ -287,10 +285,11 @@
       if (descriptor.context) {
         const lineIndex = lines.findIndex((line) => line.includes(descriptor.context));
         if (lineIndex < 0) return null;
-        const local = lines[lineIndex].indexOf(descriptor.value);
-        if (local < 0) return null;
         const contextPosition = lines[lineIndex].indexOf(descriptor.context);
-        return { start: absoluteOffset(lines, lineIndex) + local, end: absoluteOffset(lines, lineIndex) + local + descriptor.value.length };
+        const relativePosition = descriptor.context.indexOf(descriptor.value);
+        if (contextPosition < 0 || relativePosition < 0) return null;
+        const start = absoluteOffset(lines, lineIndex) + contextPosition + relativePosition;
+        return { start, end: start + descriptor.value.length };
       }
       const lineIndex = lines.findIndex((line) => line.includes(descriptor.value));
       if (lineIndex < 0) return null;
@@ -351,7 +350,7 @@
       if (event.key === "Backspace") observed.backspace = true;
       if (event.shiftKey && event.key === "End") observed.shiftEnd = true;
       if (event.shiftKey && event.key.length === 1 && /[a-z]/i.test(event.key)) observed.shiftLetter = true;
-      if (event.shiftKey && event.key === "1") observed.shiftNumber = true;
+      if (event.shiftKey && (event.key === "1" || event.key === "!" || event.code === "Digit1")) observed.shiftNumber = true;
     });
     checkButton.addEventListener("click", () => {
       const stage = checkpoint.stages[stageIndex];
@@ -575,7 +574,7 @@
     input.addEventListener("keydown", (event) => {
       if (!event.isTrusted) return;
       if (stage === 1 && event.shiftKey && event.key.toLowerCase() === "o") observed = true;
-      if (stage === 3 && event.shiftKey && event.key === "1") observed = true;
+      if (stage === 3 && event.shiftKey && (event.key === "1" || event.key === "!" || event.code === "Digit1")) observed = true;
     });
     checkButton.addEventListener("click", () => {
       let expected;
