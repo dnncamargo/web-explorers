@@ -95,7 +95,8 @@ for (const obsolete of ["assets", "stages", "index2.html", "index3.html", "index
 const menu = read("index.html");
 assert.ok(menu.includes('href="activities/digital-explorers/index.html"'), "the catalog opens the first activity's entry page");
 assert.ok(menu.includes('href="activities/yoshi-typing/index.html"'), "the catalog opens the Yoshi activity's entry page");
-assert.equal([...menu.matchAll(/class="activity-card(?:\s|"?)/g)].length, 2, "the catalog lists only the two existing activities");
+assert.ok(menu.includes('href="activities/donkey-kong/index.html"'), "the catalog opens the Donkey Kong activity's entry page");
+assert.equal([...menu.matchAll(/class="activity-card(?:\s|"?)/g)].length, 3, "the catalog lists the three independent activities");
 
 const digitalRoot = "activities/digital-explorers";
 const routes = new Map([
@@ -121,6 +122,10 @@ assert.ok(!files.some((file) => /dnncamargo\.github\.io\/web-explorers\/(?:index
 
 const yoshiHome = read("activities/yoshi-typing/index.html");
 assert.ok(yoshiHome.includes('href="../../index.html"'), "Yoshi's return link opens the new root catalog");
+const donkeyHome = read("activities/donkey-kong/index.html");
+assert.ok(donkeyHome.includes('href="../../index.html"'), "Donkey Kong's return link opens the root catalog");
+assert.ok(donkeyHome.includes('data-page="map"'), "Donkey Kong opens on its own world map");
+assert.ok(read("activities/donkey-kong/tests/validate-activity.mjs").includes("22 ordered checkpoints"), "Donkey Kong has a dedicated activity validation suite");
 const donkeyHome = read("activities/donkey-kong/index.html");
 assert.ok(donkeyHome.includes('href="../../index.html"'), "Donkey Kong's return link opens the root catalog");
 assert.ok(donkeyHome.includes('data-page="map"'), "Donkey Kong opens on its own world map");
