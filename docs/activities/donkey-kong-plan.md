@@ -5,7 +5,7 @@
 
 ## 1. Proposta pedagógica
 
-Aventura curta para transferir técnica de digitação no ABNT2 e edição de texto pelo teclado. São 22 checkpoints em três mundos e uma missão final. Sem cronômetro, vidas ou velocidade. A validação automática mede conteúdo e operações observáveis; o professor observa o posicionamento real dos dedos. Um texto correto nunca será tratado como prova de qual dedo foi usado.
+Aventura curta para transferir técnica de digitação no ABNT2 e edição de texto pelo teclado. São 21 checkpoints em três mundos e uma missão final. Sem cronômetro, vidas ou velocidade. A validação automática mede conteúdo e operações observáveis; o professor observa o posicionamento real dos dedos. Um texto correto nunca será tratado como prova de qual dedo foi usado.
 
 A progressão apresenta mãos/fileiras antes de frases; depois seleção, Shift, AltGr, Backspace e acentos; então Enter, Delete, Ctrl, atalhos e revisão integral. Mundo 1 não cobra acento nem pontuação. Toda tecla nova é demonstrada antes de seu uso.
 
@@ -31,7 +31,7 @@ Não há `AGENTS.md` no checkout. `activities/digital-explorers/index.html` leva
 | Player Yoshi | `assets/js/audio.js` | **ADAPT** | Bom modelo de status/fallback, mas hoje usa autoplay=0 e controls de iframe ocultos; rádio pedido deriva do padrão Exploradores. |
 | Testes teclado/progresso | `yoshi-typing/tests/validate-*.mjs` | **ADAPT** | Reusar abordagem, dados e alvos DK novos. Testes Yoshi não verificam teclado físico. |
 | Poema editável com oito alvos | Não existe | **NEW** | Especificação do textarea, seleção e estado abaixo. |
-| 22 checkpoints DK | Não existe | **NEW** | Exercícios detalhados neste plano. |
+| 21 checkpoints DK | Não existe | **NEW** | Exercícios detalhados neste plano. |
 | Assets DK | Não há no repo | **NEW, condicionado** | Só arquivos com licença confirmada ou arte original/licenciada. |
 | Testes e checklist Chromebook DK | Não existe | **NEW** | Plano automatizado e humano na seção 13. |
 
@@ -48,12 +48,12 @@ Predomina Exploradores: mapa ilustrado, painéis de missão escuros, campo de a�
 | Página proposta | Papel |
 |---|---|
 | `index.html` | Capa, rádio da seleção, cartões dos quatro mundos, progresso e retomar. |
-| `jungle.html` | Treino ABNT2 + 9 checkpoints consecutivos. |
+| `jungle.html` | Treino ABNT2 + 8 checkpoints consecutivos. |
 | `mine.html` | 7 checkpoints de seleção, Shift, AltGr, Backspace e acentos. |
 | `camp.html` | 6 checkpoints de Enter, Delete, Ctrl e operações. |
 | `king-k-rool.html` | Editor e referência do poema. |
 
-Um cartão por vez; sequência é interna à página, não 22 rotas. Mapa permite abrir qualquer mundo, mesmo sem concluir o anterior; conserva sequência dentro do mundo e progresso por checkpoint. Sem exigência de conclusão total para considerar evidência de aprendizagem. Navegação por teclado e foco visível. Em tela estreita, painéis empilhados; consulta do poema expansível e com rolagem própria.
+Um cartão por vez; sequência é interna à página, não 21 rotas. Mapa permite abrir qualquer mundo, mesmo sem concluir o anterior; conserva sequência dentro do mundo e progresso por checkpoint. Sem exigência de conclusão total para considerar evidência de aprendizagem. Navegação por teclado e foco visível. Em tela estreita, painéis empilhados; consulta do poema expansível e com rolagem própria.
 
 ### Rádio e vídeos
 
@@ -126,7 +126,7 @@ Cinco páginas estáticas implementadas, sem SPA ou biblioteca adicional. Conte�
 
 Personagem/missão curta → demonstração reaberta a qualquer momento → área de exercício focada → feedback imediato → repetir sem punição → conclusão observável → próximo checkpoint. Mensagem de erro indica a habilidade e uma ação. Não aceitar clique em “avançar” sem texto/seleção/resultado correto. Sem cronômetro, vidas ou prêmio por velocidade. Missões não concluídas continuam registradas como evidência parcial. O professor observa postura; o sistema não afirma reconhecer dedos.
 
-## 7. Mundo 1 — A Selva dos Kongs (9)
+## 7. Mundo 1 — A Selva dos Kongs (8)
 
 **Rádio:** `eAm9fk39c50`. A tela inicial abaixo integra treino obrigatório antes da primeira frase. Textos não pedem acento ou pontuação. Comparação de caixa sem distinção e NFC; espaços do alvo, letras e Ç precisam coincidir.
 
@@ -146,15 +146,14 @@ Fileira-base: esquerda A,S,D,F; direita J,K,L,Ç. Professor observa a mão; app 
 
 | # Nome | Objetivo e demonstração | Aluno vê/faz → resultado | Validação, erro/feedback, dica/repetição e evidência |
 |---|---|---|---|
-| 1 A posição dos Kongs | Reconhecer F/J e preparar as mãos. Demo: marcações e fileira-base. “Aponte as marcas e acomode os indicadores em F e J.” | Alvo `FJ`; digitar F depois J. | Evento real e sequência exata case-insensitive. Ordem errada: “Comece em F e siga para J.” Reabrir desenho, reset só alvo. Evidência de postura é professor; software registra FJ digitado. |
-| 2 Mão esquerda | Fileira-base esquerda. Demo A/S/D/F cor por dedo. “Digite A, S, D, F e volte até A.” | `ASDF FDSA` | Alvo exato NFC/case-insensitive. Erro: “Confira a próxima tecla na fileira-base esquerda.” Dica e nova tentativa livre. |
-| 3 Mão direita | Fileira-base direita/Ç. Demo J/K/L/Ç. “Use J, K, L e Ç; depois volte.” | `JKLÇ ÇLKJ` | Alvo exato; se falha, lembrar “Ç fica à direita do L”. Reabrir teclado e tentar novamente. |
-| 4 Duas mãos | Coordenação, retorno à base e espaço com polegares. Demo dois grupos por mão. “Alterne as mãos, use espaço entre grupos e volte a F/J quando ajudar.” | `ASDF JKLÇ FDSA ÇLKJ` | Respeitar todos os espaços; erro indica grupo divergente. Repetir do começo. Evidência: sequência, postura observada pelo professor. |
-| 5 Subindo pelas árvores | Fileira superior e mesmo dedo correspondente. Demo QWERTY/UIOP. “Suba a fileira superior e volte à posição-base entre grupos.” | `QWERTY UIOP` | Alvo exato; erro destaca tecla esperada no teclado. Reabrir mapa e repetir. |
-| 6 Descendo pela selva | Fileira inferior, alcance de indicador. Demo Z–M. “Desça pelas teclas inferiores e volte pela trilha.” | `ZXCVBNM MNBVCXZ` | Alvo exato. Dica: V/B indicador esq.; N/M indicador dir. Repetição livre. |
-| 7 As bananas | Palavras curtas de todas as fileiras. Demo teclado completo e espaço. “Digite as quatro palavras separadas por espaço.” | `KONG BANANA DIDDY FLORESTA` | NFC/case-insensitive, espaços simples exatos. Mostrar primeira posição divergente sem apagar texto; dica segmenta por palavra. |
-| 8 Diddy Kong | Frase curta, fileiras e polegares. “Digite sem correr; use os dois polegares nos espaços.” | `Diddy corre pela floresta` | Alvo NFC/case-insensitive, espaçamento exato, sem pontuação/acentuação. Erro informa palavra/posição; reinicia exercício. |
-| 9 A turma dos Kongs | Frase integral de consolidação. “Digite a frase toda, uma palavra por vez.” Teclado e tecla próxima revisitáveis. | `Os Kongs exploram a ilha` | Mesmo critério; sem pontuação/acentos. Dica oferece grupos; reset da tentativa. Evidência é precisão, não velocidade/dedo. |
+| 1 Mão esquerda | Comece posicionando os indicadores nas marcas F/J e acomodando os demais dedos. Demo A/S/D/F por dedo. “Use a mão esquerda para digitar A, S, D, F e volte até A.” | `ASDF FDSA` | Alvo exato NFC/case-insensitive. Erro: “Confira a próxima tecla na fileira-base esquerda.” Dica e nova tentativa livre. O professor observa os dedos; a atividade valida a sequência. |
+| 2 Mão direita | Fileira-base direita/Ç. Demo J/K/L/Ç. “Use J, K, L e Ç; depois volte.” | `JKLÇ ÇLKJ` | Alvo exato; se falha, lembrar “Ç fica à direita do L”. Reabrir teclado e tentar novamente. |
+| 3 Duas mãos | Coordenação, retorno à base e espaço com polegares. Demo dois grupos por mão. “Alterne as mãos, use espaço entre grupos e volte a F/J quando ajudar.” | `ASDF JKLÇ FDSA ÇLKJ` | Respeitar todos os espaços; erro indica grupo divergente. Repetir do começo. Evidência: sequência, postura observada pelo professor. |
+| 4 Subindo pelas árvores | Fileira superior e mesmo dedo correspondente. Demo QWERTY/UIOP. “Suba a fileira superior e volte à posição-base entre grupos.” | `QWERTY UIOP` | Alvo exato; erro destaca tecla esperada no teclado. Reabrir mapa e repetir. |
+| 5 Descendo pela selva | Fileira inferior, alcance de indicador. Demo Z–M. “Desça pelas teclas inferiores e volte pela trilha.” | `ZXCVBNM MNBVCXZ` | Alvo exato. Dica: V/B indicador esq.; N/M indicador dir. Repetição livre. |
+| 6 As bananas | Palavras curtas de todas as fileiras. Demo teclado completo e espaço. “Digite as quatro palavras separadas por espaço.” | `KONG BANANA DIDDY FLORESTA` | NFC/case-insensitive, espaços simples exatos. Mostrar primeira posição divergente sem apagar texto; dica segmenta por palavra. |
+| 7 Diddy Kong | Frase curta, fileiras e polegares. “Digite sem correr; use os dois polegares nos espaços.” | `Diddy corre pela floresta` | Alvo NFC/case-insensitive, espaçamento exato, sem pontuação/acentuação. Erro informa palavra/posição; reinicia exercício. |
+| 8 A turma dos Kongs | Frase integral de consolidação. “Digite a frase toda, uma palavra por vez.” Teclado e tecla próxima revisitáveis. | `Os Kongs exploram a ilha` | Mesmo critério; sem pontuação/acentos. Dica oferece grupos; reset da tentativa. Evidência é precisão, não velocidade/dedo. |
 
 ## 8. Mundo 2 — A Mina dos Barris (7)
 
@@ -164,11 +163,11 @@ Fileira-base: esquerda A,S,D,F; direita J,K,L,Ç. Professor observa a mão; app 
 |---|---|---|---|
 | 1 O poder do Shift | Maiúscula e `!`. Demo Shift esquerdo/direito, letra e Shift+1. “Segure Shift com D; para !, segure Shift com 1.” Campo vazio, alvo `DK!`. | Digitar `DK!`; validar conteúdo, não declarar que Shift físico foi detectado. | Caixa errada: rever tecla modificadora; ! errado: mapa ABNT2. Limpar campo e repetir; evidencia resultado maiúsculo/símbolo. |
 | 2 Barris selecionados | Shift+seta, um e vários caracteres. Em `DK BANANA`, demonstre duas seleções separadas: caret depois de D e Shift+← uma vez seleciona `D`; reposicione caret depois de K e Shift+← duas vezes seleciona `DK`. | Primeiro intervalo selecionado `D`, depois `DK`; conferir `selectionStart/End`/slice; botão só avança após as duas seleções. | Se seta move caret, lembrete “mantenha Shift”; reiniciar caret/texto. Evidência: seleção real. |
-| 3 Abrindo caminho | Shift+setas seleciona palavra e expressão, sem Ctrl. Demo caret no início. Texto `DK BANANA DOS KONGS`; selecionar `DK BANANA` usando Shift+→ incluindo o espaço entre palavras (9 caracteres). | Seleção começa em 0, termina em 10, conteúdo selecionado exato; sem mouse. | Dica demonstra direção e extensão; se inclui espaço seguinte/seleção curta, ajustar com seta. Reiniciar seleção. |
-| 4 Limpando a mina | Backspace e exclusão de seleção. Demo antes do cursor e seleção. `DK! KONG`, caret após `!`: Backspace→`DK KONG`; depois pôr caret antes de K, usar Shift+End para selecionar `KONG`, e Backspace→`DK ` (espaço final sinalizado visualmente). | Verificar cada valor intermediário e evento input. | Explica diferença de posição; restaura estado inicial deste checkpoint. Evidência: caráter anterior/seleção apagados. |
-| 5 Símbolos secretos | AltGr. Só após confirmação local mostrar AltGr+Q→`/`, AltGr+W→`?`. Texto: “Segure AltGr com a tecla indicada.” | Digitar `/ ?` em textarea e observar entrada real. Se modelo não produzir, suspender checkpoint e mapear layout real; não substituir por clique. | Erro: “Confira Português (Brasil) ABNT2 ativo.” Reiniciar. Evidência condicionada ao Chromebook. |
-| 6 A oficina de palavras | Teclas mortas ´, ~, ^, grave e Shift para Á. Apresentar uma por vez. | Corrigir em três rodadas: `cafe`→`café`, `irma`→`irmã`, `agua`→`água`; NFC/valor exato após cada palavra. Inserir acento antes da vogal ou substituir palavra usando teclado. | Se acento fica isolado/na letra errada, reabrir demo do acento alvo; reset só rodada atual. Detectar input, tolerar `key=Dead`. Evidência: escrita acentuada (ação física requer observação). |
-| 7 A mensagem dos Kongs | Revisar caixa, acento grave e pontuação. Demo das três teclas pertinentes, sem Ctrl. Texto `os kongs chegaram a selva?`; usar Shift+→ sobre o `o` inicial e Shift+O para caixa, percorrer com setas até antes do `a`, Shift+→ para selecioná-lo e digitar grave+a, ir ao fim, Shift+← e Shift+1 para trocar `?` por `!`. | Resultado `Os Kongs chegaram à selva!`; valida valor integral e alteração via textarea. | Mostrar primeira diferença e demo respectiva; restore texto inicial. Evidência: mensagem combinada revisada. |
+| 2 Abrindo caminho | Shift+setas seleciona palavra e expressão, sem Ctrl. Demo caret no início. Texto `DK BANANA DOS KONGS`; selecionar `DK BANANA` usando Shift+→ incluindo o espaço entre palavras (9 caracteres). | Seleção começa em 0, termina em 10, conteúdo selecionado exato; sem mouse. | Dica demonstra direção e extensão; se inclui espaço seguinte/seleção curta, ajustar com seta. Reiniciar seleção. |
+| 3 Limpando a mina | Backspace e exclusão de seleção. Demo antes do cursor e seleção. `DK! KONG`, caret após `!`: Backspace→`DK KONG`; depois pôr caret antes de K, usar Shift+End para selecionar `KONG`, e Backspace→`DK ` (espaço final sinalizado visualmente). | Verificar cada valor intermediário e evento input. | Explica diferença de posição; restaura estado inicial deste checkpoint. Evidência: caráter anterior/seleção apagados. |
+| 4 Símbolos secretos | AltGr. Só após confirmação local mostrar AltGr+Q→`/`, AltGr+W→`?`. Texto: “Segure AltGr com a tecla indicada.” | Digitar `/ ?` em textarea e observar entrada real. Se modelo não produzir, suspender checkpoint e mapear layout real; não substituir por clique. | Erro: “Confira Português (Brasil) ABNT2 ativo.” Reiniciar. Evidência condicionada ao Chromebook. |
+| 5 A oficina de palavras | Teclas mortas ´, ~, ^, grave e Shift para Á. Apresentar uma por vez. | Corrigir em três rodadas: `cafe`→`café`, `irma`→`irmã`, `agua`→`água`; NFC/valor exato após cada palavra. Inserir acento antes da vogal ou substituir palavra usando teclado. | Se acento fica isolado/na letra errada, reabrir demo do acento alvo; reset só rodada atual. Detectar input, tolerar `key=Dead`. Evidência: escrita acentuada (ação física requer observação). |
+| 6 A mensagem dos Kongs | Revisar caixa, acento grave e pontuação. Demo das três teclas pertinentes, sem Ctrl. Texto `os kongs chegaram a selva?`; usar Shift+→ sobre o `o` inicial e Shift+O para caixa, percorrer com setas até antes do `a`, Shift+→ para selecioná-lo e digitar grave+a, ir ao fim, Shift+← e Shift+1 para trocar `?` por `!`. | Resultado `Os Kongs chegaram à selva!`; valida valor integral e alteração via textarea. | Mostrar primeira diferença e demo respectiva; restore texto inicial. Evidência: mensagem combinada revisada. |
 
 O M2 ensina seleção de palavra/expressão deslocando a seta com Shift; Ctrl+Shift+seta fica reservado ao M3. Não depender de gesto de touchpad.
 
@@ -180,10 +179,10 @@ O M2 ensina seleção de palavra/expressão deslocando a seta com Shift; Ctrl+Sh
 |---|---|---|---|
 | 1 Uma nova linha | Enter e quebra. Texto `A equipe chegou`; cursor após equipe. “Enter cria outra linha aqui.” | Aluno insere Enter entre palavras; valor `A equipe\nchegou` com LF único. | Quebra em posição errada: mostrar cursor. Restaurar texto; verificar ação via valor. |
 | 2 Apagando pela frente | Delete oposto ao Backspace. Mostrar `DK|!`; após validação nos Chromebooks, “Search/Launcher+Backspace apaga à frente”; uma combinação. | `DK!` vira `DK`; verificar input e exclusão frontal. Não simular com Backspace. | Se abre launcher/atalho diferente, suspender (sem penalizar), validar configuração. Dica compara antes/depois do cursor. |
-| 3 A força do Ctrl | Ctrl+setas, Ctrl+Shift+setas e Ctrl+A. Demo em `Diddy corre pela ilha`, caret antes de corre; mover/selecionar palavra; Ctrl+A em textarea focalizado. | Validar ranges reais, texto selecionado e Ctrl+A apenas no campo; ajustar seleção de palavra segundo teste ChromeOS. | Seleção de limite errado: “Ctrl+seta salta uma palavra; Shift mantém a seleção.” Restaurar caret. Evidência: navegação/seleção maior sem alterar conteúdo. |
-| 4 Barris transportadores | Ctrl+C/X/V por etapas. `BANANA` selecionada→copiar→colar em destino vazio; depois recortar `DK` do campo-fonte e colar ao fim do campo `KONG ` (com espaço final). | Destino da cópia `BANANA`; após recorte, fonte vazia e destino `KONG DK`. Observar copy/cut/paste/input quando browser permitir; sem clipboard programático. | Se perdeu seleção/foco, orientar a focar campo e repetir; conferir conteúdo final; registrar se clipboard bloqueado. |
-| 5 Voltando no tempo | Ctrl+Z desfaz e Ctrl+Shift+Z refaz, demonstrações separadas. Texto `DK KONG`; digitar `!` no final. | Estados `DK KONG!`→`DK KONG`→`DK KONG!`; valor/evento compatível necessário, clique não substitui atalho. | Se redo for diferente naquela configuração, testar ChromeOS e adaptar antes. Repor valor. Evidência bidirecional. |
-| 6 O recado do Cranky | Consolidar acentos maiúsculos. Demo acento morto seguido de Shift+vogal: `´`, Shift+A→`Á`; `´`, Shift+E→`É`; `^`, Shift+E→`Ê`; `~`, Shift+O→`Õ`; `´`, Shift+U→`Ú`. A tecla inicia composição e Shift modifica a vogal seguinte; não manter Shift sobre a tecla morta sem conferir equipamento. | Primeiro digitar `Á É Ê Õ Ú` em campo curto e validar NFC; depois corrigir recado inicial `os kongs\nchegaram a mina?\ntraga bananas!` para `Os Kongs\nchegaram à mina!\nTraga bananas!`. Demonstrar cada combinação isoladamente. | Se composição divergir, rever ABNT2/local; reset da sequência ou do recado atual. Evidência: cinco maiúsculas acentuadas e mensagem final integrada. |
+| 2 A força do Ctrl | Ctrl+setas, Ctrl+Shift+setas e Ctrl+A. Demo em `Diddy corre pela ilha`, caret antes de corre; mover/selecionar palavra; Ctrl+A em textarea focalizado. | Validar ranges reais, texto selecionado e Ctrl+A apenas no campo; ajustar seleção de palavra segundo teste ChromeOS. | Seleção de limite errado: “Ctrl+seta salta uma palavra; Shift mantém a seleção.” Restaurar caret. Evidência: navegação/seleção maior sem alterar conteúdo. |
+| 3 Barris transportadores | Ctrl+C/X/V por etapas. `BANANA` selecionada→copiar→colar em destino vazio; depois recortar `DK` do campo-fonte e colar ao fim do campo `KONG ` (com espaço final). | Destino da cópia `BANANA`; após recorte, fonte vazia e destino `KONG DK`. Observar copy/cut/paste/input quando browser permitir; sem clipboard programático. | Se perdeu seleção/foco, orientar a focar campo e repetir; conferir conteúdo final; registrar se clipboard bloqueado. |
+| 4 Voltando no tempo | Ctrl+Z desfaz e Ctrl+Shift+Z refaz, demonstrações separadas. Texto `DK KONG`; digitar `!` no final. | Estados `DK KONG!`→`DK KONG`→`DK KONG!`; valor/evento compatível necessário, clique não substitui atalho. | Se redo for diferente naquela configuração, testar ChromeOS e adaptar antes. Repor valor. Evidência bidirecional. |
+| 5 O recado do Cranky | Consolidar acentos maiúsculos. Demo acento morto seguido de Shift+vogal: `´`, Shift+A→`Á`; `´`, Shift+E→`É`; `^`, Shift+E→`Ê`; `~`, Shift+O→`Õ`; `´`, Shift+U→`Ú`. A tecla inicia composição e Shift modifica a vogal seguinte; não manter Shift sobre a tecla morta sem conferir equipamento. | Primeiro digitar `Á É Ê Õ Ú` em campo curto e validar NFC; depois corrigir recado inicial `os kongs\nchegaram a mina?\ntraga bananas!` para `Os Kongs\nchegaram à mina!\nTraga bananas!`. Demonstrar cada combinação isoladamente. | Se composição divergir, rever ABNT2/local; reset da sequência ou do recado atual. Evidência: cinco maiúsculas acentuadas e mensagem final integrada. |
 
 ## 10. Chefe Final — King K. Rool
 
@@ -261,12 +260,12 @@ Onde canta o sabiá.
 |---|---|---|
 | 1 | Linha 1 `minha`→`Minha` | Shift+seta seleciona inicial e Shift+M substitui. |
 | 2 | Linhas 2–3 reordenadas e pontuadas: `Onde canta o sabiá;` seguida de `As aves, que aqui gorjeiam,` | Selecionar e mover linhas com Ctrl+X/Ctrl+V e quebras. Seleção automática abrange exatamente duas linhas; nenhuma interface de alternativa. |
-| 3 | Linha 4 `?`→`.` | Selecionar sinal e digitar ponto. |
-| 4 | `ceo`→`céu` | Selecionar palavra ou inserir tecla morta no local. |
-| 5 | `tem` da linha das várzeas→`têm` | Selecionar palavra e corrigir circunflexo. |
-| 6 | `a noite` na primeira ocorrência de “Em cismar”→`à noite` | Inserir grave e preservar o restante da expressão. |
-| 7 | `la` em `Sem que eu volte para la;`→`lá` | Acento agudo, preservar `;`. |
-| 8 | Linha `As aves que aqui gorjeiam,`→`As aves, que aqui gorjeiam,` | Inserir vírgula; a validação final compara texto inteiro canônico. |
+| 2 | Linha 4 `?`→`.` | Selecionar sinal e digitar ponto. |
+| 3 | `ceo`→`céu` | Selecionar palavra ou inserir tecla morta no local. |
+| 4 | `tem` da linha das várzeas→`têm` | Selecionar palavra e corrigir circunflexo. |
+| 5 | `a noite` na primeira ocorrência de “Em cismar”→`à noite` | Inserir grave e preservar o restante da expressão. |
+| 6 | `la` em `Sem que eu volte para la;`→`lá` | Acento agudo, preservar `;`. |
+| 7 | Linha `As aves que aqui gorjeiam,`→`As aves, que aqui gorjeiam,` | Inserir vírgula; a validação final compara texto inteiro canônico. |
 
 A reordenação 2 deixará linha das aves sem vírgula, de forma que o alvo 8 faz a pontuação em exercício separado. Após as oito correções, comparar todo o textarea com a referência integral, inclusive LF e linhas vazias. Nenhum erro altera o sentido do poema.
 
@@ -341,20 +340,20 @@ Pendências antes da liberação para a turma: (1) confirmar a combinação Lupa
 
 ## 16. Revisão e conclusão da especificação
 
-Os 22 checkpoints especificam contexto, habilidade, instrução, demonstração, texto exato, ação, resultado, critério, erros, feedback, dica/repetição e evidência de aprendizagem. Mundo 1 ensina mãos/fileiras antes das frases; Mundo 2 apresenta Shift, setas, AltGr, Backspace, acentos e pontuação sem Ctrl; Mundo 3 introduz Enter, Delete e Ctrl em sequência. O chefe fixa referência integral, variante, oito alvos, seleção real, painel consultivo e sincronização. Arquitetura reusa padrões com evidência sem mudar as atividades antigas. Direitos, áudio, layout escolar e combinações ChromeOS permanecem riscos declarados.
+Os 21 checkpoints especificam contexto, habilidade, instrução, demonstração, texto exato, ação, resultado, critério, erros, feedback, dica/repetição e evidência de aprendizagem. Mundo 1 ensina mãos/fileiras antes das frases; Mundo 2 apresenta Shift, setas, AltGr, Backspace, acentos e pontuação sem Ctrl; Mundo 3 introduz Enter, Delete e Ctrl em sequência. O chefe fixa referência integral, variante, oito alvos, seleção real, painel consultivo e sincronização. Arquitetura reusa padrões com evidência sem mudar as atividades antigas. Direitos, áudio, layout escolar e combinações ChromeOS permanecem riscos declarados.
 
-**Entrega:** planejamento e primeira implementação completos nesta branch. A atividade possui mapa, três mundos, 22 checkpoints, chefe final com oito correções, progresso local isolado e rádio em todas as páginas. A validação de sintaxe e de dados foi executada nesta sessão; o teste de navegador e a validação completa em Chromebook permanecem pendentes. Não houve merge. A implementação não inclui personagens/arte Nintendo sem licença confirmada.
+**Entrega:** planejamento e primeira implementação completos nesta branch. A atividade possui mapa, três mundos, 21 checkpoints, chefe final com oito correções, progresso local isolado e rádio em todas as páginas. A validação de sintaxe e de dados foi executada nesta sessão; o teste de navegador e a validação completa em Chromebook permanecem pendentes. Não houve merge. A implementação não inclui personagens/arte Nintendo sem licença confirmada.
 
 ## 17. Registro da implementação inicial — 30/10/2026
 
 - Criadas as cinco páginas estáticas, estilos e módulos de dados, progresso, fluxo e rádio em `activities/donkey-kong/`.
 - O catálogo raiz apresenta agora três atividades. O progresso DK usa chave própria e não lê nem altera o progresso de Yoshi.
-- Mundo 1 implementa nove exercícios de digitação com orientação de F/J, mãos, fileiras e frases; Mundo 2 implementa sete tarefas de Shift, seleção, Backspace, símbolos, acentos e revisão; Mundo 3 implementa seis tarefas de Enter, Delete, Ctrl, clipboard, undo/redo e texto integrado.
+- Mundo 1 implementa oito exercícios de digitação com orientação de F/J, mãos, fileiras e frases; Mundo 2 implementa sete tarefas de Shift, seleção, Backspace, símbolos, acentos e revisão; Mundo 3 implementa seis tarefas de Enter, Delete, Ctrl, clipboard, undo/redo e texto integrado.
 - Chefe final implementa textarea editável, referência separada e oito correções da versão modernizada de *Canção do Exílio*. A missão só conclui com igualdade integral do texto e das quebras de linha.
 - Os cinco rádios YouTube usam IFrame API; controles ficam visíveis, o player tenta autoplay, inicia em 25/100 e mantém link de fallback. A reprodução depende da disponibilidade do YouTube e da política do navegador/rede escolar.
 - Evidência relatada pelo professor: acentuação funciona; Lupa (Launcher) + Backspace apaga à direita; Ctrl+Z, Ctrl+X, Ctrl+C e Ctrl+V funcionaram na atividade Exploradores; Ctrl+Shift+Z funcionou na atividade de navegador, mas não no aplicativo Text. O exercício usa os atalhos nativos dentro dos campos e não generaliza o comportamento de Text.
 - AltGr+Q/W não foi confirmado; o exercício pede os símbolos `/` e `?` sem exigir uma combinação específica. Arte de personagens não foi incluída por falta de licença de redistribuição confirmada.
-- Validação executada nesta sessão: análise sintática dos scripts JS/MJS (após remover imports e a expressão import.meta.url para a checagem de parsing), carregamento dos dados/progresso em runtime, contagem 9+7+6, oito passos do poema, reconstrução exata da referência e progressão sequencial de checkpoints. Não foram executados os arquivos de teste Node no repositório nem o Chromium automatizado; testes físicos e visuais continuam necessários.
+- Validação executada nesta sessão: análise sintática dos scripts JS/MJS (após remover imports e a expressão import.meta.url para a checagem de parsing), carregamento dos dados/progresso em runtime, contagem 8+7+6, oito passos do poema, reconstrução exata da referência e progressão sequencial de checkpoints. Não foram executados os arquivos de teste Node no repositório nem o Chromium automatizado; testes físicos e visuais continuam necessários.
 - Branch `codex/donkey-kong-planning`, PR #21 permanece draft e sem merge: https://github.com/dnncamargo/web-explorers/pull/21.
 ### Como executar a prévia local
 
@@ -373,3 +372,14 @@ Depois abra `http://localhost:8000/activities/donkey-kong/index.html`. Em macOS/
 - O checkpoint de Shift exige o modificador Shift, não apenas uma letra maiúscula produzida por Caps Lock.
 - O checkpoint Delete só aceita o evento de apagar à frente (`Delete`/`deleteContentForward`), não um Backspace comum.
 - A validação de “à noite” está ancorada à primeira ocorrência incorreta, não à segunda ocorrência que já estava correta.
+
+
+## 18. Ajustes solicitados — 30/10/2026
+
+- O mapa da Ilha dos Kongs recebeu uma tela de entrada em overlay, modelada na entrada do Submundo: painel em tela cheia, botão de barril de madeira com marca DK e transição ao entrar. O player do mapa é preparado sem autoplay; o botão do barril só libera quando a IFrame API está pronta e chama `playVideo()` diretamente no gesto do clique. Se a API falhar ou expirar, o aluno pode entrar sem música e usar o controle/link do YouTube.
+- O barril é uma ilustração CSS original, não o sprite da wiki.
+- A posição do polegar esquerdo foi invertida para inclinar em direção ao centro da mão; o polegar direito mantém a inclinação oposta.
+- As teclas do mapa de digitação agora seguem as referências visuais do Yoshi: tipografia pixel, borda escura e inferior mais espessa, cores por dedo, destaque externo da próxima tecla e marcação das teclas já usadas.
+- O foco vai para o botão “Continuar” imediatamente após uma sequência digitada com sucesso.
+- O antigo checkpoint isolado FJ foi removido. O primeiro exercício agora é o antigo “Mão esquerda”, com alvo `ASDF FDSA`; o mapa passa a ter 8+7+6 = 21 checkpoints.
+- O progresso versão 1 é migrado: uma conclusão antiga do FJ isolado não é contada como conclusão do novo exercício; os demais checkpoints e o rascunho do poema são preservados. O progresso de outros mundos permanece inalterado.
