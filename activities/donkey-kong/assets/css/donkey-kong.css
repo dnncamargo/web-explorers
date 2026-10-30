@@ -51,7 +51,7 @@ button, a, input, textarea { outline-offset: 3px; }
 .radio-button { padding:8px 12px; border:1px solid #e7d58e; border-radius:5px; background:#f7d56f; color:#263b2d; font-weight:900; cursor:pointer; }
 .radio-button:hover { background:#ffe59c; }
 .radio-fallback { color:#f9e9ae; font-size:12px; }
-.player-host { position:static; grid-column:1 / -1; display:block; width:min(360px,100%); height:203px; margin-top:4px; overflow:hidden; border-radius:5px; background:#0b1710; }
+.player-host, #radio-player { position:static; grid-column:1 / -1; display:block; width:min(360px,100%); height:203px; margin-top:4px; overflow:hidden; border-radius:5px; background:#0b1710; }
 .map-intro { margin:44px 0 24px; text-align:center; }
 .map-intro h1 { margin:0; color:#174b34; font-size:clamp(31px,5vw,52px); line-height:1.15; }
 .map-intro p { max-width:690px; margin:14px auto 0; color:var(--muted); font-size:18px; line-height:1.55; }
@@ -104,6 +104,7 @@ button, a, input, textarea { outline-offset: 3px; }
 .keyboard-row { display:flex; justify-content:center; gap:5px; margin:6px 0; }
 .keycap { position:relative; display:flex; min-width:34px; min-height:38px; align-items:center; justify-content:center; border:1px solid #b6c3ad; border-bottom-width:3px; border-radius:4px; background:#fffef8; color:#23372b; font-size:13px; font-weight:900; }
 .keycap.home { outline:2px solid #b28b32; outline-offset:1px; }
+.keycap.is-current { z-index:1; outline:3px solid #d28b13; outline-offset:2px; background:#ffe6a0; }
 .keycap.bump::after { content:"•"; position:absolute; margin-top:23px; color:#8e6c20; font-size:9px; }
 .keycap.left-pinky, .finger-shape.pinky { background:#f4c4b6; }
 .keycap.left-ring, .finger-shape.ring { background:#f2d5a0; }
@@ -128,6 +129,14 @@ button, a, input, textarea { outline-offset: 3px; }
 .target-char.is-done { background:#d9ecd6; border-color:#a3c8a1; }
 .target-char.is-current { outline:2px solid #d5a53e; background:#fff2c8; }
 .target-char.space-char { min-width:34px; color:#7a7461; }
+.target-char.left-pinky, .target-char.pinky { background:#f4c4b6; }
+.target-char.left-ring, .target-char.ring { background:#f2d5a0; }
+.target-char.left-middle, .target-char.middle { background:#f0e5a7; }
+.target-char.left-index, .target-char.right-index, .target-char.index { background:#b9d9bc; }
+.target-char.right-middle { background:#c8c6ed; }
+.target-char.right-ring { background:#e0c7e6; }
+.target-char.right-pinky { background:#f2bfd7; }
+.target-char.thumb { background:#e4e6d7; }
 .exercise-area { width:100%; min-height:64px; padding:12px 13px; border:2px solid #a9b8a0; border-radius:5px; background:#fff; color:#24392c; font:18px/1.55 "Trebuchet MS",Arial,sans-serif; resize:vertical; }
 .exercise-area.single-line { min-height:48px; height:50px; resize:none; }
 .exercise-area:focus { border-color:#56865a; outline:3px solid rgba(86,134,90,.2); }
