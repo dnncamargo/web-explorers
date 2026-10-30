@@ -692,6 +692,8 @@
     const checkButton = host.querySelector("#check-poem");
     editor.value = draft;
     reference.textContent = DATA.poemReference;
+    const referenceDetails = host.querySelector(".poem-reference");
+    if (global.matchMedia && global.matchMedia("(max-width: 760px)").matches) referenceDetails.open = false;
 
     function saveDraft() {
       progress.boss.draft = editor.value;
