@@ -39,7 +39,7 @@
           { name: "Selecione DK", caret: 2, direction: "ArrowLeft", presses: 2, start: 0, end: 2, expected: "DK" }
         ] },
         { title: "Abrindo caminho", instruction: "No texto DK BANANA DOS KONGS, selecione DK BANANA usando Shift+→. São dez pressões da seta para a direita, mantendo Shift.", hint: "Comece com o cursor antes do D. A seleção deve incluir o espaço entre DK e BANANA, mas não o espaço seguinte.", kind: "selection", source: "DK BANANA DOS KONGS", stages: [
-          { name: "Selecione DK BANANA", caret: 0, direction: "ArrowRight", presses: 10, start: 0, end: 10, expected: "DK BANANA" }
+          { name: "Selecione DK BANANA", caret: 0, direction: "ArrowRight", presses: 9, start: 0, end: 9, expected: "DK BANANA" }
         ] },
         { title: "Limpando a mina", instruction: "Primeiro, com o cursor depois do ponto de exclamação, use Backspace para apagá-lo. Depois, selecione KONG com Shift+End e apague a seleção com Backspace.", hint: "Backspace apaga o caractere que fica antes do cursor. Quando houver uma seleção, Backspace apaga todo o trecho selecionado.", kind: "edit-sequence", initial: "DK! KONG", stages: [
           { name: "Apague o ponto de exclamação", caret: 3, key: "Backspace", expected: "DK KONG", instruction: "O cursor está depois de !. Pressione Backspace uma vez." },
@@ -136,8 +136,8 @@
   ].join("\n");
 
   const poemSteps = [
-    { title: "A primeira letra", instruction: "Comece o poema com letra maiúscula: Minha. Selecione a palavra destacada e substitua a primeira letra.", selection: { type: "literal", value: "minha", occurrence: 0 }, validate: "first-capital" },
-    { title: "A ordem dos versos", instruction: "Mova o verso “Onde canta o sabiá,” para antes de “As aves que aqui gorjeiam,”. Use Ctrl+X para recortar, setas para posicionar o cursor e Ctrl+V para colar. Troque a vírgula final do verso movido por ponto e vírgula.", selection: { type: "line", value: "Onde canta o sabiá,", includeNewline: true }, validate: "verse-order" },
+    { title: "A primeira letra", instruction: "A primeira letra está selecionada. Digite M usando Shift para começar o poema com maiúscula.", selection: { type: "line-token", linePrefix: "minha terra", value: "m" }, validate: "first-capital" },
+    { title: "A ordem dos versos", instruction: "Mova o verso “Onde canta o sabiá,” para antes de “As aves que aqui gorjeiam,”. Use Ctrl+X para recortar; depois pressione ↑ uma vez para voltar ao começo do verso das aves e Ctrl+V para colar. Por fim, troque a vírgula final do verso movido por ponto e vírgula.", selection: { type: "line", value: "Onde canta o sabiá,", includeNewline: true }, validate: "verse-order" },
     { title: "O ponto final", instruction: "No quarto verso, troque o ponto de interrogação por ponto final.", selection: { type: "line-token", linePrefix: "Não gorjeiam como lá?", value: "?" }, validate: "question-to-period" },
     { title: "O céu", instruction: "Na primeira linha da segunda estrofe, corrija ceo para céu usando o acento agudo.", selection: { type: "line-token", linePrefix: "Nosso ceo", value: "ceo" }, validate: "sky-accent" },
     { title: "As várzeas", instruction: "Na linha das várzeas, corrija tem para têm usando o circunflexo.", selection: { type: "line-token", linePrefix: "Nossas várzeas", value: "tem" }, validate: "plural-circumflex" },
