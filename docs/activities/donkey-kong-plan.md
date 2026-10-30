@@ -67,7 +67,7 @@ Consulta ao oEmbed público de todos os IDs respondeu HTTP 200 com títulos abai
 | Mundo 3 | `wxAZfLenfa0` — Donkey Kong Country 2 - Forest Interlude [Restored], Jammin’ Sam Miller |
 | Chefe | `i3qYmvTq6uI` — Gangplank Galleon - Donkey Kong Country (SNES) Music Extended, Aacro Xtensions² |
 
-Um player IFrame API por página, controls visíveis (`controls:1`), `playsinline`, `origin`, volume inicial 25/100, indicador tocando/pausado/conectando/erro, tentativa de play ao abrir e botão manual. Tratar `onAutoplayBlocked`; mostrar fallback para abrir YouTube. Autoplay não é garantido. Preservar trecho limitado e repetição do padrão atual. Testar disponibilidade, conteúdo do trecho, filtros e uso na escola; não baixar/redistribuir áudio.
+Um player IFrame API por página, controls visíveis (`controls:1`), `playsinline`, `origin`, permissão `allow="autoplay"` e volume inicial 25/100. Nas páginas de mundo e chefe, tenta autoplay audível ao abrir; se `onAutoplayBlocked` disparar, tenta novamente em modo mudo e troca o botão para “Ativar som”. Clique nesse botão chama `unMute()` no gesto do usuário. Se a segunda tentativa também for bloqueada, mantém “Ouvir trilha” e o link externo. O mapa espera o clique no barril para iniciar. Autoplay audível não pode ser garantido por código em navegadores que exigem gesto; testar rede, política gerenciada e reprodução real na escola. Não baixar/redistribuir áudio.
 
 ## 4. Assets e direitos
 
@@ -383,3 +383,13 @@ Depois abra `http://localhost:8000/activities/donkey-kong/index.html`. Em macOS/
 - O foco vai para o botão “Continuar” imediatamente após uma sequência digitada com sucesso.
 - O antigo checkpoint isolado FJ foi removido. O primeiro exercício agora é o antigo “Mão esquerda”, com alvo `ASDF FDSA`; o mapa passa a ter 8+7+6 = 21 checkpoints.
 - O progresso versão 1 é migrado: uma conclusão antiga do FJ isolado não é contada como conclusão do novo exercício; os demais checkpoints e o rascunho do poema são preservados. O progresso de outros mundos permanece inalterado.
+
+
+## 19. Ajuste de autoplay da rádio — 30/10/2026
+
+- Nas páginas internas (Selva, Mina, Acampamento e Chefe Final), o player continua solicitando autoplay audível e chama `playVideo()` no evento `onReady`.
+- Quando o YouTube informa `onAutoplayBlocked`, o player tenta uma segunda vez com `mute()` + `playVideo()`. Se iniciar, o controle passa para “Ativar som”; o clique chama `unMute()` e restaura volume 25/100.
+- O código declara a permissão autoplay no iframe e trata o evento de bloqueio antes ou depois de `onReady`.
+- O mapa continua diferente por decisão de interação: não reproduz antes do clique no barril.
+- Foi adicionada a suíte `activities/donkey-kong/tests/validate-radio.mjs`, com player simulado para autoplay de páginas internas, fallback mudo, ativação de som, pausa, bloqueio antes de `onReady` e entrada do mapa.
+- A simulação executada nesta sessão passou nesses sete cenários. Reprodução com som depende da política do navegador/perfil; a validação audível real ainda precisa ser feita no Chromebook escolar.
