@@ -138,7 +138,7 @@ button, a, input, textarea { outline-offset: 3px; }
 .keycap.right-middle { background:#92b9ef; }
 .keycap.right-ring { background:#c2a7ef; }
 .keycap.right-pinky { background:#f0a6cd; }
-.keycap.thumb { min-width:210px; max-width:240px; height:39px; flex:0 1 38%; font-family:"Trebuchet MS",Arial,sans-serif; font-size:12px; font-weight:800; }
+.keycap.thumb { min-width:210px; max-width:240px; height:39px; flex:0 1 38%; background:#b9c9c7; font-family:"Trebuchet MS",Arial,sans-serif; font-size:12px; font-weight:800; }
 .keycap.key-space { height:39px; }
 .finger-legend { display:flex; flex-wrap:wrap; gap:7px 12px; margin:13px 0 0; font-size:11px; color:#526357; }
 .finger-legend span:nth-child(1) { --swatch:#f2a6a1; }
