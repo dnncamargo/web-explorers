@@ -44,6 +44,7 @@ for (const letter of letters) assert.ok(data.fingers[letter], "finger guidance e
 assert.equal(data.fingers[" "], "thumb", "the space bar is assigned to the thumbs");
 
 assert.equal(data.poemSteps.length, 8, "the final mission has eight corrections");
+assert.equal(data.poemSteps[5].selection.linePrefix, "Em cismar, sozinho, a noite,", "the grave-accent correction is anchored to the first occurrence");
 assert.notEqual(data.poemDamaged, data.poemReference, "the initial poem is intentionally damaged");
 assert.ok(data.poemReference.includes("Sem qu'inda aviste as palmeiras,"), "the canonical poem keeps the modernized ASCII apostrophe");
 assert.ok(data.poemReference.includes("Nossas várzeas têm mais flores,"), "the canonical poem uses modern plural accentuation");
