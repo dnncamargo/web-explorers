@@ -73,8 +73,8 @@
             const parsed = JSON.parse(saved);
             if (parsed && [1, 2].includes(parsed.version)) {
               const progress = normalize(parsed);
-              if (parsed.version === 1 || !currentSaved) {
-                save(progress, name);
+              if (parsed.version === 1 || !currentSaved) save(progress, name);
+              if (legacySaved) {
                 try { store.removeItem(LEGACY_KEY); } catch { /* legacy data is already migrated */ }
               }
               return { progress, mode: name };
