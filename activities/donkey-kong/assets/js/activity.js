@@ -737,51 +737,58 @@
     let copied = false;
     let cut = false;
     let pasted = false;
+    let advancing = false;
     area.innerHTML = '<div class="clipboard-grid"><div><label class="input-label" for="clipboard-source">Origem</label><textarea id="clipboard-source" class="exercise-area" rows="2"></textarea></div>' +
       '<div><label class="input-label" for="clipboard-target">Destino</label><textarea id="clipboard-target" class="exercise-area" rows="2"></textarea></div></div>' +
-      '<p id="clipboard-instruction" class="selection-status"></p>' +
+      '<p id="clipboard-instruction" class="selection-status" aria-live="polite"></p>' +
       '<div class="exercise-actions"><button class="button secondary small" id="focus-source" type="button">Focar origem</button><button class="button secondary small" id="focus-target" type="button">Focar destino</button></div>';
     const source = area.querySelector("#clipboard-source");
     const target = area.querySelector("#clipboard-target");
     const instruction = area.querySelector("#clipboard-instruction");
+    checkButton.hidden = true;
+
     function prepare() {
-      copied = false; cut = false; pasted = false;
+      copied = false; cut = false; pasted = false; advancing = false;
       if (stage === 0) {
         source.value = "BANANA";
         target.value = "Destino: ";
         source.focus(); source.select();
-        instruction.textContent = "Selecione BANANA. Pressione Ctrl+C. Depois, use Focar destino e Ctrl+V.";
+        instruction.textContent = "ETAPA 1/2 · Selecione BANANA e pressione Ctrl+C. Depois, foque o destino e pressione Ctrl+V.";
       } else {
         source.value = "DK";
         target.value = "KONG ";
         source.focus(); source.select();
-        instruction.textContent = "Selecione DK. Pressione Ctrl+X. Depois, use Focar destino e Ctrl+V.";
+        instruction.textContent = "ETAPA 2/2 · Selecione DK e pressione Ctrl+X. Depois, foque o destino e pressione Ctrl+V.";
       }
     }
+
+    function verify() {
+      if (advancing || !pasted) return;
+      const okay = stage === 0
+        ? copied && target.value === "Destino: BANANA"
+        : cut && source.value === "" && target.value === "KONG DK";
+      if (!okay) return;
+      advancing = true;
+      if (stage === 0) {
+        stage = 1;
+        setFeedback(feedback, "Copiar e colar concluídos. Agora vamos recortar.", "good");
+        prepare();
+      } else {
+        source.disabled = true;
+        target.disabled = true;
+        instruction.textContent = "Copiar, recortar e colar concluídos.";
+        setFeedback(feedback, "Área de transferência nativa utilizada com sucesso.", "good");
+        complete();
+      }
+    }
+
     source.addEventListener("copy", (event) => { if (event.isTrusted) copied = true; });
     source.addEventListener("cut", (event) => { if (event.isTrusted) cut = true; });
     target.addEventListener("paste", (event) => { if (event.isTrusted) pasted = true; });
+    source.addEventListener("input", verify);
+    target.addEventListener("input", verify);
     area.querySelector("#focus-source").addEventListener("click", () => { source.focus(); source.select(); });
     area.querySelector("#focus-target").addEventListener("click", () => { target.focus(); target.setSelectionRange(target.value.length, target.value.length); });
-    checkButton.hidden = false;
-    checkButton.addEventListener("click", () => {
-      const okay = stage === 0 ? copied && pasted && target.value === "Destino: BANANA" :
-        cut && pasted && source.value === "" && target.value === "KONG DK";
-      if (!okay) {
-        setFeedback(feedback, "A operação ainda não foi concluída. Use o atalho indicado e a área de transferência nativa do navegador.", "gentle");
-        return;
-      }
-      if (stage === 0) {
-        stage = 1;
-        prepare();
-        setFeedback(feedback, "Cópia e colagem corretas. Agora vamos recortar.", "good");
-      } else {
-        source.disabled = true; target.disabled = true;
-        checkButton.disabled = true;
-        setFeedback(feedback, "Copiar, recortar e colar concluídos.", "good");
-        complete();
-      }
-    });
     prepare();
   }
 
