@@ -45,11 +45,12 @@
     .eyebrow { margin: 0 0 15px; color: #16724f; font-size: 10px; line-height: 1.8; }
     h1 { margin: 0; color: #164b3a; font-size: clamp(32px, 6vw, 58px); line-height: 1.12; }
     .intro-copy { max-width: 640px; margin: 17px auto 0; color: var(--muted); font-size: 18px; line-height: 1.6; }
-    .activity-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .activity-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
     .activity-card { position: relative; display: flex; min-height: 330px; flex-direction: column; overflow: hidden; padding: 23px; border: 3px solid #fff; border-radius: 16px; background: linear-gradient(145deg, rgba(255,255,255,.95), rgba(240,250,219,.95)); box-shadow: 0 5px 0 #a8c8aa; text-decoration: none; transition: transform .15s ease, box-shadow .15s ease; }
     .activity-card:hover { transform: translateY(-3px); box-shadow: 0 8px 0 #a8c8aa; }
     .activity-card::after { position: absolute; right: -26px; bottom: -39px; width: 170px; height: 115px; border-radius: 50%; background: rgba(107,200,124,.2); content: ""; pointer-events: none; }
     .yoshi-card::after { background: rgba(255,201,77,.25); }
+    .donkey-card::after { background: rgba(177,112,54,.22); }
     .card-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
     .badge { padding: 8px 10px; border: 2px solid #a9cdb2; border-radius: 5px; color: #176b4a; font-size: 9px; font-weight: 900; letter-spacing: .06em; }
     .number { color: #6e9c79; font-size: 13px; font-weight: 900; }
@@ -86,7 +87,7 @@
     </header>
 
     <section class="intro" aria-labelledby="page-title">
-      <p class="eyebrow pixel">DUAS AVENTURAS · SEU PRÓXIMO MUNDO</p>
+      <p class="eyebrow pixel">TRÊS AVENTURAS · SEU PRÓXIMO MUNDO</p>
       <h1 id="page-title">Por onde vamos explorar?</h1>
       <p class="intro-copy">Escolha uma atividade para começar. Cada aventura abre no seu próprio mapa inicial.</p>
     </section>
@@ -105,6 +106,14 @@
         <span class="activity-icon" aria-hidden="true">🥚🌼</span>
         <h2>Floresta do Yoshi</h2>
         <p class="activity-description">Explore mundos temáticos enquanto pratica o teclado físico, aprende as fileiras e acompanha seu progresso sem cronômetro.</p>
+        <span class="card-action">Abrir atividade <span aria-hidden="true">→</span></span>
+      </a>
+
+      <a class="activity-card donkey-card" href="activities/donkey-kong/index.html">
+        <span class="card-meta"><span class="badge">CONSOLIDAÇÃO · ABNT2</span><span class="number">03</span></span>
+        <span class="activity-icon" aria-hidden="true">🍌🌴</span>
+        <h2>Donkey Kong Country</h2>
+        <p class="activity-description">Uma aventura para consolidar a digitação, seleção, acentuação e edição de textos com o teclado físico e atalhos.</p>
         <span class="card-action">Abrir atividade <span aria-hidden="true">→</span></span>
       </a>
     </nav>

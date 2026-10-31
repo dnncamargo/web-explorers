@@ -147,7 +147,7 @@ if (!browserPath) {
     await navigate(`${baseUrl}index.html?viewport=${width}`, "/index.html");
     const result = await evaluate(`(()=>({width:innerWidth,clientWidth:document.documentElement.clientWidth,scrollWidth:document.documentElement.scrollWidth,cards:[...document.querySelectorAll('.activity-card')].map(a=>({href:a.getAttribute('href'),left:a.getBoundingClientRect().left,right:a.getBoundingClientRect().right}))}))()`);
     assert.equal(result.scrollWidth, result.clientWidth, `${width}px catalog has no horizontal overflow: ${JSON.stringify(result)}`);
-    assert.deepEqual(result.cards.map(({ href }) => href), ["activities/digital-explorers/index.html", "activities/yoshi-typing/index.html"], `${width}px catalog lists only the two existing activity entries`);
+    assert.deepEqual(result.cards.map(({ href }) => href), ["activities/digital-explorers/index.html", "activities/yoshi-typing/index.html", "activities/donkey-kong/index.html"], `${width}px catalog lists all three independent activities`);
     for (const card of result.cards) assert.ok(card.left >= 0 && card.right <= result.clientWidth, `${width}px activity card stays within the viewport`);
     if (width === 390 || width === 1366) await saveCatalogScreenshot(width);
   }
@@ -212,10 +212,79 @@ if (!browserPath) {
     await clickAndWait(".back-link", "/index.html");
     assert.match(await evaluate("document.title"), /Atividades/);
 
+    // Donkey Kong remains independent and exposes its map and four activity routes.
+    await clickAndWait('.activity-card[href="activities/donkey-kong/index.html"]', "/activities/donkey-kong/index.html");
+    assert.match(await evaluate("document.title"), /Donkey Kong Country/);
+    assert.equal(await evaluate('document.querySelectorAll("#world-map .world-card").length'), 4, "Donkey Kong map offers three worlds and the final boss");
+    assert.equal(await evaluate('!!document.querySelector("#start-screen")'), true, "the Kong barrel entrance overlay is visible on the island map");
+    assert.equal(await evaluate('!!document.querySelector("#start-button")'), true, "the barrel entrance control is available");
+    assert.equal(await evaluate('document.querySelectorAll("#world-map .world-card-art").length'), 3, "the map world cards include game character art");
+    for (const [route, titlePattern, selector] of [
+      ["jungle.html", /Selva dos Kongs/, "#typing-input"],
+      ["mine.html", /Mina dos Barris/, "#sequence-input"],
+      ["camp.html", /Acampamento dos Kongs/, "#native-edit-input"],
+      ["king-k-rool.html", /King K. Rool/, "#poem-editor"],
+    ]) {
+      await navigate(baseUrl + "activities/donkey-kong/" + route, "/activities/donkey-kong/" + route);
+      assert.match(await evaluate("document.title"), titlePattern);
+      if (route !== "king-k-rool.html") {
+        const expectedTheme = route === "jungle.html" ? "world-theme-jungle" : route === "mine.html" ? "world-theme-mine" : "world-theme-camp";
+        assert.equal(await evaluate('document.body.classList.contains(' + JSON.stringify(expectedTheme) + ')'), true, route + " applies its distinct visual theme");
+        assert.ok(await evaluate('!!document.querySelector("#world-character-art img")'), route + " renders character artwork in the hero");
+        assert.ok(await evaluate('!!document.querySelector("body[data-page=world]")'), route + " keeps the game-stage background context");
+      }
+      if (route === "king-k-rool.html") {
+        assert.equal(await evaluate('!!document.querySelector("#poem-editor")'), true, "the final poem editor renders");
+        assert.equal(await evaluate('!!document.querySelector("#reset-boss")'), true, "the final poem mission offers an activity reset");
+      } else {
+        assert.equal(await evaluate('!!document.querySelector("#reset-world")'), true, route + " world guide offers a full-world reset");
+        await evaluate('document.querySelector("#start-world")?.click()');
+        assert.equal(await evaluate('!!document.querySelector(' + JSON.stringify(selector) + ')'), true, route + " opens its expected exercise control");
+        assert.equal(await evaluate('!!document.querySelector("#reset-activity")'), true, route + " checkpoint offers an activity reset");
+        assert.equal(await evaluate('document.querySelector("#check-action").hidden'), true, route + " advances without a Conferir etapa button");
+        if (route === "mine.html") {
+          assert.equal(await evaluate('document.querySelectorAll(".mine-keyboard").length'), 1, "Mine displays the complete World 1-style ABNT2 keyboard");
+          assert.equal(await evaluate('document.querySelector("#sequence-tip")?.tagName'), "SPAN", "Mine renders a live span for changing typing tips");
+          assert.equal(await evaluate('document.querySelector("#sequence-tip")?.textContent'), "Pressione a letra B sem segurar Shift.", "the live tip explains the current lowercase key");
+          assert.equal(await evaluate('document.querySelectorAll(".mine-keyboard .keycap-shift").length'), 2, "Mine shows left and right Shift keys");
+          assert.equal(await evaluate('document.querySelectorAll(".mine-keyboard .number-row .keycap").length'), 14, "the number row includes quote, ten digits, minus, equals and Backspace");
+          assert.equal(await evaluate('Array.from("qwertyuiopasdfghjklçzxcvbnm").every((key) => !!Array.from(document.querySelectorAll(".mine-keyboard [data-key]")).find((item) => item.dataset.key === key))'), true, "all letters and Ç are displayed");
+          assert.equal(await evaluate('!!document.querySelector(".mine-keyboard [data-key=acute]")'), true, "the acute key is shown beside P");
+          assert.equal(await evaluate('!!document.querySelector(".mine-keyboard [data-key=tilde]")'), true, "the tilde/circumflex key is shown beside Ç");
+          assert.equal(await evaluate('!!document.querySelector(".mine-keyboard [data-key=space]")'), true, "the space bar is shown");
+          assert.equal(await evaluate('Array.from(document.querySelectorAll(".mine-keyboard [data-key]")).find((key) => key.dataset.key === "2")?.querySelector(".mine-keycap-shift")?.textContent'), "@", "the 2 key shows the at symbol");
+          assert.equal(await evaluate('Array.from(document.querySelectorAll(".mine-keyboard [data-key]")).find((key) => key.dataset.key === "3")?.querySelector(".mine-keycap-shift")?.textContent'), "#", "the 3 key shows the number sign");
+          assert.equal(await evaluate('Array.from(document.querySelectorAll(".mine-keyboard [data-key]")).find((key) => key.dataset.key === "6")?.querySelector(".mine-keycap-shift")?.textContent'), "¨", "the 6 key shows the diaeresis");
+          assert.equal(await evaluate('Array.from(document.querySelectorAll(".mine-keyboard [data-key]")).find((key) => key.dataset.key === "7")?.querySelector(".mine-keycap-shift")?.textContent'), "&", "the 7 key shows the ampersand");
+          assert.equal(await evaluate('Array.from(document.querySelectorAll(".mine-keyboard [data-key]")).find((key) => key.dataset.key === "=")?.querySelector(".mine-keycap-shift")?.textContent'), "+", "the equals key shows the plus symbol");
+          await evaluate('(() => { const field = document.querySelector("#sequence-input"); field.value = "banana"; field.dispatchEvent(new Event("input", { bubbles: true })); })()');
+          assert.equal(await evaluate('document.querySelector("#sequence-target").textContent.replace(/\\s+/g,"").startsWith("BANANA")'), true, "the next Mine sequence is the uppercase form");
+          assert.equal(await evaluate('!!document.querySelector(".mine-keyboard [data-key=b].is-next")'), true, "the current letter key is highlighted");
+          assert.equal(await evaluate('!!document.querySelector(".mine-keyboard [data-key=shift-left].is-next")'), true, "the left Shift arrow lights with uppercase letters");
+          assert.equal(await evaluate('!!document.querySelector(".mine-keyboard [data-key=shift-right].is-next")'), true, "the right Shift arrow lights with uppercase letters");
+          await evaluate('(() => { const field = document.querySelector("#sequence-input"); field.value = "BANANX"; field.dispatchEvent(new Event("input", { bubbles: true })); })()');
+          assert.equal(await evaluate('!!document.querySelector(".mine-keyboard [data-key=backspace].is-next")'), true, "Backspace lights while the text has an incorrect suffix");
+          assert.equal(await evaluate('document.querySelector("#sequence-tip")?.textContent.includes("Backspace")'), true, "the live tip tells the student to correct the text with Backspace");
+          await evaluate('(() => { const field = document.querySelector("#sequence-input"); field.value = "BANAN"; field.dispatchEvent(new Event("input", { bubbles: true })); })()');
+          assert.equal(await evaluate('!!document.querySelector(".mine-keyboard [data-key=backspace].is-next")'), false, "Backspace highlight turns off when the text returns to a correct prefix");
+          assert.equal(await evaluate('document.querySelector("#sequence-tip")?.textContent'), "Segure a tecla Shift, mantenha-a pressionada e pressione A.", "the live tip advances to the next uppercase letter");
+          await evaluate('(() => { const field = document.querySelector("#sequence-input"); field.value = "BANANA"; field.dispatchEvent(new Event("input", { bubbles: true })); })()');
+          await evaluate('(() => { const field = document.querySelector("#sequence-input"); field.value = "Barril"; field.dispatchEvent(new Event("input", { bubbles: true })); })()');
+          await evaluate('(() => { const field = document.querySelector("#sequence-input"); field.value = "CROCODILO"; field.dispatchEvent(new Event("input", { bubbles: true })); })()');
+          await evaluate('(() => { const field = document.querySelector("#sequence-input"); field.value = "Rinoceronte"; field.dispatchEvent(new Event("input", { bubbles: true })); })()');
+          assert.equal(await evaluate('document.querySelector("#sequence-tip")?.textContent'), "Segure a tecla shift, mantenha-a pressionada e pressione O.", "the first O in the sentence gets the requested Shift instruction");
+        }
+        if (route === "jungle.html") {
+          await evaluate('(() => { const field = document.querySelector("#typing-input"); field.value = "A"; field.dispatchEvent(new Event("input", { bubbles: true })); document.querySelector("#reset-activity").click(); })()');
+          assert.equal(await evaluate('document.querySelector("#typing-input")?.value'), "", "activity reset clears only the current typing attempt");
+        }
+      }
+    }
+
     assert.deepEqual(missing, [], `browser requested only existing local files: ${missing.join(", ")}`);
     console.log("OK: Chromium/Edge navigated from the catalog to World 1, Submundo material, World 2, Water, Ghost House, Final Boss and completion");
-    console.log("OK: activity aliases redirect correctly; Yoshi opens and returns to the root catalog");
-    console.log("OK: catalog fits 320, 390, 768 and 1366 px; moved local maps, character art and audio paths load");
+    console.log("OK: activity aliases redirect correctly; Yoshi and Donkey Kong open from the root catalog");
+    console.log("OK: catalog fits 320, 390, 768 and 1366 px; existing and Donkey Kong local activity paths load");
     if (screenshotDir) console.log(`Menu screenshots: ${path.join(screenshotDir, "web-explorers-menu-390px.png")}, ${path.join(screenshotDir, "web-explorers-menu-1366px.png")}`);
   } finally {
     cdp?.close();

@@ -75,6 +75,18 @@ for (const target of [
   "public/02-entrar-no-submundo.html",
   "public/flower.png",
   "activities/yoshi-typing/index.html",
+  "activities/donkey-kong/index.html",
+  "activities/donkey-kong/jungle.html",
+  "activities/donkey-kong/mine.html",
+  "activities/donkey-kong/camp.html",
+  "activities/donkey-kong/king-k-rool.html",
+  "activities/donkey-kong/assets/css/donkey-kong.css",
+  "activities/donkey-kong/assets/js/checkpoints.js",
+  "activities/donkey-kong/assets/js/progress.js",
+  "activities/donkey-kong/assets/js/radio.js",
+  "activities/donkey-kong/assets/js/activity.js",
+  "activities/donkey-kong/tests/validate-activity.mjs",
+  "activities/donkey-kong/tests/validate-radio.mjs",
 ]) assert.ok(fs.existsSync(path.join(root, target)), `${target} exists`);
 
 for (const obsolete of ["assets", "stages", "index2.html", "index3.html", "index_final.html", "02-entrar-no-submundo.html"]) {
@@ -84,7 +96,8 @@ for (const obsolete of ["assets", "stages", "index2.html", "index3.html", "index
 const menu = read("index.html");
 assert.ok(menu.includes('href="activities/digital-explorers/index.html"'), "the catalog opens the first activity's entry page");
 assert.ok(menu.includes('href="activities/yoshi-typing/index.html"'), "the catalog opens the Yoshi activity's entry page");
-assert.equal([...menu.matchAll(/class="activity-card(?:\s|"?)/g)].length, 2, "the catalog lists only the two existing activities");
+assert.ok(menu.includes('href="activities/donkey-kong/index.html"'), "the catalog opens the Donkey Kong activity's entry page");
+assert.equal([...menu.matchAll(/class="activity-card(?:\s|"?)/g)].length, 3, "the catalog lists the three independent activities");
 
 const digitalRoot = "activities/digital-explorers";
 const routes = new Map([
@@ -110,6 +123,21 @@ assert.ok(!files.some((file) => /dnncamargo\.github\.io\/web-explorers\/(?:index
 
 const yoshiHome = read("activities/yoshi-typing/index.html");
 assert.ok(yoshiHome.includes('href="../../index.html"'), "Yoshi's return link opens the new root catalog");
+const donkeyHome = read("activities/donkey-kong/index.html");
+assert.ok(donkeyHome.includes('href="../../index.html"'), "Donkey Kong's return link opens the root catalog");
+assert.ok(donkeyHome.includes('data-page="map"'), "Donkey Kong opens on its own world map");
+assert.ok(read("activities/donkey-kong/tests/validate-activity.mjs").includes("22 ordered checkpoints"), "Donkey Kong has a dedicated activity validation suite");
+assert.ok(read("activities/donkey-kong/tests/validate-radio.mjs").includes("muted fallback"), "Donkey Kong has a dedicated radio autoplay regression suite");
+assert.ok(read("activities/donkey-kong/tests/validate-activity.mjs").includes("world reset preserves progress in other worlds"), "Donkey Kong tests isolated world reset behavior");
+const donkeyData = read("activities/donkey-kong/assets/js/checkpoints.js");
+const donkeyStyles = read("activities/donkey-kong/assets/css/donkey-kong.css");
+assert.ok(donkeyData.includes("DK_and_Diddy.PNG") && donkeyData.includes("Dixie_rambi_and_klobble.gif"), "Donkey Kong uses the supplied DK/Diddy and Dixie/Rambi character assets");
+assert.ok(donkeyData.includes("Squawks_-_DKC2.gif") && donkeyData.includes("Zinger.png") && donkeyData.includes("Krusha_4.png"), "Donkey Kong uses the supplied Squawks, Zinger and Krusha assets");
+assert.ok(donkeyStyles.includes('body[data-world="jungle"]::before') && donkeyStyles.includes('body[data-world="mine"]::before') && donkeyStyles.includes('body[data-world="camp"]::before'), "each Donkey Kong world has its own gameplay backdrop");
+assert.ok(donkeyData.includes('AltGr+W') && donkeyData.includes('title: "O ponto de interrogação"'), "the question mark lesson is in World 3");
+assert.ok(donkeyData.includes('title: "Acentos sem Shift · maiúsculas"') && donkeyData.includes('title: "Acentos com Shift · maiúsculas"'), "Mine includes the two uppercase accent progressions");
+
+
 assert.ok(read("activities/yoshi-typing/tests/validate-activity.mjs").includes("assets/js/world-data.js"), "the independent Yoshi validation suite remains in place");
 
 console.log(`OK: ${htmlFiles.length} HTML pages and ${cssFiles.length} stylesheets have valid local references`);

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#174d35">
+  <meta name="description" content="Aventura de consolidação de digitação e edição de textos pelo teclado.">
+  <title>Donkey Kong Country — Aventura de Consolidação</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/donkey-kong.css">
+  <script defer src="assets/js/checkpoints.js"></script>
+  <script defer src="assets/js/progress.js"></script>
+  <script defer src="assets/js/radio.js"></script>
+  <script defer src="assets/js/activity.js"></script>
+</head>
+<body data-page="map">
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand pixel" href="index.html"><span class="brand-icon">🍌</span><span>DONKEY KONG<br>COUNTRY</span></a>
+      <a class="back-link" href="../../index.html">← Catálogo de atividades</a>
+    </header>
+    <section class="radio-panel" aria-label="Rádio da aventura">
+      <div class="radio-copy"><span class="radio-label pixel">RÁDIO DA SELVA</span><span id="radio-status" class="radio-status" aria-live="polite">Preparando a trilha...</span></div>
+      <div class="radio-controls">
+        <button id="radio-toggle" class="radio-button" type="button" aria-pressed="false">♪ Ouvir trilha</button>
+        <a id="radio-fallback" class="radio-fallback" href="https://www.youtube.com/watch?v=DTLfV7Ru5VY" target="_blank" rel="noopener noreferrer">Abrir no YouTube</a>
+      </div>
+      <div id="radio-player" class="player-host"></div>
+    </section>
+    <section class="map-intro">
+      <p class="eyebrow pixel">AVENTURA DE CONSOLIDAÇÃO · SEM CRONÔMETRO</p>
+      <h1>A Ilha dos Kongs</h1>
+      <p>Prepare as mãos, explore os três mundos e ajude os Kongs a corrigir a mensagem final. Cada checkpoint apresenta uma habilidade antes de pedir que você pratique.</p>
+    </section>
+    <div id="map-summary" class="map-summary" aria-live="polite"></div>
+    <nav id="world-map" class="world-grid" aria-label="Mapa da aventura">
+      <p>Carregando o mapa...</p>
+    </nav>
+    <p class="home-note">Você pode visitar qualquer mundo pelo mapa. Dentro de cada mundo, os checkpoints seguem uma sequência. Não há perda por erro, cronômetro ou recompensa por velocidade. O professor acompanha o posicionamento dos dedos; a atividade verifica somente o que foi digitado e editado.</p>
+    <div class="reset-row"><button id="reset-progress" class="button secondary small" type="button">Reiniciar progresso</button></div>
+    <footer class="site-footer"><p id="persistence-status" class="persistence"></p><p>Atividade independente · Teclado Português (Brasil) ABNT2</p></footer>
+  </main>
+    <div id="start-screen" class="start-screen" role="dialog" aria-modal="true" aria-labelledby="start-title">
+      <div class="start-content">
+        <p class="start-world-number pixel">DONKEY KONG COUNTRY</p>
+        <h1 id="start-title">A ILHA DOS KONGS</h1>
+        <p>O mapa está pronto. Entre pelo barril para começar a aventura e ouvir a trilha da ilha.</p>
+        <p id="start-status" class="start-status" role="status" aria-live="polite">Conectando à trilha da Ilha dos Kongs…</p>
+        <button id="start-button" class="barrel-button" type="button" disabled aria-label="Entrar pelo barril e iniciar a música">
+          <img class="barrel-image" src="https://www.ssbwiki.com/images/thumb/e/ef/DK_Barrel_DKCR.png/510px-DK_Barrel_DKCR.png" alt="">
+          <span id="start-button-label" class="barrel-enter-label">AGUARDE…</span>
+        </button>
+        <a class="barrel-credit" href="https://www.ssbwiki.com/File:DK_Barrel_DKCR.png" target="_blank" rel="noopener noreferrer">Imagem do barril: SmashWiki · via DK Wiki</a>
+      </div>
+    </div>
+</body>
+</html>
