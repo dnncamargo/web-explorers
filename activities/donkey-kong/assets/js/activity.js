@@ -633,12 +633,17 @@
   function renderNativeEdit(checkpoint, area, feedback, checkButton, complete) {
     area.innerHTML = '<label class="input-label" for="native-edit-input">Campo de edição</label>' +
       '<textarea id="native-edit-input" class="exercise-area" rows="2" spellcheck="false"></textarea>' +
-      '<p class="selection-status">Ação esperada: ' + escapeHTML(checkpoint.actionLabel) + '</p>';
+      '<p id="native-edit-status" class="selection-status"></p>';
     const input = area.querySelector("#native-edit-input");
+    const status = area.querySelector("#native-edit-status");
     input.value = checkpoint.initial;
     input.focus();
     input.setSelectionRange(checkpoint.caret, checkpoint.caret);
     let observed = false;
+    let completed = false;
+    checkButton.hidden = true;
+    status.textContent = checkpoint.actionLabel + ". O sistema avança automaticamente quando a edição correta acontece.";
+
     input.addEventListener("keydown", (event) => {
       if (!event.isTrusted) return;
       if (checkpoint.key === "Enter" && event.key === "Enter") observed = true;
@@ -648,18 +653,21 @@
       if (checkpoint.key === "Delete" && event.inputType === "deleteContentForward") observed = true;
       if (checkpoint.key === "Enter" && (event.inputType === "insertLineBreak" || event.inputType === "insertParagraph")) observed = true;
     });
-    checkButton.hidden = false;
-    checkButton.addEventListener("click", () => {
-      if (input.value !== checkpoint.expected || !observed) {
-        setFeedback(feedback, checkpoint.key === "Delete" ?
-          "O caractere à direita ainda está no campo. Use Lupa (Launcher) + Backspace, não Backspace sozinho." :
-          "A quebra de linha ainda não está na posição indicada. Use Enter com o campo focado.", "gentle");
+    input.addEventListener("input", () => {
+      if (completed) return;
+      if (input.value === checkpoint.expected && observed) {
+        completed = true;
+        input.disabled = true;
+        status.textContent = "Ação reconhecida. Próximo checkpoint liberado.";
+        setFeedback(feedback, "Edição correta. Muito bem!", "good");
+        complete();
         return;
       }
-      input.disabled = true;
-      checkButton.disabled = true;
-      setFeedback(feedback, "A edição foi realizada com a tecla esperada.", "good");
-      complete();
+      if (input.value !== checkpoint.initial) {
+        setFeedback(feedback, checkpoint.key === "Delete"
+          ? "Confira: Lupa (Launcher) + Backspace apaga o caractere à direita."
+          : "Confira a posição do cursor e use Enter para criar a nova linha.", "gentle");
+      }
     });
   }
 
