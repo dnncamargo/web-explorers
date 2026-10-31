@@ -36,7 +36,7 @@ assert.equal(data.worlds.mine.checkpoints.length, 7, "Mine keeps seven planned c
 assert.ok(data.worlds.mine.checkpoints.every(({ kind }) => kind === "typing-sequence"), "all Mine checkpoints use automatic typing sequences");
 assert.deepEqual(
   data.worlds.mine.checkpoints.map(({ title }) => title),
-  ["Maiúsculas e minúsculas", "Shift, números e símbolos", "Acentos sem Shift · minúsculas", "Acento com Shift · minúsculas", "Acentos sem Shift · maiúsculas", "Acentos com Shift · maiúsculas", "Misturando acentos e símbolos"],
+  ["Maiúsculas e minúsculas", "Shift, números e símbolos", "Acentos sem Shift · minúsculas", "Acentos com Shift · minúsculas", "Acentos sem Shift · maiúsculas", "Acentos com Shift · maiúsculas", "Misturando acentos e símbolos"],
   "Mine follows the seven-step Shift and accent progression"
 );
 assert.ok(data.worlds.mine.checkpoints[0].stages.some(({ target }) => target === "banana") && data.worlds.mine.checkpoints[0].stages.some(({ target }) => target === "BANANA"), "first Mine checkpoint distinguishes lowercase and uppercase with a real word");
