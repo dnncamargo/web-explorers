@@ -35,14 +35,33 @@
   function allWorldsComplete() {
     return Object.keys(DATA.worlds).every((id) => progress.checkpoints[id] >= DATA.worlds[id].checkpoints.length);
   }
+  function renderGameArt(world, className, limit) {
+    const characters = (world.characters || []).slice(0, limit || 5);
+    return '<div class="' + className + '" aria-label="Personagens e elementos de ' + escapeHTML(world.title) + '">' +
+      characters.map((character) =>
+        '<img data-game-art src="' + escapeHTML(character.src) + '" alt="' + escapeHTML(character.alt) +
+        '" title="' + escapeHTML(character.alt) + '" loading="lazy" referrerpolicy="no-referrer">'
+      ).join("") + '</div>';
+  }
+  function bindGameArt(host) {
+    if (!host) return;
+    host.querySelectorAll("img[data-game-art]").forEach((image) => {
+      image.addEventListener("error", () => {
+        image.hidden = true;
+        const wrapper = image.closest("a");
+        if (wrapper) wrapper.hidden = true;
+      }, { once: true });
+    });
+  }
   function renderMap() {
     const host = document.getElementById("world-map");
     if (!host) return;
     const cards = Object.values(DATA.worlds).map((world) => {
       const count = progress.checkpoints[world.id] || 0;
       const total = world.checkpoints.length;
-      return '<a class="world-card" href="' + world.page + '">' +
+      return '<a class="world-card world-card-' + world.id + '" href="' + world.page + '">' +
         '<span class="world-number">MUNDO ' + world.number + ' · ' + total + ' CHECKPOINTS</span>' +
+        renderGameArt(world, "world-card-art", 2) +
         '<h2>' + escapeHTML(world.title) + '</h2>' +
         '<p>' + escapeHTML(world.intro) + '</p>' +
         '<span class="world-progress">' + count + ' de ' + total + ' checkpoints concluídos</span>' +
@@ -53,6 +72,7 @@
       '<a class="world-card boss-card" href="king-k-rool.html"><span class="world-number">CHEFE FINAL · REVISÃO INTEGRADA</span>' +
       '<h2>King K. Rool</h2><p>Recupere a Canção do Exílio com seleção, edição, acentuação, pontuação e atalhos.</p>' +
       '<span class="world-progress">' + bossCount + '</span><span class="world-action"><span>' + (progress.boss.passed ? "Rever missão" : "Entrar no desafio") + '</span><span aria-hidden="true">→</span></span></a>';
+    bindGameArt(host);
     const summary = document.getElementById("map-summary");
     const totalCheckpoints = Object.values(DATA.worlds).reduce((sum, item) => sum + item.checkpoints.length, 0);
     if (summary) summary.innerHTML = '<span>' + countComplete() + ' de ' + totalCheckpoints + ' checkpoints concluídos</span><span>' +
@@ -148,15 +168,17 @@
 
   function renderGuide(world, host) {
     const guide = world.id === "jungle" ? keyboardGuide() :
-      '<div class="guide-steps"><div class="guide-step"><strong>1. Veja a demonstração</strong><span>Leia a instrução e confira a combinação antes de começar.</span></div><div class="guide-step"><strong>2. Use o teclado físico</strong><span>O campo precisa estar focado. O aplicativo verifica o resultado da edição.</span></div><div class="guide-step"><strong>3. Repita sem pressa</strong><span>Erros não retiram pontos nem apagam o progresso já concluído.</span></div></div>';
+      '<div class="guide-steps"><div class="guide-step"><strong>1. Veja a tecla e a combinação</strong><span>A ilustração mostra o modificador e a tecla física que será usada.</span></div><div class="guide-step"><strong>2. Digite no campo</strong><span>O sistema confere o texto à medida que você digita.</span></div><div class="guide-step"><strong>3. Avance automaticamente</strong><span>Ao concluir uma sequência, a próxima aparece nesta mesma página.</span></div></div>';
     const completed = progress.checkpoints[world.id] || 0;
     host.innerHTML = '<section class="guide-card"><p class="eyebrow pixel">MUNDO ' + world.number + ' · ' + world.checkpoints.length + ' CHECKPOINTS</p>' +
       '<h2>Antes de começar</h2><p>' + escapeHTML(world.guide) + '</p>' +
+      '<div class="world-intro-art">' + renderGameArt(world, "world-character-strip", 5) + '</div>' +
       '<p class="world-reset-status">' + completed + ' de ' + world.checkpoints.length + ' checkpoints concluídos neste mundo.</p>' +
       guide +
       '<div class="guide-actions"><button class="button" id="start-world" type="button">Começar checkpoints</button>' +
       '<button class="button danger" id="reset-world" type="button"' + (completed === 0 ? ' disabled' : '') + '>↻ Resetar mundo</button>' +
       '<a class="button secondary" href="index.html">Voltar ao mapa</a></div></section>';
+    bindGameArt(host);
     host.querySelector("#start-world").addEventListener("click", () => renderCheckpoint(world, host));
     host.querySelector("#reset-world").addEventListener("click", () => {
       if (!global.confirm("Resetar todo o progresso de " + world.title + "? Os outros mundos e a missão final serão preservados.")) return;
@@ -192,7 +214,7 @@
     host.innerHTML = '<section class="exercise-card">' +
       '<div class="checkpoint-strip"><span class="checkpoint-name pixel">CHECKPOINT ' + number + '/' + total + '</span><span class="checkpoint-dots" aria-label="' + completedCount + ' de ' + total + ' concluídos">' + renderDots(completedCount, total) + '</span></div>' +
       '<h2>' + escapeHTML(checkpoint.title) + '</h2><p class="instruction">' + escapeHTML(checkpoint.instruction) + '</p>' +
-      '<details class="demo-box"><summary>Ver demonstração e dica</summary><p>' + escapeHTML(checkpoint.hint) + '</p></details>' +
+      (checkpoint.kind === "typing-sequence" ? "" : '<details class="demo-box"><summary>Ver demonstração e dica</summary><p>' + escapeHTML(checkpoint.hint) + '</p></details>') +
       '<div id="exercise-area"></div><p id="exercise-feedback" class="feedback" role="status" aria-live="polite">Faça a atividade usando o teclado físico, sem pressa.</p>' +
       '<div class="exercise-actions"><button id="reset-activity" class="button danger" type="button">↻ Resetar atividade</button>' +
       '<button id="check-action" class="button secondary" type="button">Conferir etapa</button>' +
@@ -235,6 +257,7 @@
     });
 
     if (checkpoint.kind === "typing") renderTyping(checkpoint, area, feedback, checkButton, continueButton, complete);
+    else if (checkpoint.kind === "typing-sequence") renderTypingSequence(checkpoint, area, feedback, checkButton, continueButton, complete);
     else if (checkpoint.kind === "selection") renderSelection(checkpoint, area, feedback, checkButton, complete);
     else if (checkpoint.kind === "edit-sequence") renderEditSequence(checkpoint, area, feedback, checkButton, complete);
     else if (checkpoint.kind === "native-edit") renderNativeEdit(checkpoint, area, feedback, checkButton, complete);
@@ -694,7 +717,7 @@
 
   function renderWorldFinish(world, host) {
     const total = world.checkpoints.length;
-    host.innerHTML = '<section class="world-finish"><p class="eyebrow pixel">MUNDO CONCLUÍDO</p><div class="hero-icon" aria-hidden="true">' + world.icon + '</div>' +
+    host.innerHTML = '<section class="world-finish"><p class="eyebrow pixel">MUNDO CONCLUÍDO</p>' + renderGameArt(world, "finish-art", 4) +
       '<h2>' + escapeHTML(world.title) + '</h2><p>Você concluiu os ' + total + ' checkpoints deste mundo. O progresso foi salvo neste navegador.</p>' +
       '<div class="finish-actions"><a class="button" href="index.html">Voltar ao mapa</a><a class="button secondary" href="king-k-rool.html">Ir ao chefe final</a></div></section>';
     const pageProgress = document.getElementById("page-progress");
@@ -711,6 +734,12 @@
     const description = document.getElementById("world-description");
     if (title) title.textContent = world.title;
     if (description) description.textContent = world.intro;
+    document.body.classList.add("world-theme-" + id);
+    const artHost = document.getElementById("world-character-art");
+    if (artHost) {
+      artHost.innerHTML = renderGameArt(world, "world-character-strip", 5);
+      bindGameArt(artHost);
+    }
     renderGuide(world, host);
     updatePersistence();
   }
