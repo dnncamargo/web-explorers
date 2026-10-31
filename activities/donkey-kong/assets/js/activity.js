@@ -856,57 +856,45 @@
   function renderIntegrated(checkpoint, area, feedback, checkButton, complete) {
     let stage = 0;
     let observed = false;
+    let advancing = false;
     area.innerHTML = '<p id="integrated-instruction" class="demo-box"></p><label class="input-label" for="integrated-input">Campo de edição</label><textarea id="integrated-input" class="exercise-area" rows="3" spellcheck="false"></textarea>';
     const input = area.querySelector("#integrated-input");
-    input.value = "";
-    checkButton.hidden = false;
+    const instruction = area.querySelector("#integrated-instruction");
+    checkButton.hidden = true;
+
+    function expectedForStage() {
+      if (stage === 0) return checkpoint.accents;
+      if (stage === 1) return "Os kongs\nchegaram a mina?\ntraga bananas!";
+      if (stage === 2) return "Os kongs\nchegaram à mina?\ntraga bananas!";
+      if (stage === 3) return "Os kongs\nchegaram à mina?\nTraga bananas!";
+      return checkpoint.expected;
+    }
     function prepare() {
       observed = false;
+      advancing = false;
+      input.disabled = false;
       if (stage === 0) {
         input.value = "";
-        input.focus(); input.setSelectionRange(0, 0);
-        area.querySelector("#integrated-instruction").textContent = "Etapa 1: digite exatamente " + checkpoint.accents + ". Use as teclas mortas e as vogais maiúsculas.";
+        input.focus();
+        input.setSelectionRange(0, 0);
+        instruction.textContent = "ETAPA 1/5 · Digite exatamente " + checkpoint.accents + ". Prepare cada acento antes da vogal e use Shift nas vogais maiúsculas.";
       } else {
-        if (stage === 1) input.value = checkpoint.initial;
-        else if (stage === 2) input.value = "Os kongs\nchegaram a mina?\ntraga bananas!";
-        else if (stage === 3) input.value = "Os kongs\nchegaram à mina?\ntraga bananas!";
-        else input.value = "Os kongs\nchegaram à mina?\nTraga bananas!";
-        area.querySelector("#integrated-instruction").textContent =
-          stage === 1 ? "Etapa 2: corrija o primeiro o para O usando Shift." :
-          stage === 2 ? "Etapa 3: corrija a antes de mina para à." :
-          stage === 3 ? "Etapa 4: coloque T maiúsculo no início da segunda frase usando Shift." :
-          "Etapa 5: troque ? por ! usando Shift.";
+        input.value = stage === 1 ? checkpoint.initial :
+          stage === 2 ? "Os kongs\nchegaram a mina?\ntraga bananas!" :
+          stage === 3 ? "Os kongs\nchegaram à mina?\ntraga bananas!" :
+          stage === 4 ? "Os kongs\nchegaram à mina?\nTraga bananas!" :
+          "Os kongs\nchegaram à mina?\nTraga bananas!";
+        instruction.textContent = [
+          "",
+          "ETAPA 2/5 · O primeiro o está selecionado. Digite O usando Shift.",
+          "ETAPA 3/5 · A letra a antes de mina está selecionada. Prepare o acento grave e digite a.",
+          "ETAPA 4/5 · A letra inicial da última linha está selecionada. Digite T usando Shift.",
+          "ETAPA 5/5 · O ponto de interrogação está selecionado. Troque por ! usando Shift+1."
+        ][stage];
         selectIntegratedTarget(input, stage);
       }
     }
-    input.addEventListener("keydown", (event) => {
-      if (!event.isTrusted) return;
-      if (stage === 1 && event.shiftKey && event.key.toLowerCase() === "o") observed = true;
-      if (stage === 3 && event.shiftKey && event.key.toLowerCase() === "t") observed = true;
-      if (stage === 4 && event.shiftKey && (event.key === "1" || event.key === "!" || event.code === "Digit1")) observed = true;
-    });
-    checkButton.addEventListener("click", () => {
-      let expected;
-      if (stage === 0) expected = checkpoint.accents;
-      else if (stage === 1) expected = "Os kongs\nchegaram a mina?\ntraga bananas!";
-      else if (stage === 2) expected = "Os kongs\nchegaram à mina?\ntraga bananas!";
-      else if (stage === 3) expected = "Os kongs\nchegaram à mina?\nTraga bananas!";
-      else expected = checkpoint.expected;
-      const actionOkay = ![1, 3, 4].includes(stage) || observed;
-      if (input.value !== expected || !actionOkay) {
-        setFeedback(feedback, "Confira as letras, os acentos e a pontuação. A correção ainda não está completa.", "gentle");
-        return;
-      }
-      if (stage < 4) {
-        stage += 1;
-        prepare();
-        setFeedback(feedback, "Etapa correta. Continue a revisão.", "good");
-      } else {
-        input.disabled = true; checkButton.disabled = true;
-        setFeedback(feedback, "As maiúsculas acentuadas e o recado foram corrigidos.", "good");
-        complete();
-      }
-    });
+
     function selectIntegratedTarget(target, currentStage) {
       if (currentStage === 1) target.setSelectionRange(0, 1);
       if (currentStage === 2) {
@@ -925,6 +913,33 @@
       }
       target.focus();
     }
+
+    input.addEventListener("keydown", (event) => {
+      if (!event.isTrusted) return;
+      if (stage === 1 && event.shiftKey && event.key.toLowerCase() === "o") observed = true;
+      if (stage === 3 && event.shiftKey && event.key.toLowerCase() === "t") observed = true;
+      if (stage === 4 && event.shiftKey && (event.key === "1" || event.key === "!" || event.code === "Digit1")) observed = true;
+    });
+    input.addEventListener("input", () => {
+      if (advancing) return;
+      const expected = expectedForStage();
+      if (input.value !== expected) return;
+      if ([1, 3, 4].includes(stage) && !observed) {
+        setFeedback(feedback, "Use Shift na tecla indicada para fazer esta correção.", "gentle");
+        return;
+      }
+      advancing = true;
+      if (stage < 4) {
+        stage += 1;
+        setFeedback(feedback, "Etapa concluída. A próxima edição já está selecionada.", "good");
+        prepare();
+      } else {
+        input.disabled = true;
+        instruction.textContent = "Recado corrigido. Muito bem!";
+        setFeedback(feedback, "As maiúsculas acentuadas, a edição e a pontuação foram concluídas.", "good");
+        complete();
+      }
+    });
     prepare();
   }
 
