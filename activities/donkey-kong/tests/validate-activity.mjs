@@ -175,6 +175,12 @@ assert.ok(activitySource.includes('"1":["1","!"]') && activitySource.includes('"
 assert.ok(activitySource.includes('ALTGR + W produz ?'), "the visible ABNT2 keyboard explains AltGr+W");
 assert.ok(activitySource.includes("playFromGesture()"), "barrel interaction calls the radio gesture method");
 assert.ok(activitySource.includes('continueButton.focus({ preventScroll: true })'), "typing completion moves focus to the continue button");
+assert.ok(activitySource.includes('id="sequence-tip"') && activitySource.includes('function updateSequenceTip'), "typing sequences render a live tip span that updates with progress");
+assert.ok(activitySource.includes("Segure a tecla shift, mantenha-a pressionada e pressione O."), "the first O in the Mine sentence has the requested Shift teaching tip");
+assert.ok(activitySource.includes("correctionNeeded = !isValidPrefix"), "wrong text enters the Backspace correction state");
+assert.ok(activitySource.includes('renderControl("⌫","backspace-key","backspace")'), "the full keyboard exposes a dedicated Backspace key for correction");
+assert.ok(activitySource.includes('keyId==="backspace" && correctionNeeded'), "Backspace highlights while the typed text is outside the correct prefix");
+assert.ok(activityCss.includes(".sequence-tip") && activityCss.includes(".mine-keyboard .backspace-key.is-next"), "live tips and Backspace correction have dedicated visual styling");
 assert.ok(activityCss.includes(".hand.left .finger-shape.thumb { transform:rotate(28deg); }"), "left thumb illustration angles inward");
 assert.ok(activityCss.includes(".keycap.is-next"), "keyboard next-key treatment is defined");
 
@@ -190,4 +196,4 @@ assert.equal(memorySave.mode, "memory", "memory fallback is reported");
 assert.equal(memorySave.persisted, false, "memory fallback does not claim durable storage");
 assert.equal(memoryStore.load().progress.checkpoints.camp, 0, "new memory-only store starts clean");
 
-console.log("OK: 22 checkpoints, familiar Mine vocabulary, complete ABNT2 keyboard, two Shift arrows, image fallbacks, accent stages, AltGr+W, progress and poem");
+console.log("OK: 22 checkpoints, familiar Mine vocabulary, full ABNT2 keyboard, live tips, Backspace correction, Shift arrows, sprites, accents and poem");
