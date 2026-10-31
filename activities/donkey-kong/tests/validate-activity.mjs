@@ -167,7 +167,7 @@ assert.ok(activitySource.includes('"ç", "tilde", "bracket-right"'), "the tilde/
 assert.ok(activitySource.includes('"m", ",", ".", "semicolon"'), "comma and period are placed beside M");
 assert.ok(activitySource.includes('class="shift-arrow">↑'), "Shift is shown with an upward arrow");
 assert.ok(activitySource.includes('action.shift === side'), "the Shift arrow illuminates together with the active physical key");
-assert.ok(activitySource.includes('SHIFT + 1 = !'), "the visible ABNT2 keyboard explains the 1/! mapping");
+assert.ok(activitySource.includes('"1": "!') && activitySource.includes('"7": "&"') && activitySource.includes('"=": "+"'), "the restricted ABNT2 keyboard shows the shifted numeric symbols");
 assert.ok(activitySource.includes('ALTGR + W produz ?'), "the visible ABNT2 keyboard explains AltGr+W");
 assert.ok(activitySource.includes("playFromGesture()"), "barrel interaction calls the radio gesture method");
 assert.ok(activitySource.includes('continueButton.focus({ preventScroll: true })'), "typing completion moves focus to the continue button");
