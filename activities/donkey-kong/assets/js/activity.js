@@ -48,10 +48,13 @@
   function bindGameArt(host) {
     if (!host) return;
     host.querySelectorAll("img[data-game-art]").forEach((image) => {
-      image.addEventListener("error", () => {
+      const hideBrokenImage = () => {
         image.hidden = true;
         image.removeAttribute("src");
-      }, { once: true });
+        image.setAttribute("aria-hidden", "true");
+      };
+      image.addEventListener("error", hideBrokenImage, { once: true });
+      if (image.complete && image.naturalWidth === 0) hideBrokenImage();
     });
   }
   function renderMap() {
@@ -420,8 +423,9 @@
     function renderControl(label,className) {
       return '<span class="keycap mine-control-key '+className+'">'+label+'</span>';
     }
-    function renderShift() {
-      return '<span class="keycap keycap-shift left-pinky'+(showShift?" is-next":"")+'" data-key="shift"><span class="shift-arrow">↑</span><span class="shift-label">SHIFT</span></span>';
+    function renderShift(side) {
+      const finger=side==="left"?"left-pinky":"right-pinky";
+      return '<span class="keycap keycap-shift '+finger+(showShift?" is-next":"")+'" data-key="shift-'+side+'"><span class="shift-arrow">↑</span><span class="shift-label">SHIFT</span></span>';
     }
     const numberRow=[
       renderKey("quote"),...Array.from("1234567890").map(k=>renderKey(k)),
@@ -438,9 +442,9 @@
       renderKey("tilde"),renderKey("bracket-right"),renderControl("ENTER","enter-key")
     ].join("");
     const bottomRow=[
-      renderShift(),renderKey("backslash"),
+      renderShift("left"),renderKey("backslash"),
       ...Array.from("zxcvbnm").map(k=>renderLetter(k)),
-      renderKey("comma"),renderKey("period"),renderKey("semicolon"),renderKey("slash"),renderShift()
+      renderKey("comma"),renderKey("period"),renderKey("semicolon"),renderKey("slash"),renderShift("right")
     ].join("");
     const spaceRow='<div class="keyboard-row mine-keyboard-row space-row"><span class="keycap thumb key-space'+
       (action.key==="space"?" is-next":"")+'" data-key="space">ESPAÇO · polegares</span></div>';
