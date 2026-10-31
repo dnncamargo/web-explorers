@@ -11,7 +11,7 @@
       characters: [
         { src: "https://static.wikia.nocookie.net/nintendo/images/f/f9/DK_and_Diddy.PNG/revision/latest?cb=20141007152903&path-prefix=en", alt: "Donkey Kong e Diddy Kong", credit: "Nintendo Fandom" },
         { src: "https://static.wikia.nocookie.net/donkeykong/images/7/7b/Squawks_-_DKC2.gif/revision/latest?cb=20190113015723", alt: "Squawks", credit: "Donkey Kong Wiki" },
-        { src: "https://static.wikia.nocookie.net/donkeykong/images/1/14/Necky_1.png/revision/latest/scale-to-width-down/1000?cb=20170823192107&path-prefix=pt", alt: "Necky", credit: "Donkey Kong Wiki" }
+        { src: "https://snesmaps.com/maps/DonkeyKongCountry/sprites/Necky.png", alt: "Necky", credit: "SNESMaps" }
       ],
       intro: "Encontre a posição-base, explore as três fileiras e digite as primeiras frases.",
       guide: "Encontre as marcas tácteis em F e J. Coloque o indicador esquerdo em F e o direito em J. Acomode os outros dedos na fileira-base e deixe os polegares próximos à barra de espaço. Ao alcançar outra fileira, volte a F e J.",
@@ -37,7 +37,7 @@
       characters: [
         { src: "https://static.wikia.nocookie.net/donkeykong/images/4/47/Dixie_rambi_and_klobble.gif/revision/latest?cb=20210429024957", alt: "Dixie Kong, Rambi e Klobber", credit: "Donkey Kong Wiki" },
         { src: "https://media.tenor.com/GXqnaxylERQAAAAi/dk-coin-dk.gif", alt: "Moeda DK", credit: "Tenor" },
-        { src: "https://static.wikia.nocookie.net/donkeykong/images/7/7a/Zinger.png/revision/latest?cb=20170908235819&path-prefix=pt", alt: "Zinger", credit: "Donkey Kong Wiki" }
+        { src: "https://snesmaps.com/maps/DonkeyKongCountry/sprites/ZingerOrange.png", alt: "Zinger", credit: "SNESMaps" }
       ],
       intro: "Explore o teclado ABNT2: diferencie maiúsculas, minúsculas, números, símbolos e acentos.",
       guide: "A Mina dos Barris agora é uma sequência de oficinas. Cada etapa mostra a tecla e a combinação necessárias; ao digitar corretamente, a atividade avança sozinha. Use Shift apenas quando a tecla ou o símbolo pedir.",
@@ -158,7 +158,7 @@
       characters: [
         { src: "https://static.wikia.nocookie.net/donkeykong/images/7/7b/Squawks_-_DKC2.gif/revision/latest?cb=20190113015723", alt: "Squawks, o papagaio", credit: "Donkey Kong Wiki" },
         { src: "https://static.wikia.nocookie.net/donkeykong/images/8/8e/Krusha_4.png/revision/latest?cb=20190503205924&path-prefix=pt", alt: "Krusha", credit: "Donkey Kong Wiki" },
-        { src: "https://static.wikia.nocookie.net/donkeykong/images/1/14/Necky_1.png/revision/latest/scale-to-width-down/1000?cb=20170823192107&path-prefix=pt", alt: "Necky", credit: "Donkey Kong Wiki" },
+        { src: "https://snesmaps.com/maps/DonkeyKongCountry/sprites/Necky.png", alt: "Necky", credit: "SNESMaps" },
         { src: "https://media.tenor.com/HomN6gM7WcEAAAAj/diddy-kong-donkey-kong.gif", alt: "Diddy e Donkey Kong", credit: "Tenor" },
         { src: "https://media.tenor.com/GXqnaxylERQAAAAi/dk-coin-dk.gif", alt: "Moeda DK", credit: "Tenor" }
       ],
