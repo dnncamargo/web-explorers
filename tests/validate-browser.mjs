@@ -244,6 +244,8 @@ if (!browserPath) {
         assert.equal(await evaluate('document.querySelector("#check-action").hidden'), true, route + " advances without a Conferir etapa button");
         if (route === "mine.html") {
           assert.equal(await evaluate('document.querySelectorAll(".mine-keyboard").length'), 1, "Mine displays the complete World 1-style ABNT2 keyboard");
+          assert.equal(await evaluate('document.querySelector("#sequence-tip")?.tagName'), "SPAN", "Mine renders a live span for changing typing tips");
+          assert.equal(await evaluate('document.querySelector("#sequence-tip")?.textContent'), "Pressione a letra B sem segurar Shift.", "the live tip explains the current lowercase key");
           assert.equal(await evaluate('document.querySelectorAll(".mine-keyboard .keycap-shift").length'), 2, "Mine shows left and right Shift keys");
           assert.equal(await evaluate('document.querySelectorAll(".mine-keyboard .number-row .keycap").length'), 14, "the number row includes quote, ten digits, minus, equals and Backspace");
           assert.equal(await evaluate('Array.from("qwertyuiopasdfghjklçzxcvbnm").every((key) => !!Array.from(document.querySelectorAll(".mine-keyboard [data-key]")).find((item) => item.dataset.key === key))'), true, "all letters and Ç are displayed");
@@ -260,6 +262,17 @@ if (!browserPath) {
           assert.equal(await evaluate('!!document.querySelector(".mine-keyboard [data-key=b].is-next")'), true, "the current letter key is highlighted");
           assert.equal(await evaluate('!!document.querySelector(".mine-keyboard [data-key=shift-left].is-next")'), true, "the left Shift arrow lights with uppercase letters");
           assert.equal(await evaluate('!!document.querySelector(".mine-keyboard [data-key=shift-right].is-next")'), true, "the right Shift arrow lights with uppercase letters");
+          await evaluate('(() => { const field = document.querySelector("#sequence-input"); field.value = "BANANX"; field.dispatchEvent(new Event("input", { bubbles: true })); })()');
+          assert.equal(await evaluate('!!document.querySelector(".mine-keyboard [data-key=backspace].is-next")'), true, "Backspace lights while the text has an incorrect suffix");
+          assert.equal(await evaluate('document.querySelector("#sequence-tip")?.textContent.includes("Backspace")'), true, "the live tip tells the student to correct the text with Backspace");
+          await evaluate('(() => { const field = document.querySelector("#sequence-input"); field.value = "BANAN"; field.dispatchEvent(new Event("input", { bubbles: true })); })()');
+          assert.equal(await evaluate('!!document.querySelector(".mine-keyboard [data-key=backspace].is-next")'), false, "Backspace highlight turns off when the text returns to a correct prefix");
+          assert.equal(await evaluate('document.querySelector("#sequence-tip")?.textContent'), "Segure a tecla Shift, mantenha-a pressionada e pressione A.", "the live tip advances to the next uppercase letter");
+          await evaluate('(() => { const field = document.querySelector("#sequence-input"); field.value = "BANANA"; field.dispatchEvent(new Event("input", { bubbles: true })); })()');
+          await evaluate('(() => { const field = document.querySelector("#sequence-input"); field.value = "Barril"; field.dispatchEvent(new Event("input", { bubbles: true })); })()');
+          await evaluate('(() => { const field = document.querySelector("#sequence-input"); field.value = "CROCODILO"; field.dispatchEvent(new Event("input", { bubbles: true })); })()');
+          await evaluate('(() => { const field = document.querySelector("#sequence-input"); field.value = "Rinoceronte"; field.dispatchEvent(new Event("input", { bubbles: true })); })()');
+          assert.equal(await evaluate('document.querySelector("#sequence-tip")?.textContent'), "Segure a tecla shift, mantenha-a pressionada e pressione O.", "the first O in the sentence gets the requested Shift instruction");
         }
         if (route === "jungle.html") {
           await evaluate('(() => { const field = document.querySelector("#typing-input"); field.value = "A"; field.dispatchEvent(new Event("input", { bubbles: true })); document.querySelector("#reset-activity").click(); })()');
