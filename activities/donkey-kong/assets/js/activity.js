@@ -355,6 +355,7 @@
 
   function renderMineSequenceKeyboard(stage, nextChar, pendingDeadKey) {
     const inventory = new Set();
+    const shiftedOutputs = new Set();
     const mine = DATA.worlds.mine;
     mine.checkpoints.forEach((checkpoint) => checkpoint.stages.forEach((item) => {
       Array.from(normalize(item.target)).forEach((char) => {
@@ -363,14 +364,16 @@
         const marks = Array.from(decomposed).slice(1);
         if (/[a-z]/i.test(base) || base === "ç" || base === "Ç") inventory.add(base.toLocaleLowerCase("pt-BR"));
         if (/\d/u.test(char)) inventory.add(char);
-        if (char === "!") inventory.add("1");
-        if (char === "&") inventory.add("7");
-        if (char === "+" || char === "=") inventory.add("=");
+        if (char === "!") { inventory.add("1"); shiftedOutputs.add("!"); }
+        if (char === "&") { inventory.add("7"); shiftedOutputs.add("&"); }
+        if (char === "+") { inventory.add("="); shiftedOutputs.add("+"); }
+        if (char === "=") inventory.add("=");
         if (char === ",") inventory.add(",");
         if (char === ".") inventory.add(".");
         if (char === " ") inventory.add("space");
         if (marks.includes("\u0301")) inventory.add("acute");
         if (marks.includes("\u0303") || marks.includes("\u0302")) inventory.add("tilde");
+        if (marks.includes("\u0302")) shiftedOutputs.add("^");
         if (marks.includes("\u0327")) inventory.add("ç");
       });
     }));
@@ -423,15 +426,15 @@
     function keyLabels(keyId) {
       const numberSymbols = { "1": "!", "2": "@", "3": "#", "4": "$", "5": "%", "6": "¨", "7": "&", "8": "*", "9": "(", "0": ")", "-": "_", "=": "+" };
       const special = {
-        acute: { main: "´", shifted: "`" },
-        tilde: { main: "~", shifted: "^" },
-        ç: { main: "ç", shifted: "Ç" },
-        ",": { main: ",", shifted: "<" },
-        ".": { main: ".", shifted: ">" },
-        "=": { main: "=", shifted: "+" }
+        acute: { main: "´", shifted: "" },
+        tilde: { main: "~", shifted: shiftedOutputs.has("^") ? "^" : "" },
+        ç: { main: "ç", shifted: shiftedOutputs.has("Ç") ? "Ç" : "" },
+        ",": { main: ",", shifted: shiftedOutputs.has("<") ? "<" : "" },
+        ".": { main: ".", shifted: shiftedOutputs.has(">") ? ">" : "" },
+        "=": { main: "=", shifted: shiftedOutputs.has("+") ? "+" : "" }
       };
       if (special[keyId]) return special[keyId];
-      if (numberSymbols[keyId]) return { main: keyId, shifted: numberSymbols[keyId] };
+      if (numberSymbols[keyId]) return { main: keyId, shifted: shiftedOutputs.has(numberSymbols[keyId]) ? numberSymbols[keyId] : "" };
       return { main: keyId.toLocaleUpperCase("pt-BR"), shifted: "" };
     }
     function renderKey(keyId) {
