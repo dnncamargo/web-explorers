@@ -674,45 +674,61 @@
   function renderNavigation(checkpoint, area, feedback, checkButton, complete) {
     let step = 0;
     let observed = false;
+    let advancing = false;
     area.innerHTML = '<label class="input-label" for="navigation-input">Texto de prática</label>' +
       '<textarea id="navigation-input" class="exercise-area" rows="2" readonly></textarea>' +
-      '<p id="navigation-status" class="selection-status"></p>';
+      '<p id="navigation-status" class="selection-status" aria-live="polite"></p>';
     const input = area.querySelector("#navigation-input");
     const status = area.querySelector("#navigation-status");
     input.value = checkpoint.source;
-    checkButton.hidden = false;
+    checkButton.hidden = true;
+
     function prepare() {
       observed = false;
+      advancing = false;
       input.focus();
       const start = step === 0 ? checkpoint.caret : step === 1 ? input.selectionEnd : 0;
       input.setSelectionRange(start, start);
-      status.textContent = ["1. Ctrl + → avança uma palavra.", "2. Ctrl + Shift + → seleciona a palavra seguinte.", "3. Ctrl + A seleciona todo o texto."][step];
+      status.textContent = [
+        "ETAPA 1/3 · Ctrl + → avança uma palavra.",
+        "ETAPA 2/3 · Ctrl + Shift + → seleciona a palavra seguinte.",
+        "ETAPA 3/3 · Ctrl + A seleciona todo o texto."
+      ][step];
     }
+
+    function verify() {
+      if (!observed || advancing) return;
+      const selectionLength = input.selectionEnd - input.selectionStart;
+      const okay = step === 0
+        ? input.selectionStart === input.selectionEnd && input.selectionStart > checkpoint.caret
+        : step === 1
+          ? selectionLength > 0
+          : input.selectionStart === 0 && input.selectionEnd === input.value.length;
+      if (!okay) {
+        status.textContent = "A seleção ainda não corresponde ao atalho. Mantenha o campo focado e tente novamente.";
+        return;
+      }
+      advancing = true;
+      if (step < 2) {
+        step += 1;
+        setFeedback(feedback, "Atalho reconhecido. Próxima etapa.", "good");
+        prepare();
+      } else {
+        input.readOnly = true;
+        status.textContent = "Navegação e seleção com Ctrl concluídas.";
+        setFeedback(feedback, "As três operações foram realizadas.", "good");
+        complete();
+      }
+    }
+
     input.addEventListener("keydown", (event) => {
       if (!event.isTrusted || !event.ctrlKey) return;
       if (step === 0 && event.key === "ArrowRight" && !event.shiftKey) observed = true;
       if (step === 1 && event.key === "ArrowRight" && event.shiftKey) observed = true;
       if (step === 2 && event.key.toLowerCase() === "a" && !event.shiftKey) observed = true;
     });
-    checkButton.addEventListener("click", () => {
-      const selectionLength = input.selectionEnd - input.selectionStart;
-      const okay = observed && (step === 0 ? input.selectionStart > checkpoint.caret :
-        step === 1 ? selectionLength > 0 : input.selectionStart === 0 && input.selectionEnd === input.value.length);
-      if (!okay) {
-        setFeedback(feedback, "A navegação ainda não corresponde ao atalho desta etapa. Mantenha o campo focado e tente novamente.", "gentle");
-        return;
-      }
-      if (step < 2) {
-        step += 1;
-        prepare();
-        setFeedback(feedback, "Atalho reconhecido. Próxima etapa.", "good");
-      } else {
-        input.readOnly = true;
-        checkButton.disabled = true;
-        setFeedback(feedback, "Navegação e seleção com Ctrl concluídas.", "good");
-        complete();
-      }
-    });
+    input.addEventListener("keyup", verify);
+    input.addEventListener("select", verify);
     prepare();
   }
 
