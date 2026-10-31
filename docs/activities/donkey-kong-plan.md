@@ -452,3 +452,10 @@ Os exercícios de Enter, Delete, AltGr, Ctrl, clipboard e undo/redo avançam aut
 ### Notas de crédito e disponibilidade dos assets
 
 As imagens de fase e os sprites desta revisão permanecem remotos e não são redistribuídos dentro do repositório. Os atributos `alt` e `title` identificam personagem e origem (Nintendo Fandom, Donkey Kong Wiki ou Tenor). As imagens Fandom/remote podem responder 403, variar de URL ou não carregar na rede escolar; o código oculta somente o arquivo que falhar, sem remover o cartão ou bloquear o exercício. A publicação para além do uso pessoal/escolar exige revisão de direitos e licenças das imagens.
+### URLs das imagens de fase usadas
+
+- Selva / Jungle Climb (MobyGames): https://www.mobygames.com/images/shots/l/27540-donkey-kong-country-snes-screenshot-now-we-ve-really-climbed.jpg
+- Mina / Mine Cart Madness (GameTyrant): https://images.squarespace-cdn.com/content/v1/55ef0e29e4b099e22cdc9eea/1446879156032-U8BD4PO9C0DRYDHWD8RA/image-asset.jpeg
+- Acampamento / Bramble Scramble (The Mezunian): https://www.mezunian.com/wp-content/uploads/2020/05/donkey-kong-country-2-diddys-kong-quest-bramble-scramble-bramble-wall-near-start.png?m=1701871908
+
+Os sprites dos personagens usam as URLs fornecidas pelo professor; os créditos de origem aparecem sobre a faixa de arte de cada mundo e no atributo `title` das imagens. São carregamentos remotos, não cópias locais.
