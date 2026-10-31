@@ -468,7 +468,22 @@ body[data-world="camp"] .sequence-instruction { color:#d8f7ff; }
 body[data-world="camp"] .sequence-hint { color:#d5f2fa; }
 body[data-world="camp"] .sequence-key-explainer { color:#17465c; }
 body[data-world="camp"] .sequence-keyboard-note { color:#17465c; }
-.world-art-credit { margin:5px 0 10px; color:rgba(255,255,255,.75); font-size:10px; text-align:right; }
+.world-card-art, .world-character-strip, .finish-art { position:relative; }
+.world-art-credit {
+  position:absolute;
+  right:3px;
+  bottom:1px;
+  max-width:100%;
+  overflow:hidden;
+  padding:2px 4px;
+  background:rgba(0,0,0,.56);
+  color:#fff;
+  font-size:8px;
+  line-height:1.3;
+  text-align:right;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
 @media (max-width:760px) {
   .world-character-strip { justify-content:center; width:100%; height:108px; }
   .world-character-strip img { height:100px; }
