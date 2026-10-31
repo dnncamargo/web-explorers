@@ -648,3 +648,107 @@ body[data-world="mine"] .mine-keyboard-note {
   }
   .mine-keyboard .keycap.key-space { width:220px; min-width:180px; }
 }
+
+
+/* Complete ABNT2 keyboard: every physical row stays aligned and visible. */
+.mine-keyboard .mine-keyboard-row {
+  width:max-content;
+  min-width:min(100%,max-content);
+  max-width:none;
+  justify-content:center;
+  flex-wrap:nowrap;
+  gap:4px;
+}
+.mine-keyboard .keycap {
+  width:42px;
+  min-width:42px;
+  max-width:42px;
+  height:48px;
+  min-height:48px;
+  flex:0 0 42px;
+}
+.mine-keyboard .mine-control-key {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:48px;
+  min-height:48px;
+  padding:0 8px;
+  border:2px solid #728979;
+  border-bottom-width:5px;
+  background:#e2e9df;
+  color:#334b3a;
+  font-family:"Trebuchet MS",Arial,sans-serif;
+  font-size:10px;
+  font-weight:900;
+}
+.mine-keyboard .tab-key { width:58px; min-width:58px; max-width:58px; flex-basis:58px; }
+.mine-keyboard .backspace-key { width:66px; min-width:66px; max-width:66px; flex-basis:66px; }
+.mine-keyboard .caps-key { width:68px; min-width:68px; max-width:68px; flex-basis:68px; }
+.mine-keyboard .enter-key { width:70px; min-width:70px; max-width:70px; flex-basis:70px; }
+.mine-keyboard .keycap-shift {
+  width:84px;
+  min-width:84px;
+  max-width:84px;
+  height:48px;
+  min-height:48px;
+  flex:0 0 84px;
+}
+.mine-keyboard .keycap-shift.is-next {
+  background:#ffe18a;
+  border-color:#8e5a12;
+  color:#3d2a0e;
+  box-shadow:0 0 0 3px rgba(255,194,67,.7),0 0 0 6px rgba(255,255,255,.92),0 4px 0 rgba(0,0,0,.18);
+}
+.mine-keyboard .keycap-shift .shift-arrow {
+  font-size:23px;
+  line-height:18px;
+}
+.mine-keyboard .keycap-shift .shift-label {
+  font-size:8px;
+}
+.mine-keyboard .mine-keycap-shift {
+  min-height:13px;
+  font-size:11px;
+}
+.mine-keyboard .mine-keycap-main {
+  min-height:18px;
+  font-size:15px;
+}
+.mine-keyboard .keycap.is-next {
+  border-color:#8e5a12;
+  background:#ffe18a;
+  box-shadow:0 0 0 3px rgba(255,194,67,.7),0 0 0 6px rgba(255,255,255,.92),0 4px 0 rgba(0,0,0,.18);
+}
+.mine-keyboard .space-row {
+  width:100%;
+  justify-content:center;
+}
+.mine-keyboard .space-row .key-space {
+  width:300px;
+  min-width:220px;
+  max-width:300px;
+  height:39px;
+  min-height:39px;
+  flex:0 1 300px;
+}
+@media (max-width:760px) {
+  .mine-keyboard-map { overflow-x:auto; }
+  .mine-keyboard .mine-keyboard-row { justify-content:flex-start; margin-left:0; margin-right:0; }
+}
+@media (max-width:520px) {
+  .mine-keyboard .keycap {
+    width:35px;
+    min-width:35px;
+    max-width:35px;
+    height:43px;
+    min-height:43px;
+    flex-basis:35px;
+  }
+  .mine-keyboard .tab-key { width:46px; min-width:46px; max-width:46px; flex-basis:46px; }
+  .mine-keyboard .backspace-key { width:56px; min-width:56px; max-width:56px; flex-basis:56px; }
+  .mine-keyboard .caps-key { width:54px; min-width:54px; max-width:54px; flex-basis:54px; }
+  .mine-keyboard .enter-key { width:55px; min-width:55px; max-width:55px; flex-basis:55px; }
+  .mine-keyboard .keycap-shift { width:68px; min-width:68px; max-width:68px; flex-basis:68px; }
+  .mine-keyboard .mine-keycap-main { font-size:13px; }
+}
