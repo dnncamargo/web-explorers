@@ -245,7 +245,7 @@ if (!browserPath) {
         if (route === "mine.html") {
           assert.equal(await evaluate('document.querySelectorAll(".mine-keyboard").length'), 1, "Mine displays the complete World 1-style ABNT2 keyboard");
           assert.equal(await evaluate('document.querySelectorAll(".mine-keyboard .keycap-shift").length'), 2, "Mine shows left and right Shift keys");
-          assert.equal(await evaluate('document.querySelectorAll(".mine-keyboard .number-row [data-key]").length'), 14, "the number row includes quote, ten digits, minus, equals and Backspace");
+          assert.equal(await evaluate('document.querySelectorAll(".mine-keyboard .number-row .keycap").length'), 14, "the number row includes quote, ten digits, minus, equals and Backspace");
           assert.equal(await evaluate('Array.from("qwertyuiopasdfghjklçzxcvbnm").every((key) => !!Array.from(document.querySelectorAll(".mine-keyboard [data-key]")).find((item) => item.dataset.key === key))'), true, "all letters and Ç are displayed");
           assert.equal(await evaluate('!!document.querySelector(".mine-keyboard [data-key=acute]")'), true, "the acute key is shown beside P");
           assert.equal(await evaluate('!!document.querySelector(".mine-keyboard [data-key=tilde]")'), true, "the tilde/circumflex key is shown beside Ç");
