@@ -128,6 +128,7 @@ assert.ok(donkeyHome.includes('href="../../index.html"'), "Donkey Kong's return 
 assert.ok(donkeyHome.includes('data-page="map"'), "Donkey Kong opens on its own world map");
 assert.ok(read("activities/donkey-kong/tests/validate-activity.mjs").includes("21 ordered checkpoints"), "Donkey Kong has a dedicated activity validation suite");
 assert.ok(read("activities/donkey-kong/tests/validate-radio.mjs").includes("muted fallback"), "Donkey Kong has a dedicated radio autoplay regression suite");
+assert.ok(read("activities/donkey-kong/tests/validate-activity.mjs").includes("world reset preserves progress in other worlds"), "Donkey Kong tests isolated world reset behavior");
 
 
 assert.ok(read("activities/yoshi-typing/tests/validate-activity.mjs").includes("assets/js/world-data.js"), "the independent Yoshi validation suite remains in place");
