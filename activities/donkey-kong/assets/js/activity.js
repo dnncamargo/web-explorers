@@ -356,7 +356,7 @@
       '</p></div>';
   }
 
-  function renderMineSequenceKeyboard(stage, nextChar, pendingDeadKey) {
+  function renderMineSequenceKeyboard(stage, nextChar, pendingDeadKey, correctionNeeded) {
     const numberFingers = {
       quote:"left-pinky",
       "1":"left-pinky","2":"left-ring","3":"left-middle","4":"left-index","5":"left-index",
@@ -420,8 +420,10 @@
     function renderLetter(keyId) {
       return renderKey(keyId,{home:"asdfghjklç".includes(keyId),bump:keyId==="f"||keyId==="j"});
     }
-    function renderControl(label,className) {
-      return '<span class="keycap mine-control-key '+className+'">'+label+'</span>';
+    function renderControl(label,className,keyId) {
+      const active=keyId==="backspace" && correctionNeeded;
+      return '<span class="keycap mine-control-key '+className+(active?" is-next":"")+'"'+
+        (keyId?' data-key="'+escapeHTML(keyId)+'"':'')+'>'+label+'</span>';
     }
     function renderShift(side) {
       const finger=side==="left"?"left-pinky":"right-pinky";
@@ -429,7 +431,7 @@
     }
     const numberRow=[
       renderKey("quote"),...Array.from("1234567890").map(k=>renderKey(k)),
-      renderKey("-"),renderKey("="),renderControl("⌫","backspace-key")
+      renderKey("-"),renderKey("="),renderControl("⌫","backspace-key","backspace")
     ].join("");
     const topRow=[
       renderControl("TAB","tab-key"),
@@ -461,8 +463,8 @@
       '</section>';
   }
 
-  function renderSequenceKeyboard(stage, nextChar, pendingDeadKey) {
-    if (document.body.dataset.world === "mine") return renderMineSequenceKeyboard(stage, nextChar, pendingDeadKey);
+  function renderSequenceKeyboard(stage, nextChar, pendingDeadKey, correctionNeeded) {
+    if (document.body.dataset.world === "mine") return renderMineSequenceKeyboard(stage, nextChar, pendingDeadKey, correctionNeeded);
     return renderCampSequenceKeyboard(stage);
   }
 
@@ -472,11 +474,14 @@
     let target = "";
     let stage = null;
     let pendingDeadKey = false;
+    let correctionNeeded = false;
+    let hadCorrection = false;
     checkButton.hidden = true;
     continueButton.disabled = true;
     area.innerHTML = '<div class="sequence-progress" id="sequence-progress"></div>' +
       '<h3 class="sequence-instruction" id="sequence-instruction"></h3>' +
       '<p class="sequence-hint" id="sequence-hint"></p>' +
+      '<span class="sequence-tip" id="sequence-tip" role="status" aria-live="polite"></span>' +
       '<div class="target-row" id="sequence-target" aria-label="Sequência que será digitada"></div>' +
       '<div id="sequence-keyboard-host"></div>' +
       '<label class="input-label" for="sequence-input">Digite aqui com o teclado físico</label>' +
@@ -485,6 +490,7 @@
     const progressLabel = area.querySelector("#sequence-progress");
     const instruction = area.querySelector("#sequence-instruction");
     const hint = area.querySelector("#sequence-hint");
+    const liveTip = area.querySelector("#sequence-tip");
     const targetRow = area.querySelector("#sequence-target");
     const keyboardHost = area.querySelector("#sequence-keyboard-host");
 
@@ -493,22 +499,62 @@
       target = normalize(stage.target);
       accepted = 0;
       pendingDeadKey = false;
+      correctionNeeded = false;
+      hadCorrection = false;
       input.disabled = false;
       input.value = "";
       progressLabel.textContent = "ETAPA " + (stageIndex + 1) + "/" + checkpoint.stages.length;
       instruction.textContent = stage.instruction || ("Digite: " + target);
       hint.textContent = stage.hint || checkpoint.hint || "";
       targetRow.innerHTML = renderTarget(target, 0);
-      keyboardHost.innerHTML = renderSequenceKeyboard(stage, Array.from(target)[0], pendingDeadKey);
+      keyboardHost.innerHTML = renderSequenceKeyboard(stage, Array.from(target)[0], pendingDeadKey, correctionNeeded);
+      updateSequenceTip(Array.from(target)[0]);
       input.focus();
     }
 
-    function isAccentOutput(char) {
-      return /[áéíóúÁÉÍÓÚâêîôûÂÊÎÔÛãõÃÕàèìòùÀÈÌÒÙ]/u.test(char || "");
+    function updateSequenceTip(expected, isCorrection, isPendingDeadKey) {
+      if (isCorrection) {
+        liveTip.textContent = "Pressione Backspace até voltar ao trecho correto da escrita.";
+        return;
+      }
+      if (expected === undefined) {
+        liveTip.textContent = "Sequência completa.";
+        return;
+      }
+      if (isPendingDeadKey) {
+        const vowel = expected.normalize("NFD").slice(0, 1).toLocaleUpperCase("pt-BR");
+        liveTip.textContent = "Agora pressione a vogal " + vowel + " para completar o acento.";
+        return;
+      }
+      if (target === "O Sapo saltou sobre a Abelha." && expected === "O") {
+        liveTip.textContent = "Segure a tecla shift, mantenha-a pressionada e pressione O.";
+        return;
+      }
+      if (/[A-ZÁÉÍÓÚÂÊÔÃÕ]/u.test(expected)) {
+        liveTip.textContent = "Segure a tecla Shift, mantenha-a pressionada e pressione " + expected + ".";
+        return;
+      }
+      if (/[a-zç]/u.test(expected)) {
+        liveTip.textContent = "Pressione a letra " + expected.toLocaleUpperCase("pt-BR") + " sem segurar Shift.";
+        return;
+      }
+      if (expected === " ") {
+        liveTip.textContent = "Pressione a barra de espaço.";
+        return;
+      }
+      const symbolTips = {
+        "!":"Segure Shift e pressione 1 para produzir !.",
+        "&":"Segure Shift e pressione 7 para produzir &.",
+        "+":"Segure Shift e pressione = para produzir +.",
+        ",":"Pressione a tecla de vírgula sem Shift.",
+        ".":"Pressione a tecla de ponto sem Shift."
+      };
+      liveTip.textContent = symbolTips[expected] || ("Próximo caractere: " + expected + ".");
     }
 
     function reject(event, message) {
       event.preventDefault();
+      liveTip.textContent = message;
       setFeedback(feedback, message, "gentle");
     }
 
@@ -518,6 +564,7 @@
         reject(event, "Use o teclado físico para praticar. Sem pressa.");
         return;
       }
+      if (correctionNeeded) return;
       const expected = Array.from(target)[accepted];
       if (expected === undefined || event.key === "Backspace" || event.key === "Tab" || event.key === "Shift") return;
 
@@ -532,7 +579,8 @@
           return;
         }
         pendingDeadKey = true;
-        keyboardHost.innerHTML = renderSequenceKeyboard(stage, expected, pendingDeadKey);
+        keyboardHost.innerHTML = renderSequenceKeyboard(stage, expected, pendingDeadKey, correctionNeeded);
+        updateSequenceTip(expected, false, true);
         return;
       }
 
@@ -567,9 +615,6 @@
         return;
       }
 
-      if (!isAccentOutput(expected) && event.key.length === 1 && stage.caseSensitive && event.key !== expected) {
-        reject(event, "Confira se a tecla precisa de Shift ou se deve ser digitada sem Shift.");
-      }
     });
 
     input.addEventListener("input", () => {
@@ -578,13 +623,21 @@
       let prefixLength = 0;
       while (prefixLength < chars.length && prefixLength < Array.from(target).length &&
         chars[prefixLength] === Array.from(target)[prefixLength]) prefixLength += 1;
-      accepted = value === target || target.startsWith(value) ? chars.length : prefixLength;
+      const isValidPrefix = value === target || target.startsWith(value);
+      correctionNeeded = !isValidPrefix;
+      accepted = isValidPrefix ? chars.length : prefixLength;
       pendingDeadKey = false;
       targetRow.innerHTML = renderTarget(target, accepted);
-      keyboardHost.innerHTML = renderSequenceKeyboard(stage, Array.from(target)[accepted], pendingDeadKey);
-      if (value !== target && !target.startsWith(value)) {
-        setFeedback(feedback, "Esta sequência ainda não corresponde ao exemplo. Corrija a tecla e continue.", "gentle");
+      keyboardHost.innerHTML = renderSequenceKeyboard(stage, Array.from(target)[accepted], pendingDeadKey, correctionNeeded);
+      updateSequenceTip(Array.from(target)[accepted], correctionNeeded, false);
+      if (correctionNeeded) {
+        hadCorrection = true;
+        setFeedback(feedback, "Esta sequência saiu do caminho correto. Use Backspace para apagar o trecho digitado a mais.", "gentle");
         return;
+      }
+      if (hadCorrection) {
+        setFeedback(feedback, "Você voltou ao ponto correto. Continue a digitação.", "good");
+        hadCorrection = false;
       }
       if (value === target) {
         input.disabled = true;
