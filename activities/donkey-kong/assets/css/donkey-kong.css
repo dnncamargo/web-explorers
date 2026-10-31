@@ -754,3 +754,35 @@ body[data-world="mine"] .mine-keyboard-note {
 }
 
 .mine-keyboard .mine-keyboard-row { min-width:0; max-width:none; }
+
+
+.sequence-tip {
+  display:block;
+  min-height:1.4em;
+  margin:-4px 0 12px;
+  padding:8px 11px;
+  border-left:4px solid #c58a2d;
+  background:rgba(255,226,164,.12);
+  color:#fff0c7;
+  font-size:13px;
+  font-weight:700;
+  line-height:1.5;
+}
+body[data-world="mine"] .sequence-tip {
+  border-left-color:#ffc45d;
+  background:rgba(255,203,111,.13);
+  color:#ffe7b3;
+}
+body[data-world="camp"] .sequence-tip {
+  border-left-color:#73d4ef;
+  background:rgba(159,226,245,.12);
+  color:#d8f7ff;
+}
+.mine-keyboard .backspace-key.is-next {
+  z-index:3;
+  border-color:#a54a2f;
+  background:#ffd0b8;
+  color:#612819;
+  box-shadow:0 0 0 3px rgba(255,145,100,.68),0 0 0 6px rgba(255,255,255,.92),0 4px 0 rgba(0,0,0,.18);
+  transform:translateY(-3px) scale(1.04);
+}
