@@ -354,8 +354,11 @@
       '<p class="sequence-keyboard-note">' +
       (stage.altGrCodes ? 'ALTGR + W produz ? neste teclado ABNT2.' :
         stage.symbolCodes ? 'SHIFT + 1 = ! · SHIFT + 7 = & · SHIFT + = = +' :
-          stage.deadKeyShift === true ? 'SHIFT + ^ prepara o circunflexo; depois digite a vogal.' :
-            'Pressione primeiro a tecla do acento e depois a vogal.') +
+          stage.requireNoShiftSymbols ? 'Ponto e vírgula são digitados sem Shift.' :
+            stage.deadKeyShift === true ? 'SHIFT + ^ prepara o circunflexo; depois digite a vogal.' :
+              /[áéíóúÁÉÍÓÚãõÃÕàèìòùÀÈÌÒÙ]/u.test(target) ? '´ e ~ são preparados sem Shift; depois digite a vogal.' :
+                stage.shiftLetters ? 'Segure Shift nas letras maiúsculas e solte para as minúsculas.' :
+                  'Observe as teclas destacadas e digite na ordem indicada.') +
       '</p></div>';
   }
 
@@ -440,6 +443,10 @@
           reject(event, "Use " + combo + " para produzir " + expected + ".");
           return;
         }
+      }
+      if (stage.requireNoShiftSymbols && /[.,]/u.test(expected || "") && event.shiftKey) {
+        reject(event, "Ponto e vírgula são digitados sem Shift nesta etapa.");
+        return;
       }
 
       if (/[A-ZÁÉÍÓÚÂÊÔÃÕ]/u.test(expected || "") && stage.shiftLetters && !event.shiftKey) {
