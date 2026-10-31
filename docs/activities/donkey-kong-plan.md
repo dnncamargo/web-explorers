@@ -443,6 +443,8 @@ Os exercícios de Enter, Delete, AltGr, Ctrl, clipboard e undo/redo avançam aut
 
 - O teclado mostra todas as teclas físicas do ABNT2: fileira numérica completa, todas as letras e Ç, acentos, colchetes, barras, pontuação, os dois Shift, teclas auxiliares e barra de espaço. Mantém o desenho e as cores por dedo do Mundo 1.
 - O Shift aparece com seta para cima nos dois lados. As duas teclas Shift brilham juntas com a tecla correspondente quando uma maiúscula ou símbolo exige o modificador.
+- Um `span#sequence-tip` separado da orientação geral mostra uma dica viva e acompanha a próxima tecla/caractere, espaço, símbolo ou acento; na primeira letra `O` de `O Sapo saltou sobre a Abelha.`, exibe literalmente: “Segure a tecla shift, mantenha-a pressionada e pressione O.”.
+- Quando o aluno digita um caractere incorreto, o texto digitado permanece editável, o teclado destaca exclusivamente Backspace e a dica pede para apagar até voltar ao prefixo correto. O destaque de Backspace desaparece assim que o conteúdo volta a ser um prefixo válido; então a dica e o destaque da próxima tecla retomam o avanço.
 - A posição segue o ABNT2: agudo `´` à direita do P; til/circunflexo `~`/`^` à direita do Ç; vírgula e ponto à direita do M.
 - A fileira de números apresenta a camada Shift do ABNT2: `! @ # $ % ¨ & * ( ) _ +`. As demais fileiras mostram acento agudo/crase, colchetes/chaves, til/circunflexo, barra vertical, vírgula/menor, ponto/maior, ponto e vírgula/dois-pontos e barra/interrogação.
 - As duas setas de Shift brilham simultaneamente à tecla que precisa do modificador. Para acentos, o realce começa na tecla morta e passa para a vogal depois do primeiro toque.
