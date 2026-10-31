@@ -50,7 +50,9 @@ assert.ok(data.worlds.mine.checkpoints[3].stages.some(({ target }) => target ===
 assert.ok(["Árvore","Érica","Índia","Óscar","Úrsula"].every((word) => data.worlds.mine.checkpoints[4].stages.some(({ target }) => target === word)), "fifth Mine checkpoint practices all acute uppercase vowels in words");
 assert.ok(["Ângela","Ênio","Ônibus"].every((word) => data.worlds.mine.checkpoints[5].stages.some(({ target }) => target === word)), "sixth Mine checkpoint practices all uppercase circumflex vowels in words");
 assert.ok(data.worlds.mine.checkpoints[6].stages.length >= 3, "seventh Mine checkpoint mixes accents and symbols");
-assert.ok(data.worlds.mine.checkpoints[1].stages.some(({ symbolCodes }) => symbolCodes && symbolCodes["!"] === "Digit1" && symbolCodes["&"] === "Digit7" && symbolCodes["+"] === "Equal"), "ABNT2 shifted symbols are tied to the correct physical keys");
+assert.ok(data.worlds.mine.checkpoints[1].stages.some(({ symbolCodes }) => symbolCodes && symbolCodes["!"] === "Digit1"), "Shift+1 produces the exclamation mark");
+assert.ok(data.worlds.mine.checkpoints[1].stages.some(({ symbolCodes }) => symbolCodes && symbolCodes["&"] === "Digit7"), "Shift+7 produces the ampersand");
+assert.ok(data.worlds.mine.checkpoints[1].stages.some(({ symbolCodes }) => symbolCodes && symbolCodes["+"] === "Equal"), "Shift+= produces the plus sign");
 assert.ok(data.worlds.mine.scene && data.worlds.mine.characters.length >= 3, "Mine has a game-stage scene and character art");
 assert.ok(data.worlds.jungle.scene && data.worlds.jungle.characters.some(({ alt }) => /Donkey Kong e Diddy/.test(alt)), "Jungle includes DK and Diddy character art");
 assert.ok(data.worlds.camp.scene && data.worlds.camp.characters.length >= 4, "Camp has a game-stage scene and multiple characters");
