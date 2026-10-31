@@ -148,10 +148,22 @@
   function renderGuide(world, host) {
     const guide = world.id === "jungle" ? keyboardGuide() :
       '<div class="guide-steps"><div class="guide-step"><strong>1. Veja a demonstração</strong><span>Leia a instrução e confira a combinação antes de começar.</span></div><div class="guide-step"><strong>2. Use o teclado físico</strong><span>O campo precisa estar focado. O aplicativo verifica o resultado da edição.</span></div><div class="guide-step"><strong>3. Repita sem pressa</strong><span>Erros não retiram pontos nem apagam o progresso já concluído.</span></div></div>';
+    const completed = progress.checkpoints[world.id] || 0;
     host.innerHTML = '<section class="guide-card"><p class="eyebrow pixel">MUNDO ' + world.number + ' · ' + world.checkpoints.length + ' CHECKPOINTS</p>' +
-      '<h2>Antes de começar</h2><p>' + escapeHTML(world.guide) + '</p>' + guide +
-      '<div class="guide-actions"><button class="button" id="start-world" type="button">Começar checkpoints</button><a class="button secondary" href="index.html">Voltar ao mapa</a></div></section>';
+      '<h2>Antes de começar</h2><p>' + escapeHTML(world.guide) + '</p>' +
+      '<p class="world-reset-status">' + completed + ' de ' + world.checkpoints.length + ' checkpoints concluídos neste mundo.</p>' +
+      guide +
+      '<div class="guide-actions"><button class="button" id="start-world" type="button">Começar checkpoints</button>' +
+      '<button class="button danger" id="reset-world" type="button"' + (completed === 0 ? ' disabled' : '') + '>↻ Resetar mundo</button>' +
+      '<a class="button secondary" href="index.html">Voltar ao mapa</a></div></section>';
     host.querySelector("#start-world").addEventListener("click", () => renderCheckpoint(world, host));
+    host.querySelector("#reset-world").addEventListener("click", () => {
+      if (!STORE.resetWorld(progress, world.id)) return;
+      if (!global.confirm("Resetar todo o progresso de " + world.title + "? Os outros mundos e a missão final serão preservados.")) return;
+      STORE.resetWorld(progress, world.id);
+      saveProgress();
+      renderGuide(world, host);
+    });
   }
 
   function renderDots(count, total) {
@@ -182,7 +194,7 @@
       '<h2>' + escapeHTML(checkpoint.title) + '</h2><p class="instruction">' + escapeHTML(checkpoint.instruction) + '</p>' +
       '<details class="demo-box"><summary>Ver demonstração e dica</summary><p>' + escapeHTML(checkpoint.hint) + '</p></details>' +
       '<div id="exercise-area"></div><p id="exercise-feedback" class="feedback" role="status" aria-live="polite">Faça a atividade usando o teclado físico, sem pressa.</p>' +
-      '<div class="exercise-actions"><button id="repeat-checkpoint" class="button secondary" type="button">Repetir checkpoint</button>' +
+      '<div class="exercise-actions"><button id="reset-activity" class="button danger" type="button">↻ Resetar atividade</button>' +
       '<button id="check-action" class="button secondary" type="button">Conferir etapa</button>' +
       '<button id="continue-checkpoint" class="button" type="button" disabled>Continuar</button></div>' +
       '<p class="exercise-note">Não há cronômetro nem punição por erro. O sistema verifica texto, seleção e operações observáveis; não identifica os dedos usados.</p></section>';
@@ -191,7 +203,7 @@
     const feedback = host.querySelector("#exercise-feedback");
     const checkButton = host.querySelector("#check-action");
     const continueButton = host.querySelector("#continue-checkpoint");
-    const repeatButton = host.querySelector("#repeat-checkpoint");
+    const resetButton = host.querySelector("#reset-activity");
     let completed = false;
 
     function complete() {
@@ -213,8 +225,13 @@
       renderCheckpoint(world, host);
     }
     continueButton.addEventListener("click", continueNext);
-    repeatButton.addEventListener("click", () => {
-      if (!completed) renderCheckpoint(world, host);
+    resetButton.addEventListener("click", () => {
+      if (completed) {
+        if (!global.confirm("Resetar esta atividade? Somente a conclusão deste checkpoint será desfeita.")) return;
+        progress.checkpoints[world.id] = number - 1;
+        saveProgress();
+      }
+      renderCheckpoint(world, host);
     });
 
     if (checkpoint.kind === "typing") renderTyping(checkpoint, area, feedback, checkButton, continueButton, complete);
@@ -728,7 +745,7 @@
       '<h2>Recupere os versos</h2><p>O poema foi alterado em oito pontos. Leia cada missão, selecione o trecho atual e corrija diretamente no texto. Use os atalhos praticados nas etapas anteriores.</p>' +
       '<div class="poem-progress" id="poem-progress" aria-live="polite"></div>' +
       '<div class="boss-step"><strong id="poem-step-title"></strong><p id="poem-step-instruction" class="instruction"></p>' +
-      '<div class="exercise-actions"><button id="select-poem-target" class="button secondary small" type="button">Selecionar trecho atual</button><button id="check-poem" class="button small" type="button">Conferir correção</button></div></div>' +
+      '<div class="exercise-actions"><button id="select-poem-target" class="button secondary small" type="button">Selecionar trecho atual</button><button id="check-poem" class="button small" type="button">Conferir correção</button><button id="reset-boss" class="button danger small" type="button">↻ Resetar atividade</button></div></div>' +
       '<div class="poem-layout"><div><label class="input-label" for="poem-editor">Texto para editar</label><textarea id="poem-editor" class="poem-editor" spellcheck="false"></textarea>' +
       '<p id="poem-feedback" class="feedback" role="status" aria-live="polite"></p></div>' +
       '<details class="poem-reference" open><summary>Consultar o poema de referência</summary><pre class="poem-reference-content" id="poem-reference"></pre></details></div>' +
@@ -790,6 +807,12 @@
       updateStep();
     });
     selectButton.addEventListener("click", selectCurrent);
+    host.querySelector("#reset-boss").addEventListener("click", () => {
+      if (!global.confirm("Resetar a missão final? O poema voltará ao texto com os oito erros iniciais.")) return;
+      STORE.resetBoss(progress);
+      saveProgress();
+      renderBoss();
+    });
     checkButton.addEventListener("click", () => {
       saveDraft();
       const index = updateStep();
@@ -817,7 +840,13 @@
     saveProgress();
     host.innerHTML = '<section class="world-finish"><p class="eyebrow pixel">CHEFE FINAL DERROTADO</p><div class="hero-icon" aria-hidden="true">👑</div>' +
       '<h2>A Canção do Exílio foi recuperada!</h2><p>Você corrigiu os oito trechos e conferiu o poema integral. A aventura de consolidação está concluída.</p>' +
-      '<div class="finish-actions"><a class="button" href="index.html">Voltar ao mapa</a><a class="button secondary" href="../../index.html">Catálogo de atividades</a></div></section>';
+      '<div class="finish-actions"><button id="reset-boss-finish" class="button danger" type="button">↻ Resetar atividade</button><a class="button" href="index.html">Voltar ao mapa</a><a class="button secondary" href="../../index.html">Catálogo de atividades</a></div></section>';
+    host.querySelector("#reset-boss-finish").addEventListener("click", () => {
+      if (!global.confirm("Resetar a missão final e apagar as correções do poema?")) return;
+      STORE.resetBoss(progress);
+      saveProgress();
+      renderBoss();
+    });
   }
 
   const page = document.body.dataset.page;
