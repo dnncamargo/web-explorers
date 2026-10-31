@@ -752,3 +752,5 @@ body[data-world="mine"] .mine-keyboard-note {
   .mine-keyboard .keycap-shift { width:68px; min-width:68px; max-width:68px; flex-basis:68px; }
   .mine-keyboard .mine-keycap-main { font-size:13px; }
 }
+
+.mine-keyboard .mine-keyboard-row { min-width:0; max-width:none; }
