@@ -552,8 +552,8 @@
       liveTip.textContent = symbolTips[expected] || ("Próximo caractere: " + expected + ".");
     }
 
-    function reject(event, message) {
-      event.preventDefault();
+    function reject(event, message, preventInput) {
+      if (preventInput) event.preventDefault();
       liveTip.textContent = message;
       setFeedback(feedback, message, "gentle");
     }
@@ -561,7 +561,7 @@
     input.addEventListener("keydown", (event) => {
       if (event.isComposing || event.metaKey || event.repeat) return;
       if (!event.isTrusted) {
-        reject(event, "Use o teclado físico para praticar. Sem pressa.");
+        reject(event, "Use o teclado físico para praticar. Sem pressa.", true);
         return;
       }
       if (correctionNeeded) return;
@@ -573,9 +573,12 @@
         if (/[âêîôûÂÊÎÔÛ]/u.test(expected || "")) requiredShift = true;
         if (/[áéíóúÁÉÍÓÚãõÃÕàèìòùÀÈÌÒÙ]/u.test(expected || "")) requiredShift = false;
         if (requiredShift !== undefined && event.shiftKey !== requiredShift) {
+          pendingDeadKey = true;
+          keyboardHost.innerHTML = renderSequenceKeyboard(stage, expected, pendingDeadKey, correctionNeeded);
+          updateSequenceTip(expected, false, true);
           reject(event, requiredShift
             ? "Para preparar ^, segure Shift. Depois solte ou mantenha conforme a letra que será escrita."
-            : "Prepare este acento sem Shift; use Shift somente quando a vogal precisar ser maiúscula.");
+            : "Prepare este acento sem Shift; use Shift somente quando a vogal precisar ser maiúscula.", false);
           return;
         }
         pendingDeadKey = true;
@@ -588,7 +591,7 @@
         const altGraph = (typeof event.getModifierState === "function" && event.getModifierState("AltGraph")) ||
           (event.altKey && event.code === stage.altGrCodes[expected]);
         if (!altGraph || event.code !== stage.altGrCodes[expected]) {
-          reject(event, "Use AltGr + W para produzir o ponto de interrogação.");
+          reject(event, "Use AltGr + W para produzir o ponto de interrogação.", false);
         }
         return;
       }
@@ -597,21 +600,21 @@
         const code = stage.symbolCodes[expected];
         if (!event.shiftKey || event.code !== code) {
           const combo = expected === "!" ? "Shift + 1" : expected === "&" ? "Shift + 7" : "Shift + =";
-          reject(event, "Use " + combo + " para produzir " + expected + ".");
+          reject(event, "Use " + combo + " para produzir " + expected + ".", false);
           return;
         }
       }
       if (stage.requireNoShiftSymbols && /[.,]/u.test(expected || "") && event.shiftKey) {
-        reject(event, "Ponto e vírgula são digitados sem Shift nesta etapa.");
+        reject(event, "Ponto e vírgula são digitados sem Shift nesta etapa.", false);
         return;
       }
 
       if (/[A-ZÁÉÍÓÚÂÊÔÃÕ]/u.test(expected || "") && stage.shiftLetters && !event.shiftKey) {
-        reject(event, "Segure Shift enquanto digita a letra maiúscula.");
+        reject(event, "Segure Shift enquanto digita a letra maiúscula.", false);
         return;
       }
       if (/[a-z]/u.test(expected || "") && stage.caseSensitive && event.shiftKey) {
-        reject(event, "Solte Shift para digitar esta letra minúscula.");
+        reject(event, "Solte Shift para digitar esta letra minúscula.", false);
         return;
       }
 
