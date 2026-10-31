@@ -23,23 +23,44 @@ assert.deepEqual(
 );
 assert.equal(data.worlds.jungle.checkpoints.length, 8, "Jungle has eight checkpoints");
 assert.equal(data.worlds.mine.checkpoints.length, 7, "Mine has seven checkpoints");
-assert.equal(data.worlds.camp.checkpoints.length, 6, "Camp has six checkpoints");
+assert.equal(data.worlds.camp.checkpoints.length, 7, "Camp has seven checkpoints");
 assert.equal(
   Object.values(data.worlds).reduce((sum, world) => sum + world.checkpoints.length, 0),
-  21,
-  "the three worlds contain 21 checkpoints"
+  22,
+  "the three worlds contain 22 checkpoints"
 );
 
 assert.equal(data.worlds.jungle.checkpoints[0].target, "ASDF FDSA", "the first checkpoint practices the complete left home row");
 assert.equal(data.worlds.jungle.checkpoints[0].title, "Mão esquerda", "the old second checkpoint is now the first exercise");
-assert.equal(data.worlds.mine.checkpoints[0].requireShift, true, "the introductory Shift checkpoint requires the Shift key");
+assert.equal(data.worlds.mine.checkpoints.length, 7, "Mine keeps seven planned checkpoints");
+assert.ok(data.worlds.mine.checkpoints.every(({ kind }) => kind === "typing-sequence"), "all Mine checkpoints use automatic typing sequences");
+assert.deepEqual(
+  data.worlds.mine.checkpoints.map(({ title }) => title),
+  ["Maiúsculas e minúsculas", "Shift, números e símbolos", "Acentos sem Shift · minúsculas", "Acento com Shift · minúsculas", "Acentos sem Shift · maiúsculas", "Acentos com Shift · maiúsculas", "Misturando acentos e símbolos"],
+  "Mine follows the seven-step Shift and accent progression"
+);
+assert.ok(data.worlds.mine.checkpoints[0].stages.some(({ target }) => target === "diddy") && data.worlds.mine.checkpoints[0].stages.some(({ target }) => target === "DIDDY"), "first Mine checkpoint distinguishes lowercase and uppercase");
+assert.ok(data.worlds.mine.checkpoints[1].stages.some(({ target }) => target === "! & +"), "second Mine checkpoint exercises Shift symbols");
+assert.ok(data.worlds.mine.checkpoints[2].stages.some(({ target }) => target === "café"), "third Mine checkpoint begins with unshifted acute accents");
+assert.ok(data.worlds.mine.checkpoints[3].stages.some(({ target }) => target === "você"), "fourth Mine checkpoint practices Shift circumflex with lowercase vowels");
+assert.ok(data.worlds.mine.checkpoints[4].stages.some(({ target }) => target === "Á É Í Ó Ú"), "fifth Mine checkpoint combines unshifted acute with uppercase vowels");
+assert.ok(data.worlds.mine.checkpoints[5].stages.some(({ target }) => target === "Â Ê Ô"), "sixth Mine checkpoint practices Shift circumflex with uppercase vowels");
+assert.ok(data.worlds.mine.checkpoints[6].stages.length >= 3, "seventh Mine checkpoint mixes accents and symbols");
+assert.ok(data.worlds.mine.checkpoints[1].stages.some(({ symbolCodes }) => symbolCodes && symbolCodes["!"] === "Digit1" && symbolCodes["&"] === "Digit7" && symbolCodes["+"] === "Equal"), "ABNT2 shifted symbols are tied to the correct physical keys");
+assert.ok(data.worlds.mine.scene && data.worlds.mine.characters.length >= 3, "Mine has a game-stage scene and character art");
+assert.ok(data.worlds.jungle.scene && data.worlds.jungle.characters.some(({ alt }) => /Donkey Kong e Diddy/.test(alt)), "Jungle includes DK and Diddy character art");
+assert.ok(data.worlds.camp.scene && data.worlds.camp.characters.length >= 4, "Camp has a game-stage scene and multiple characters");
+assert.equal(data.worlds.camp.checkpoints[2].title, "O ponto de interrogação", "AltGr+W is taught in Camp, not Mine");
+assert.equal(data.worlds.camp.checkpoints[2].altGrCodes["?"], "KeyW", "the question mark uses AltGr+W");
+assert.equal(data.worlds.camp.checkpoints[3].kind, "navigation", "Ctrl text selection belongs to Camp");
+assert.equal(data.worlds.mine.checkpoints[0].requireShift, undefined, "case distinction is taught directly instead of only requiring Shift");
 assert.equal(data.worlds.jungle.checkpoints[1].target, "JKLÇ ÇLKJ", "the right home row includes Ç");
 assert.ok(data.worlds.jungle.checkpoints.every(({ target }) => !/[áàâãéêíóôõú,;.!?]/i.test(target)), "Jungle targets do not demand accents or punctuation");
 assert.ok(data.worlds.mine.checkpoints.some(({ target }) => target === "café irmã água"), "Mine practices real accented words");
 assert.equal(data.worlds.camp.checkpoints[1].key, "Delete", "Camp teaches forward delete");
 assert.ok(data.worlds.camp.checkpoints[1].instruction.includes("Lupa (Launcher) + Backspace"), "Delete instruction uses the Chromebook shortcut confirmed by the teacher");
-assert.equal(data.worlds.camp.checkpoints[4].expectedUndo, "DK KONG", "undo target is defined");
-assert.equal(data.worlds.camp.checkpoints[4].expectedRedo, "DK KONG!", "redo target is defined");
+assert.equal(data.worlds.camp.checkpoints[5].expectedUndo, "DK KONG", "undo target is defined");
+assert.equal(data.worlds.camp.checkpoints[5].expectedRedo, "DK KONG!", "redo target is defined");
 
 const letters = "abcdefghijklmnopqrstuvwxyzç";
 for (const letter of letters) assert.ok(data.fingers[letter], "finger guidance exists for " + letter);
@@ -147,4 +168,4 @@ assert.equal(memorySave.mode, "memory", "memory fallback is reported");
 assert.equal(memorySave.persisted, false, "memory fallback does not claim durable storage");
 assert.equal(memoryStore.load().progress.checkpoints.camp, 0, "new memory-only store starts clean");
 
-console.log("OK: 21 ordered checkpoints, ABNT2 finger map, progress migration, Delete/undo/redo targets, and eight poem corrections");
+console.log("OK: 22 ordered checkpoints, automatic Shift/accent sequences, AltGr+W, world art metadata, progress migration, Delete/undo/redo and poem corrections");
