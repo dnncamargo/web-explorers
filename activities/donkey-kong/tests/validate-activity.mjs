@@ -56,11 +56,13 @@ assert.equal(data.worlds.camp.checkpoints[3].kind, "navigation", "Ctrl text sele
 assert.equal(data.worlds.mine.checkpoints[0].requireShift, undefined, "case distinction is taught directly instead of only requiring Shift");
 assert.equal(data.worlds.jungle.checkpoints[1].target, "JKLÇ ÇLKJ", "the right home row includes Ç");
 assert.ok(data.worlds.jungle.checkpoints.every(({ target }) => !/[áàâãéêíóôõú,;.!?]/i.test(target)), "Jungle targets do not demand accents or punctuation");
-assert.ok(data.worlds.mine.checkpoints.some(({ target }) => target === "café irmã água"), "Mine practices real accented words");
+assert.ok(data.worlds.mine.checkpoints[2].stages.some(({ target }) => target === "café") && data.worlds.mine.checkpoints[2].stages.some(({ target }) => target === "maçã"), "Mine practices real accented words");
 assert.equal(data.worlds.camp.checkpoints[1].key, "Delete", "Camp teaches forward delete");
 assert.ok(data.worlds.camp.checkpoints[1].instruction.includes("Lupa (Launcher) + Backspace"), "Delete instruction uses the Chromebook shortcut confirmed by the teacher");
 assert.equal(data.worlds.camp.checkpoints[5].expectedUndo, "DK KONG", "undo target is defined");
 assert.equal(data.worlds.camp.checkpoints[5].expectedRedo, "DK KONG!", "redo target is defined");
+assert.ok(data.worlds.camp.checkpoints[2].stages[0].altGrCodes["?"], "Camp requires AltGr+W for the question mark");
+assert.equal(data.worlds.camp.checkpoints[3].source, "Diddy corre pela ilha", "Ctrl selection practice follows the AltGr checkpoint");
 
 const letters = "abcdefghijklmnopqrstuvwxyzç";
 for (const letter of letters) assert.ok(data.fingers[letter], "finger guidance exists for " + letter);
@@ -151,6 +153,10 @@ assert.ok(activitySource.includes('id="reset-activity"'), "each active checkpoin
 assert.ok(activitySource.includes('id="reset-world"'), "each world guide offers a full-world reset");
 assert.ok(activitySource.includes('id="reset-boss"'), "the final poem mission offers an activity reset");
 assert.ok(activitySource.includes('id="reset-boss-finish"'), "the completed final mission also offers a reset");
+assert.ok(activitySource.includes('kind === "typing-sequence"'), "Mine uses the automatic sequence renderer");
+assert.ok(activitySource.includes('stage.requireNoShiftSymbols'), "unshifted punctuation is validated separately");
+assert.ok(activitySource.includes('SHIFT + 1 = !'), "the visible ABNT2 keyboard explains the 1/! mapping");
+assert.ok(activitySource.includes('ALTGR + W produz ?'), "the visible ABNT2 keyboard explains AltGr+W");
 assert.ok(activitySource.includes("playFromGesture()"), "barrel interaction calls the radio gesture method");
 assert.ok(activitySource.includes('continueButton.focus({ preventScroll: true })'), "typing completion moves focus to the continue button");
 assert.ok(activityCss.includes(".hand.left .finger-shape.thumb { transform:rotate(28deg); }"), "left thumb illustration angles inward");
