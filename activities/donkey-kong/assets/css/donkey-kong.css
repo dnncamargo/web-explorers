@@ -489,3 +489,5 @@ body[data-world="camp"] .sequence-keyboard-note { color:#17465c; }
   .modifier-key { min-width:70px; min-height:32px; font-size:7px; }
   .world-card-art img { height:82px; }
 }
+
+.abnt-key-altgr { color:#1b6488; font-size:8px; font-weight:900; white-space:nowrap; }
