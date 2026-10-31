@@ -321,6 +321,168 @@
     input.focus();
   }
 
+  function renderSequenceKeyboard(stage) {
+    const target = stage.target || "";
+    const uppercase = /[A-ZÁÉÍÓÚÂÊÔÃÕ]/u.test(target);
+    const useShift = !!(stage.shiftLetters || stage.requireShiftSymbols || stage.deadKeyShift || uppercase);
+    const numberKeys = [
+      ["1", "!", "Digit1"], ["2", "@", "Digit2"], ["3", "#", "Digit3"], ["4", "$", "Digit4"],
+      ["5", "%", "Digit5"], ["6", "¨", "Digit6"], ["7", "&", "Digit7"], ["8", "*", "Digit8"],
+      ["9", "(", "Digit9"], ["0", ")", "Digit0"], ["-", "_", "Minus"], ["=", "+", "Equal"]
+    ];
+    function key(base, shifted, code, extra) {
+      const highlighted = target.includes(shifted) || (extra && extra(stage));
+      return '<kbd class="abnt-key' + (highlighted ? ' is-needed' : '') + '" data-code="' + code + '">' +
+        '<span class="abnt-key-shift">' + shifted + '</span><span class="abnt-key-base">' + base + '</span></kbd>';
+    }
+    const shiftKeys = '<kbd class="modifier-key' + (useShift ? ' is-needed' : '') + '">SHIFT</kbd>';
+    const altGr = stage.altGrCodes ? '<kbd class="modifier-key altgr-key is-needed">ALTGR</kbd>' : "";
+    const accents = [
+      ["´", "´", "acute", /[áéíóúÁÉÍÓÚ]/u.test(target)],
+      ["~", "^", "circumflex", /[âêîôûÂÊÎÔÛ]/u.test(target)],
+      [",", "<", "comma", target.includes(",")],
+      [".", ">", "period", target.includes(".")]
+    ];
+    return '<div class="sequence-keyboard" aria-label="Teclado ABNT2: modificadores e símbolos">' +
+      '<div class="sequence-keyboard-row sequence-modifiers">' + shiftKeys + altGr + '</div>' +
+      '<div class="sequence-keyboard-row">' + numberKeys.map(([base, shifted, code]) => key(base, shifted, code)).join("") + '</div>' +
+      '<div class="sequence-keyboard-row accent-keys">' + accents.map(([base, shifted, code, active]) => key(base, shifted, code, () => active)).join("") +
+      '<span class="sequence-key-explainer">´ agudo · ~ til · ^ circunflexo</span></div>' +
+      '<p class="sequence-keyboard-note">' +
+      (stage.altGrCodes ? 'ALTGR + W produz ? neste teclado ABNT2.' :
+        stage.symbolCodes ? 'SHIFT + 1 = ! · SHIFT + 7 = & · SHIFT + = = +' :
+          stage.deadKeyShift === true ? 'SHIFT + ^ prepara o circunflexo; depois digite a vogal.' :
+            'Pressione primeiro a tecla do acento e depois a vogal.') +
+      '</p></div>';
+  }
+
+  function renderTypingSequence(checkpoint, area, feedback, checkButton, continueButton, complete) {
+    let stageIndex = 0;
+    let accepted = 0;
+    let target = "";
+    let stage = null;
+    checkButton.hidden = true;
+    continueButton.disabled = true;
+    area.innerHTML = '<div class="sequence-progress" id="sequence-progress"></div>' +
+      '<h3 class="sequence-instruction" id="sequence-instruction"></h3>' +
+      '<p class="sequence-hint" id="sequence-hint"></p>' +
+      '<div class="target-row" id="sequence-target" aria-label="Sequência que será digitada"></div>' +
+      '<div id="sequence-keyboard-host"></div>' +
+      '<label class="input-label" for="sequence-input">Digite aqui com o teclado físico</label>' +
+      '<textarea id="sequence-input" class="exercise-area single-line" rows="1" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Digite a sequência indicada"></textarea>';
+    const input = area.querySelector("#sequence-input");
+    const progressLabel = area.querySelector("#sequence-progress");
+    const instruction = area.querySelector("#sequence-instruction");
+    const hint = area.querySelector("#sequence-hint");
+    const targetRow = area.querySelector("#sequence-target");
+    const keyboardHost = area.querySelector("#sequence-keyboard-host");
+
+    function renderStage() {
+      stage = checkpoint.stages[stageIndex];
+      target = normalize(stage.target);
+      accepted = 0;
+      input.disabled = false;
+      input.value = "";
+      progressLabel.textContent = "ETAPA " + (stageIndex + 1) + "/" + checkpoint.stages.length;
+      instruction.textContent = stage.instruction || ("Digite: " + target);
+      hint.textContent = stage.hint || checkpoint.hint || "";
+      targetRow.innerHTML = renderTarget(target, 0);
+      keyboardHost.innerHTML = renderSequenceKeyboard(stage);
+      input.focus();
+    }
+
+    function isAccentOutput(char) {
+      return /[áéíóúÁÉÍÓÚâêîôûÂÊÎÔÛãõÃÕàèìòùÀÈÌÒÙ]/u.test(char || "");
+    }
+
+    function reject(event, message) {
+      event.preventDefault();
+      setFeedback(feedback, message, "gentle");
+    }
+
+    input.addEventListener("keydown", (event) => {
+      if (event.isComposing || event.metaKey || event.repeat) return;
+      if (!event.isTrusted) {
+        reject(event, "Use o teclado físico para praticar. Sem pressa.");
+        return;
+      }
+      const expected = Array.from(target)[accepted];
+      if (expected === undefined || event.key === "Backspace" || event.key === "Tab" || event.key === "Shift") return;
+
+      if (event.key === "Dead" || ["´", "~", "^"].includes(event.key)) {
+        let requiredShift = stage.deadKeyShift;
+        if (/[âêîôûÂÊÎÔÛ]/u.test(expected || "")) requiredShift = true;
+        if (/[áéíóúÁÉÍÓÚãõÃÕàèìòùÀÈÌÒÙ]/u.test(expected || "")) requiredShift = false;
+        if (requiredShift !== undefined && event.shiftKey !== requiredShift) {
+          reject(event, requiredShift
+            ? "Para preparar ^, segure Shift. Depois solte para digitar a vogal minúscula."
+            : "Prepare este acento sem Shift; use Shift somente quando a vogal precisar ser maiúscula.");
+        }
+        return;
+      }
+
+      if (stage.altGrCodes && stage.altGrCodes[expected]) {
+        const altGraph = (typeof event.getModifierState === "function" && event.getModifierState("AltGraph")) ||
+          (event.altKey && event.code === stage.altGrCodes[expected]);
+        if (!altGraph || event.code !== stage.altGrCodes[expected]) {
+          reject(event, "Use AltGr + W para produzir o ponto de interrogação.");
+        }
+        return;
+      }
+
+      if (stage.symbolCodes && stage.symbolCodes[expected]) {
+        const code = stage.symbolCodes[expected];
+        if (!event.shiftKey || event.code !== code) {
+          const combo = expected === "!" ? "Shift + 1" : expected === "&" ? "Shift + 7" : "Shift + =";
+          reject(event, "Use " + combo + " para produzir " + expected + ".");
+          return;
+        }
+      }
+
+      if (/[A-ZÁÉÍÓÚÂÊÔÃÕ]/u.test(expected || "") && stage.shiftLetters && !event.shiftKey) {
+        reject(event, "Segure Shift enquanto digita a letra maiúscula.");
+        return;
+      }
+      if (/[a-z]/u.test(expected || "") && stage.caseSensitive && event.shiftKey) {
+        reject(event, "Solte Shift para digitar esta letra minúscula.");
+        return;
+      }
+
+      if (!isAccentOutput(expected) && event.key.length === 1 && stage.caseSensitive && event.key !== expected) {
+        reject(event, "Confira se a tecla precisa de Shift ou se deve ser digitada sem Shift.");
+      }
+    });
+
+    input.addEventListener("input", () => {
+      const value = normalize(input.value);
+      const chars = Array.from(value);
+      accepted = chars.length;
+      targetRow.innerHTML = renderTarget(target, accepted);
+      if (value !== target && !target.startsWith(value)) {
+        setFeedback(feedback, "Esta sequência ainda não corresponde ao exemplo. Corrija a tecla e continue.", "gentle");
+        return;
+      }
+      if (value === target) {
+        input.disabled = true;
+        setFeedback(feedback, "Correto! " + (stageIndex + 1 < checkpoint.stages.length ? "Próxima etapa." : "Checkpoint concluído."), "good");
+        if (stageIndex + 1 < checkpoint.stages.length) {
+          stageIndex += 1;
+          renderStage();
+        } else {
+          complete();
+          continueButton.focus({ preventScroll: true });
+        }
+      }
+    });
+
+    input.addEventListener("paste", (event) => {
+      event.preventDefault();
+      setFeedback(feedback, "Colar texto não conta como prática. Digite cada tecla com calma.", "gentle");
+    });
+    input.addEventListener("drop", (event) => event.preventDefault());
+    renderStage();
+  }
+
   function renderSelection(checkpoint, area, feedback, checkButton, complete) {
     let stageIndex = 0;
     let shiftCount = 0;
