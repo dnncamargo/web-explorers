@@ -463,8 +463,8 @@
       rowHtml(topRow, "top-row") +
       rowHtml(homeRow, "home-row") +
       rowHtml(bottomRow, "bottom-row") +
-      (inventory.has("space") ? '<div class="keyboard-row mine-keyboard-row space-row"><span class="keycap thumb key-space" data-key="space' +
-        (action.key === "space" ? '" data-next="true' : '"') + '">ESPAÇO · polegares</span></div>' : "") +
+      (inventory.has("space") ? '<div class="keyboard-row mine-keyboard-row space-row"><span class="keycap thumb key-space' +
+        (action.key === "space" ? ' is-next' : '') + '" data-key="space">ESPAÇO · polegares</span></div>' : "") +
       '</div>' +
       '<p class="mine-keyboard-note">A seta ↑ acende junto com a tecla quando é necessário usar Shift. As teclas em branco são posições não usadas nesta Mina.</p>' +
       '</section>';
@@ -480,6 +480,7 @@
     let accepted = 0;
     let target = "";
     let stage = null;
+    let pendingDeadKey = false;
     checkButton.hidden = true;
     continueButton.disabled = true;
     area.innerHTML = '<div class="sequence-progress" id="sequence-progress"></div>' +
@@ -500,13 +501,14 @@
       stage = checkpoint.stages[stageIndex];
       target = normalize(stage.target);
       accepted = 0;
+      pendingDeadKey = false;
       input.disabled = false;
       input.value = "";
       progressLabel.textContent = "ETAPA " + (stageIndex + 1) + "/" + checkpoint.stages.length;
       instruction.textContent = stage.instruction || ("Digite: " + target);
       hint.textContent = stage.hint || checkpoint.hint || "";
       targetRow.innerHTML = renderTarget(target, 0);
-      keyboardHost.innerHTML = renderSequenceKeyboard(stage);
+      keyboardHost.innerHTML = renderSequenceKeyboard(stage, Array.from(target)[0], pendingDeadKey);
       input.focus();
     }
 
@@ -534,9 +536,12 @@
         if (/[áéíóúÁÉÍÓÚãõÃÕàèìòùÀÈÌÒÙ]/u.test(expected || "")) requiredShift = false;
         if (requiredShift !== undefined && event.shiftKey !== requiredShift) {
           reject(event, requiredShift
-            ? "Para preparar ^, segure Shift. Depois solte para digitar a vogal minúscula."
+            ? "Para preparar ^, segure Shift. Depois solte ou mantenha conforme a letra que será escrita."
             : "Prepare este acento sem Shift; use Shift somente quando a vogal precisar ser maiúscula.");
+          return;
         }
+        pendingDeadKey = true;
+        keyboardHost.innerHTML = renderSequenceKeyboard(stage, expected, pendingDeadKey);
         return;
       }
 
@@ -579,8 +584,13 @@
     input.addEventListener("input", () => {
       const value = normalize(input.value);
       const chars = Array.from(value);
-      accepted = chars.length;
+      let prefixLength = 0;
+      while (prefixLength < chars.length && prefixLength < Array.from(target).length &&
+        chars[prefixLength] === Array.from(target)[prefixLength]) prefixLength += 1;
+      accepted = value === target || target.startsWith(value) ? chars.length : prefixLength;
+      pendingDeadKey = false;
       targetRow.innerHTML = renderTarget(target, accepted);
+      keyboardHost.innerHTML = renderSequenceKeyboard(stage, Array.from(target)[accepted], pendingDeadKey);
       if (value !== target && !target.startsWith(value)) {
         setFeedback(feedback, "Esta sequência ainda não corresponde ao exemplo. Corrija a tecla e continue.", "gentle");
         return;
