@@ -51,7 +51,7 @@ assert.ok(data.worlds.mine.scene && data.worlds.mine.characters.length >= 3, "Mi
 assert.ok(data.worlds.jungle.scene && data.worlds.jungle.characters.some(({ alt }) => /Donkey Kong e Diddy/.test(alt)), "Jungle includes DK and Diddy character art");
 assert.ok(data.worlds.camp.scene && data.worlds.camp.characters.length >= 4, "Camp has a game-stage scene and multiple characters");
 assert.equal(data.worlds.camp.checkpoints[2].title, "O ponto de interrogação", "AltGr+W is taught in Camp, not Mine");
-assert.equal(data.worlds.camp.checkpoints[2].altGrCodes["?"], "KeyW", "the question mark uses AltGr+W");
+assert.equal(data.worlds.camp.checkpoints[2].stages[0].altGrCodes["?"], "KeyW", "the question mark uses AltGr+W");
 assert.equal(data.worlds.camp.checkpoints[3].kind, "navigation", "Ctrl text selection belongs to Camp");
 assert.equal(data.worlds.mine.checkpoints[0].requireShift, undefined, "case distinction is taught directly instead of only requiring Shift");
 assert.equal(data.worlds.jungle.checkpoints[1].target, "JKLÇ ÇLKJ", "the right home row includes Ç");
