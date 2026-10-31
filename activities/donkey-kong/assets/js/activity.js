@@ -399,7 +399,7 @@
       if (char===" ") return {key:"space",shift:false};
       return {key:char.toLocaleLowerCase("pt-BR"),shift:false};
     }
-    const action=activeAction(nextChar,pendingDeadKey);
+    const action=correctionNeeded ? {key:"",shift:false} : activeAction(nextChar,pendingDeadKey);
     const showShift=!!action.shift;
     const keyLabels = {
       quote:["'","\""],"1":["1","!"],"2":["2","@"],"3":["3","#"],"4":["4","$"],"5":["5","%"],"6":["6","¨"],
