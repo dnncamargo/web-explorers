@@ -171,7 +171,9 @@ Fileira-base: esquerda A,S,D,F; direita J,K,L,Ç. Professor observa a mão; app 
 
 A seleção de texto foi retirada da Mina e ficou no exercício de navegação/seleção com Ctrl, no Mundo 3. As frases são curtas e têm significado; os exemplos de letras maiúsculas acentuadas usam palavras e nomes, não grupos artificiais de letras.
 
-## 9. Mundo 3 — O Acampamento dos Kongs (6)
+## 9. Mundo 3 — O Acampamento dos Kongs
+
+**Nota:** a tabela abaixo registra a primeira proposta. O currículo implementado de sete checkpoints, incluindo AltGr+W no terceiro, está descrito na seção 21.
 
 **Rádio:** `wxAZfLenfa0`. Apresentar cada combinação antes do uso. Search/Backspace só vira conteúdo pedagógico depois da prova física.
 
