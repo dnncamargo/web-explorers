@@ -7,7 +7,7 @@
 
 Aventura curta para transferir técnica de digitação no ABNT2 e edição de texto pelo teclado. São 22 checkpoints em três mundos e uma missão final. Sem cronômetro, vidas ou velocidade. A validação automática mede conteúdo e operações observáveis; o professor observa o posicionamento real dos dedos. Um texto correto nunca será tratado como prova de qual dedo foi usado.
 
-A progressão apresenta mãos/fileiras antes de frases; depois seleção, Shift, AltGr, Backspace e acentos; então Enter, Delete, Ctrl, atalhos e revisão integral. Mundo 1 não cobra acento nem pontuação. Toda tecla nova é demonstrada antes de seu uso.
+A progressão apresenta mãos/fileiras antes de frases; depois diferenciação de maiúsculas/minúsculas, Shift, símbolos e acentos; por fim, Enter, Delete, AltGr+W, seleção e operações Ctrl. Mundo 1 não cobra acento nem pontuação. Toda tecla nova é demonstrada antes de seu uso.
 
 ## 2. Auditoria — fontes locais
 
@@ -32,7 +32,7 @@ Não há `AGENTS.md` no checkout. `activities/digital-explorers/index.html` leva
 | Testes teclado/progresso | `yoshi-typing/tests/validate-*.mjs` | **ADAPT** | Reusar abordagem, dados e alvos DK novos. Testes Yoshi não verificam teclado físico. |
 | Poema editável com oito alvos | Não existe | **NEW** | Especificação do textarea, seleção e estado abaixo. |
 | 22 checkpoints DK | Não existe | **NEW** | Exercícios detalhados neste plano. |
-| Assets DK | Não há no repo | **NEW, condicionado** | Só arquivos com licença confirmada ou arte original/licenciada. |
+| Assets DK | URLs externas fornecidas pelo professor | **ADAPT** | Carregar sprites e cenas remotamente com `alt`, `title`, créditos e fallback de erro; não copiar arquivos protegidos ao repo. |
 | Testes e checklist Chromebook DK | Não existe | **NEW** | Plano automatizado e humano na seção 13. |
 
 ### Evidências por atividade
@@ -43,14 +43,14 @@ Não há `AGENTS.md` no checkout. `activities/digital-explorers/index.html` leva
 
 ## 3. Identidade, navegação e rádio
 
-Predomina Exploradores: mapa ilustrado, painéis de missão escuros, campo de ação claro, personagem em área discreta e faixa constante de checkpoint. Yoshi fornece teclado, cores e dedos. Paleta selva/madeira/ouro; leitura e campo sempre mais proeminentes que decoração. Sem colagem literal das duas interfaces.
+Exploradores é a referência estrutural: mapa ilustrado, cenários de fase em tela cheia e cartões de missão escurecidos. Cada mundo tem paleta e captura próprias; sprites aparecem no mapa, no cabeçalho, na introdução e na conclusão. Yoshi fornece teclado, cores e dedos. Leitura e campo continuam mais proeminentes que a decoração.
 
 | Página proposta | Papel |
 |---|---|
 | `index.html` | Capa, rádio da seleção, cartões dos quatro mundos, progresso e retomar. |
 | `jungle.html` | Treino ABNT2 + 8 checkpoints consecutivos. |
-| `mine.html` | 7 checkpoints de seleção, Shift, AltGr, Backspace e acentos. |
-| `camp.html` | 7 checkpoints de Enter, Delete, AltGr+W, Ctrl e operações. |
+| `mine.html` | 7 checkpoints automáticos de maiúsculas/minúsculas, Shift, símbolos e acentuação. |
+| `camp.html` | 7 checkpoints automáticos de Enter, Delete, AltGr+W, seleção/Ctrl, clipboard, undo/redo e integração. |
 | `king-k-rool.html` | Editor e referência do poema. |
 
 Um cartão por vez; sequência é interna à página, não 22 rotas. Mapa permite abrir qualquer mundo, mesmo sem concluir o anterior; conserva sequência dentro do mundo e progresso por checkpoint. Sem exigência de conclusão total para considerar evidência de aprendizagem. Navegação por teclado e foco visível. Em tela estreita, painéis empilhados; consulta do poema expansível e com rolagem própria.
@@ -403,6 +403,8 @@ Depois abra `http://localhost:8000/activities/donkey-kong/index.html`. Em macOS/
 - As funções de progresso `resetWorld()` e `resetBoss()` isolam as mutações. Testes de unidade verificam a preservação de progresso não relacionado; o smoke test de navegador verifica a presença dos controles e o reset de uma tentativa de digitação.
 
 ## 21. Redesign visual e pedagógico dos mundos 2 e 3 — 30/10/2026
+
+Esta revisão substitui as propostas anteriores de conteúdo dos mundos 2 e 3 descritas nas seções iniciais e nas tabelas de planejamento.
 
 ### Cenários e personagens
 
