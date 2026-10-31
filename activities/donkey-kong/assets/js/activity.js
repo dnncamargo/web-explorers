@@ -37,11 +37,13 @@
   }
   function renderGameArt(world, className, limit) {
     const characters = (world.characters || []).slice(0, limit || 5);
+    const credits = Array.from(new Set(characters.map((character) => character.credit).filter(Boolean))).join(" · ");
     return '<div class="' + className + '" aria-label="Personagens e elementos de ' + escapeHTML(world.title) + '">' +
       characters.map((character) =>
         '<img data-game-art src="' + escapeHTML(character.src) + '" alt="' + escapeHTML(character.alt) +
         '" title="' + escapeHTML(character.alt + " · " + character.credit) + '" loading="lazy" referrerpolicy="no-referrer">'
-      ).join("") + '</div>';
+      ).join("") +
+      (credits ? '<span class="world-art-credit">Arte: ' + escapeHTML(credits) + '</span>' : '') + '</div>';
   }
   function bindGameArt(host) {
     if (!host) return;
