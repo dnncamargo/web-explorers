@@ -51,8 +51,10 @@
           stages: [
             { target: "banana", instruction: "Escreva a palavra banana com letras minúsculas.", hint: "Digite todas as letras sem segurar Shift." },
             { target: "BANANA", instruction: "Agora escreva BANANA com todas as letras maiúsculas.", hint: "Segure Shift para cada letra. A seta de Shift brilha junto com a tecla da letra.", shiftLetters: true },
-            { target: "Diddy Kong", instruction: "Escreva os nomes Diddy Kong com a primeira letra de cada nome em maiúscula.", hint: "Use Shift em D e em K. As outras letras ficam minúsculas.", shiftLetters: true },
-            { target: "Diddy corre pela ilha.", instruction: "Digite a frase. O nome Diddy e o começo da frase começam com letra maiúscula.", hint: "Use Shift no D inicial. Depois, solte Shift para escrever o restante da frase. Termine com ponto.", shiftLetters: true }
+            { target: "Barril", instruction: "Escreva Barril com apenas a primeira letra em maiúscula.", hint: "Use Shift no B inicial. Depois, solte Shift e continue com letras minúsculas.", shiftLetters: true },
+            { target: "CROCODILO", instruction: "Agora escreva CROCODILO com todas as letras maiúsculas.", hint: "Segure Shift em cada letra da palavra.", shiftLetters: true },
+            { target: "Rinoceronte", instruction: "Escreva Rinoceronte com apenas a primeira letra em maiúscula.", hint: "Use Shift no R inicial. As outras letras ficam minúsculas.", shiftLetters: true },
+            { target: "O Sapo saltou sobre a Abelha.", instruction: "Digite a frase O Sapo saltou sobre a Abelha.", hint: "Use Shift no começo da frase e no começo dos nomes Sapo e Abelha. Nas outras letras, solte Shift.", shiftLetters: true }
           ]
         },
         {
@@ -62,10 +64,10 @@
           kind: "typing-sequence",
           caseSensitive: true,
           stages: [
-            { target: "Diddy tem 2 bananas!", instruction: "Digite a frase Diddy tem 2 bananas!", hint: "Use Shift para o D inicial e Shift+1 para o ponto de exclamação.", shiftLetters: true, symbolCodes: { "!": "Digit1" }, requireShiftSymbols: true },
-            { target: "2 bananas, 1 fruta.", instruction: "Digite a lista de frutas com números, vírgula e ponto.", hint: "Os números ficam sem Shift. Digite a vírgula e o ponto sem pressionar Shift.", requireNoShiftSymbols: true },
+            { target: "O barril tem 2 bananas!", instruction: "Digite a frase O barril tem 2 bananas!", hint: "Use Shift no O inicial e Shift+1 para o ponto de exclamação.", shiftLetters: true, symbolCodes: { "!": "Digit1" }, requireShiftSymbols: true },
+            { target: "3 sapos, 2 abelhas e 1 rinoceronte.", instruction: "Digite a lista com quantidades de animais.", hint: "Use os números sem Shift. A vírgula e o ponto final também são digitados sem Shift.", requireNoShiftSymbols: true },
             { target: "2 + 1 = 3 bananas.", instruction: "Complete a conta que mostra quantas bananas há ao todo.", hint: "Para +, segure Shift e pressione a tecla =. O sinal = é digitado sem Shift.", symbolCodes: { "+": "Equal" }, requireShiftSymbols: true },
-            { target: "Diddy & Dixie formam uma dupla!", instruction: "Escreva a frase que apresenta a dupla.", hint: "Use Shift nas letras D maiúsculas, Shift+7 para & e Shift+1 para !.", shiftLetters: true, symbolCodes: { "&": "Digit7", "!": "Digit1" }, requireShiftSymbols: true }
+            { target: "FRUTAS & ANIMAIS", instruction: "Digite o título FRUTAS & ANIMAIS.", hint: "Use Shift em todas as letras maiúsculas e Shift+7 para produzir &.", shiftLetters: true, symbolCodes: { "&": "Digit7" }, requireShiftSymbols: true }
           ]
         },
         {
@@ -137,10 +139,10 @@
           kind: "typing-sequence",
           caseSensitive: true,
           stages: [
-            { target: "Diddy tem 2 maçãs!", instruction: "Digite a frase sobre as maçãs do Diddy.", hint: "Shift no D inicial, til sem Shift para ã, e Shift+1 para !.", shiftLetters: true, symbolCodes: { "!": "Digit1" }, requireShiftSymbols: true },
-            { target: "Café, maçã e pêssego.", instruction: "Escreva os nomes das três frutas separados por vírgula.", hint: "Agudo e til sem Shift; circunflexo com Shift. Vírgula e ponto sem Shift.", shiftLetters: true, deadKeyShift: false, requireNoShiftSymbols: true },
+            { target: "O sapo tem 2 maçãs!", instruction: "Digite a frase sobre o sapo e as maçãs.", hint: "Use Shift no O inicial, prepare ~ sem Shift para ã e use Shift+1 para !.", shiftLetters: true, symbolCodes: { "!": "Digit1" }, requireShiftSymbols: true },
+            { target: "Café, maçã e pêssego.", instruction: "Escreva os nomes das três frutas separados por vírgula.", hint: "Agudo e til sem Shift; circunflexo com Shift. Vírgula e ponto sem Shift.", deadKeyShift: false, requireNoShiftSymbols: true },
             { target: "2 + 1 = 3 bananas.", instruction: "Complete a conta das bananas.", hint: "Use Shift+= para +. O sinal =, os números e o ponto são digitados sem Shift.", symbolCodes: { "+": "Equal" }, requireShiftSymbols: true, requireNoShiftSymbols: true },
-            { target: "Diddy & Dixie formam uma dupla!", instruction: "Finalize com a frase sobre Diddy e Dixie.", hint: "Use Shift nos D maiúsculos, Shift+7 para & e Shift+1 para !.", shiftLetters: true, symbolCodes: { "&": "Digit7", "!": "Digit1" }, requireShiftSymbols: true }
+            { target: "FRUTAS & ANIMAIS", instruction: "Finalize com o título FRUTAS & ANIMAIS.", hint: "Use Shift em todas as letras maiúsculas e Shift+7 para &.", shiftLetters: true, symbolCodes: { "&": "Digit7" }, requireShiftSymbols: true }
           ]
         }
       ]
