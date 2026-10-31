@@ -7,6 +7,7 @@
   let progress = loaded.progress;
   let persistenceMode = loaded.mode;
   let saveTimer = null;
+  let bossPagehideHandler = null;
 
   function escapeHTML(value) {
     return String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
@@ -797,7 +798,9 @@
       setFeedback(feedback, "Trecho selecionado no editor. Faça a correção usando o teclado.", "");
     }
     editor.addEventListener("blur", saveDraft);
-    global.addEventListener("pagehide", saveDraft);
+    if (bossPagehideHandler) global.removeEventListener("pagehide", bossPagehideHandler);
+    bossPagehideHandler = saveDraft;
+    global.addEventListener("pagehide", bossPagehideHandler);
     editor.addEventListener("input", () => {
       progress.boss.draft = editor.value;
       progress.boss.passed = false;
@@ -808,9 +811,14 @@
     selectButton.addEventListener("click", selectCurrent);
     host.querySelector("#reset-boss").addEventListener("click", () => {
       if (!global.confirm("Resetar a missão final? O poema voltará ao texto com os oito erros iniciais.")) return;
+      if (saveTimer) global.clearTimeout(saveTimer);
+      saveTimer = null;
       STORE.resetBoss(progress);
-      saveProgress();
-      renderBoss();
+      editor.value = DATA.poemDamaged;
+      saveDraft();
+      updateStep();
+      selectCurrent();
+      setFeedback(feedback, "Missão reiniciada. O poema voltou ao texto inicial.", "good");
     });
     checkButton.addEventListener("click", () => {
       saveDraft();
@@ -842,6 +850,8 @@
       '<div class="finish-actions"><button id="reset-boss-finish" class="button danger" type="button">↻ Resetar atividade</button><a class="button" href="index.html">Voltar ao mapa</a><a class="button secondary" href="../../index.html">Catálogo de atividades</a></div></section>';
     host.querySelector("#reset-boss-finish").addEventListener("click", () => {
       if (!global.confirm("Resetar a missão final e apagar as correções do poema?")) return;
+      if (saveTimer) global.clearTimeout(saveTimer);
+      saveTimer = null;
       STORE.resetBoss(progress);
       saveProgress();
       renderBoss();
