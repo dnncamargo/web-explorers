@@ -48,8 +48,7 @@
     host.querySelectorAll("img[data-game-art]").forEach((image) => {
       image.addEventListener("error", () => {
         image.hidden = true;
-        const wrapper = image.closest("a");
-        if (wrapper) wrapper.hidden = true;
+        image.removeAttribute("src");
       }, { once: true });
     });
   }
@@ -952,6 +951,7 @@
     host.innerHTML = '<section class="world-finish"><p class="eyebrow pixel">MUNDO CONCLUÍDO</p>' + renderGameArt(world, "finish-art", 4) +
       '<h2>' + escapeHTML(world.title) + '</h2><p>Você concluiu os ' + total + ' checkpoints deste mundo. O progresso foi salvo neste navegador.</p>' +
       '<div class="finish-actions"><a class="button" href="index.html">Voltar ao mapa</a><a class="button secondary" href="king-k-rool.html">Ir ao chefe final</a></div></section>';
+    bindGameArt(host);
     const pageProgress = document.getElementById("page-progress");
     if (pageProgress) pageProgress.textContent = total + "/" + total + " checkpoints concluídos";
     updatePersistence();
