@@ -251,7 +251,7 @@ if (!browserPath) {
           assert.equal(await evaluate('document.querySelector(".mine-keyboard [data-key=1] .mine-keycap-shift")?.textContent'), "!", "the 1 key shows only the exclamation symbol used in Mine");
           assert.equal(await evaluate('document.querySelector(".mine-keyboard [data-key=2] .mine-keycap-shift")?.textContent'), "", "the 2 key hides the unused at symbol");
           assert.equal(await evaluate('document.querySelector(".mine-keyboard [data-key=7] .mine-keycap-shift")?.textContent'), "&", "the 7 key shows the ampersand used in Mine");
-          assert.equal(await evaluate('document.querySelector(".mine-keyboard [data-key==] .mine-keycap-shift")?.textContent'), "+", "the equals key shows the plus symbol used in Mine");
+          assert.equal(await evaluate('Array.from(document.querySelectorAll(".mine-keyboard [data-key]")).find((key) => key.dataset.key === "=")?.querySelector(".mine-keycap-shift")?.textContent'), "+", "the equals key shows the plus symbol used in Mine");
           assert.equal(await evaluate('!!document.querySelector(".mine-keyboard [data-key=q]")'), false, "unused letter keys are omitted from the Mine keyboard");
           await evaluate('(() => { const field = document.querySelector("#sequence-input"); field.value = "banana"; field.dispatchEvent(new Event("input", { bubbles: true })); })()');
           assert.equal(await evaluate('document.querySelector("#sequence-target").textContent.replace(/\\s+/g,"").startsWith("BANANA")'), true, "the next Mine sequence is the uppercase form");
