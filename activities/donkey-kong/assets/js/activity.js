@@ -354,127 +354,106 @@
   }
 
   function renderMineSequenceKeyboard(stage, nextChar, pendingDeadKey) {
-    const inventory = new Set();
-    const shiftedOutputs = new Set();
-    const mine = DATA.worlds.mine;
-    mine.checkpoints.forEach((checkpoint) => checkpoint.stages.forEach((item) => {
-      Array.from(normalize(item.target)).forEach((char) => {
-        const decomposed = char.normalize("NFD");
-        const base = Array.from(decomposed)[0] || "";
-        const marks = Array.from(decomposed).slice(1);
-        if (/[a-z]/i.test(base) || base === "ç" || base === "Ç") inventory.add(base.toLocaleLowerCase("pt-BR"));
-        if (/\d/u.test(char)) inventory.add(char);
-        if (char === "!") { inventory.add("1"); shiftedOutputs.add("!"); }
-        if (char === "&") { inventory.add("7"); shiftedOutputs.add("&"); }
-        if (char === "+") { inventory.add("="); shiftedOutputs.add("+"); }
-        if (char === "=") inventory.add("=");
-        if (char === ",") inventory.add(",");
-        if (char === ".") inventory.add(".");
-        if (char === " ") inventory.add("space");
-        if (marks.includes("\u0301")) inventory.add("acute");
-        if (marks.includes("\u0303") || marks.includes("\u0302")) inventory.add("tilde");
-        if (marks.includes("\u0302")) shiftedOutputs.add("^");
-        if (marks.includes("\u0327")) inventory.add("ç");
-      });
-    }));
-
-    const leftHandKeys = new Set(["1", "2", "3", "4", "5", "q", "w", "e", "r", "t", "a", "s", "d", "f", "g", "z", "x", "c", "v", "b"]);
-    const fingerFor = (keyId) => {
-      if (DATA.fingers[keyId]) return DATA.fingers[keyId];
-      const numberFingers = {
-        "1": "left-pinky", "2": "left-ring", "3": "left-middle", "4": "left-index", "5": "left-index",
-        "6": "right-index", "7": "right-middle", "8": "right-middle", "9": "right-ring", "0": "right-pinky",
-        "=": "right-pinky", "acute": "right-pinky", "tilde": "right-pinky",
-        ",": "right-middle", ".": "right-ring"
-      };
-      return numberFingers[keyId] || "";
+    const numberFingers = {
+      quote:"left-pinky",
+      "1":"left-pinky","2":"left-ring","3":"left-middle","4":"left-index","5":"left-index",
+      "6":"right-index","7":"right-index","8":"right-middle","9":"right-ring","0":"right-pinky",
+      "-":"right-pinky","=":"right-pinky",
+      acute:"right-pinky","bracket-left":"right-pinky",
+      ç:"right-pinky",tilde:"right-pinky","bracket-right":"right-pinky",
+      backslash:"left-pinky",comma:"right-index",period:"right-middle",semicolon:"right-ring",slash:"right-pinky"
     };
+    function fingerFor(keyId) {
+      return DATA.fingers[keyId] || numberFingers[keyId] || "";
+    }
     function activeAction(char, pending) {
-      if (!char) return { key: "", shift: "" };
-      const decomposed = char.normalize("NFD");
-      const parts = Array.from(decomposed);
-      const base = parts[0] || "";
-      const marks = parts.slice(1);
-      const uppercase = base !== base.toLocaleLowerCase("pt-BR");
-      if (marks.includes("\u0327")) {
-        return { key: "ç", shift: uppercase ? "left-shift" : "" };
-      }
+      if (!char) return {key:"",shift:false};
+      const parts=Array.from(char.normalize("NFD"));
+      const base=parts[0]||"";
+      const marks=parts.slice(1);
+      const uppercase=base!==base.toLocaleLowerCase("pt-BR");
+      if (marks.includes("\u0327")) return {key:"ç",shift:uppercase};
       if (marks.length) {
-        const accent = marks.includes("\u0301") ? "acute" :
-          (marks.includes("\u0303") || marks.includes("\u0302")) ? "tilde" : "";
-        const accentShift = marks.includes("\u0302");
-        if (!pending) return { key: accent, shift: accentShift ? "left-shift" : "" };
-        const baseKey = base.toLocaleLowerCase("pt-BR");
-        return { key: baseKey, shift: uppercase ? (leftHandKeys.has(baseKey) ? "right-shift" : "left-shift") : "" };
+        const accent=marks.includes("\u0301")?"acute":
+          (marks.includes("\u0303")||marks.includes("\u0302"))?"tilde":"";
+        if (!pending) return {key:accent,shift:marks.includes("\u0302")};
+        return {key:base.toLocaleLowerCase("pt-BR"),shift:uppercase};
       }
-      if (/[A-Z]/u.test(char)) {
-        const baseKey = char.toLocaleLowerCase("pt-BR");
-        return { key: baseKey, shift: leftHandKeys.has(baseKey) ? "right-shift" : "left-shift" };
-      }
-      if (char === "!") return { key: "1", shift: "right-shift" };
-      if (char === "&") return { key: "7", shift: "left-shift" };
-      if (char === "+") return { key: "=", shift: "left-shift" };
-      if (char === "=") return { key: "=", shift: "" };
-      if (char === ",") return { key: ",", shift: "" };
-      if (char === ".") return { key: ".", shift: "" };
-      if (/\d/u.test(char)) return { key: char, shift: "" };
-      if (char === " ") return { key: "space", shift: "" };
-      return { key: char.toLocaleLowerCase("pt-BR"), shift: "" };
-    }
-    const action = activeAction(nextChar, pendingDeadKey);
-
-    function keyLabels(keyId) {
-      const numberSymbols = { "1": "!", "2": "@", "3": "#", "4": "$", "5": "%", "6": "¨", "7": "&", "8": "*", "9": "(", "0": ")", "-": "_", "=": "+" };
-      const special = {
-        acute: { main: "´", shifted: "" },
-        tilde: { main: "~", shifted: shiftedOutputs.has("^") ? "^" : "" },
-        ç: { main: "ç", shifted: shiftedOutputs.has("Ç") ? "Ç" : "" },
-        ",": { main: ",", shifted: shiftedOutputs.has("<") ? "<" : "" },
-        ".": { main: ".", shifted: shiftedOutputs.has(">") ? ">" : "" },
-        "=": { main: "=", shifted: shiftedOutputs.has("+") ? "+" : "" }
+      if (/[A-Z]/u.test(char)) return {key:char.toLocaleLowerCase("pt-BR"),shift:true};
+      const shiftedSymbols = {
+        "!":"1","@":"2","#":"3","$":"4","%":"5","¨":"6","&":"7","*":"8",
+        "(":"9",")":"0","_":"-","+":"=","{":"bracket-left","^":"tilde",
+        "}":"bracket-right","|":"backslash","<":"comma",">":"period",":":"semicolon","?":"slash"
       };
-      if (special[keyId]) return special[keyId];
-      if (numberSymbols[keyId]) return { main: keyId, shifted: shiftedOutputs.has(numberSymbols[keyId]) ? numberSymbols[keyId] : "" };
-      return { main: keyId.toLocaleUpperCase("pt-BR"), shifted: "" };
+      if (shiftedSymbols[char]) return {key:shiftedSymbols[char],shift:true};
+      if (char===String.fromCharCode(96)) return {key:"acute",shift:true};
+      const plainSymbols = {
+        "[":"bracket-left","~":"tilde","]":"bracket-right","\\":"backslash",
+        ",":"comma",".":"period",";":"semicolon","/":"slash","=":"=",
+        "'":"quote","1":"1","2":"2","3":"3","4":"4","5":"5","6":"6","7":"7","8":"8","9":"9","0":"0","-":"-"
+      };
+      if (plainSymbols[char]) return {key:plainSymbols[char],shift:false};
+      if (char===" ") return {key:"space",shift:false};
+      return {key:char.toLocaleLowerCase("pt-BR"),shift:false};
     }
-    function renderKey(keyId) {
-      const labels = keyLabels(keyId);
-      const finger = fingerFor(keyId);
-      const home = "asdfghjklç".includes(keyId) && keyId.length === 1;
-      const bump = keyId === "f" || keyId === "j";
-      const active = action.key === keyId;
-      return '<span class="keycap ' + finger + (home ? " home" : "") + (bump ? " bump" : "") +
-        (active ? " is-next" : "") + '" data-key="' + escapeHTML(keyId) + '">' +
-        '<span class="mine-keycap-shift">' + escapeHTML(labels.shifted) + '</span>' +
-        '<span class="mine-keycap-main">' + escapeHTML(labels.main) + '</span></span>';
+    const action=activeAction(nextChar,pendingDeadKey);
+    const showShift=!!action.shift;
+    const keyLabels = {
+      quote:["'","\""],"1":["1","!"],"2":["2","@"],"3":["3","#"],"4":["4","$"],"5":["5","%"],"6":["6","¨"],
+      "7":["7","&"],"8":["8","*"],"9":["9","("],"0":["0",")"],"-":["-","_"],"=":["=","+"],
+      acute:["´",String.fromCharCode(96)],"bracket-left":["[","{"],ç:["ç","Ç"],tilde:["~","^"],"bracket-right":["]", "}"],
+      backslash:["\\","|"],comma:[",","<"],period:[".",">"],semicolon:[";",":"],slash:["/","?"]
+    };
+    function renderKey(keyId, options={}) {
+      const labels=keyLabels[keyId]||[keyId.toLocaleUpperCase("pt-BR"),""];
+      const classes=["keycap",fingerFor(keyId)];
+      if (options.home) classes.push("home");
+      if (options.bump) classes.push("bump");
+      if (action.key===keyId) classes.push("is-next");
+      return '<span class="'+classes.join(" ")+'" data-key="'+escapeHTML(keyId)+'">' +
+        '<span class="mine-keycap-shift">'+escapeHTML(labels[1])+'</span>' +
+        '<span class="mine-keycap-main">'+escapeHTML(labels[0])+'</span></span>';
     }
-    function renderShift(side) {
-      const active = action.shift === side;
-      const finger = side === "left-shift" ? "left-pinky" : "right-pinky";
-      return '<span class="keycap keycap-shift ' + finger + (active ? " is-next" : "") +
-        '" data-key="' + side + '"><span class="shift-arrow">↑</span><span class="shift-label">SHIFT</span></span>';
+    function renderLetter(keyId) {
+      return renderKey(keyId,{home:"asdfghjklç".includes(keyId),bump:keyId==="f"||keyId==="j"});
     }
-    function rowHtml(keys, options) {
-      return '<div class="keyboard-row mine-keyboard-row ' + (options || "") + '">' + keys.map((keyId) => {
-        if (keyId === "left-shift" || keyId === "right-shift") return renderShift(keyId);
-        return inventory.has(keyId) ? renderKey(keyId) : '<span class="keyboard-spacer" aria-hidden="true"></span>';
-      }).join("") + '</div>';
+    function renderControl(label,className) {
+      return '<span class="keycap mine-control-key '+className+'">'+label+'</span>';
     }
-    const numberRow = ["apostrophe", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "="];
-    const topRow = ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "acute", "bracket-left"];
-    const homeRow = ["a", "s", "d", "f", "g", "h", "j", "k", "l", "ç", "tilde", "bracket-right"];
-    const bottomRow = ["left-shift", "backslash", "z", "x", "c", "v", "b", "n", "m", ",", ".", "semicolon", "slash", "right-shift"];
-    return '<section class="keyboard-guide mine-keyboard" aria-label="Teclado ABNT2: somente as teclas usadas na Mina">' +
-      '<h3>Teclado ABNT2 · somente as teclas usadas neste mundo</h3>' +
+    function renderShift() {
+      return '<span class="keycap keycap-shift left-pinky'+(showShift?" is-next":"")+'" data-key="shift"><span class="shift-arrow">↑</span><span class="shift-label">SHIFT</span></span>';
+    }
+    const numberRow=[
+      renderKey("quote"),...Array.from("1234567890").map(k=>renderKey(k)),
+      renderKey("-"),renderKey("="),renderControl("⌫","backspace-key")
+    ].join("");
+    const topRow=[
+      renderControl("TAB","tab-key"),
+      ...Array.from("qwertyuiop").map(k=>renderLetter(k)),
+      renderKey("acute"),renderKey("bracket-left")
+    ].join("");
+    const homeRow=[
+      renderControl("CAPS","caps-key"),
+      ...Array.from("asdfghjklç").map(k=>renderLetter(k)),
+      renderKey("tilde"),renderKey("bracket-right"),renderControl("ENTER","enter-key")
+    ].join("");
+    const bottomRow=[
+      renderShift(),renderKey("backslash"),
+      ...Array.from("zxcvbnm").map(k=>renderLetter(k)),
+      renderKey("comma"),renderKey("period"),renderKey("semicolon"),renderKey("slash"),renderShift()
+    ].join("");
+    const spaceRow='<div class="keyboard-row mine-keyboard-row space-row"><span class="keycap thumb key-space'+
+      (action.key==="space"?" is-next":"")+'" data-key="space">ESPAÇO · polegares</span></div>';
+    return '<section class="keyboard-guide mine-keyboard" aria-label="Teclado ABNT2 completo: números, letras, símbolos e acentos">' +
+      '<h3>Teclado ABNT2 · números, letras e símbolos</h3>' +
       '<div class="mine-keyboard-map">' +
-      rowHtml(numberRow, "number-row") +
-      rowHtml(topRow, "top-row") +
-      rowHtml(homeRow, "home-row") +
-      rowHtml(bottomRow, "bottom-row") +
-      (inventory.has("space") ? '<div class="keyboard-row mine-keyboard-row space-row"><span class="keycap thumb key-space' +
-        (action.key === "space" ? ' is-next' : '') + '" data-key="space">ESPAÇO · polegares</span></div>' : "") +
+      '<div class="keyboard-row mine-keyboard-row number-row">'+numberRow+'</div>' +
+      '<div class="keyboard-row mine-keyboard-row top-row">'+topRow+'</div>' +
+      '<div class="keyboard-row mine-keyboard-row home-row">'+homeRow+'</div>' +
+      '<div class="keyboard-row mine-keyboard-row bottom-row">'+bottomRow+'</div>' +
+      spaceRow +
       '</div>' +
-      '<p class="mine-keyboard-note">A seta ↑ acende junto com a tecla quando é necessário usar Shift. As teclas em branco são posições não usadas nesta Mina.</p>' +
+      '<p class="mine-keyboard-note">Quando uma letra ou símbolo exige Shift, as duas setas ↑ brilham junto com a tecla correspondente. O destaque acompanha a próxima tecla, inclusive depois de preparar um acento.</p>' +
       '</section>';
   }
 
