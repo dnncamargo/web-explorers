@@ -217,7 +217,7 @@
       (checkpoint.kind === "typing-sequence" ? "" : '<details class="demo-box"><summary>Ver demonstração e dica</summary><p>' + escapeHTML(checkpoint.hint) + '</p></details>') +
       '<div id="exercise-area"></div><p id="exercise-feedback" class="feedback" role="status" aria-live="polite">Faça a atividade usando o teclado físico, sem pressa.</p>' +
       '<div class="exercise-actions"><button id="reset-activity" class="button danger" type="button">↻ Resetar atividade</button>' +
-      '<button id="check-action" class="button secondary" type="button">Conferir etapa</button>' +
+      '<button id="check-action" class="button secondary" type="button" hidden>Conferir etapa</button>' +
       '<button id="continue-checkpoint" class="button" type="button" disabled>Continuar</button></div>' +
       '<p class="exercise-note">Não há cronômetro nem punição por erro. O sistema verifica texto, seleção e operações observáveis; não identifica os dedos usados.</p></section>';
 
