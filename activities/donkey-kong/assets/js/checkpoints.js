@@ -7,7 +7,7 @@
       subtitle: "Treino de digitação · Teclado ABNT2",
       page: "jungle.html",
       track: "eAm9fk39c50",
-      scene: "https://m.media-amazon.com/images/M/MV5BZjM0OWI5NjgtMmUwMS00MjlhLTg0ZTktNDQ3MTBkYWNhMzkwXkEyXkFqcGc%40._V1_.jpg",
+      scene: "https://www.mobygames.com/images/shots/l/27540-donkey-kong-country-snes-screenshot-now-we-ve-really-climbed.jpg",
       characters: [
         { src: "https://static.wikia.nocookie.net/nintendo/images/f/f9/DK_and_Diddy.PNG/revision/latest?cb=20141007152903&path-prefix=en", alt: "Donkey Kong e Diddy Kong", credit: "Nintendo Fandom" },
         { src: "https://static.wikia.nocookie.net/donkeykong/images/7/7b/Squawks_-_DKC2.gif/revision/latest?cb=20190113015723", alt: "Squawks", credit: "Donkey Kong Wiki" },
@@ -33,7 +33,7 @@
       subtitle: "Shift, símbolos e acentuação",
       page: "mine.html",
       track: "cBK2YIrY62I",
-      scene: "https://i1.sndcdn.com/artworks-GFTiQ1tx2yLRObMR-XVi6NQ-t1080x1080.jpg",
+      scene: "https://images.squarespace-cdn.com/content/v1/55ef0e29e4b099e22cdc9eea/1446879156032-U8BD4PO9C0DRYDHWD8RA/image-asset.jpeg",
       characters: [
         { src: "https://static.wikia.nocookie.net/donkeykong/images/4/47/Dixie_rambi_and_klobble.gif/revision/latest?cb=20210429024957", alt: "Dixie Kong, Rambi e Klobber", credit: "Donkey Kong Wiki" },
         { src: "https://media.tenor.com/GXqnaxylERQAAAAi/dk-coin-dk.gif", alt: "Moeda DK", credit: "Tenor" },
@@ -140,7 +140,7 @@
       subtitle: "Navegação e atalhos de texto",
       page: "camp.html",
       track: "wxAZfLenfa0",
-      scene: "https://www.mezunian.com/wp-content/uploads/2020/05/donkey-kong-country-2-diddys-kong-quest-screechs-sprint-cat-o-9-tails-near-start.png?m=1701871908",
+      scene: "https://www.mezunian.com/wp-content/uploads/2020/05/donkey-kong-country-2-diddys-kong-quest-bramble-scramble-bramble-wall-near-start.png?m=1701871908",
       characters: [
         { src: "https://static.wikia.nocookie.net/donkeykong/images/7/7b/Squawks_-_DKC2.gif/revision/latest?cb=20190113015723", alt: "Squawks, o papagaio", credit: "Donkey Kong Wiki" },
         { src: "https://static.wikia.nocookie.net/donkeykong/images/8/8e/Krusha_4.png/revision/latest?cb=20190503205924&path-prefix=pt", alt: "Krusha", credit: "Donkey Kong Wiki" },
