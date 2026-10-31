@@ -25,32 +25,107 @@
       id: "mine",
       number: 2,
       title: "A Mina dos Barris",
-      subtitle: "Seleção, edição e acentuação",
-      icon: "🛢️",
+      subtitle: "Shift, símbolos e acentuação",
       page: "mine.html",
       track: "cBK2YIrY62I",
-      intro: "Use Shift, selecione trechos, apague, escreva símbolos e pratique os acentos.",
-      guide: "Nesta mina, você vai selecionar letras e palavras com Shift e as setas, apagar com Backspace e escrever palavras com acentos. O campo de texto precisa estar focado para que as teclas atuem nele.",
+      scene: "https://i1.sndcdn.com/artworks-GFTiQ1tx2yLRObMR-XVi6NQ-t1080x1080.jpg",
+      characters: [
+        { src: "https://static.wikia.nocookie.net/donkeykong/images/4/47/Dixie_rambi_and_klobble.gif/revision/latest?cb=20210429024957", alt: "Dixie Kong, Rambi e Klobber", credit: "Donkey Kong Wiki" },
+        { src: "https://media.tenor.com/GXqnaxylERQAAAAi/dk-coin-dk.gif", alt: "Moeda DK", credit: "Tenor" },
+        { src: "https://static.wikia.nocookie.net/donkeykong/images/7/7a/Zinger.png/revision/latest?cb=20170908235819&path-prefix=pt", alt: "Zinger", credit: "Donkey Kong Wiki" }
+      ],
+      intro: "Explore o teclado ABNT2: diferencie maiúsculas, minúsculas, números, símbolos e acentos.",
+      guide: "A Mina dos Barris agora é uma sequência de oficinas. Cada etapa mostra a tecla e a combinação necessárias; ao digitar corretamente, a atividade avança sozinha. Use Shift apenas quando a tecla ou o símbolo pedir.",
       checkpoints: [
-        { title: "O poder do Shift", instruction: "Digite DK! usando Shift para escrever as letras maiúsculas e o sinal de exclamação.", hint: "Segure Shift enquanto pressiona D e K. Para !, use a combinação que produz esse sinal no teclado ABNT2.", kind: "typing", target: "DK!", requireShift: true },
-        { title: "Barris selecionados", instruction: "O cursor já está depois do D. Segure Shift e pressione ← uma vez para selecionar D. Depois, o cursor será posicionado depois do K: use Shift+← duas vezes para selecionar DK.", hint: "A seleção real aparece destacada no campo. Mantenha Shift pressionado enquanto usa a seta.", kind: "selection", source: "DK BANANA", stages: [
-          { name: "Selecione D", caret: 1, direction: "ArrowLeft", presses: 1, start: 0, end: 1, expected: "D" },
-          { name: "Selecione DK", caret: 2, direction: "ArrowLeft", presses: 2, start: 0, end: 2, expected: "DK" }
-        ] },
-        { title: "Abrindo caminho", instruction: "No texto DK BANANA DOS KONGS, selecione DK BANANA usando Shift+→. São nove pressões da seta para a direita, mantendo Shift.", hint: "Comece com o cursor antes do D. A seleção deve incluir o espaço entre DK e BANANA, mas não o espaço seguinte.", kind: "selection", source: "DK BANANA DOS KONGS", stages: [
-          { name: "Selecione DK BANANA", caret: 0, direction: "ArrowRight", presses: 9, start: 0, end: 9, expected: "DK BANANA" }
-        ] },
-        { title: "Limpando a mina", instruction: "Primeiro, com o cursor depois do ponto de exclamação, use Backspace para apagá-lo. Depois, selecione KONG com Shift+End e apague a seleção com Backspace.", hint: "Backspace apaga o caractere que fica antes do cursor. Quando houver uma seleção, Backspace apaga todo o trecho selecionado.", kind: "edit-sequence", initial: "DK! KONG", stages: [
-          { name: "Apague o ponto de exclamação", caret: 3, key: "Backspace", expected: "DK KONG", instruction: "O cursor está depois de !. Pressione Backspace uma vez." },
-          { name: "Selecione e apague KONG", caret: 3, selectToEnd: true, expectedSelection: "KONG", key: "Backspace", expected: "DK ", instruction: "Com o cursor antes de KONG, segure Shift e pressione End. Depois, pressione Backspace." }
-        ] },
-        { title: "Símbolos dos barris", instruction: "Digite / e ? no campo. Use as teclas físicas ou a combinação que produz esses símbolos no seu ABNT2.", hint: "O resultado pode variar conforme o teclado e o método de entrada. Este exercício verifica os símbolos digitados, não presume uma combinação AltGr que ainda não foi confirmada em todos os Chromebooks.", kind: "typing", target: "/ ?" },
-        { title: "A oficina de palavras", instruction: "Digite as três palavras com seus acentos: café, irmã e água.", hint: "Em muitas teclas ABNT2, o acento é uma tecla morta: pressione o acento e depois a vogal. A composição final é o que vale.", kind: "typing", target: "café irmã água" },
-        { title: "A mensagem dos Kongs", instruction: "Revise a mensagem em três etapas: transforme o primeiro o em O; corrija a para à; troque ? por !.", hint: "Use Shift para a maiúscula e para !. Para à, use a tecla de acento grave e depois a vogal a. A seleção atual está destacada; digite a correção no lugar.", kind: "edit-sequence", initial: "os kongs chegaram a selva?", stages: [
-          { name: "Comece com maiúscula", range: { type: "literal", value: "o", occurrence: 0 }, expected: "Os kongs chegaram a selva?", instruction: "O primeiro o está selecionado. Digite O usando Shift." },
-          { name: "Acento grave", range: { type: "literal", value: "a", occurrence: 0, context: " a selva" }, expected: "Os kongs chegaram à selva?", instruction: "A letra a antes de selva está selecionada. Faça o acento grave e depois digite a." },
-          { name: "Pontuação", range: { type: "literal", value: "?", occurrence: 0 }, expected: "Os kongs chegaram à selva!", instruction: "O ponto de interrogação está selecionado. Digite ! usando Shift." }
-        ] }
+        {
+          title: "Maiúsculas e minúsculas",
+          instruction: "Compare letras pequenas e grandes. Digite cada exemplo exatamente como aparece.",
+          hint: "Letras minúsculas são digitadas sem Shift. Para maiúsculas, segure Shift enquanto pressiona a letra. Observe que o texto diferencia K de k.",
+          kind: "typing-sequence",
+          caseSensitive: true,
+          stages: [
+            { target: "diddy", instruction: "Primeiro, escreva Diddy em letras minúsculas.", hint: "Não segure Shift: digite d i d d y." },
+            { target: "DIDDY", instruction: "Agora escreva a mesma palavra em letras maiúsculas.", hint: "Segure Shift para cada letra: D I D D Y.", shiftLetters: true },
+            { target: "Diddy Kong", instruction: "Use maiúscula apenas no começo de cada nome.", hint: "Shift aparece em D e K. As outras letras são minúsculas.", shiftLetters: true },
+            { target: "KONG kong", instruction: "Compare uma palavra toda em maiúsculas com outra toda em minúsculas.", hint: "Na primeira palavra, use Shift nas quatro letras. Na segunda, solte Shift." , shiftLetters: true }
+          ]
+        },
+        {
+          title: "Shift, números e símbolos",
+          instruction: "Use letras maiúsculas, números e os símbolos que aparecem na parte superior das teclas.",
+          hint: "O teclado abaixo destaca Shift e as teclas físicas. No ABNT2: Shift+1 produz !, Shift+7 produz & e Shift+= produz +. Ponto e vírgula são digitados sem Shift.",
+          kind: "typing-sequence",
+          caseSensitive: true,
+          stages: [
+            { target: "DK 123", instruction: "Misture letras maiúsculas com números.", hint: "Use Shift em D e K. Digite 1, 2 e 3 sem Shift.", shiftLetters: true },
+            { target: "! & +", instruction: "Agora produza três símbolos com Shift.", hint: "Shift+1 → ! · Shift+7 → & · Shift+= → +.", symbolCodes: { "!": "Digit1", "&": "Digit7", "+": "Equal" }, requireShiftSymbols: true },
+            { target: ".,", instruction: "Digite ponto e vírgula. Nesta etapa, não use Shift.", hint: "Use as teclas de pontuação do teclado ABNT2. Digite primeiro o ponto e depois a vírgula." },
+            { target: "KONG! 7 + 1.", instruction: "Misture maiúsculas, números, símbolos e pontuação.", hint: "KONG usa Shift nas letras; ! usa Shift+1; + usa Shift+=. O ponto final é digitado sem Shift.", shiftLetters: true, symbolCodes: { "!": "Digit1", "+": "Equal" }, requireShiftSymbols: true }
+          ]
+        },
+        {
+          title: "Acentos sem Shift · minúsculas",
+          instruction: "Prepare o acento e depois digite a vogal. Complete cada palavra em letras minúsculas.",
+          hint: "O agudo ´ fica na tecla à direita do P e é usado sem Shift. O til ~ fica à direita do Ç e também é usado sem Shift. Primeiro pressione o acento; depois a vogal.",
+          kind: "typing-sequence",
+          caseSensitive: true,
+          deadKeyShift: false,
+          stages: [
+            { target: "café", instruction: "Digite café.", hint: "Para é: pressione ´ sem Shift e depois e." },
+            { target: "jacaré", instruction: "Digite jacaré.", hint: "Repita o agudo ´ sem Shift antes do e." },
+            { target: "irmã", instruction: "Digite irmã.", hint: "Para ã: pressione ~ sem Shift e depois a." },
+            { target: "maçã", instruction: "Digite maçã.", hint: "Use ç normalmente; para ã, prepare ~ sem Shift e depois a." }
+          ]
+        },
+        {
+          title: "Acento com Shift · minúsculas",
+          instruction: "Agora use o circunflexo, que fica na mesma tecla do til, mas exige Shift. As vogais continuam minúsculas.",
+          hint: "Segure Shift para produzir ^. Solte Shift antes de digitar a vogal minúscula: ^ + e → ê; ^ + o → ô.",
+          kind: "typing-sequence",
+          caseSensitive: true,
+          deadKeyShift: true,
+          stages: [
+            { target: "você", instruction: "Digite você.", hint: "Para ê, use Shift+^ e depois e minúsculo." },
+            { target: "avô", instruction: "Digite avô.", hint: "Para ô, use Shift+^ e depois o minúsculo." },
+            { target: "câmera", instruction: "Digite câmera.", hint: "Para â, use Shift+^ e depois a minúsculo." },
+            { target: "pêssego", instruction: "Digite pêssego.", hint: "Prepare ^ com Shift; depois pressione e sem Shift." }
+          ]
+        },
+        {
+          title: "Acentos sem Shift · maiúsculas",
+          instruction: "O acento é preparado sem Shift; a vogal será maiúscula. Digite as cinco letras.",
+          hint: "Pressione ´ sem Shift. Depois segure Shift ao digitar a vogal: ´ + Shift+A → Á. Repita com E, I, O e U.",
+          kind: "typing-sequence",
+          caseSensitive: true,
+          deadKeyShift: false,
+          shiftLetters: true,
+          stages: [
+            { target: "Á É Í Ó Ú", instruction: "Digite Á, É, Í, Ó e Ú.", hint: "Em cada letra: primeiro ´ sem Shift; depois Shift + vogal maiúscula.", shiftLetters: true }
+          ]
+        },
+        {
+          title: "Acentos com Shift · maiúsculas",
+          instruction: "Use Shift para preparar o circunflexo e mantenha Shift ao digitar a vogal maiúscula.",
+          hint: "Shift+^ prepara o circunflexo. Depois, Shift+A → Â; Shift+E → Ê; Shift+O → Ô.",
+          kind: "typing-sequence",
+          caseSensitive: true,
+          deadKeyShift: true,
+          stages: [
+            { target: "Â Ê Ô", instruction: "Digite Â, Ê e Ô.", hint: "Para cada letra, use Shift+^ e depois Shift + vogal maiúscula.", shiftLetters: true }
+          ]
+        },
+        {
+          title: "Misturando acentos e símbolos",
+          instruction: "Use tudo o que aprendeu: maiúsculas, minúsculas, acentos, números e símbolos.",
+          hint: "Lembre-se: ! = Shift+1; & = Shift+7; + = Shift+=. Para os acentos, prepare a tecla antes da vogal.",
+          kind: "typing-sequence",
+          caseSensitive: true,
+          stages: [
+            { target: "DIDDY & KONG! 7 + 1.", instruction: "Digite a frase com letras maiúsculas, números e símbolos.", hint: "Use Shift nas letras maiúsculas, Shift+7 para &, Shift+1 para ! e Shift+= para +.", shiftLetters: true, symbolCodes: { "!": "Digit1", "&": "Digit7", "+": "Equal" }, requireShiftSymbols: true },
+            { target: "Café, maçã & você.", instruction: "Agora misture acentos, vírgula, ponto e comercial.", hint: "´ prepara é; ~ prepara ã; Shift+^ prepara ê. Vírgula e ponto são digitados sem Shift.", deadKeyShift: false, allowCircumflex: true },
+            { target: "AVÔ, VOCÊ & AVÓ!", instruction: "Conclua misturando maiúsculas acentuadas e símbolos.", hint: "Use Shift para as letras maiúsculas, Shift+^ para Ô/Ê e Shift+1 para !.", shiftLetters: true, deadKeyShift: true, symbolCodes: { "!": "Digit1", "&": "Digit7" }, requireShiftSymbols: true }
+          ]
+        }
       ]
     },
     camp: {
@@ -58,18 +133,28 @@
       number: 3,
       title: "O Acampamento dos Kongs",
       subtitle: "Navegação e atalhos de texto",
-      icon: "⛺",
       page: "camp.html",
       track: "wxAZfLenfa0",
-      intro: "Crie linhas, apague à frente, navegue pelo texto e use os atalhos de edição.",
-      guide: "Agora você vai conhecer Enter, Delete e atalhos com Ctrl. As combinações serão praticadas dentro dos campos de texto, sem bloquear os atalhos do navegador fora deles.",
+      scene: "https://www.mezunian.com/wp-content/uploads/2020/05/donkey-kong-country-2-diddys-kong-quest-screechs-sprint-cat-o-9-tails-near-start.png?m=1701871908",
+      characters: [
+        { src: "https://static.wikia.nocookie.net/donkeykong/images/7/7b/Squawks_-_DKC2.gif/revision/latest?cb=20190113015723", alt: "Squawks, o papagaio", credit: "Donkey Kong Wiki" },
+        { src: "https://static.wikia.nocookie.net/donkeykong/images/8/8e/Krusha_4.png/revision/latest?cb=20190503205924&path-prefix=pt", alt: "Krusha", credit: "Donkey Kong Wiki" },
+        { src: "https://static.wikia.nocookie.net/donkeykong/images/1/14/Necky_1.png/revision/latest/scale-to-width-down/1000?cb=20170823192107&path-prefix=pt", alt: "Necky", credit: "Donkey Kong Wiki" },
+        { src: "https://media.tenor.com/HomN6gM7WcEAAAAj/diddy-kong-donkey-kong.gif", alt: "Diddy e Donkey Kong", credit: "Tenor" },
+        { src: "https://media.tenor.com/GXqnaxylERQAAAAi/dk-coin-dk.gif", alt: "Moeda DK", credit: "Tenor" }
+      ],
+      intro: "Crie linhas, apague à frente, selecione trechos e use os atalhos de edição.",
+      guide: "Agora você vai praticar Enter, Delete, AltGr e atalhos com Ctrl. As seleções de texto aparecem junto das operações de Ctrl, sempre com avanço automático quando a ação correta é reconhecida.",
       checkpoints: [
         { title: "Uma nova linha", instruction: "O cursor está entre as palavras equipe e chegou. Pressione Enter para iniciar uma nova linha.", hint: "Enter cria uma quebra de linha. O texto esperado terá duas linhas.", kind: "native-edit", initial: "A equipe chegou", caret: 8, key: "Enter", expected: "A equipe\nchegou", actionLabel: "Inserir uma quebra de linha" },
         { title: "Apagando pela frente", instruction: "O cursor está entre K e !. Pressione Lupa (Launcher) + Backspace para apagar o caractere à direita.", hint: "Backspace sozinho apaga à esquerda. No Chromebook testado, Lupa + Backspace apaga à direita, como Delete.", kind: "native-edit", initial: "DK!", caret: 2, key: "Delete", expected: "DK", actionLabel: "Apagar pela frente" },
-        { title: "A força do Ctrl", instruction: "No texto, use Ctrl+→ para avançar uma palavra, Ctrl+Shift+→ para selecionar a palavra seguinte e Ctrl+A para selecionar todo o texto.", hint: "O campo já posiciona o cursor antes de corre. A seleção deve ser feita com o teclado; não use o mouse para marcar o trecho.", kind: "navigation", source: "Diddy corre pela ilha", caret: 6 },
+        { title: "O ponto de interrogação", instruction: "Digite ? usando AltGr+W no teclado ABNT2.", hint: "Mantenha AltGr pressionado e toque W. Essa combinação produz o ponto de interrogação no layout ABNT2.", kind: "typing-sequence", caseSensitive: true, stages: [
+          { target: "?", instruction: "Produza o ponto de interrogação.", hint: "AltGr+W → ?.", altGrCodes: { "?": "KeyW" } }
+        ] },
+        { title: "A força do Ctrl", instruction: "Use Ctrl+→ para avançar uma palavra, Ctrl+Shift+→ para selecionar a palavra seguinte e Ctrl+A para selecionar todo o texto.", hint: "O campo posiciona o cursor antes de corre. A seleção é real e deve ser feita com o teclado; não use o mouse.", kind: "navigation", source: "Diddy corre pela ilha", caret: 6 },
         { title: "Barris transportadores", instruction: "Use Ctrl+C para copiar BANANA e Ctrl+V para colar no destino. Depois, use Ctrl+X para recortar DK e Ctrl+V para colar depois de KONG.", hint: "Os campos de origem e destino usam a área de transferência nativa do navegador. Nenhum texto é copiado pelo aplicativo.", kind: "clipboard" },
         { title: "Voltando no tempo", instruction: "Digite ! no fim de DK KONG. Depois, use Ctrl+Z para desfazer e Ctrl+Shift+Z para refazer.", hint: "Esses atalhos funcionam quando o campo de texto está focado. O navegador mantém o histórico nativo de edição.", kind: "undo", initial: "DK KONG", expectedTyped: "DK KONG!", expectedUndo: "DK KONG", expectedRedo: "DK KONG!" },
-        { title: "O recado do Cranky", instruction: "Primeiro, digite as maiúsculas acentuadas Á É Ê Õ Ú. Depois, corrija o recado: coloque maiúscula no início das duas frases, use à em chegaram à mina e termine a pergunta com !.", hint: "Para cada letra acentuada, pressione a tecla do acento e depois a vogal com Shift. O acento pode ser composto em duas teclas; confira o resultado no campo.", kind: "integrated", accents: "Á É Ê Õ Ú", initial: "os kongs\nchegaram a mina?\ntraga bananas!", expected: "Os kongs\nchegaram à mina!\nTraga bananas!" }
+        { title: "O recado do Cranky", instruction: "Primeiro, digite as maiúsculas acentuadas Á É Ê Õ Ú. Depois, corrija o recado: coloque maiúscula no início das duas frases, use à em chegaram à mina e termine a pergunta com !.", hint: "Para cada letra acentuada, pressione a tecla do acento e depois a vogal com Shift. O acento pode ser composto em duas teclas; confira o resultado no campo.", kind: "integrated", accents: "Á É Ê Õ Ú", initial: "os kongs\nchegaram a mina?\ntraga bananas!", expected: "Os kongs\nchegaram à mina?\nTraga bananas!" }
       ]
     }
   };
