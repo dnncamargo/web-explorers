@@ -40,7 +40,7 @@
     return '<div class="' + className + '" aria-label="Personagens e elementos de ' + escapeHTML(world.title) + '">' +
       characters.map((character) =>
         '<img data-game-art src="' + escapeHTML(character.src) + '" alt="' + escapeHTML(character.alt) +
-        '" title="' + escapeHTML(character.alt) + '" loading="lazy" referrerpolicy="no-referrer">'
+        '" title="' + escapeHTML(character.alt + " · " + character.credit) + '" loading="lazy" referrerpolicy="no-referrer">'
       ).join("") + '</div>';
   }
   function bindGameArt(host) {
@@ -331,11 +331,12 @@
       ["9", "(", "Digit9"], ["0", ")", "Digit0"], ["-", "_", "Minus"], ["=", "+", "Equal"]
     ];
     function key(base, shifted, code, extra) {
-      const highlighted = target.includes(shifted) || (extra && extra(stage));
+      const highlighted = target.includes(shifted) || target.includes(base) || (extra && extra(stage));
       return '<kbd class="abnt-key' + (highlighted ? ' is-needed' : '') + '" data-code="' + code + '">' +
         '<span class="abnt-key-shift">' + shifted + '</span><span class="abnt-key-base">' + base + '</span></kbd>';
     }
-    const shiftKeys = '<kbd class="modifier-key' + (useShift ? ' is-needed' : '') + '">SHIFT</kbd>';
+    const shiftKeys = '<kbd class="modifier-key' + (useShift ? ' is-needed' : '') + '">SHIFT</kbd>' +
+      '<kbd class="modifier-key right-shift' + (useShift ? ' is-needed' : '') + '">SHIFT</kbd>';
     const altGr = stage.altGrCodes ? '<kbd class="modifier-key altgr-key is-needed">ALTGR</kbd>' : "";
     const accents = [
       ["´", "´", "acute", /[áéíóúÁÉÍÓÚ]/u.test(target)],
@@ -343,11 +344,14 @@
       [",", "<", "comma", target.includes(",")],
       [".", ">", "period", target.includes(".")]
     ];
-    return '<div class="sequence-keyboard" aria-label="Teclado ABNT2: modificadores e símbolos">' +
+    const altGrW = stage.altGrCodes
+      ? '<kbd class="abnt-key is-needed altgr-target" data-code="KeyW"><span class="abnt-key-shift">?</span><span class="abnt-key-base">W</span></kbd>'
+      : '<kbd class="abnt-key" data-code="KeyW"><span class="abnt-key-shift">W</span><span class="abnt-key-base">W</span></kbd>';
+    return '<div class="sequence-keyboard" aria-label="Teclado ABNT2: Shift, AltGr, números, símbolos e acentos">' +
       '<div class="sequence-keyboard-row sequence-modifiers">' + shiftKeys + altGr + '</div>' +
       '<div class="sequence-keyboard-row">' + numberKeys.map(([base, shifted, code]) => key(base, shifted, code)).join("") + '</div>' +
       '<div class="sequence-keyboard-row accent-keys">' + accents.map(([base, shifted, code, active]) => key(base, shifted, code, () => active)).join("") +
-      '<span class="sequence-key-explainer">´ agudo · ~ til · ^ circunflexo</span></div>' +
+      altGrW + '<span class="sequence-key-explainer">´ agudo · ~ til · ^ circunflexo · ? com AltGr+W</span></div>' +
       '<p class="sequence-keyboard-note">' +
       (stage.altGrCodes ? 'ALTGR + W produz ? neste teclado ABNT2.' :
         stage.symbolCodes ? 'SHIFT + 1 = ! · SHIFT + 7 = & · SHIFT + = = +' :
