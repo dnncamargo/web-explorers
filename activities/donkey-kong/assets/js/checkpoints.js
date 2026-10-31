@@ -64,7 +64,7 @@
           stages: [
             { target: "DK 123", instruction: "Misture letras maiúsculas com números.", hint: "Use Shift em D e K. Digite 1, 2 e 3 sem Shift.", shiftLetters: true },
             { target: "! & +", instruction: "Agora produza três símbolos com Shift.", hint: "Shift+1 → ! · Shift+7 → & · Shift+= → +.", symbolCodes: { "!": "Digit1", "&": "Digit7", "+": "Equal" }, requireShiftSymbols: true },
-            { target: ".,", instruction: "Digite ponto e vírgula. Nesta etapa, não use Shift.", hint: "Use as teclas de pontuação do teclado ABNT2. Digite primeiro o ponto e depois a vírgula." },
+            { target: ".,", instruction: "Digite ponto e vírgula. Nesta etapa, não use Shift.", hint: "Use as teclas de pontuação do teclado ABNT2. Digite primeiro o ponto e depois a vírgula.", requireNoShiftSymbols: true },
             { target: "KONG! 7 + 1.", instruction: "Misture maiúsculas, números, símbolos e pontuação.", hint: "KONG usa Shift nas letras; ! usa Shift+1; + usa Shift+=. O ponto final é digitado sem Shift.", shiftLetters: true, symbolCodes: { "!": "Digit1", "+": "Equal" }, requireShiftSymbols: true }
           ]
         },
@@ -127,7 +127,7 @@
           caseSensitive: true,
           stages: [
             { target: "DIDDY & KONG! 7 + 1.", instruction: "Digite a frase com letras maiúsculas, números e símbolos.", hint: "Use Shift nas letras maiúsculas, Shift+7 para &, Shift+1 para ! e Shift+= para +.", shiftLetters: true, symbolCodes: { "!": "Digit1", "&": "Digit7", "+": "Equal" }, requireShiftSymbols: true },
-            { target: "Café, maçã & você.", instruction: "Agora misture acentos, vírgula, ponto e comercial.", hint: "´ prepara é; ~ prepara ã; Shift+^ prepara ê. Vírgula e ponto são digitados sem Shift.", deadKeyShift: false, allowCircumflex: true },
+            { target: "Café, maçã & você.", instruction: "Agora misture acentos, vírgula, ponto e comercial.", hint: "´ prepara é; ~ prepara ã; Shift+^ prepara ê. Vírgula e ponto são digitados sem Shift; Shift+7 produz &.", deadKeyShift: false, shiftLetters: true, symbolCodes: { "&": "Digit7" }, requireShiftSymbols: true },
             { target: "AVÔ, VOCÊ & AVÓ!", instruction: "Conclua misturando maiúsculas acentuadas e símbolos.", hint: "Use Shift para as letras maiúsculas, Shift+^ para Ô/Ê e Shift+1 para !.", shiftLetters: true, deadKeyShift: true, symbolCodes: { "!": "Digit1", "&": "Digit7" }, requireShiftSymbols: true }
           ]
         }
