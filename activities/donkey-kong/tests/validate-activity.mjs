@@ -165,12 +165,12 @@ assert.ok(activitySource.includes('id="reset-boss-finish"'), "the completed fina
 assert.ok(activitySource.includes('kind === "typing-sequence"'), "Mine uses the automatic sequence renderer");
 assert.ok(activitySource.includes('stage.requireNoShiftSymbols'), "unshifted punctuation is validated separately");
 assert.ok(activitySource.includes("function renderMineSequenceKeyboard"), "Mine has its own restricted ABNT2 keyboard renderer");
-assert.ok(activitySource.includes('"acute", "bracket-left"'), "the acute accent key is placed after P");
-assert.ok(activitySource.includes('"ç", "tilde", "bracket-right"'), "the tilde/circumflex key is placed after Ç");
-assert.ok(activitySource.includes('"m", ",", ".", "semicolon"'), "comma and period are placed beside M");
+assert.ok(activitySource.includes('renderKey("acute"),renderKey("bracket-left")'), "the acute accent key is placed after P");
+assert.ok(activitySource.includes('renderKey("tilde"),renderKey("bracket-right")'), "the tilde/circumflex key is placed after Ç");
+assert.ok(activitySource.includes('renderKey("comma"),renderKey("period"),renderKey("semicolon"),renderKey("slash")'), "comma, period, semicolon and slash are arranged after M");
 assert.ok(activitySource.includes('class="shift-arrow">↑'), "Shift is shown with an upward arrow");
 assert.ok(activitySource.includes('const showShift=!!action.shift'), "Shift highlighting follows the next character");
-assert.ok(activitySource.includes('data-key="shift-'+side+'"'), "left and right Shift keys have independent physical positions");
+assert.ok(activitySource.includes('renderShift("left")') && activitySource.includes('renderShift("right")') && activitySource.includes('data-key="shift-"+side'), "left and right Shift keys have independent physical positions");
 assert.ok(activitySource.includes('"1":["1","!"]') && activitySource.includes('"2":["2","@"]') && activitySource.includes('"6":["6","¨"]') && activitySource.includes('"7":["7","&"]') && activitySource.includes('"=":["=","+"]'), "the complete ABNT2 keyboard shows the number-row symbols");
 assert.ok(activitySource.includes('ALTGR + W produz ?'), "the visible ABNT2 keyboard explains AltGr+W");
 assert.ok(activitySource.includes("playFromGesture()"), "barrel interaction calls the radio gesture method");
