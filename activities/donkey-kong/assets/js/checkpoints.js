@@ -126,7 +126,7 @@
           kind: "typing-sequence",
           caseSensitive: true,
           stages: [
-            { target: "DIDDY & KONG! 7 + 1.", instruction: "Digite a frase com letras maiúsculas, números e símbolos.", hint: "Use Shift nas letras maiúsculas, Shift+7 para &, Shift+1 para ! e Shift+= para +.", shiftLetters: true, symbolCodes: { "!": "Digit1", "&": "Digit7", "+": "Equal" }, requireShiftSymbols: true },
+            { target: "DIDDY & KONG! 7 + 1.", instruction: "Digite a frase com letras maiúsculas, números e símbolos.", hint: "Use Shift nas letras maiúsculas, Shift+7 para &, Shift+1 para ! e Shift+= para +. O ponto final fica sem Shift.", shiftLetters: true, symbolCodes: { "!": "Digit1", "&": "Digit7", "+": "Equal" }, requireShiftSymbols: true, requireNoShiftSymbols: true },
             { target: "Café, maçã & você.", instruction: "Agora misture acentos, vírgula, ponto e comercial.", hint: "´ prepara é; ~ prepara ã; Shift+^ prepara ê. Vírgula e ponto são digitados sem Shift; Shift+7 produz &.", deadKeyShift: false, shiftLetters: true, symbolCodes: { "&": "Digit7" }, requireShiftSymbols: true },
             { target: "AVÔ, VOCÊ & AVÓ!", instruction: "Conclua misturando maiúsculas acentuadas e símbolos.", hint: "Use Shift para as letras maiúsculas, Shift+^ para Ô/Ê e Shift+1 para !.", shiftLetters: true, deadKeyShift: true, symbolCodes: { "!": "Digit1", "&": "Digit7" }, requireShiftSymbols: true }
           ]
