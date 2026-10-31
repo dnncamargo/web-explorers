@@ -158,9 +158,8 @@
       '<a class="button secondary" href="index.html">Voltar ao mapa</a></div></section>';
     host.querySelector("#start-world").addEventListener("click", () => renderCheckpoint(world, host));
     host.querySelector("#reset-world").addEventListener("click", () => {
-      if (!STORE.resetWorld(progress, world.id)) return;
       if (!global.confirm("Resetar todo o progresso de " + world.title + "? Os outros mundos e a missão final serão preservados.")) return;
-      STORE.resetWorld(progress, world.id);
+      if (!STORE.resetWorld(progress, world.id)) return;
       saveProgress();
       renderGuide(world, host);
     });
