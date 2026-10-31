@@ -129,6 +129,13 @@ assert.ok(donkeyHome.includes('data-page="map"'), "Donkey Kong opens on its own 
 assert.ok(read("activities/donkey-kong/tests/validate-activity.mjs").includes("22 ordered checkpoints"), "Donkey Kong has a dedicated activity validation suite");
 assert.ok(read("activities/donkey-kong/tests/validate-radio.mjs").includes("muted fallback"), "Donkey Kong has a dedicated radio autoplay regression suite");
 assert.ok(read("activities/donkey-kong/tests/validate-activity.mjs").includes("world reset preserves progress in other worlds"), "Donkey Kong tests isolated world reset behavior");
+const donkeyData = read("activities/donkey-kong/assets/js/checkpoints.js");
+const donkeyStyles = read("activities/donkey-kong/assets/css/donkey-kong.css");
+assert.ok(donkeyData.includes("DK_and_Diddy.PNG") && donkeyData.includes("Dixie_rambi_and_klobble.gif"), "Donkey Kong uses the supplied DK/Diddy and Dixie/Rambi character assets");
+assert.ok(donkeyData.includes("Squawks_-_DKC2.gif") && donkeyData.includes("Zinger.png") && donkeyData.includes("Krusha_4.png"), "Donkey Kong uses the supplied Squawks, Zinger and Krusha assets");
+assert.ok(donkeyStyles.includes('body[data-world="jungle"]::before') && donkeyStyles.includes('body[data-world="mine"]::before') && donkeyStyles.includes('body[data-world="camp"]::before'), "each Donkey Kong world has its own gameplay backdrop");
+assert.ok(donkeyData.includes('AltGr+W') && donkeyData.includes('title: "O ponto de interrogação"'), "the question mark lesson is in World 3");
+assert.ok(donkeyData.includes('title: "Acentos sem Shift · maiúsculas"') && donkeyData.includes('title: "Acentos com Shift · maiúsculas"'), "Mine includes the two uppercase accent progressions");
 
 
 assert.ok(read("activities/yoshi-typing/tests/validate-activity.mjs").includes("assets/js/world-data.js"), "the independent Yoshi validation suite remains in place");
