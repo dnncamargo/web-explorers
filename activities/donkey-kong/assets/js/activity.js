@@ -322,7 +322,7 @@
     input.focus();
   }
 
-  function renderSequenceKeyboard(stage) {
+  function renderCampSequenceKeyboard(stage) {
     const target = stage.target || "";
     const uppercase = /[A-ZÁÉÍÓÚÂÊÔÃÕ]/u.test(target);
     const useShift = !!(stage.shiftLetters || stage.requireShiftSymbols || stage.deadKeyShift || uppercase);
@@ -331,37 +331,148 @@
       ["5", "%", "Digit5"], ["6", "¨", "Digit6"], ["7", "&", "Digit7"], ["8", "*", "Digit8"],
       ["9", "(", "Digit9"], ["0", ")", "Digit0"], ["-", "_", "Minus"], ["=", "+", "Equal"]
     ];
-    function key(base, shifted, code, extra) {
-      const highlighted = target.includes(shifted) || target.includes(base) || (extra && extra(stage));
+    function key(base, shifted, code) {
+      const highlighted = target.includes(shifted) || target.includes(base);
       return '<kbd class="abnt-key' + (highlighted ? ' is-needed' : '') + '" data-code="' + code + '">' +
         '<span class="abnt-key-shift">' + shifted + '</span><span class="abnt-key-base">' + base + '</span></kbd>';
     }
-    const shiftKeys = '<kbd class="modifier-key' + (useShift ? ' is-needed' : '') + '">SHIFT</kbd>' +
-      '<kbd class="modifier-key right-shift' + (useShift ? ' is-needed' : '') + '">SHIFT</kbd>';
+    const shiftKeys = '<kbd class="modifier-key' + (useShift ? ' is-needed' : '') + '"><span>↑</span> SHIFT</kbd>' +
+      '<kbd class="modifier-key right-shift' + (useShift ? ' is-needed' : '') + '"><span>↑</span> SHIFT</kbd>';
     const altGr = stage.altGrCodes ? '<kbd class="modifier-key altgr-key is-needed">ALTGR</kbd>' : "";
-    const accents = [
-      ["´", "´", "acute", /[áéíóúÁÉÍÓÚ]/u.test(target)],
-      ["~", "^", "circumflex", /[âêîôûÂÊÎÔÛ]/u.test(target)],
-      [",", "<", "comma", target.includes(",")],
-      [".", ">", "period", target.includes(".")]
-    ];
     const altGrW = stage.altGrCodes
       ? '<kbd class="abnt-key is-needed altgr-target" data-code="KeyW"><span class="abnt-key-altgr">ALTGR · ?</span><span class="abnt-key-base">W</span></kbd>'
-      : '<kbd class="abnt-key" data-code="KeyW"><span class="abnt-key-shift">W</span><span class="abnt-key-base">W</span></kbd>';
+      : "";
     return '<div class="sequence-keyboard" aria-label="Teclado ABNT2: Shift, AltGr, números, símbolos e acentos">' +
       '<div class="sequence-keyboard-row sequence-modifiers">' + shiftKeys + altGr + '</div>' +
       '<div class="sequence-keyboard-row">' + numberKeys.map(([base, shifted, code]) => key(base, shifted, code)).join("") + '</div>' +
-      '<div class="sequence-keyboard-row accent-keys">' + accents.map(([base, shifted, code, active]) => key(base, shifted, code, () => active)).join("") +
-      altGrW + '<span class="sequence-key-explainer">´ agudo · ~ til · ^ circunflexo · ? com AltGr+W</span></div>' +
+      '<div class="sequence-keyboard-row accent-keys">' +
+      key("´", "`", "BracketLeft") + key("~", "^", "Backslash") + altGrW + '</div>' +
       '<p class="sequence-keyboard-note">' +
       (stage.altGrCodes ? 'ALTGR + W produz ? neste teclado ABNT2.' :
-        stage.symbolCodes ? 'SHIFT + 1 = ! · SHIFT + 7 = & · SHIFT + = = +' :
-          stage.requireNoShiftSymbols ? 'Ponto e vírgula são digitados sem Shift.' :
-            stage.deadKeyShift === true ? 'SHIFT + ^ prepara o circunflexo; depois digite a vogal.' :
-              /[áéíóúÁÉÍÓÚãõÃÕàèìòùÀÈÌÒÙ]/u.test(target) ? '´ e ~ são preparados sem Shift; depois digite a vogal.' :
-                stage.shiftLetters ? 'Segure Shift nas letras maiúsculas e solte para as minúsculas.' :
-                  'Observe as teclas destacadas e digite na ordem indicada.') +
+        'Observe a tecla e o modificador destacados no desenho.') +
       '</p></div>';
+  }
+
+  function renderMineSequenceKeyboard(stage, nextChar, pendingDeadKey) {
+    const inventory = new Set();
+    const mine = DATA.worlds.mine;
+    mine.checkpoints.forEach((checkpoint) => checkpoint.stages.forEach((item) => {
+      Array.from(normalize(item.target)).forEach((char) => {
+        const decomposed = char.normalize("NFD");
+        const base = Array.from(decomposed)[0] || "";
+        const marks = Array.from(decomposed).slice(1);
+        if (/[a-z]/i.test(base) || base === "ç" || base === "Ç") inventory.add(base.toLocaleLowerCase("pt-BR"));
+        if (/\d/u.test(char)) inventory.add(char);
+        if (char === "!") inventory.add("1");
+        if (char === "&") inventory.add("7");
+        if (char === "+" || char === "=") inventory.add("=");
+        if (char === ",") inventory.add(",");
+        if (char === ".") inventory.add(".");
+        if (char === " ") inventory.add("space");
+        if (marks.includes("\u0301")) inventory.add("acute");
+        if (marks.includes("\u0303") || marks.includes("\u0302")) inventory.add("tilde");
+      });
+    }));
+
+    const leftHandKeys = new Set(["1", "2", "3", "4", "5", "q", "w", "e", "r", "t", "a", "s", "d", "f", "g", "z", "x", "c", "v", "b"]);
+    const fingerFor = (keyId) => {
+      if (DATA.fingers[keyId]) return DATA.fingers[keyId];
+      const numberFingers = {
+        "1": "left-pinky", "2": "left-ring", "3": "left-middle", "4": "left-index", "5": "left-index",
+        "6": "right-index", "7": "right-middle", "8": "right-middle", "9": "right-ring", "0": "right-pinky",
+        "=": "right-pinky", "acute": "right-pinky", "tilde": "right-pinky",
+        ",": "right-middle", ".": "right-ring"
+      };
+      return numberFingers[keyId] || "";
+    };
+    function activeAction(char, pending) {
+      if (!char) return { key: "", shift: "" };
+      const decomposed = char.normalize("NFD");
+      const parts = Array.from(decomposed);
+      const base = parts[0] || "";
+      const marks = parts.slice(1);
+      const uppercase = base !== base.toLocaleLowerCase("pt-BR");
+      if (marks.length) {
+        const accent = marks.includes("\u0301") ? "acute" :
+          (marks.includes("\u0303") || marks.includes("\u0302")) ? "tilde" : "";
+        const accentShift = marks.includes("\u0302");
+        if (!pending) return { key: accent, shift: accentShift ? "left-shift" : "" };
+        const baseKey = base.toLocaleLowerCase("pt-BR");
+        return { key: baseKey, shift: uppercase ? (leftHandKeys.has(baseKey) ? "right-shift" : "left-shift") : "" };
+      }
+      if (/[A-Z]/u.test(char)) {
+        const baseKey = char.toLocaleLowerCase("pt-BR");
+        return { key: baseKey, shift: leftHandKeys.has(baseKey) ? "right-shift" : "left-shift" };
+      }
+      if (char === "!") return { key: "1", shift: "right-shift" };
+      if (char === "&") return { key: "7", shift: "left-shift" };
+      if (char === "+") return { key: "=", shift: "left-shift" };
+      if (char === "=") return { key: "=", shift: "" };
+      if (char === ",") return { key: ",", shift: "" };
+      if (char === ".") return { key: ".", shift: "" };
+      if (/\d/u.test(char)) return { key: char, shift: "" };
+      if (char === " ") return { key: "space", shift: "" };
+      return { key: char.toLocaleLowerCase("pt-BR"), shift: "" };
+    }
+    const action = activeAction(nextChar, pendingDeadKey);
+
+    function keyLabels(keyId) {
+      const numberSymbols = { "1": "!", "2": "@", "3": "#", "4": "$", "5": "%", "6": "¨", "7": "&", "8": "*", "9": "(", "0": ")", "-": "_", "=": "+" };
+      const special = {
+        acute: { main: "´", shifted: "`" },
+        tilde: { main: "~", shifted: "^" },
+        ",": { main: ",", shifted: "<" },
+        ".": { main: ".", shifted: ">" },
+        "=": { main: "=", shifted: "+" }
+      };
+      if (special[keyId]) return special[keyId];
+      if (numberSymbols[keyId]) return { main: keyId, shifted: numberSymbols[keyId] };
+      return { main: keyId.toLocaleUpperCase("pt-BR"), shifted: "" };
+    }
+    function renderKey(keyId) {
+      const labels = keyLabels(keyId);
+      const finger = fingerFor(keyId);
+      const home = "asdfghjklç".includes(keyId) && keyId.length === 1;
+      const bump = keyId === "f" || keyId === "j";
+      const active = action.key === keyId;
+      return '<span class="keycap ' + finger + (home ? " home" : "") + (bump ? " bump" : "") +
+        (active ? " is-next" : "") + '" data-key="' + escapeHTML(keyId) + '">' +
+        '<span class="mine-keycap-shift">' + escapeHTML(labels.shifted) + '</span>' +
+        '<span class="mine-keycap-main">' + escapeHTML(labels.main) + '</span></span>';
+    }
+    function renderShift(side) {
+      const active = action.shift === side;
+      const finger = side === "left-shift" ? "left-pinky" : "right-pinky";
+      return '<span class="keycap keycap-shift ' + finger + (active ? " is-next" : "") +
+        '" data-key="' + side + '"><span class="shift-arrow">↑</span><span class="shift-label">SHIFT</span></span>';
+    }
+    function rowHtml(keys, options) {
+      return '<div class="keyboard-row mine-keyboard-row ' + (options || "") + '">' + keys.map((keyId) => {
+        if (keyId === "left-shift" || keyId === "right-shift") return renderShift(keyId);
+        return inventory.has(keyId) ? renderKey(keyId) : '<span class="keyboard-spacer" aria-hidden="true"></span>';
+      }).join("") + '</div>';
+    }
+    const numberRow = ["apostrophe", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "="];
+    const topRow = ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "acute", "bracket-left"];
+    const homeRow = ["a", "s", "d", "f", "g", "h", "j", "k", "l", "ç", "tilde", "bracket-right"];
+    const bottomRow = ["left-shift", "backslash", "z", "x", "c", "v", "b", "n", "m", ",", ".", "semicolon", "slash", "right-shift"];
+    return '<section class="keyboard-guide mine-keyboard" aria-label="Teclado ABNT2: somente as teclas usadas na Mina">' +
+      '<h3>Teclado ABNT2 · somente as teclas usadas neste mundo</h3>' +
+      '<div class="mine-keyboard-map">' +
+      rowHtml(numberRow, "number-row") +
+      rowHtml(topRow, "top-row") +
+      rowHtml(homeRow, "home-row") +
+      rowHtml(bottomRow, "bottom-row") +
+      (inventory.has("space") ? '<div class="keyboard-row mine-keyboard-row space-row"><span class="keycap thumb key-space" data-key="space' +
+        (action.key === "space" ? '" data-next="true' : '"') + '">ESPAÇO · polegares</span></div>' : "") +
+      '</div>' +
+      '<p class="mine-keyboard-note">A seta ↑ acende junto com a tecla quando é necessário usar Shift. As teclas em branco são posições não usadas nesta Mina.</p>' +
+      '</section>';
+  }
+
+  function renderSequenceKeyboard(stage, nextChar, pendingDeadKey) {
+    if (document.body.dataset.world === "mine") return renderMineSequenceKeyboard(stage, nextChar, pendingDeadKey);
+    return renderCampSequenceKeyboard(stage);
   }
 
   function renderTypingSequence(checkpoint, area, feedback, checkButton, continueButton, complete) {
