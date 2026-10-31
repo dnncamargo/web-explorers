@@ -250,10 +250,10 @@ if (!browserPath) {
           assert.equal(await evaluate('!!document.querySelector(".mine-keyboard [data-key=acute]")'), true, "the acute key is shown beside P");
           assert.equal(await evaluate('!!document.querySelector(".mine-keyboard [data-key=tilde]")'), true, "the tilde/circumflex key is shown beside Ç");
           assert.equal(await evaluate('!!document.querySelector(".mine-keyboard [data-key=space]")'), true, "the space bar is shown");
-          assert.equal(await evaluate('document.querySelector(".mine-keyboard [data-key=2] .mine-keycap-shift")?.textContent'), "@", "the 2 key shows the at symbol");
-          assert.equal(await evaluate('document.querySelector(".mine-keyboard [data-key=3] .mine-keycap-shift")?.textContent'), "#", "the 3 key shows the number sign");
-          assert.equal(await evaluate('document.querySelector(".mine-keyboard [data-key=6] .mine-keycap-shift")?.textContent'), "¨", "the 6 key shows the diaeresis");
-          assert.equal(await evaluate('document.querySelector(".mine-keyboard [data-key=7] .mine-keycap-shift")?.textContent'), "&", "the 7 key shows the ampersand");
+          assert.equal(await evaluate('document.querySelector(".mine-keyboard [data-key="2"] .mine-keycap-shift")?.textContent'), "@", "the 2 key shows the at symbol");
+          assert.equal(await evaluate('document.querySelector(".mine-keyboard [data-key="3"] .mine-keycap-shift")?.textContent'), "#", "the 3 key shows the number sign");
+          assert.equal(await evaluate('document.querySelector(".mine-keyboard [data-key="6"] .mine-keycap-shift")?.textContent'), "¨", "the 6 key shows the diaeresis");
+          assert.equal(await evaluate('document.querySelector(".mine-keyboard [data-key="7"] .mine-keycap-shift")?.textContent'), "&", "the 7 key shows the ampersand");
           assert.equal(await evaluate('Array.from(document.querySelectorAll(".mine-keyboard [data-key]")).find((key) => key.dataset.key === "=")?.querySelector(".mine-keycap-shift")?.textContent'), "+", "the equals key shows the plus symbol");
           await evaluate('(() => { const field = document.querySelector("#sequence-input"); field.value = "banana"; field.dispatchEvent(new Event("input", { bubbles: true })); })()');
           assert.equal(await evaluate('document.querySelector("#sequence-target").textContent.replace(/\\s+/g,"").startsWith("BANANA")'), true, "the next Mine sequence is the uppercase form");
