@@ -228,9 +228,16 @@ if (!browserPath) {
       assert.match(await evaluate("document.title"), titlePattern);
       if (route === "king-k-rool.html") {
         assert.equal(await evaluate('!!document.querySelector("#poem-editor")'), true, "the final poem editor renders");
+        assert.equal(await evaluate('!!document.querySelector("#reset-boss")'), true, "the final poem mission offers an activity reset");
       } else {
+        assert.equal(await evaluate('!!document.querySelector("#reset-world")'), true, route + " world guide offers a full-world reset");
         await evaluate('document.querySelector("#start-world")?.click()');
         assert.equal(await evaluate('!!document.querySelector(' + JSON.stringify(selector) + ')'), true, route + " opens its expected exercise control");
+        assert.equal(await evaluate('!!document.querySelector("#reset-activity")'), true, route + " checkpoint offers an activity reset");
+        if (route === "jungle.html") {
+          await evaluate('(() => { const field = document.querySelector("#typing-input"); field.value = "A"; field.dispatchEvent(new Event("input", { bubbles: true })); document.querySelector("#reset-activity").click(); })()');
+          assert.equal(await evaluate('document.querySelector("#typing-input")?.value'), "", "activity reset clears only the current typing attempt");
+        }
       }
     }
 
