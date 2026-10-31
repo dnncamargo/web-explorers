@@ -5,9 +5,14 @@
       number: 1,
       title: "A Selva dos Kongs",
       subtitle: "Treino de digitação · Teclado ABNT2",
-      icon: "🌴",
       page: "jungle.html",
       track: "eAm9fk39c50",
+      scene: "https://m.media-amazon.com/images/M/MV5BZjM0OWI5NjgtMmUwMS00MjlhLTg0ZTktNDQ3MTBkYWNhMzkwXkEyXkFqcGc%40._V1_.jpg",
+      characters: [
+        { src: "https://static.wikia.nocookie.net/nintendo/images/f/f9/DK_and_Diddy.PNG/revision/latest?cb=20141007152903&path-prefix=en", alt: "Donkey Kong e Diddy Kong", credit: "Nintendo Fandom" },
+        { src: "https://static.wikia.nocookie.net/donkeykong/images/7/7b/Squawks_-_DKC2.gif/revision/latest?cb=20190113015723", alt: "Squawks", credit: "Donkey Kong Wiki" },
+        { src: "https://static.wikia.nocookie.net/donkeykong/images/1/14/Necky_1.png/revision/latest/scale-to-width-down/1000?cb=20170823192107&path-prefix=pt", alt: "Necky", credit: "Donkey Kong Wiki" }
+      ],
       intro: "Encontre a posição-base, explore as três fileiras e digite as primeiras frases.",
       guide: "Encontre as marcas tácteis em F e J. Coloque o indicador esquerdo em F e o direito em J. Acomode os outros dedos na fileira-base e deixe os polegares próximos à barra de espaço. Ao alcançar outra fileira, volte a F e J.",
       checkpoints: [
