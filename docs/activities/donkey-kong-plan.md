@@ -91,7 +91,7 @@ Não embutir/baixar os sete até confirmar permissão. Registrar crédito/licen�
 
 ChromiumOS lista Brazil (ABNT2), `xkb:br::por`, e diferencia ABNT1; o Google avisa que a tabela genérica de atalhos de Chromebook é US QWERTY e que teclas podem ser reconfiguradas. Usar o mapa do Yoshi: esquerda A/Q/Z mínimo, S/W/X anelar, D/E/C médio, F/R/T/G/V/B indicador; direita J/Y/U/H/N/M indicador, K/I médio, L/O anelar, Ç/P mínimo; espaço com polegares. Fileiras `QWERTYUIOP`, `ASDFGHJKLÇ`, `ZXCVBNM`. Ilustração com duas mãos, dez dedos, marcas F/J e espaço. Cor/dedo é orientação visual; só professor acompanha dedo real.
 
-**AltGr/símbolos:** o mapeamento XKB brasileiro sugere AltGr+Q→`/` e AltGr+W→`?`, mas o professor ainda não confirmou essas combinações no Chromebook. Por isso o checkpoint pede que o aluno produza `/` e `?` com o teclado ABNT2, sem impor nem simular uma combinação AltGr não verificada.
+**AltGr:** `/` não é mais praticado na Mina. O ponto de interrogação `?` fica no checkpoint 3 do Acampamento e usa AltGr+W, conforme a decisão pedagógica do professor. O exercício verifica a camada AltGr e a tecla física W.
 
 **Acentos:** o professor confirmou que a acentuação funciona no Chromebook usado. Na Mina, o agudo e o til são preparados sem Shift; o circunflexo usa Shift. Nas etapas de maiúsculas, a tecla morta é preparada primeiro e Shift é usado na vogal. O resultado é validado após composição no `input` e NFC.
 
@@ -318,7 +318,7 @@ A implementação inclui testes de dados/progresso e amplia os testes de reposit
 | Offsets do poema mudam com edição Unicode. | Recalcular no valor corrente com linha/contexto, atualizar estado do draft junto ao próximo alvo. |
 | Software não mede dedo nem postura. | Professor acompanha técnica; mostrar no app só resultado de digitação. |
 
-Pendências antes da liberação para a turma: (1) confirmar a combinação Lupa/Launcher + Backspace em cada modelo/perfil de Chromebook; (2) validar AltGr+W no perfil escolar; (3) concluir a observação de Á É Ê Õ Ú, Ctrl+Shift+Z e clipboard no campo real da atividade; (4) ouvir os cinco vídeos, escolher eventuais segmentos e testar a reprodução na rede escolar; (5) decidir sobre licenças/arte — esta implementação não inclui imagens extraídas de wikis; (6) realizar teste visual e pedagógico com alunos/professor. O poema e o mapa com entrada em qualquer mundo já estão implementados.
+Pendências antes da liberação para a turma: (1) confirmar a combinação Lupa/Launcher + Backspace em cada modelo/perfil de Chromebook; (2) validar AltGr+W no perfil escolar; (3) observar as letras Á É Ê Õ Ú, Ctrl+Shift+Z e a área de transferência no campo real da atividade; (4) ouvir os cinco vídeos e testar a reprodução na rede escolar; (5) revisar os direitos/termos de uso dos cenários e sprites remotos; (6) realizar teste visual e pedagógico com professor e alunos. O poema, os cenários e a progressão automática dos mundos já estão implementados.
 
 ## 15. Fontes de evidência
 
@@ -342,7 +342,7 @@ Pendências antes da liberação para a turma: (1) confirmar a combinação Lupa
 
 A implementação agora contém 22 checkpoints. Mundo 1 ensina mãos/fileiras antes das frases; Mundo 2 pratica diferenciação de maiúsculas/minúsculas, Shift e símbolos, depois acentos sem/com Shift em minúsculas e maiúsculas; Mundo 3 introduz Enter, Delete, AltGr+W e operações Ctrl, incluindo seleção real. Os exercícios de Mundo 2 e 3 avançam automaticamente entre etapas na mesma página. O chefe mantém a missão integral da Canção do Exílio. Direitos das imagens, áudio e políticas de reprodução dos Chromebooks permanecem riscos declarados.
 
-**Entrega:** planejamento e implementação incremental nesta branch. A atividade possui mapa, três mundos, 22 checkpoints, identidade visual distinta em cada mundo, personagens e cenários carregados externamente, chefe final com oito correções, progresso local isolado e rádio em todas as páginas. A validação de sintaxe e de dados foi executada nesta sessão; o teste de navegador e a validação completa em Chromebook permanecem pendentes. Não houve merge. A implementação não inclui personagens/arte Nintendo sem licença confirmada.
+**Entrega:** planejamento e implementação incremental nesta branch. A atividade possui mapa, três mundos, 22 checkpoints, identidade visual distinta em cada mundo, personagens e cenários carregados externamente, chefe final com oito correções, progresso local isolado e rádio em todas as páginas. A validação de sintaxe e de dados foi executada nesta sessão; os testes Node completos, o Chromium automatizado e a conferência das imagens na rede escolar permanecem pendentes. Não houve merge.
 
 ## 17. Registro da implementação inicial — 30/10/2026
 
