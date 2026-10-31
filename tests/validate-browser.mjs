@@ -243,8 +243,16 @@ if (!browserPath) {
         assert.equal(await evaluate('!!document.querySelector("#reset-activity")'), true, route + " checkpoint offers an activity reset");
         assert.equal(await evaluate('document.querySelector("#check-action").hidden'), true, route + " advances without a Conferir etapa button");
         if (route === "mine.html") {
-          assert.equal(await evaluate('document.querySelectorAll(".sequence-keyboard").length'), 1, "Mine displays the ABNT2 Shift and symbol keyboard");
-          assert.equal(await evaluate('document.querySelector("#sequence-input")?.value'), "", "Mine starts with an empty automatic sequence");
+          assert.equal(await evaluate('document.querySelectorAll(".mine-keyboard").length'), 1, "Mine displays the World 1-style restricted ABNT2 keyboard");
+          assert.equal(await evaluate('document.querySelectorAll(".mine-keyboard .keycap-shift").length'), 2, "Mine shows left and right Shift keys");
+          assert.equal(await evaluate('!!document.querySelector(".mine-keyboard [data-key=acute]")'), true, "the acute key is shown beside P");
+          assert.equal(await evaluate('!!document.querySelector(".mine-keyboard [data-key=tilde]")'), true, "the tilde/circumflex key is shown beside Ç");
+          assert.equal(await evaluate('!!document.querySelector(".mine-keyboard [data-key=space]")'), true, "the space bar is shown");
+          assert.equal(await evaluate('!!document.querySelector(".mine-keyboard [data-key=q]")'), false, "unused letter keys are omitted from the Mine keyboard");
+          await evaluate('(() => { const field = document.querySelector("#sequence-input"); field.value = "banana"; field.dispatchEvent(new Event("input", { bubbles: true })); })()');
+          assert.equal(await evaluate('document.querySelector("#sequence-target").textContent.replace(/\\s+/g,"").startsWith("BANANA")'), true, "the next Mine sequence is the uppercase form");
+          assert.equal(await evaluate('!!document.querySelector(".mine-keyboard [data-key=b].is-next")'), true, "the current letter key is highlighted");
+          assert.equal(await evaluate('!!document.querySelector(".mine-keyboard [data-key=right-shift].is-next")'), true, "the paired upward Shift arrow lights with an uppercase letter");
         }
         if (route === "jungle.html") {
           await evaluate('(() => { const field = document.querySelector("#typing-input"); field.value = "A"; field.dispatchEvent(new Event("input", { bubbles: true })); document.querySelector("#reset-activity").click(); })()');
