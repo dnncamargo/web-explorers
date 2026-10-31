@@ -93,7 +93,7 @@ ChromiumOS lista Brazil (ABNT2), `xkb:br::por`, e diferencia ABNT1; o Google avi
 
 **AltGr/símbolos:** o mapeamento XKB brasileiro sugere AltGr+Q→`/` e AltGr+W→`?`, mas o professor ainda não confirmou essas combinações no Chromebook. Por isso o checkpoint pede que o aluno produza `/` e `?` com o teclado ABNT2, sem impor nem simular uma combinação AltGr não verificada.
 
-**Acentos:** o professor testou e confirmou a acentuação no Chromebook usado. A atividade trabalha acentos como teclas mortas, inclusive maiúsculas acentuadas; a sequência completa `Á É Ê Õ Ú` ainda deve ser confirmada manualmente no checkpoint integrado. O resultado final é validado por `input` e NFC, sem depender do `keydown` intermediário da tecla morta.
+**Acentos:** o professor confirmou que a acentuação funciona no Chromebook usado. Na Mina, o agudo e o til são preparados sem Shift; o circunflexo usa Shift. Nas etapas de maiúsculas, a tecla morta é preparada primeiro e Shift é usado na vogal. O resultado é validado após composição no `input` e NFC.
 
 **Backspace/Delete:** Backspace apaga antes do cursor. No Chromebook testado pelo professor, Lupa (Launcher) + Backspace apaga o caractere à direita. A atividade ensina essa combinação no Mundo 3 e exige o efeito no texto; confirmar em outros modelos/perfis antes de usar em toda a frota. Não interceptar ou simular em JS uma tecla que o aluno deve aprender como Delete.
 
@@ -165,7 +165,7 @@ Fileira-base: esquerda A,S,D,F; direita J,K,L,Ç. Professor observa a mão; app 
 | 2 Barris selecionados | Shift+seta, um e vários caracteres. Em `DK BANANA`, demonstre duas seleções separadas: caret depois de D e Shift+← uma vez seleciona `D`; reposicione caret depois de K e Shift+← duas vezes seleciona `DK`. | Primeiro intervalo selecionado `D`, depois `DK`; conferir `selectionStart/End`/slice; botão só avança após as duas seleções. | Se seta move caret, lembrete “mantenha Shift”; reiniciar caret/texto. Evidência: seleção real. |
 | 3 Abrindo caminho | Shift+setas seleciona palavra e expressão, sem Ctrl. Demo caret no início. Texto `DK BANANA DOS KONGS`; selecionar `DK BANANA` usando Shift+→ incluindo o espaço entre palavras (9 caracteres). | Seleção começa em 0, termina em 10, conteúdo selecionado exato; sem mouse. | Dica demonstra direção e extensão; se inclui espaço seguinte/seleção curta, ajustar com seta. Reiniciar seleção. |
 | 4 Limpando a mina | Backspace e exclusão de seleção. Demo antes do cursor e seleção. `DK! KONG`, caret após `!`: Backspace→`DK KONG`; depois pôr caret antes de K, usar Shift+End para selecionar `KONG`, e Backspace→`DK ` (espaço final sinalizado visualmente). | Verificar cada valor intermediário e evento input. | Explica diferença de posição; restaura estado inicial deste checkpoint. Evidência: caráter anterior/seleção apagados. |
-| 5 Símbolos secretos | AltGr. Só após confirmação local mostrar AltGr+Q→`/`, AltGr+W→`?`. Texto: “Segure AltGr com a tecla indicada.” | Digitar `/ ?` em textarea e observar entrada real. Se modelo não produzir, suspender checkpoint e mapear layout real; não substituir por clique. | Erro: “Confira Português (Brasil) ABNT2 ativo.” Reiniciar. Evidência condicionada ao Chromebook. |
+| Símbolos da Mina | A Mina não ensina AltGr. Shift+1, Shift+7 e Shift+= produzem `!`, `&` e `+`; ponto e vírgula usam as teclas normais sem Shift. | Sequências de digitação em campo focado; a tecla física e o Shift são conferidos e o exercício avança sozinho. | Feedback imediato explica Shift e a tecla correspondente; o próximo exemplo aparece sem botão de conferência. |
 | 6 A oficina de palavras | Teclas mortas ´, ~, ^, grave e Shift para Á. Apresentar uma por vez. | Corrigir em três rodadas: `cafe`→`café`, `irma`→`irmã`, `agua`→`água`; NFC/valor exato após cada palavra. Inserir acento antes da vogal ou substituir palavra usando teclado. | Se acento fica isolado/na letra errada, reabrir demo do acento alvo; reset só rodada atual. Detectar input, tolerar `key=Dead`. Evidência: escrita acentuada (ação física requer observação). |
 | 7 A mensagem dos Kongs | Revisar caixa, acento grave e pontuação. Demo das três teclas pertinentes, sem Ctrl. Texto `os kongs chegaram a selva?`; usar Shift+→ sobre o `o` inicial e Shift+O para caixa, percorrer com setas até antes do `a`, Shift+→ para selecioná-lo e digitar grave+a, ir ao fim, Shift+← e Shift+1 para trocar `?` por `!`. | Resultado `Os Kongs chegaram à selva!`; valida valor integral e alteração via textarea. | Mostrar primeira diferença e demo respectiva; restore texto inicial. Evidência: mensagem combinada revisada. |
 
@@ -282,8 +282,8 @@ A reordenação 2 deixará linha das aves sem vírgula, de forma que o alvo 8 fa
 | Mundo | Habilidade central dos checkpoints | Revisões |
 |---|---|---|
 | Selva | 1 F/J; 2 mão esq.; 3 direita/Ç; 4 coordenação; 5 fileira superior; 6 inferior; 7 palavras; 8 frase curta; 9 completa | Técnica acompanhada em todos, espaço e teclado completo antes de frases. |
-| Mina | 1 Shift; 2 caracteres; 3 palavra/expressão; 4 Backspace; 5 AltGr; 6 acentos; 7 revisão | Seleção 2–4/7, pontuação e Shift 1/7, AltGr 5/7. |
-| Acampamento | 1 Enter; 2 Delete; 3 Ctrl/seleção; 4 copiar/recortar/colar; 5 undo/redo; 6 integração | Revisa Shift, AltGr, Backspace, acentos, pontuação, teclado e quebras. |
+| Mina | 1 maiúsculas/minúsculas; 2 Shift, números e símbolos; 3–6 acentos em minúsculas/maiúsculas; 7 mistura | Seleção foi transferida para o Acampamento; AltGr não é ensinado na Mina. |
+| Acampamento | 1 Enter; 2 Delete; 3 AltGr+W; 4 Ctrl/seleção; 5 copiar/recortar/colar; 6 undo/redo; 7 integração | Revisa Shift, acentos, símbolos, pontuação, teclado e quebras. |
 | Chefe | Corrigir 8 alvos em poema integral | Caixa, ordenação, acentos, pontuação, seleção, apagar/substituir, linhas, desfazer/refazer/consulta. |
 
 ## 12. Validação pedagógica e critério de avanço
@@ -318,7 +318,7 @@ A implementação inclui testes de dados/progresso e amplia os testes de reposit
 | Offsets do poema mudam com edição Unicode. | Recalcular no valor corrente com linha/contexto, atualizar estado do draft junto ao próximo alvo. |
 | Software não mede dedo nem postura. | Professor acompanha técnica; mostrar no app só resultado de digitação. |
 
-Pendências antes da liberação para a turma: (1) confirmar a combinação Lupa/Launcher + Backspace em cada modelo/perfil de Chromebook; (2) testar AltGr+Q/W no equipamento e manter o checkpoint baseado no resultado do símbolo enquanto não houver confirmação; (3) concluir a observação de Á É Ê Õ Ú, Ctrl+Shift+Z e clipboard no campo real da atividade; (4) ouvir os cinco vídeos, escolher eventuais segmentos e testar a reprodução na rede escolar; (5) decidir sobre licenças/arte — esta implementação não inclui imagens extraídas de wikis; (6) realizar teste visual e pedagógico com alunos/professor. O poema e o mapa com entrada em qualquer mundo já estão implementados.
+Pendências antes da liberação para a turma: (1) confirmar a combinação Lupa/Launcher + Backspace em cada modelo/perfil de Chromebook; (2) validar AltGr+W no perfil escolar; (3) concluir a observação de Á É Ê Õ Ú, Ctrl+Shift+Z e clipboard no campo real da atividade; (4) ouvir os cinco vídeos, escolher eventuais segmentos e testar a reprodução na rede escolar; (5) decidir sobre licenças/arte — esta implementação não inclui imagens extraídas de wikis; (6) realizar teste visual e pedagógico com alunos/professor. O poema e o mapa com entrada em qualquer mundo já estão implementados.
 
 ## 15. Fontes de evidência
 
@@ -448,3 +448,7 @@ Os exercícios de Enter, Delete, AltGr, Ctrl, clipboard e undo/redo avançam aut
 - Dados em runtime conferidos: 8 checkpoints de Selva, 7 de Mina e 7 de Acampamento (22 no total); sete nomes/ordem de checkpoints do Mundo 2 e sete do Mundo 3.
 - Sintaxe de `activity.js`, `checkpoints.js`, `progress.js`, `radio.js`, testes de atividade, rádio, repositório e navegador analisada; CSS com chaves balanceadas.
 - Os testes Node completos e o navegador automatizado ainda não foram executados em checkout local nesta sessão. As URLs externas de personagens/fundos também precisam ser visualmente conferidas na rede da escola.
+
+### Notas de crédito e disponibilidade dos assets
+
+As imagens de fase e os sprites desta revisão permanecem remotos e não são redistribuídos dentro do repositório. Os atributos `alt` e `title` identificam personagem e origem (Nintendo Fandom, Donkey Kong Wiki ou Tenor). As imagens Fandom/remote podem responder 403, variar de URL ou não carregar na rede escolar; o código oculta somente o arquivo que falhar, sem remover o cartão ou bloquear o exercício. A publicação para além do uso pessoal/escolar exige revisão de direitos e licenças das imagens.
