@@ -97,6 +97,17 @@
     return fresh();
   }
 
+  function resetWorld(progress, worldId) {
+    if (!Object.prototype.hasOwnProperty.call(TOTALS, worldId)) return false;
+    progress.checkpoints[worldId] = 0;
+    return true;
+  }
+
+  function resetBoss(progress) {
+    progress.boss = { draft: "", passed: false };
+    return true;
+  }
+
   function completeCheckpoint(progress, worldId, number) {
     if (!Object.prototype.hasOwnProperty.call(TOTALS, worldId)) return false;
     if (number !== progress.checkpoints[worldId] + 1 || number > TOTALS[worldId]) return false;
@@ -104,5 +115,5 @@
     return true;
   }
 
-  global.DonkeyKongProgress = { KEY, LEGACY_KEY, TOTALS, fresh, normalize, load, save, reset, completeCheckpoint };
+  global.DonkeyKongProgress = { KEY, LEGACY_KEY, TOTALS, fresh, normalize, load, save, reset, resetWorld, resetBoss, completeCheckpoint };
 })(window);
