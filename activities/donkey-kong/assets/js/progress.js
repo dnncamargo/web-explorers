@@ -1,7 +1,7 @@
 (function (global) {
   const KEY = "exploradores.donkey-kong.progress.v2";
   const LEGACY_KEY = "exploradores.donkey-kong.progress.v1";
-  const TOTALS = { jungle: 8, mine: 7, camp: 6 };
+  const TOTALS = { jungle: 8, mine: 7, camp: 7 };
   const memory = { raw: null };
 
   function fresh() {
