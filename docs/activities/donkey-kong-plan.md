@@ -157,19 +157,19 @@ Fileira-base: esquerda A,S,D,F; direita J,K,L,Ç. Professor observa a mão; app 
 
 ## 8. Mundo 2 — A Mina dos Barris (7)
 
-**Rádio:** `cBK2YIrY62I`. Sem Ctrl neste mundo. Apresentar apenas combinação da etapa atual. Para tarefas de Shift+seta, editor precisa estar focado.
+**Rádio:** `cBK2YIrY62I`. Não há Ctrl neste mundo. O conteúdo atual tem sete checkpoints, todos com sequências curtas de digitação automática, na mesma página e sem botão de conferência. Os alvos completos e as instruções vigentes são definidos em `activities/donkey-kong/assets/js/checkpoints.js`; o desenho do teclado é gerado em `renderMineSequenceKeyboard()` a partir da união das teclas desses alvos.
 
-| # Nome | Habilidade, instrução/demonstração e conteúdo/ação | Resultado/critérios | Erro, dica, repetição e evidência |
-|---|---|---|---|
-| 1 O poder do Shift | Maiúscula e `!`. Demo Shift esquerdo/direito, letra e Shift+1. “Segure Shift com D; para !, segure Shift com 1.” Campo vazio, alvo `DK!`. | Digitar `DK!`; validar conteúdo, não declarar que Shift físico foi detectado. | Caixa errada: rever tecla modificadora; ! errado: mapa ABNT2. Limpar campo e repetir; evidencia resultado maiúsculo/símbolo. |
-| 2 Barris selecionados | Shift+seta, um e vários caracteres. Em `DK BANANA`, demonstre duas seleções separadas: caret depois de D e Shift+← uma vez seleciona `D`; reposicione caret depois de K e Shift+← duas vezes seleciona `DK`. | Primeiro intervalo selecionado `D`, depois `DK`; conferir `selectionStart/End`/slice; botão só avança após as duas seleções. | Se seta move caret, lembrete “mantenha Shift”; reiniciar caret/texto. Evidência: seleção real. |
-| 3 Abrindo caminho | Shift+setas seleciona palavra e expressão, sem Ctrl. Demo caret no início. Texto `DK BANANA DOS KONGS`; selecionar `DK BANANA` usando Shift+→ incluindo o espaço entre palavras (9 caracteres). | Seleção começa em 0, termina em 10, conteúdo selecionado exato; sem mouse. | Dica demonstra direção e extensão; se inclui espaço seguinte/seleção curta, ajustar com seta. Reiniciar seleção. |
-| 4 Limpando a mina | Backspace e exclusão de seleção. Demo antes do cursor e seleção. `DK! KONG`, caret após `!`: Backspace→`DK KONG`; depois pôr caret antes de K, usar Shift+End para selecionar `KONG`, e Backspace→`DK ` (espaço final sinalizado visualmente). | Verificar cada valor intermediário e evento input. | Explica diferença de posição; restaura estado inicial deste checkpoint. Evidência: caráter anterior/seleção apagados. |
-| Símbolos da Mina | A Mina não ensina AltGr. Shift+1, Shift+7 e Shift+= produzem `!`, `&` e `+`; ponto e vírgula usam as teclas normais sem Shift. | Sequências de digitação em campo focado; a tecla física e o Shift são conferidos e o exercício avança sozinho. | Feedback imediato explica Shift e a tecla correspondente; o próximo exemplo aparece sem botão de conferência. |
-| 6 A oficina de palavras | Teclas mortas ´, ~, ^, grave e Shift para Á. Apresentar uma por vez. | Corrigir em três rodadas: `cafe`→`café`, `irma`→`irmã`, `agua`→`água`; NFC/valor exato após cada palavra. Inserir acento antes da vogal ou substituir palavra usando teclado. | Se acento fica isolado/na letra errada, reabrir demo do acento alvo; reset só rodada atual. Detectar input, tolerar `key=Dead`. Evidência: escrita acentuada (ação física requer observação). |
-| 7 A mensagem dos Kongs | Revisar caixa, acento grave e pontuação. Demo das três teclas pertinentes, sem Ctrl. Texto `os kongs chegaram a selva?`; usar Shift+→ sobre o `o` inicial e Shift+O para caixa, percorrer com setas até antes do `a`, Shift+→ para selecioná-lo e digitar grave+a, ir ao fim, Shift+← e Shift+1 para trocar `?` por `!`. | Resultado `Os Kongs chegaram à selva!`; valida valor integral e alteração via textarea. | Mostrar primeira diferença e demo respectiva; restore texto inicial. Evidência: mensagem combinada revisada. |
+| # | Conteúdo atualmente implementado |
+|---|---|
+| 1 | Minúsculas/maiúsculas: `banana`, `BANANA`, `Diddy Kong`, `Diddy corre pela ilha.` |
+| 2 | Letras, números e sinais: `Diddy tem 2 bananas!`, `2 bananas, 1 fruta.`, `2 + 1 = 3 bananas.`, `Diddy & Dixie formam uma dupla!` |
+| 3 | Agudo e til sem Shift em minúsculas: `café`, `jacaré`, `irmã`, `maçã`, `o jacaré come maçã`. |
+| 4 | Circunflexo com Shift e vogal minúscula: `você`, `avô`, `câmera`, `pêssego`, `o avô vê a câmera`. |
+| 5 | Agudo sem Shift e vogal maiúscula com Shift: `Árvore`, `Érica`, `Índia`, `Óscar`, `Úrsula`, `Árvore alta`. |
+| 6 | Circunflexo com Shift e vogal maiúscula: `Ângela`, `Ênio`, `Ônibus`, `Ângela pega o ônibus.` |
+| 7 | Revisão integrada: `Diddy tem 2 maçãs!`, `Café, maçã e pêssego.`, `2 + 1 = 3 bananas.`, `Diddy & Dixie formam uma dupla!`. |
 
-O M2 ensina seleção de palavra/expressão deslocando a seta com Shift; Ctrl+Shift+seta fica reservado ao M3. Não depender de gesto de touchpad.
+A seleção de texto foi retirada da Mina e ficou no exercício de navegação/seleção com Ctrl, no Mundo 3. As frases são curtas e têm significado; os exemplos de letras maiúsculas acentuadas usam palavras e nomes, não grupos artificiais de letras.
 
 ## 9. Mundo 3 — O Acampamento dos Kongs (6)
 
@@ -415,15 +415,15 @@ Esta revisão substitui as propostas anteriores de conteúdo dos mundos 2 e 3 de
 
 ### Mundo 2 — A Mina dos Barris (7 checkpoints)
 
-1. **Maiúsculas e minúsculas:** quatro sequências, da palavra minúscula a nomes mistos e palavras inteiras em caixa alta/baixa.
-2. **Shift, números e símbolos:** combinações de letras, números, `!` (Shift+1), `&` (Shift+7), `+` (Shift+=), ponto e vírgula sem Shift e mistura de todos.
-3. **Acentos sem Shift · minúsculas:** agudo e til em palavras como café, jacaré, irmã e maçã. A instrução diz para preparar o acento antes da vogal.
-4. **Acento com Shift · minúsculas:** circunflexo com Shift e vogal minúscula, em você, avô, câmera e pêssego.
-5. **Acentos sem Shift · maiúsculas:** preparar agudo sem Shift e digitar a vogal maiúscula com Shift, em `Á É Í Ó Ú`.
-6. **Acentos com Shift · maiúsculas:** preparar circunflexo com Shift e manter Shift na vogal maiúscula, em `Â Ê Ô`.
-7. **Misturando acentos e símbolos:** frases que combinam maiúsculas/minúsculas, agudo, til, circunflexo, `&`, `!`, números, vírgula e ponto.
+1. **Maiúsculas e minúsculas:** `banana`, `BANANA`, `Diddy Kong` e uma frase completa com capitalização correta.
+2. **Shift, números e símbolos:** frases com números e os sinais `!` (Shift+1), `&` (Shift+7), `+` (Shift+=), vírgula e ponto.
+3. **Acentos sem Shift · minúsculas:** agudo e til em palavras e numa frase curta.
+4. **Acentos com Shift · minúsculas:** circunflexo preparado com Shift; a vogal minúscula vem depois, sem Shift.
+5. **Acentos sem Shift · maiúsculas:** agudo preparado sem Shift e Shift na vogal maiúscula; palavras e nomes reais.
+6. **Acentos com Shift · maiúsculas:** circunflexo e vogal maiúscula, com palavras e uma frase.
+7. **Misturando acentos e símbolos:** frases completas que combinam maiúsculas/minúsculas, acentos, `&`, `!`, números, vírgula e ponto.
 
-Cada checkpoint usa várias sequências curtas no mesmo cartão. O campo valida o prefixo e o resultado completo; ao terminar uma sequência, a próxima aparece e recebe foco automaticamente. Não existe botão “Conferir etapa” nos mundos 2 e 3. O teclado ABNT2 desenhado apresenta os dois modificadores Shift, a fileira numérica com símbolo superior e a tecla W com `?` quando AltGr for praticado.
+Cada checkpoint usa várias sequências curtas no mesmo cartão. O campo valida o prefixo e o resultado completo; ao terminar uma sequência, a próxima aparece e recebe foco automaticamente. Não existe botão “Conferir etapa” nos mundos 2 e 3.
 
 ### Mundo 3 — O Acampamento dos Kongs (7 checkpoints)
 
@@ -437,13 +437,15 @@ Cada checkpoint usa várias sequências curtas no mesmo cartão. O campo valida 
 
 Os exercícios de Enter, Delete, AltGr, Ctrl, clipboard e undo/redo avançam automaticamente quando o evento e o resultado correspondem à operação esperada. A seleção foi movida de Mundo 2 para a sequência de Ctrl em Mundo 3.
 
-### Mapeamento ABNT2 ensinado
+### Teclado ABNT2 específico da Mina
 
-- Shift+1 → `!`; Shift+7 → `&`; Shift+= → `+`.
-- Ponto e vírgula são digitados sem Shift no exercício dedicado.
+- O teclado reutiliza as fileiras, as cores por dedo, os realces e a barra de espaço do Mundo 1, mas calcula a lista de teclas físicas a partir de todos os alvos dos sete checkpoints da Mina. Teclas que não aparecem em nenhum alvo ficam como lacunas invisíveis para preservar as posições físicas.
+- O desenho tem fileira de números, letras, dois Shift com seta para cima, barra de espaço e as teclas de pontuação/acentuação que a Mina realmente usa.
+- A posição segue o ABNT2: agudo `´` à direita do P; til/circunflexo `~`/`^` à direita do Ç; vírgula e ponto à direita do M.
+- Shift+1 → `!`; Shift+7 → `&`; Shift+= → `+`. Os símbolos superiores são mostrados apenas nas teclas cujos sinais são praticados nesta Mina.
+- A seta de Shift correspondente brilha ao mesmo tempo que a tecla física que precisa dela. Para acentos, o realce passa da tecla morta para a vogal depois do primeiro toque.
 - Agudo `´` e til `~` são preparados sem Shift; circunflexo `^` é preparado com Shift. A vogal é pressionada depois da tecla morta.
-- As vogais maiúsculas usam Shift na segunda tecla (vogal); a tecla morta continua a obedecer à regra do acento.
-- AltGr+W → `?`, somente no Mundo 3.
+- AltGr+W → `?` permanece exclusivo do Mundo 3.
 
 ### Validação desta revisão
 
