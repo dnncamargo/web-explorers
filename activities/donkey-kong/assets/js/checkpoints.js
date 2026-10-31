@@ -44,91 +44,103 @@
       checkpoints: [
         {
           title: "Maiúsculas e minúsculas",
-          instruction: "Compare letras pequenas e grandes. Digite cada exemplo exatamente como aparece.",
-          hint: "Letras minúsculas são digitadas sem Shift. Para maiúsculas, segure Shift enquanto pressiona a letra. Observe que o texto diferencia K de k.",
+          instruction: "Compare letras minúsculas e maiúsculas. Depois, use maiúsculas no começo dos nomes e da frase.",
+          hint: "Sem Shift, as letras ficam minúsculas. Segure Shift para escrever uma letra maiúscula. O desenho acende a tecla e a seta de Shift que você deve usar.",
           kind: "typing-sequence",
           caseSensitive: true,
           stages: [
-            { target: "diddy", instruction: "Primeiro, escreva Diddy em letras minúsculas.", hint: "Não segure Shift: digite d i d d y." },
-            { target: "DIDDY", instruction: "Agora escreva a mesma palavra em letras maiúsculas.", hint: "Segure Shift para cada letra: D I D D Y.", shiftLetters: true },
-            { target: "Diddy Kong", instruction: "Use maiúscula apenas no começo de cada nome.", hint: "Shift aparece em D e K. As outras letras são minúsculas.", shiftLetters: true },
-            { target: "KONG kong", instruction: "Compare uma palavra toda em maiúsculas com outra toda em minúsculas.", hint: "Na primeira palavra, use Shift nas quatro letras. Na segunda, solte Shift." , shiftLetters: true }
+            { target: "banana", instruction: "Escreva a palavra banana com letras minúsculas.", hint: "Digite todas as letras sem segurar Shift." },
+            { target: "BANANA", instruction: "Agora escreva BANANA com todas as letras maiúsculas.", hint: "Segure Shift para cada letra. A seta de Shift brilha junto com a tecla da letra.", shiftLetters: true },
+            { target: "Diddy Kong", instruction: "Escreva os nomes Diddy Kong com a primeira letra de cada nome em maiúscula.", hint: "Use Shift em D e em K. As outras letras ficam minúsculas.", shiftLetters: true },
+            { target: "Diddy corre pela ilha.", instruction: "Digite a frase. O nome Diddy e o começo da frase começam com letra maiúscula.", hint: "Use Shift no D inicial. Depois, solte Shift para escrever o restante da frase. Termine com ponto.", shiftLetters: true }
           ]
         },
         {
           title: "Shift, números e símbolos",
-          instruction: "Use letras maiúsculas, números e os símbolos que aparecem na parte superior das teclas.",
-          hint: "O teclado abaixo destaca Shift e as teclas físicas. No ABNT2: Shift+1 produz !, Shift+7 produz & e Shift+= produz +. Ponto e vírgula são digitados sem Shift.",
+          instruction: "Use Shift com letras e números. Descubra também os sinais que ficam na parte de cima de algumas teclas.",
+          hint: "No ABNT2: Shift+1 produz !, Shift+7 produz & e Shift+= produz +. Vírgula e ponto são digitados sem Shift. A seta de Shift acende junto com a tecla correspondente.",
           kind: "typing-sequence",
           caseSensitive: true,
           stages: [
-            { target: "DK 123", instruction: "Misture letras maiúsculas com números.", hint: "Use Shift em D e K. Digite 1, 2 e 3 sem Shift.", shiftLetters: true },
-            { target: "! & +", instruction: "Agora produza três símbolos com Shift.", hint: "Shift+1 → ! · Shift+7 → & · Shift+= → +.", symbolCodes: { "!": "Digit1", "&": "Digit7", "+": "Equal" }, requireShiftSymbols: true },
-            { target: ".,", instruction: "Digite ponto e vírgula. Nesta etapa, não use Shift.", hint: "Use as teclas de pontuação do teclado ABNT2. Digite primeiro o ponto e depois a vírgula.", requireNoShiftSymbols: true },
-            { target: "KONG! 7 + 1.", instruction: "Misture maiúsculas, números, símbolos e pontuação.", hint: "KONG usa Shift nas letras; ! usa Shift+1; + usa Shift+=. O ponto final é digitado sem Shift.", shiftLetters: true, symbolCodes: { "!": "Digit1", "+": "Equal" }, requireShiftSymbols: true }
+            { target: "Diddy tem 2 bananas!", instruction: "Digite a frase Diddy tem 2 bananas!", hint: "Use Shift para o D inicial e Shift+1 para o ponto de exclamação.", shiftLetters: true, symbolCodes: { "!": "Digit1" }, requireShiftSymbols: true },
+            { target: "2 bananas, 1 fruta.", instruction: "Digite a lista de frutas com números, vírgula e ponto.", hint: "Os números ficam sem Shift. Digite a vírgula e o ponto sem pressionar Shift.", requireNoShiftSymbols: true },
+            { target: "2 + 1 = 3 bananas.", instruction: "Complete a conta que mostra quantas bananas há ao todo.", hint: "Para +, segure Shift e pressione a tecla =. O sinal = é digitado sem Shift.", symbolCodes: { "+": "Equal" }, requireShiftSymbols: true },
+            { target: "Diddy & Dixie formam uma dupla!", instruction: "Escreva a frase que apresenta a dupla.", hint: "Use Shift nas letras D maiúsculas, Shift+7 para & e Shift+1 para !.", shiftLetters: true, symbolCodes: { "&": "Digit7", "!": "Digit1" }, requireShiftSymbols: true }
           ]
         },
         {
           title: "Acentos sem Shift · minúsculas",
-          instruction: "Prepare o acento e depois digite a vogal. Complete cada palavra em letras minúsculas.",
-          hint: "O agudo ´ fica na tecla à direita do P e é usado sem Shift. O til ~ fica à direita do Ç e também é usado sem Shift. Primeiro pressione o acento; depois a vogal.",
+          instruction: "Prepare o acento sem Shift e depois digite a vogal minúscula. Complete palavras e uma frase.",
+          hint: "O agudo ´ fica à direita do P. O til ~ fica à direita do Ç. Pressione primeiro a tecla do acento e depois a vogal, sem segurar Shift.",
           kind: "typing-sequence",
           caseSensitive: true,
           deadKeyShift: false,
           stages: [
-            { target: "café", instruction: "Digite café.", hint: "Para é: pressione ´ sem Shift e depois e." },
-            { target: "jacaré", instruction: "Digite jacaré.", hint: "Repita o agudo ´ sem Shift antes do e." },
-            { target: "irmã", instruction: "Digite irmã.", hint: "Para ã: pressione ~ sem Shift e depois a." },
-            { target: "maçã", instruction: "Digite maçã.", hint: "Use ç normalmente; para ã, prepare ~ sem Shift e depois a." }
+            { target: "café", instruction: "Escreva a palavra café.", hint: "Pressione ´ sem Shift e depois e." },
+            { target: "jacaré", instruction: "Escreva a palavra jacaré.", hint: "Pressione ´ sem Shift e depois e." },
+            { target: "irmã", instruction: "Escreva a palavra irmã.", hint: "Pressione ~ sem Shift e depois a." },
+            { target: "maçã", instruction: "Escreva a palavra maçã.", hint: "Digite ç na tecla própria. Para ã, pressione ~ sem Shift e depois a." },
+            { target: "o jacaré come maçã", instruction: "Complete a frase com o jacaré e a maçã.", hint: "Prepare o agudo em jacaré e o til em maçã. As letras desta frase são minúsculas.", deadKeyShift: false }
           ]
         },
         {
-          title: "Acento com Shift · minúsculas",
-          instruction: "Agora use o circunflexo, que fica na mesma tecla do til, mas exige Shift. As vogais continuam minúsculas.",
-          hint: "Segure Shift para produzir ^. Solte Shift antes de digitar a vogal minúscula: ^ + e → ê; ^ + o → ô.",
+          title: "Acentos com Shift · minúsculas",
+          instruction: "Agora prepare o circunflexo usando Shift. Depois, solte Shift para escrever a vogal minúscula.",
+          hint: "A tecla ~ fica à direita do Ç. Com Shift, ela produz ^. Pressione Shift+^, solte Shift e digite a vogal minúscula.",
           kind: "typing-sequence",
           caseSensitive: true,
           deadKeyShift: true,
           stages: [
-            { target: "você", instruction: "Digite você.", hint: "Para ê, use Shift+^ e depois e minúsculo." },
-            { target: "avô", instruction: "Digite avô.", hint: "Para ô, use Shift+^ e depois o minúsculo." },
-            { target: "câmera", instruction: "Digite câmera.", hint: "Para â, use Shift+^ e depois a minúsculo." },
-            { target: "pêssego", instruction: "Digite pêssego.", hint: "Prepare ^ com Shift; depois pressione e sem Shift." }
+            { target: "você", instruction: "Escreva você.", hint: "Para ê, pressione Shift+^ e depois e minúsculo." },
+            { target: "avô", instruction: "Escreva avô.", hint: "Para ô, pressione Shift+^ e depois o minúsculo." },
+            { target: "câmera", instruction: "Escreva câmera.", hint: "Para â, pressione Shift+^ e depois a minúsculo." },
+            { target: "pêssego", instruction: "Escreva pêssego.", hint: "Para ê, pressione Shift+^ e depois e minúsculo." },
+            { target: "o avô vê a câmera", instruction: "Complete a frase sobre o avô e a câmera.", hint: "Prepare ^ com Shift para cada circunflexo; solte Shift antes de digitar a vogal minúscula." }
           ]
         },
         {
           title: "Acentos sem Shift · maiúsculas",
-          instruction: "O acento é preparado sem Shift; a vogal será maiúscula. Digite as cinco letras.",
-          hint: "Pressione ´ sem Shift. Depois segure Shift ao digitar a vogal: ´ + Shift+A → Á. Repita com E, I, O e U.",
+          instruction: "Prepare o agudo sem Shift. Em seguida, use Shift na vogal para formar a letra maiúscula acentuada.",
+          hint: "Primeiro pressione ´ sem Shift. Depois, segure Shift e pressione a vogal: ´ + Shift+A forma Á.",
           kind: "typing-sequence",
           caseSensitive: true,
           deadKeyShift: false,
           shiftLetters: true,
           stages: [
-            { target: "Á É Í Ó Ú", instruction: "Digite Á, É, Í, Ó e Ú.", hint: "Em cada letra: primeiro ´ sem Shift; depois Shift + vogal maiúscula.", shiftLetters: true }
+            { target: "Árvore", instruction: "Escreva Árvore com a primeira letra maiúscula e acentuada.", hint: "Pressione ´ sem Shift. Depois, Shift+A forma Á." },
+            { target: "Érica", instruction: "Escreva o nome Érica.", hint: "Pressione ´ sem Shift. Depois, Shift+E forma É." },
+            { target: "Índia", instruction: "Escreva Índia.", hint: "Pressione ´ sem Shift. Depois, Shift+I forma Í." },
+            { target: "Óscar", instruction: "Escreva o nome Óscar.", hint: "Pressione ´ sem Shift. Depois, Shift+O forma Ó." },
+            { target: "Úrsula", instruction: "Escreva o nome Úrsula.", hint: "Pressione ´ sem Shift. Depois, Shift+U forma Ú." },
+            { target: "Árvore alta", instruction: "Complete a expressão Árvore alta.", hint: "Apenas a primeira letra da expressão é maiúscula. Prepare ´ sem Shift e use Shift+A." }
           ]
         },
         {
           title: "Acentos com Shift · maiúsculas",
-          instruction: "Use Shift para preparar o circunflexo e mantenha Shift ao digitar a vogal maiúscula.",
-          hint: "Shift+^ prepara o circunflexo. Depois, Shift+A → Â; Shift+E → Ê; Shift+O → Ô.",
+          instruction: "Use Shift para preparar o circunflexo e novamente para escrever a vogal maiúscula.",
+          hint: "Pressione Shift+^ para preparar o circunflexo. Depois, mantenha Shift e pressione a vogal maiúscula.",
           kind: "typing-sequence",
           caseSensitive: true,
           deadKeyShift: true,
+          shiftLetters: true,
           stages: [
-            { target: "Â Ê Ô", instruction: "Digite Â, Ê e Ô.", hint: "Para cada letra, use Shift+^ e depois Shift + vogal maiúscula.", shiftLetters: true }
+            { target: "Ângela", instruction: "Escreva o nome Ângela.", hint: "Pressione Shift+^ e depois mantenha Shift para digitar A." },
+            { target: "Ênio", instruction: "Escreva o nome Ênio.", hint: "Pressione Shift+^ e depois mantenha Shift para digitar E." },
+            { target: "Ônibus", instruction: "Escreva a palavra Ônibus.", hint: "Pressione Shift+^ e depois mantenha Shift para digitar O." },
+            { target: "Ângela pega o ônibus.", instruction: "Complete a frase Ângela pega o ônibus.", hint: "Use Shift+^ e Shift+A para Â. No fim, o ô de ônibus é minúsculo: prepare ^ com Shift e solte antes de digitar o." }
           ]
         },
         {
           title: "Misturando acentos e símbolos",
-          instruction: "Use tudo o que aprendeu: maiúsculas, minúsculas, acentos, números e símbolos.",
-          hint: "Lembre-se: ! = Shift+1; & = Shift+7; + = Shift+=. Para os acentos, prepare a tecla antes da vogal.",
+          instruction: "Use as letras, os números, os acentos e os sinais aprendidos para escrever frases completas.",
+          hint: "Lembre-se: ´ e ~ são preparados sem Shift; ^ é preparado com Shift; ! usa Shift+1; & usa Shift+7; + usa Shift+=. O desenho destaca a próxima tecla e o Shift necessário.",
           kind: "typing-sequence",
           caseSensitive: true,
           stages: [
-            { target: "DIDDY & KONG! 7 + 1.", instruction: "Digite a frase com letras maiúsculas, números e símbolos.", hint: "Use Shift nas letras maiúsculas, Shift+7 para &, Shift+1 para ! e Shift+= para +. O ponto final fica sem Shift.", shiftLetters: true, symbolCodes: { "!": "Digit1", "&": "Digit7", "+": "Equal" }, requireShiftSymbols: true, requireNoShiftSymbols: true },
-            { target: "Café, maçã & você.", instruction: "Agora misture acentos, vírgula, ponto e comercial.", hint: "´ prepara é; ~ prepara ã; Shift+^ prepara ê. Vírgula e ponto são digitados sem Shift; Shift+7 produz &.", deadKeyShift: false, shiftLetters: true, symbolCodes: { "&": "Digit7" }, requireShiftSymbols: true },
-            { target: "AVÔ, VOCÊ & AVÓ!", instruction: "Conclua misturando maiúsculas acentuadas e símbolos.", hint: "Use Shift para as letras maiúsculas, Shift+^ para Ô/Ê e Shift+1 para !.", shiftLetters: true, deadKeyShift: true, symbolCodes: { "!": "Digit1", "&": "Digit7" }, requireShiftSymbols: true }
+            { target: "Diddy tem 2 maçãs!", instruction: "Digite a frase sobre as maçãs do Diddy.", hint: "Shift no D inicial, til sem Shift para ã, e Shift+1 para !.", shiftLetters: true, symbolCodes: { "!": "Digit1" }, requireShiftSymbols: true },
+            { target: "Café, maçã e pêssego.", instruction: "Escreva os nomes das três frutas separados por vírgula.", hint: "Agudo e til sem Shift; circunflexo com Shift. Vírgula e ponto sem Shift.", shiftLetters: true, deadKeyShift: false, requireNoShiftSymbols: true },
+            { target: "2 + 1 = 3 bananas.", instruction: "Complete a conta das bananas.", hint: "Use Shift+= para +. O sinal =, os números e o ponto são digitados sem Shift.", symbolCodes: { "+": "Equal" }, requireShiftSymbols: true, requireNoShiftSymbols: true },
+            { target: "Diddy & Dixie formam uma dupla!", instruction: "Finalize com a frase sobre Diddy e Dixie.", hint: "Use Shift nos D maiúsculos, Shift+7 para & e Shift+1 para !.", shiftLetters: true, symbolCodes: { "&": "Digit7", "!": "Digit1" }, requireShiftSymbols: true }
           ]
         }
       ]
