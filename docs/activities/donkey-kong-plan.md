@@ -377,7 +377,7 @@ Depois abra `http://localhost:8000/activities/donkey-kong/index.html`. Em macOS/
 ## 18. Ajustes solicitados — 30/10/2026
 
 - O mapa da Ilha dos Kongs recebeu uma tela de entrada em overlay, modelada na entrada do Submundo: painel em tela cheia, botão de barril de madeira com marca DK e transição ao entrar. O player do mapa é preparado sem autoplay; o botão do barril só libera quando a IFrame API está pronta e chama `playVideo()` diretamente no gesto do clique. Se a API falhar ou expirar, o aluno pode entrar sem música e usar o controle/link do YouTube.
-- O barril é uma ilustração CSS original, não o sprite da wiki.
+- O botão de entrada usa o asset DK Barrel DKCR da SmashWiki (via DK Wiki), carregado externamente e com crédito visível; o arquivo não foi copiado para o repositório. A página de origem identifica a imagem como mídia protegida usada sob alegação de fair use.
 - A posição do polegar esquerdo foi invertida para inclinar em direção ao centro da mão; o polegar direito mantém a inclinação oposta.
 - As teclas do mapa de digitação agora seguem as referências visuais do Yoshi: tipografia pixel, borda escura e inferior mais espessa, cores por dedo, destaque externo da próxima tecla e marcação das teclas já usadas.
 - O foco vai para o botão “Continuar” imediatamente após uma sequência digitada com sucesso.
@@ -393,3 +393,11 @@ Depois abra `http://localhost:8000/activities/donkey-kong/index.html`. Em macOS/
 - O mapa continua diferente por decisão de interação: não reproduz antes do clique no barril.
 - Foi adicionada a suíte `activities/donkey-kong/tests/validate-radio.mjs`, com player simulado para autoplay de páginas internas, fallback mudo, ativação de som, pausa, bloqueio antes de `onReady` e entrada do mapa.
 - A simulação executada nesta sessão passou nesses sete cenários. Reprodução com som depende da política do navegador/perfil; a validação audível real ainda precisa ser feita no Chromebook escolar.
+
+## 20. Asset de entrada e controles de reset — 30/10/2026
+
+- O overlay de entrada usa a imagem original DK Barrel DKCR da página SmashWiki, via DK Wiki: https://www.ssbwiki.com/File:DK_Barrel_DKCR.png. A imagem é carregada pela URL do thumbnail em vez de um desenho CSS; um link de crédito abre a página de origem. O arquivo não foi adicionado ao repositório, pois a página informa uso sob alegação de fair use e não apresenta licença de redistribuição.
+- Cada tela de checkpoint tem o botão **Resetar atividade**. Se o exercício ainda não foi concluído, ele reinicia apenas a tentativa atual. Se já foi concluído, pede confirmação e desfaz somente a conclusão desse checkpoint, preservando os anteriores.
+- A tela inicial de cada mundo tem **Resetar mundo**. Pede confirmação, zera só o contador desse mundo e mantém os outros mundos e a missão final. O botão aparece desabilitado quando não há progresso naquele mundo.
+- A tela da missão final também tem **Resetar atividade**, apagando o rascunho e restaurando o poema inicial com erros, sem alterar o progresso dos três mundos. O botão permanece disponível na tela de conclusão para permitir uma nova tentativa.
+- As funções de progresso `resetWorld()` e `resetBoss()` isolam as mutações. Testes de unidade verificam a preservação de progresso não relacionado; o smoke test de navegador verifica a presença dos controles e o reset de uma tentativa de digitação.
