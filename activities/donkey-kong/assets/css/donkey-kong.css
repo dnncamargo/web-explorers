@@ -242,19 +242,19 @@ body[data-page="world"]::before {
 body[data-world="jungle"]::before {
   background-image:
     linear-gradient(180deg,rgba(5,34,19,.56),rgba(8,30,17,.82)),
-    url("https://m.media-amazon.com/images/M/MV5BZjM0OWI5NjgtMmUwMS00MjlhLTg0ZTktNDQ3MTBkYWNhMzkwXkEyXkFqcGc%40._V1_.jpg"),
+    url("https://www.mobygames.com/images/shots/l/27540-donkey-kong-country-snes-screenshot-now-we-ve-really-climbed.jpg"),
     linear-gradient(145deg,#183f27,#071b11);
 }
 body[data-world="mine"]::before {
   background-image:
     linear-gradient(180deg,rgba(18,8,28,.52),rgba(17,9,26,.88)),
-    url("https://i1.sndcdn.com/artworks-GFTiQ1tx2yLRObMR-XVi6NQ-t1080x1080.jpg"),
+    url("https://images.squarespace-cdn.com/content/v1/55ef0e29e4b099e22cdc9eea/1446879156032-U8BD4PO9C0DRYDHWD8RA/image-asset.jpeg"),
     linear-gradient(145deg,#42254e,#160e24);
 }
 body[data-world="camp"]::before {
   background-image:
     linear-gradient(180deg,rgba(3,23,43,.48),rgba(3,24,43,.88)),
-    url("https://www.mezunian.com/wp-content/uploads/2020/05/donkey-kong-country-2-diddys-kong-quest-screechs-sprint-cat-o-9-tails-near-start.png?m=1701871908"),
+    url("https://www.mezunian.com/wp-content/uploads/2020/05/donkey-kong-country-2-diddys-kong-quest-bramble-scramble-bramble-wall-near-start.png?m=1701871908"),
     linear-gradient(145deg,#07506b,#031522);
 }
 body[data-page="world"] .topbar,
