@@ -39,12 +39,16 @@ assert.deepEqual(
   ["Maiúsculas e minúsculas", "Shift, números e símbolos", "Acentos sem Shift · minúsculas", "Acento com Shift · minúsculas", "Acentos sem Shift · maiúsculas", "Acentos com Shift · maiúsculas", "Misturando acentos e símbolos"],
   "Mine follows the seven-step Shift and accent progression"
 );
-assert.ok(data.worlds.mine.checkpoints[0].stages.some(({ target }) => target === "diddy") && data.worlds.mine.checkpoints[0].stages.some(({ target }) => target === "DIDDY"), "first Mine checkpoint distinguishes lowercase and uppercase");
-assert.ok(data.worlds.mine.checkpoints[1].stages.some(({ target }) => target === "! & +"), "second Mine checkpoint exercises Shift symbols");
+assert.ok(data.worlds.mine.checkpoints[0].stages.some(({ target }) => target === "banana") && data.worlds.mine.checkpoints[0].stages.some(({ target }) => target === "BANANA"), "first Mine checkpoint distinguishes lowercase and uppercase with a real word");
+assert.ok(data.worlds.mine.checkpoints[0].stages.some(({ target }) => target === "Diddy Kong") && data.worlds.mine.checkpoints[0].stages.some(({ target }) => target === "Diddy corre pela ilha."), "first Mine checkpoint uses real names and a sentence");
+assert.ok(data.worlds.mine.checkpoints[1].stages.some(({ target }) => target === "Diddy tem 2 bananas!"), "second Mine checkpoint practices exclamation with a real sentence");
+assert.ok(data.worlds.mine.checkpoints[1].stages.some(({ target }) => target === "2 bananas, 1 fruta."), "second Mine checkpoint uses numbers, comma and period in a real phrase");
+assert.ok(data.worlds.mine.checkpoints[1].stages.some(({ target }) => target === "2 + 1 = 3 bananas."), "second Mine checkpoint uses plus and equals in a meaningful arithmetic expression");
+assert.ok(data.worlds.mine.checkpoints[1].stages.some(({ target }) => target === "Diddy & Dixie formam uma dupla!"), "second Mine checkpoint uses ampersand in a natural phrase");
 assert.ok(data.worlds.mine.checkpoints[2].stages.some(({ target }) => target === "café"), "third Mine checkpoint begins with unshifted acute accents");
 assert.ok(data.worlds.mine.checkpoints[3].stages.some(({ target }) => target === "você"), "fourth Mine checkpoint practices Shift circumflex with lowercase vowels");
-assert.ok(data.worlds.mine.checkpoints[4].stages.some(({ target }) => target === "Á É Í Ó Ú"), "fifth Mine checkpoint combines unshifted acute with uppercase vowels");
-assert.ok(data.worlds.mine.checkpoints[5].stages.some(({ target }) => target === "Â Ê Ô"), "sixth Mine checkpoint practices Shift circumflex with uppercase vowels");
+assert.ok(["Árvore","Érica","Índia","Óscar","Úrsula"].every((word) => data.worlds.mine.checkpoints[4].stages.some(({ target }) => target === word)), "fifth Mine checkpoint practices all acute uppercase vowels in words");
+assert.ok(["Ângela","Ênio","Ônibus"].every((word) => data.worlds.mine.checkpoints[5].stages.some(({ target }) => target === word)), "sixth Mine checkpoint practices all uppercase circumflex vowels in words");
 assert.ok(data.worlds.mine.checkpoints[6].stages.length >= 3, "seventh Mine checkpoint mixes accents and symbols");
 assert.ok(data.worlds.mine.checkpoints[1].stages.some(({ symbolCodes }) => symbolCodes && symbolCodes["!"] === "Digit1" && symbolCodes["&"] === "Digit7" && symbolCodes["+"] === "Equal"), "ABNT2 shifted symbols are tied to the correct physical keys");
 assert.ok(data.worlds.mine.scene && data.worlds.mine.characters.length >= 3, "Mine has a game-stage scene and character art");
@@ -155,6 +159,12 @@ assert.ok(activitySource.includes('id="reset-boss"'), "the final poem mission of
 assert.ok(activitySource.includes('id="reset-boss-finish"'), "the completed final mission also offers a reset");
 assert.ok(activitySource.includes('kind === "typing-sequence"'), "Mine uses the automatic sequence renderer");
 assert.ok(activitySource.includes('stage.requireNoShiftSymbols'), "unshifted punctuation is validated separately");
+assert.ok(activitySource.includes("function renderMineSequenceKeyboard"), "Mine has its own restricted ABNT2 keyboard renderer");
+assert.ok(activitySource.includes('"acute", "bracket-left"'), "the acute accent key is placed after P");
+assert.ok(activitySource.includes('"ç", "tilde", "bracket-right"'), "the tilde/circumflex key is placed after Ç");
+assert.ok(activitySource.includes('"m", ",", ".", "semicolon"'), "comma and period are placed beside M");
+assert.ok(activitySource.includes('class="shift-arrow">↑'), "Shift is shown with an upward arrow");
+assert.ok(activitySource.includes('action.shift === side'), "the Shift arrow illuminates together with the active physical key");
 assert.ok(activitySource.includes('SHIFT + 1 = !'), "the visible ABNT2 keyboard explains the 1/! mapping");
 assert.ok(activitySource.includes('ALTGR + W produz ?'), "the visible ABNT2 keyboard explains AltGr+W");
 assert.ok(activitySource.includes("playFromGesture()"), "barrel interaction calls the radio gesture method");
@@ -174,4 +184,4 @@ assert.equal(memorySave.mode, "memory", "memory fallback is reported");
 assert.equal(memorySave.persisted, false, "memory fallback does not claim durable storage");
 assert.equal(memoryStore.load().progress.checkpoints.camp, 0, "new memory-only store starts clean");
 
-console.log("OK: 22 ordered checkpoints, automatic Shift/accent sequences, AltGr+W, world art metadata, progress migration, Delete/undo/redo and poem corrections");
+console.log("OK: 22 checkpoints, coherent Mine phrases, restricted ABNT2 keyboard, paired Shift arrows, accent stages, AltGr+W, progress migration and poem corrections");
