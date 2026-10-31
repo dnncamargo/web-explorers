@@ -342,7 +342,7 @@ Pendências antes da liberação para a turma: (1) confirmar a combinação Lupa
 
 ## 16. Revisão e conclusão da especificação
 
-A implementação agora contém 22 checkpoints. Mundo 1 ensina mãos/fileiras antes das frases; Mundo 2 pratica diferenciação de maiúsculas/minúsculas, Shift e símbolos, depois acentos sem/com Shift em minúsculas e maiúsculas; Mundo 3 introduz Enter, Delete, AltGr+W e operações Ctrl, incluindo seleção real. Os exercícios de Mundo 2 e 3 avançam automaticamente entre etapas na mesma página. O chefe mantém a missão integral da Canção do Exílio. Direitos das imagens, áudio e políticas de reprodução dos Chromebooks permanecem riscos declarados.
+A implementação agora contém 22 checkpoints. Mundo 1 ensina mãos/fileiras antes das frases; Mundo 2 pratica diferenciação de maiúsculas/minúsculas com vocabulário familiar, usa um teclado ABNT2 completo e pratica Shift, símbolos e acentos; Mundo 3 introduz Enter, Delete, AltGr+W e operações Ctrl, incluindo seleção real. Os exercícios de Mundo 2 e 3 avançam automaticamente entre etapas na mesma página. O chefe mantém a missão integral da Canção do Exílio. Direitos das imagens, áudio e políticas de reprodução dos Chromebooks permanecem riscos declarados.
 
 **Entrega:** planejamento e implementação incremental nesta branch. A atividade possui mapa, três mundos, 22 checkpoints, identidade visual distinta em cada mundo, personagens e cenários carregados externamente, chefe final com oito correções, progresso local isolado e rádio em todas as páginas. A validação de sintaxe e de dados foi executada nesta sessão; os testes Node completos, o Chromium automatizado e a conferência das imagens na rede escolar permanecem pendentes. Não houve merge.
 
@@ -417,13 +417,13 @@ Esta revisão substitui as propostas anteriores de conteúdo dos mundos 2 e 3 de
 
 ### Mundo 2 — A Mina dos Barris (7 checkpoints)
 
-1. **Maiúsculas e minúsculas:** `banana`, `BANANA`, `Diddy Kong` e uma frase completa com capitalização correta.
-2. **Shift, números e símbolos:** frases com números e os sinais `!` (Shift+1), `&` (Shift+7), `+` (Shift+=), vírgula e ponto.
+1. **Maiúsculas e minúsculas:** `banana`, `BANANA`, `Barril`, `CROCODILO`, `Rinoceronte` e `O Sapo saltou sobre a Abelha.`
+2. **Shift, números e símbolos:** `O barril tem 2 bananas!`, `3 sapos, 2 abelhas e 1 rinoceronte.`, `2 + 1 = 3 bananas.` e `FRUTAS & ANIMAIS`.
 3. **Acentos sem Shift · minúsculas:** agudo e til em palavras e numa frase curta.
 4. **Acentos com Shift · minúsculas:** circunflexo preparado com Shift; a vogal minúscula vem depois, sem Shift.
 5. **Acentos sem Shift · maiúsculas:** agudo preparado sem Shift e Shift na vogal maiúscula; palavras e nomes reais.
 6. **Acentos com Shift · maiúsculas:** circunflexo e vogal maiúscula, com palavras e uma frase.
-7. **Misturando acentos e símbolos:** frases completas que combinam maiúsculas/minúsculas, acentos, `&`, `!`, números, vírgula e ponto.
+7. **Misturando acentos e símbolos:** `O sapo tem 2 maçãs!`, `Café, maçã e pêssego.`, `2 + 1 = 3 bananas.` e `FRUTAS & ANIMAIS`.
 
 Cada checkpoint usa várias sequências curtas no mesmo cartão. O campo valida o prefixo e o resultado completo; ao terminar uma sequência, a próxima aparece e recebe foco automaticamente. Não existe botão “Conferir etapa” nos mundos 2 e 3.
 
@@ -441,23 +441,23 @@ Os exercícios de Enter, Delete, AltGr, Ctrl, clipboard e undo/redo avançam aut
 
 ### Teclado ABNT2 específico da Mina
 
-- O teclado reutiliza as fileiras, as cores por dedo, os realces e a barra de espaço do Mundo 1, mas calcula a lista de teclas físicas a partir de todos os alvos dos sete checkpoints da Mina. Teclas que não aparecem em nenhum alvo ficam como lacunas invisíveis para preservar as posições físicas.
-- O desenho tem fileira de números, letras, dois Shift com seta para cima, barra de espaço e as teclas de pontuação/acentuação que a Mina realmente usa.
+- O teclado mostra todas as teclas físicas do ABNT2: fileira numérica completa, todas as letras e Ç, acentos, colchetes, barras, pontuação, os dois Shift, teclas auxiliares e barra de espaço. Mantém o desenho e as cores por dedo do Mundo 1.
+- O Shift aparece com seta para cima nos dois lados. As duas teclas Shift brilham juntas com a tecla correspondente quando uma maiúscula ou símbolo exige o modificador.
 - A posição segue o ABNT2: agudo `´` à direita do P; til/circunflexo `~`/`^` à direita do Ç; vírgula e ponto à direita do M.
-- Shift+1 → `!`; Shift+7 → `&`; Shift+= → `+`. Os símbolos superiores são mostrados apenas nas teclas cujos sinais são praticados nesta Mina.
-- A seta de Shift correspondente brilha ao mesmo tempo que a tecla física que precisa dela. Para acentos, o realce passa da tecla morta para a vogal depois do primeiro toque.
+- A fileira de números apresenta a camada Shift do ABNT2: `! @ # $ % ¨ & * ( ) _ +`. As demais fileiras mostram acento agudo/crase, colchetes/chaves, til/circunflexo, barra vertical, vírgula/menor, ponto/maior, ponto e vírgula/dois-pontos e barra/interrogação.
+- As duas setas de Shift brilham simultaneamente à tecla que precisa do modificador. Para acentos, o realce começa na tecla morta e passa para a vogal depois do primeiro toque.
 - Agudo `´` e til `~` são preparados sem Shift; circunflexo `^` é preparado com Shift. A vogal é pressionada depois da tecla morta.
 - AltGr+W → `?` permanece exclusivo do Mundo 3.
 
 ### Validação desta revisão
 
-- Dados em runtime conferidos: 8 checkpoints de Selva, 7 de Mina e 7 de Acampamento (22 no total); sete nomes/ordem de checkpoints do Mundo 2 e sete do Mundo 3.
+- Dados em runtime conferidos: 8 checkpoints de Selva, 7 de Mina e 7 de Acampamento (22 no total); a Mina contém palavras e frases familiares, e o teclado mostra 27 teclas de letras (incluindo Ç), dez algarismos e as teclas de símbolos ABNT2.
 - Sintaxe de `activity.js`, `checkpoints.js`, `progress.js`, `radio.js`, testes de atividade, rádio, repositório e navegador analisada; CSS com chaves balanceadas.
 - Os testes Node completos e o navegador automatizado ainda não foram executados em checkout local nesta sessão. As URLs externas de personagens/fundos também precisam ser visualmente conferidas na rede da escola.
 
 ### Notas de crédito e disponibilidade dos assets
 
-As imagens de fase e os sprites desta revisão permanecem remotos e não são redistribuídos dentro do repositório. Os atributos `alt` e `title` identificam personagem e origem (Nintendo Fandom, Donkey Kong Wiki ou Tenor). As imagens Fandom/remote podem responder 403, variar de URL ou não carregar na rede escolar; o código oculta somente o arquivo que falhar, sem remover o cartão ou bloquear o exercício. A publicação para além do uso pessoal/escolar exige revisão de direitos e licenças das imagens.
+As imagens de fase e sprites permanecem remotos e não são redistribuídos no repositório. Os atributos `alt` e `title` identificam as imagens e os créditos. Zinger e Necky passaram a usar as URLs do SNESMaps documentadas abaixo; outras imagens externas ainda dependem da disponibilidade dos hosts. O código oculta uma imagem que falhe sem remover o cartão nem bloquear o mundo. A publicação ampla exige revisar direitos e licenças.
 ### URLs das imagens de fase usadas
 
 - Selva / Jungle Climb (MobyGames): https://www.mobygames.com/images/shots/l/27540-donkey-kong-country-snes-screenshot-now-we-ve-really-climbed.jpg
@@ -465,3 +465,10 @@ As imagens de fase e os sprites desta revisão permanecem remotos e não são re
 - Acampamento / Bramble Scramble (The Mezunian): https://www.mezunian.com/wp-content/uploads/2020/05/donkey-kong-country-2-diddys-kong-quest-bramble-scramble-bramble-wall-near-start.png?m=1701871908
 
 Os sprites dos personagens usam as URLs fornecidas pelo professor; os créditos de origem aparecem sobre a faixa de arte de cada mundo e no atributo `title` das imagens. São carregamentos remotos, não cópias locais.
+
+### Fontes dos sprites corrigidos
+
+- Zinger: [SNESMaps — Zinger (orange)](https://snesmaps.com/maps/DonkeyKongCountry/sprites/ZingerOrange.png), sprite PNG 44×52.
+- Necky: [SNESMaps — Necky](https://snesmaps.com/maps/DonkeyKongCountry/sprites/Necky.png), sprite PNG 61×45.
+
+Os PNGs antigos hospedados em Donkey Kong Wiki foram substituídos porque apareciam quebrados na página. As URLs novas foram abertas e retornaram os sprites. A origem do conteúdo de jogo continua protegida por direitos; o host do arquivo não é uma licença de redistribuição.
