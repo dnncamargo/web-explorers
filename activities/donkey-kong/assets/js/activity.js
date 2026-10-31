@@ -344,7 +344,7 @@
       [".", ">", "period", target.includes(".")]
     ];
     const altGrW = stage.altGrCodes
-      ? '<kbd class="abnt-key is-needed altgr-target" data-code="KeyW"><span class="abnt-key-shift">?</span><span class="abnt-key-base">W</span></kbd>'
+      ? '<kbd class="abnt-key is-needed altgr-target" data-code="KeyW"><span class="abnt-key-altgr">ALTGR · ?</span><span class="abnt-key-base">W</span></kbd>'
       : '<kbd class="abnt-key" data-code="KeyW"><span class="abnt-key-shift">W</span><span class="abnt-key-base">W</span></kbd>';
     return '<div class="sequence-keyboard" aria-label="Teclado ABNT2: Shift, AltGr, números, símbolos e acentos">' +
       '<div class="sequence-keyboard-row sequence-modifiers">' + shiftKeys + altGr + '</div>' +
