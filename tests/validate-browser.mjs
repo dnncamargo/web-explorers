@@ -218,9 +218,10 @@ if (!browserPath) {
     assert.equal(await evaluate('document.querySelectorAll("#world-map .world-card").length'), 4, "Donkey Kong map offers three worlds and the final boss");
     assert.equal(await evaluate('!!document.querySelector("#start-screen")'), true, "the Kong barrel entrance overlay is visible on the island map");
     assert.equal(await evaluate('!!document.querySelector("#start-button")'), true, "the barrel entrance control is available");
+    assert.equal(await evaluate('document.querySelectorAll("#world-map .world-card-art").length'), 3, "the map world cards include game character art");
     for (const [route, titlePattern, selector] of [
       ["jungle.html", /Selva dos Kongs/, "#typing-input"],
-      ["mine.html", /Mina dos Barris/, "#typing-input"],
+      ["mine.html", /Mina dos Barris/, "#sequence-input"],
       ["camp.html", /Acampamento dos Kongs/, "#native-edit-input"],
       ["king-k-rool.html", /King K. Rool/, "#poem-editor"],
     ]) {
@@ -234,6 +235,11 @@ if (!browserPath) {
         await evaluate('document.querySelector("#start-world")?.click()');
         assert.equal(await evaluate('!!document.querySelector(' + JSON.stringify(selector) + ')'), true, route + " opens its expected exercise control");
         assert.equal(await evaluate('!!document.querySelector("#reset-activity")'), true, route + " checkpoint offers an activity reset");
+        assert.equal(await evaluate('document.querySelector("#check-action").hidden'), true, route + " advances without a Conferir etapa button");
+        if (route === "mine.html") {
+          assert.equal(await evaluate('document.querySelectorAll(".sequence-keyboard").length'), 1, "Mine displays the ABNT2 Shift and symbol keyboard");
+          assert.equal(await evaluate('document.querySelector("#sequence-input")?.value'), "", "Mine starts with an empty automatic sequence");
+        }
         if (route === "jungle.html") {
           await evaluate('(() => { const field = document.querySelector("#typing-input"); field.value = "A"; field.dispatchEvent(new Event("input", { bubbles: true })); document.querySelector("#reset-activity").click(); })()');
           assert.equal(await evaluate('document.querySelector("#typing-input")?.value'), "", "activity reset clears only the current typing attempt");
