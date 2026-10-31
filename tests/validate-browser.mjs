@@ -227,6 +227,12 @@ if (!browserPath) {
     ]) {
       await navigate(baseUrl + "activities/donkey-kong/" + route, "/activities/donkey-kong/" + route);
       assert.match(await evaluate("document.title"), titlePattern);
+      if (route !== "king-k-rool.html") {
+        const expectedTheme = route === "jungle.html" ? "world-theme-jungle" : route === "mine.html" ? "world-theme-mine" : "world-theme-camp";
+        assert.equal(await evaluate('document.body.classList.contains(' + JSON.stringify(expectedTheme) + ')'), true, route + " applies its distinct visual theme");
+        assert.ok(await evaluate('!!document.querySelector("#world-character-art img")'), route + " renders character artwork in the hero");
+        assert.ok(await evaluate('!!document.querySelector("body[data-page=world]")'), route + " keeps the game-stage background context");
+      }
       if (route === "king-k-rool.html") {
         assert.equal(await evaluate('!!document.querySelector("#poem-editor")'), true, "the final poem editor renders");
         assert.equal(await evaluate('!!document.querySelector("#reset-boss")'), true, "the final poem mission offers an activity reset");
