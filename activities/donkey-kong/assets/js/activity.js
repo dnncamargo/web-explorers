@@ -371,6 +371,7 @@
         if (char === " ") inventory.add("space");
         if (marks.includes("\u0301")) inventory.add("acute");
         if (marks.includes("\u0303") || marks.includes("\u0302")) inventory.add("tilde");
+        if (marks.includes("\u0327")) inventory.add("ç");
       });
     }));
 
@@ -392,6 +393,9 @@
       const base = parts[0] || "";
       const marks = parts.slice(1);
       const uppercase = base !== base.toLocaleLowerCase("pt-BR");
+      if (marks.includes("\u0327")) {
+        return { key: "ç", shift: uppercase ? "left-shift" : "" };
+      }
       if (marks.length) {
         const accent = marks.includes("\u0301") ? "acute" :
           (marks.includes("\u0303") || marks.includes("\u0302")) ? "tilde" : "";
@@ -421,6 +425,7 @@
       const special = {
         acute: { main: "´", shifted: "`" },
         tilde: { main: "~", shifted: "^" },
+        ç: { main: "ç", shifted: "Ç" },
         ",": { main: ",", shifted: "<" },
         ".": { main: ".", shifted: ">" },
         "=": { main: "=", shifted: "+" }
