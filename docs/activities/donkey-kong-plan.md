@@ -425,7 +425,7 @@ Esta revisão substitui as propostas anteriores de conteúdo dos mundos 2 e 3 de
 6. **Acentos com Shift · maiúsculas:** circunflexo e vogal maiúscula, com palavras e uma frase.
 7. **Misturando acentos e símbolos:** `O sapo tem 2 maçãs!`, `Café, maçã e pêssego.`, `2 + 1 = 3 bananas.` e `FRUTAS & ANIMAIS`.
 
-Cada checkpoint usa várias sequências curtas no mesmo cartão. O campo valida o prefixo e o resultado completo; ao terminar uma sequência, a próxima aparece e recebe foco automaticamente. Não existe botão “Conferir etapa” nos mundos 2 e 3.
+Os sete checkpoints da Mina somam 34 sequências curtas. Cada sequência usa palavras, expressões ou frases com significado; o campo valida o prefixo e o resultado completo e, ao terminar, a próxima aparece e recebe foco automaticamente. Não existe botão “Conferir etapa” nos mundos 2 e 3.
 
 ### Mundo 3 — O Acampamento dos Kongs (7 checkpoints)
 
@@ -451,9 +451,10 @@ Os exercícios de Enter, Delete, AltGr, Ctrl, clipboard e undo/redo avançam aut
 
 ### Validação desta revisão
 
-- Dados em runtime conferidos: 8 checkpoints de Selva, 7 de Mina e 7 de Acampamento (22 no total); a Mina contém palavras e frases familiares, e o teclado mostra 27 teclas de letras (incluindo Ç), dez algarismos e as teclas de símbolos ABNT2.
-- Sintaxe de `activity.js`, `checkpoints.js`, `progress.js`, `radio.js`, testes de atividade, rádio, repositório e navegador analisada; CSS com chaves balanceadas.
-- Os testes Node completos e o navegador automatizado ainda não foram executados em checkout local nesta sessão. As URLs externas de personagens/fundos também precisam ser visualmente conferidas na rede da escola.
+- Dados em runtime conferidos: 8 checkpoints de Selva, 7 de Mina e 7 de Acampamento (22 no total); a Mina contém 34 sequências com palavras e frases familiares, e o teclado mostra 27 teclas de letras (incluindo Ç), dez algarismos, os símbolos ABNT2 e ambos os Shift.
+- As suítes `validate-activity.mjs` e `validate-radio.mjs` passaram em harness JavaScript isolado; a primeira valida os 22 checkpoints, o teclado completo, os exemplos familiares e os sprites corrigidos.
+- Sintaxe dos módulos de runtime e testes conferida; CSS com chaves balanceadas; renderização em memória confirmou 27 letras (incluindo Ç), dez algarismos, 22 teclas/símbolos de layout e duas teclas Shift destacadas juntas.
+- `validate-browser.mjs` foi atualizado, mas o Chromium real ainda não foi executado em checkout local nesta sessão. As URLs de imagens precisam de conferência visual final na rede da escola.
 
 ### Notas de crédito e disponibilidade dos assets
 
