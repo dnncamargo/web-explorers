@@ -795,40 +795,60 @@
   function renderUndo(checkpoint, area, feedback, checkButton, complete) {
     let stage = 0;
     let observed = false;
+    let advancing = false;
     area.innerHTML = '<label class="input-label" for="undo-input">Texto de prática</label><textarea id="undo-input" class="exercise-area single-line" rows="1"></textarea><p id="undo-status" class="selection-status"></p>';
     const input = area.querySelector("#undo-input");
     const status = area.querySelector("#undo-status");
     input.value = checkpoint.initial;
-    input.focus(); input.setSelectionRange(input.value.length, input.value.length);
-    checkButton.hidden = false;
+    checkButton.hidden = true;
+
     function prepare() {
       observed = false;
+      advancing = false;
+      input.disabled = false;
       input.focus();
       input.setSelectionRange(input.value.length, input.value.length);
-      status.textContent = ["1. Digite ! no final.", "2. Pressione Ctrl+Z para desfazer.", "3. Pressione Ctrl+Shift+Z para refazer."][stage];
+      status.textContent = [
+        "ETAPA 1/3 · Digite ! no final.",
+        "ETAPA 2/3 · Pressione Ctrl+Z para desfazer.",
+        "ETAPA 3/3 · Pressione Ctrl+Shift+Z para refazer."
+      ][stage];
     }
+
+    function verify() {
+      if (!observed || advancing) return;
+      const expected = stage === 1 ? checkpoint.expectedUndo : checkpoint.expectedRedo;
+      if (input.value !== expected) return;
+      advancing = true;
+      if (stage < 2) {
+        stage += 1;
+        setFeedback(feedback, "Estado correto. Próxima operação.", "good");
+        prepare();
+      } else {
+        input.disabled = true;
+        status.textContent = "Desfazer e refazer funcionaram no campo do navegador.";
+        setFeedback(feedback, "Os dois atalhos foram executados.", "good");
+        complete();
+      }
+    }
+
     input.addEventListener("keydown", (event) => {
       if (!event.isTrusted) return;
+      if (stage === 0 && event.shiftKey && (event.key === "1" || event.key === "!" || event.code === "Digit1")) observed = true;
       if (stage === 1 && event.ctrlKey && event.key.toLowerCase() === "z" && !event.shiftKey) observed = true;
       if (stage === 2 && event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "z") observed = true;
     });
-    checkButton.addEventListener("click", () => {
-      const expected = stage === 0 ? checkpoint.expectedTyped : stage === 1 ? checkpoint.expectedUndo : checkpoint.expectedRedo;
-      const typedOkay = stage !== 0 || input.value === expected;
-      const actionOkay = stage === 0 ? input.value === expected : observed && input.value === expected;
-      if (!typedOkay || !actionOkay) {
-        setFeedback(feedback, "O texto não está no estado esperado. Confira o atalho e tente novamente com o campo focado.", "gentle");
-        return;
-      }
-      if (stage < 2) {
-        stage += 1;
-        prepare();
-        setFeedback(feedback, "Estado correto. Próxima etapa.", "good");
-      } else {
-        input.disabled = true; checkButton.disabled = true;
-        setFeedback(feedback, "Desfazer e refazer funcionaram no campo do navegador.", "good");
-        complete();
-      }
+    input.addEventListener("input", () => {
+      if (stage === 0) {
+        if (input.value === checkpoint.expectedTyped) {
+          observed = true;
+          stage = 1;
+          setFeedback(feedback, "Texto digitado. Agora desfaça.", "good");
+          prepare();
+        } else if (!checkpoint.expectedTyped.startsWith(input.value)) {
+          setFeedback(feedback, "Digite o ponto de exclamação com Shift+1.", "gentle");
+        }
+      } else verify();
     });
     prepare();
   }
