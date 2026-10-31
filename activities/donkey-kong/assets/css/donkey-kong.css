@@ -506,3 +506,145 @@ body[data-world="camp"] .sequence-keyboard-note { color:#17465c; }
 }
 
 .abnt-key-altgr { color:#1b6488; font-size:8px; font-weight:900; white-space:nowrap; }
+
+
+/* The Mine reuses the World 1 physical-key layout, restricted to keys used here. */
+body[data-world="mine"] .mine-keyboard {
+  margin:18px 0;
+  padding:15px 12px 12px;
+  border:3px solid #ffc15b;
+  border-radius:2px;
+  background:#f3f6e9;
+  box-shadow:6px 6px 0 rgba(0,0,0,.4);
+}
+body[data-world="mine"] .mine-keyboard h3 {
+  margin:0 0 12px;
+  color:#24533a;
+  font-size:16px;
+}
+.mine-keyboard-map {
+  width:100%;
+  overflow-x:auto;
+  padding:3px 2px 8px;
+}
+.mine-keyboard-row {
+  width:max-content;
+  max-width:100%;
+  flex-wrap:nowrap;
+  justify-content:center;
+  gap:5px;
+  margin:6px auto;
+}
+.mine-keyboard .keycap {
+  display:flex;
+  width:42px;
+  min-width:42px;
+  max-width:42px;
+  height:47px;
+  min-height:47px;
+  flex:0 0 42px;
+  flex-direction:column;
+  align-items:center;
+  justify-content:space-between;
+  padding:4px 3px 3px;
+  border-radius:4px;
+  font-size:13px;
+}
+.mine-keycap-shift {
+  min-height:11px;
+  color:#9a4e19;
+  font-family:"Trebuchet MS",Arial,sans-serif;
+  font-size:10px;
+  line-height:1;
+  font-weight:900;
+}
+.mine-keycap-main {
+  display:flex;
+  min-height:18px;
+  align-items:center;
+  justify-content:center;
+  font-size:13px;
+  line-height:1;
+}
+.keyboard-spacer {
+  display:block;
+  width:42px;
+  min-width:42px;
+  max-width:42px;
+  height:47px;
+  flex:0 0 42px;
+  visibility:hidden;
+}
+.mine-keyboard .keycap-shift {
+  width:78px;
+  min-width:78px;
+  max-width:78px;
+  height:47px;
+  min-height:47px;
+  flex:0 0 78px;
+  justify-content:center;
+  gap:1px;
+  padding:2px 4px;
+}
+.shift-arrow {
+  display:block;
+  font-family:Arial,sans-serif;
+  font-size:21px;
+  line-height:17px;
+  font-weight:900;
+}
+.shift-label {
+  display:block;
+  font-family:"Press Start 2P","Courier New",monospace;
+  font-size:8px;
+  line-height:1.4;
+}
+.mine-keyboard .keycap.is-next {
+  z-index:2;
+  border-color:#8e5a12;
+  box-shadow:0 0 0 3px rgba(255,194,67,.65),0 0 0 6px rgba(255,255,255,.9),0 4px 0 rgba(0,0,0,.18);
+  transform:translateY(-3px) scale(1.04);
+  filter:brightness(1.12);
+}
+.mine-keyboard .keycap-shift.is-next {
+  background:#ffe18a;
+  color:#3d2a0e;
+}
+.mine-keyboard .space-row { margin-top:8px; }
+.mine-keyboard .keycap.key-space {
+  width:280px;
+  min-width:210px;
+  max-width:280px;
+  height:39px;
+  min-height:39px;
+  flex:0 1 280px;
+}
+body[data-world="mine"] .mine-keyboard-note {
+  margin:10px 0 0;
+  color:#425747;
+  font-size:12px;
+  line-height:1.45;
+  text-align:center;
+}
+@media (max-width:760px) {
+  .mine-keyboard-map { padding-right:5px; padding-left:5px; }
+  .mine-keyboard-row { justify-content:flex-start; max-width:none; }
+}
+@media (max-width:520px) {
+  .mine-keyboard .keycap,
+  .keyboard-spacer {
+    width:34px;
+    min-width:34px;
+    max-width:34px;
+    height:42px;
+    min-height:42px;
+    flex-basis:34px;
+  }
+  .mine-keyboard .keycap-shift {
+    width:64px;
+    min-width:64px;
+    max-width:64px;
+    flex-basis:64px;
+  }
+  .mine-keyboard .keycap.key-space { width:220px; min-width:180px; }
+}
