@@ -5,7 +5,7 @@
 
 ## 1. Proposta pedagógica
 
-Aventura curta para transferir técnica de digitação no ABNT2 e edição de texto pelo teclado. São 21 checkpoints em três mundos e uma missão final. Sem cronômetro, vidas ou velocidade. A validação automática mede conteúdo e operações observáveis; o professor observa o posicionamento real dos dedos. Um texto correto nunca será tratado como prova de qual dedo foi usado.
+Aventura curta para transferir técnica de digitação no ABNT2 e edição de texto pelo teclado. São 22 checkpoints em três mundos e uma missão final. Sem cronômetro, vidas ou velocidade. A validação automática mede conteúdo e operações observáveis; o professor observa o posicionamento real dos dedos. Um texto correto nunca será tratado como prova de qual dedo foi usado.
 
 A progressão apresenta mãos/fileiras antes de frases; depois seleção, Shift, AltGr, Backspace e acentos; então Enter, Delete, Ctrl, atalhos e revisão integral. Mundo 1 não cobra acento nem pontuação. Toda tecla nova é demonstrada antes de seu uso.
 
@@ -31,7 +31,7 @@ Não há `AGENTS.md` no checkout. `activities/digital-explorers/index.html` leva
 | Player Yoshi | `assets/js/audio.js` | **ADAPT** | Bom modelo de status/fallback, mas hoje usa autoplay=0 e controls de iframe ocultos; rádio pedido deriva do padrão Exploradores. |
 | Testes teclado/progresso | `yoshi-typing/tests/validate-*.mjs` | **ADAPT** | Reusar abordagem, dados e alvos DK novos. Testes Yoshi não verificam teclado físico. |
 | Poema editável com oito alvos | Não existe | **NEW** | Especificação do textarea, seleção e estado abaixo. |
-| 21 checkpoints DK | Não existe | **NEW** | Exercícios detalhados neste plano. |
+| 22 checkpoints DK | Não existe | **NEW** | Exercícios detalhados neste plano. |
 | Assets DK | Não há no repo | **NEW, condicionado** | Só arquivos com licença confirmada ou arte original/licenciada. |
 | Testes e checklist Chromebook DK | Não existe | **NEW** | Plano automatizado e humano na seção 13. |
 
@@ -50,10 +50,10 @@ Predomina Exploradores: mapa ilustrado, painéis de missão escuros, campo de a�
 | `index.html` | Capa, rádio da seleção, cartões dos quatro mundos, progresso e retomar. |
 | `jungle.html` | Treino ABNT2 + 8 checkpoints consecutivos. |
 | `mine.html` | 7 checkpoints de seleção, Shift, AltGr, Backspace e acentos. |
-| `camp.html` | 6 checkpoints de Enter, Delete, Ctrl e operações. |
+| `camp.html` | 7 checkpoints de Enter, Delete, AltGr+W, Ctrl e operações. |
 | `king-k-rool.html` | Editor e referência do poema. |
 
-Um cartão por vez; sequência é interna à página, não 21 rotas. Mapa permite abrir qualquer mundo, mesmo sem concluir o anterior; conserva sequência dentro do mundo e progresso por checkpoint. Sem exigência de conclusão total para considerar evidência de aprendizagem. Navegação por teclado e foco visível. Em tela estreita, painéis empilhados; consulta do poema expansível e com rolagem própria.
+Um cartão por vez; sequência é interna à página, não 22 rotas. Mapa permite abrir qualquer mundo, mesmo sem concluir o anterior; conserva sequência dentro do mundo e progresso por checkpoint. Sem exigência de conclusão total para considerar evidência de aprendizagem. Navegação por teclado e foco visível. Em tela estreita, painéis empilhados; consulta do poema expansível e com rolagem própria.
 
 ### Rádio e vídeos
 
@@ -340,20 +340,20 @@ Pendências antes da liberação para a turma: (1) confirmar a combinação Lupa
 
 ## 16. Revisão e conclusão da especificação
 
-Os 21 checkpoints especificam contexto, habilidade, instrução, demonstração, texto exato, ação, resultado, critério, erros, feedback, dica/repetição e evidência de aprendizagem. Mundo 1 ensina mãos/fileiras antes das frases; Mundo 2 apresenta Shift, setas, AltGr, Backspace, acentos e pontuação sem Ctrl; Mundo 3 introduz Enter, Delete e Ctrl em sequência. O chefe fixa referência integral, variante, oito alvos, seleção real, painel consultivo e sincronização. Arquitetura reusa padrões com evidência sem mudar as atividades antigas. Direitos, áudio, layout escolar e combinações ChromeOS permanecem riscos declarados.
+A implementação agora contém 22 checkpoints. Mundo 1 ensina mãos/fileiras antes das frases; Mundo 2 pratica diferenciação de maiúsculas/minúsculas, Shift e símbolos, depois acentos sem/com Shift em minúsculas e maiúsculas; Mundo 3 introduz Enter, Delete, AltGr+W e operações Ctrl, incluindo seleção real. Os exercícios de Mundo 2 e 3 avançam automaticamente entre etapas na mesma página. O chefe mantém a missão integral da Canção do Exílio. Direitos das imagens, áudio e políticas de reprodução dos Chromebooks permanecem riscos declarados.
 
-**Entrega:** planejamento e primeira implementação completos nesta branch. A atividade possui mapa, três mundos, 21 checkpoints, chefe final com oito correções, progresso local isolado e rádio em todas as páginas. A validação de sintaxe e de dados foi executada nesta sessão; o teste de navegador e a validação completa em Chromebook permanecem pendentes. Não houve merge. A implementação não inclui personagens/arte Nintendo sem licença confirmada.
+**Entrega:** planejamento e implementação incremental nesta branch. A atividade possui mapa, três mundos, 22 checkpoints, identidade visual distinta em cada mundo, personagens e cenários carregados externamente, chefe final com oito correções, progresso local isolado e rádio em todas as páginas. A validação de sintaxe e de dados foi executada nesta sessão; o teste de navegador e a validação completa em Chromebook permanecem pendentes. Não houve merge. A implementação não inclui personagens/arte Nintendo sem licença confirmada.
 
 ## 17. Registro da implementação inicial — 30/10/2026
 
 - Criadas as cinco páginas estáticas, estilos e módulos de dados, progresso, fluxo e rádio em `activities/donkey-kong/`.
 - O catálogo raiz apresenta agora três atividades. O progresso DK usa chave própria e não lê nem altera o progresso de Yoshi.
-- Mundo 1 implementa oito exercícios de digitação com orientação de F/J, mãos, fileiras e frases; Mundo 2 implementa sete tarefas de Shift, seleção, Backspace, símbolos, acentos e revisão; Mundo 3 implementa seis tarefas de Enter, Delete, Ctrl, clipboard, undo/redo e texto integrado.
+- Mundo 1 implementa oito exercícios de digitação com orientação de F/J, mãos, fileiras e frases; Mundo 2 implementa sete checkpoints automáticos de Shift, maiúsculas/minúsculas, símbolos, acentos e revisão; Mundo 3 implementa sete checkpoints de Enter, Delete, AltGr+W, navegação/seleção Ctrl, clipboard, undo/redo e texto integrado.
 - Chefe final implementa textarea editável, referência separada e oito correções da versão modernizada de *Canção do Exílio*. A missão só conclui com igualdade integral do texto e das quebras de linha.
 - Os cinco rádios YouTube usam IFrame API; controles ficam visíveis, o player tenta autoplay, inicia em 25/100 e mantém link de fallback. A reprodução depende da disponibilidade do YouTube e da política do navegador/rede escolar.
 - Evidência relatada pelo professor: acentuação funciona; Lupa (Launcher) + Backspace apaga à direita; Ctrl+Z, Ctrl+X, Ctrl+C e Ctrl+V funcionaram na atividade Exploradores; Ctrl+Shift+Z funcionou na atividade de navegador, mas não no aplicativo Text. O exercício usa os atalhos nativos dentro dos campos e não generaliza o comportamento de Text.
-- AltGr+Q/W não foi confirmado; o exercício pede os símbolos `/` e `?` sem exigir uma combinação específica. Arte de personagens não foi incluída por falta de licença de redistribuição confirmada.
-- Validação executada nesta sessão: análise sintática dos scripts JS/MJS (após remover imports e a expressão import.meta.url para a checagem de parsing), carregamento dos dados/progresso em runtime, contagem 8+7+6, oito passos do poema, reconstrução exata da referência e progressão sequencial de checkpoints. Não foram executados os arquivos de teste Node no repositório nem o Chromium automatizado; testes físicos e visuais continuam necessários.
+- A combinação AltGr+W para `?` foi definida para o Mundo 3. Os sprites e cenários são carregados por URLs externas, com créditos, sem copiar os arquivos para o repositório.
+- Validação executada nesta sessão: análise sintática dos scripts JS/MJS (após remover imports e a expressão import.meta.url para a checagem de parsing), carregamento dos dados/progresso em runtime, contagem 8+7+7, oito passos do poema, reconstrução exata da referência e progressão sequencial de checkpoints. Não foram executados os arquivos de teste Node no repositório nem o Chromium automatizado; testes físicos e visuais continuam necessários.
 - Branch `codex/donkey-kong-planning`, PR #21 permanece draft e sem merge: https://github.com/dnncamargo/web-explorers/pull/21.
 ### Como executar a prévia local
 
@@ -381,7 +381,7 @@ Depois abra `http://localhost:8000/activities/donkey-kong/index.html`. Em macOS/
 - A posição do polegar esquerdo foi invertida para inclinar em direção ao centro da mão; o polegar direito mantém a inclinação oposta.
 - As teclas do mapa de digitação agora seguem as referências visuais do Yoshi: tipografia pixel, borda escura e inferior mais espessa, cores por dedo, destaque externo da próxima tecla e marcação das teclas já usadas.
 - O foco vai para o botão “Continuar” imediatamente após uma sequência digitada com sucesso.
-- O antigo checkpoint isolado FJ foi removido. O primeiro exercício agora é o antigo “Mão esquerda”, com alvo `ASDF FDSA`; o mapa passa a ter 8+7+6 = 21 checkpoints.
+- O antigo checkpoint isolado FJ foi removido. O primeiro exercício agora é o antigo “Mão esquerda”, com alvo `ASDF FDSA`; inicialmente o mapa passou a ter 8+7+6 checkpoints. A revisão posterior de Mundo 3 adicionou AltGr+W, levando o total atual a 22 (8+7+7).
 - O progresso versão 1 é migrado: uma conclusão antiga do FJ isolado não é contada como conclusão do novo exercício; os demais checkpoints e o rascunho do poema são preservados. O progresso de outros mundos permanece inalterado.
 
 
@@ -401,3 +401,50 @@ Depois abra `http://localhost:8000/activities/donkey-kong/index.html`. Em macOS/
 - A tela inicial de cada mundo tem **Resetar mundo**. Pede confirmação, zera só o contador desse mundo e mantém os outros mundos e a missão final. O botão aparece desabilitado quando não há progresso naquele mundo.
 - A tela da missão final também tem **Resetar atividade**, apagando o rascunho e restaurando o poema inicial com erros, sem alterar o progresso dos três mundos. O botão permanece disponível na tela de conclusão para permitir uma nova tentativa.
 - As funções de progresso `resetWorld()` e `resetBoss()` isolam as mutações. Testes de unidade verificam a preservação de progresso não relacionado; o smoke test de navegador verifica a presença dos controles e o reset de uma tentativa de digitação.
+
+## 21. Redesign visual e pedagógico dos mundos 2 e 3 — 30/10/2026
+
+### Cenários e personagens
+
+- Cada mundo ganhou um fundo de fase próprio, no padrão de ambientação visual usado por Exploradores do Mundo Digital: Selva (verde/mata), Mina (púrpura e âmbar, ambiente subterrâneo) e Acampamento (azul/ciano, floresta/bramble). Painéis de leitura e exercício ficam escurecidos/contrastados por cima do cenário.
+- O mapa mostra personagens/elementos em cada cartão; a página de cada mundo repete a caracterização no cabeçalho, na introdução e na conclusão.
+- Selva: screenshot de fase DK Country e sprites DK/Diddy, Squawks e Necky. Mina: imagem de fase Banana Mine e sprites Dixie/Rambi/Klobber, moeda DK e Zinger. Acampamento: fase bramble/Screech e sprites Squawks, Krusha, Necky, Diddy/Donkey e moeda DK.
+- Todas as imagens de personagens e screenshots são carregadas remotamente das URLs indicadas. Títulos das imagens identificam suas fontes; quando uma imagem não carrega, somente aquela imagem é ocultada e o cartão/mundo permanece. Nenhum sprite ou screenshot foi copiado para o repositório. As páginas de wiki/hosts não concedem, por isso, licença de redistribuição; revisar direitos antes de publicação ampla.
+
+### Mundo 2 — A Mina dos Barris (7 checkpoints)
+
+1. **Maiúsculas e minúsculas:** quatro sequências, da palavra minúscula a nomes mistos e palavras inteiras em caixa alta/baixa.
+2. **Shift, números e símbolos:** combinações de letras, números, `!` (Shift+1), `&` (Shift+7), `+` (Shift+=), ponto e vírgula sem Shift e mistura de todos.
+3. **Acentos sem Shift · minúsculas:** agudo e til em palavras como café, jacaré, irmã e maçã. A instrução diz para preparar o acento antes da vogal.
+4. **Acento com Shift · minúsculas:** circunflexo com Shift e vogal minúscula, em você, avô, câmera e pêssego.
+5. **Acentos sem Shift · maiúsculas:** preparar agudo sem Shift e digitar a vogal maiúscula com Shift, em `Á É Í Ó Ú`.
+6. **Acentos com Shift · maiúsculas:** preparar circunflexo com Shift e manter Shift na vogal maiúscula, em `Â Ê Ô`.
+7. **Misturando acentos e símbolos:** frases que combinam maiúsculas/minúsculas, agudo, til, circunflexo, `&`, `!`, números, vírgula e ponto.
+
+Cada checkpoint usa várias sequências curtas no mesmo cartão. O campo valida o prefixo e o resultado completo; ao terminar uma sequência, a próxima aparece e recebe foco automaticamente. Não existe botão “Conferir etapa” nos mundos 2 e 3. O teclado ABNT2 desenhado apresenta os dois modificadores Shift, a fileira numérica com símbolo superior e a tecla W com `?` quando AltGr for praticado.
+
+### Mundo 3 — O Acampamento dos Kongs (7 checkpoints)
+
+1. Enter para criar uma nova linha.
+2. Delete para apagar à direita (Lupa/Launcher + Backspace no Chromebook testado).
+3. AltGr+W para produzir `?`.
+4. Ctrl+seta, Ctrl+Shift+seta e Ctrl+A para navegação e seleção real de texto.
+5. Ctrl+C, Ctrl+X e Ctrl+V com a área de transferência nativa.
+6. Ctrl+Z e Ctrl+Shift+Z para desfazer/refazer.
+7. Exercício integrado de acentuação, Shift, edição e pontuação no recado de Cranky.
+
+Os exercícios de Enter, Delete, AltGr, Ctrl, clipboard e undo/redo avançam automaticamente quando o evento e o resultado correspondem à operação esperada. A seleção foi movida de Mundo 2 para a sequência de Ctrl em Mundo 3.
+
+### Mapeamento ABNT2 ensinado
+
+- Shift+1 → `!`; Shift+7 → `&`; Shift+= → `+`.
+- Ponto e vírgula são digitados sem Shift no exercício dedicado.
+- Agudo `´` e til `~` são preparados sem Shift; circunflexo `^` é preparado com Shift. A vogal é pressionada depois da tecla morta.
+- As vogais maiúsculas usam Shift na segunda tecla (vogal); a tecla morta continua a obedecer à regra do acento.
+- AltGr+W → `?`, somente no Mundo 3.
+
+### Validação desta revisão
+
+- Dados em runtime conferidos: 8 checkpoints de Selva, 7 de Mina e 7 de Acampamento (22 no total); sete nomes/ordem de checkpoints do Mundo 2 e sete do Mundo 3.
+- Sintaxe de `activity.js`, `checkpoints.js`, `progress.js`, `radio.js`, testes de atividade, rádio, repositório e navegador analisada; CSS com chaves balanceadas.
+- Os testes Node completos e o navegador automatizado ainda não foram executados em checkout local nesta sessão. As URLs externas de personagens/fundos também precisam ser visualmente conferidas na rede da escola.
