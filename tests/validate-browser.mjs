@@ -297,7 +297,8 @@ if (!browserPath) {
           await evaluate('(() => { const field = document.querySelector("#line-break-input"); field.focus(); field.setSelectionRange(13,14); })()');
           await pressKey("Backspace", "Backspace");
           await pressKey("Enter", "Enter");
-          for (let index = 0; index < 8; index += 1) await pressKey("ArrowRight", "ArrowRight");
+          for (let index = 0; index < 7; index += 1) await pressKey("ArrowRight", "ArrowRight");
+          await pressKey("Delete", "Delete");
           await pressKey("Enter", "Enter");
           assert.equal(await evaluate('document.querySelector("#line-break-input")?.value'), "O sapo saltou\nsobre a\nabelha.", "checkpoint one accepts the sentence split into three lines using Enter twice");
           assert.equal(await evaluate('document.querySelector("#continue-checkpoint")?.disabled'), false, "the three-line exercise completes automatically");
