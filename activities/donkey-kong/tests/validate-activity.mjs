@@ -93,6 +93,9 @@ assert.ok(islandMapHtml.includes('src="https://giffiles.alphacoders.com/157/1579
 assert.ok(world3ActivitySource.includes('function renderShortcutKeyboard'), "World 3 draws native shortcut keys");
 assert.ok(world3ActivitySource.includes('renderShortcutKeyboard([["ENTER"], ["BACKSPACE"], ["DELETE"]])'), "checkpoint one visibly draws Enter, Backspace and Delete");
 assert.ok(world3ActivitySource.includes("event.key === \"Enter\"") && world3ActivitySource.includes("enterCount >= 2"), "checkpoint one checks two physical Enter presses before accepting three lines");
+assert.ok(world3ActivitySource.includes('input.setSelectionRange(firstBreak, firstBreak + 1)'), "checkpoint one starts with the separator space selected");
+assert.ok(world3ActivitySource.includes('event.key === "Backspace" || event.key === "Delete"'), "checkpoint one accepts Backspace or Delete to remove the selected separator");
+assert.ok(world3ActivitySource.includes("separatorRemoved && enterCount >= 2"), "checkpoint one requires the correction and two Enter actions before completion");
 assert.ok(world3ActivitySource.includes('event.key.toLowerCase() !== "c"'), "the selection checkpoint observes Ctrl+C");
 assert.ok(world3ActivitySource.includes('event.key.toLowerCase() === "v"'), "paste exercises observe Ctrl+V");
 assert.ok(world3ActivitySource.includes('event.key.toLowerCase() !== "x"') && world3ActivitySource.includes("cutShortcut = true"), "cut exercise observes Ctrl+X");
