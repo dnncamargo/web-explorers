@@ -51,7 +51,7 @@ Exploradores é a referência estrutural: mapa ilustrado, cenários de fase em t
 | `jungle.html` | Treino ABNT2 + 8 checkpoints consecutivos. |
 | `mine.html` | 7 checkpoints automáticos de maiúsculas/minúsculas, Shift, símbolos e acentuação. |
 | `camp.html` | 7 checkpoints de Enter e quebra de linhas, seleção real, Ctrl+C/V/X/Z, Ctrl+Shift+Z e Backspace. |
-| `king-k-rool.html` | Editor e referência do poema. |
+| `final-challenge.html` | Editor e referência do poema. |
 
 Um cartão por vez; sequência é interna à página, não 22 rotas. Mapa permite abrir qualquer mundo, mesmo sem concluir o anterior; conserva sequência dentro do mundo e progresso por checkpoint. Sem exigência de conclusão total para considerar evidência de aprendizagem. Navegação por teclado e foco visível. Em tela estreita, painéis empilhados; consulta do poema expansível e com rolagem própria.
 
@@ -65,7 +65,7 @@ Consulta ao oEmbed público de todos os IDs respondeu HTTP 200 com títulos abai
 | Mundo 1 | `eAm9fk39c50` — Donkey Kong Country - DK Island Swing [Restored], Jammin’ Sam Miller |
 | Mundo 2 | `cBK2YIrY62I` — Donkey Kong Country 2 - Mining Melancholy [Restored], Jammin’ Sam Miller |
 | Mundo 3 | `wxAZfLenfa0` — Donkey Kong Country 2 - Forest Interlude [Restored], Jammin’ Sam Miller |
-| Chefe | `i3qYmvTq6uI` — Gangplank Galleon - Donkey Kong Country (SNES) Music Extended, Aacro Xtensions² |
+| Chefe | `4J3V8VLtVe0` — trilha do desafio final |
 
 Um player IFrame API por página, controls visíveis (`controls:1`), `playsinline`, `origin`, permissão `allow="autoplay"` e volume inicial 25/100. Nas páginas de mundo e chefe, tenta autoplay audível ao abrir; se `onAutoplayBlocked` disparar, tenta novamente em modo mudo e troca o botão para “Ativar som”. Clique nesse botão chama `unMute()` no gesto do usuário. Se a segunda tentativa também for bloqueada, mantém “Ouvir trilha” e o link externo. O mapa espera o clique no barril para iniciar. Autoplay audível não pode ser garantido por código em navegadores que exigem gesto; testar rede, política gerenciada e reprodução real na escola. Não baixar/redistribuir áudio.
 
@@ -111,7 +111,7 @@ Namespace implementado: `exploradores.donkey-kong.progress.v2` (migra dados v1),
 
 ```text
 activities/donkey-kong/
-  index.html  jungle.html  mine.html  camp.html  king-k-rool.html
+  index.html  jungle.html  mine.html  camp.html  final-challenge.html
   assets/css/donkey-kong.css
   assets/js/checkpoints.js
   assets/js/progress.js
@@ -189,7 +189,7 @@ A seleção por mouse é intencional no CP2: o aluno aprende que um trecho preci
 
 ## 10. Chefe Final — King K. Rool
 
-**Rádio:** `i3qYmvTq6uI`. Reconstruir uma versão explicitamente modernizada de *Canção do Exílio* por Gonçalves Dias. Fonte: fac-símile/transcrição BND da edição *Primeiros Cantos* (1846), conferida com Wikisource, que indica pp. 9–10. Não chamar a modernização de transcrição diplomática.
+**Rádio:** `4J3V8VLtVe0`. Reconstruir uma versão explicitamente modernizada de *Canção do Exílio* por Gonçalves Dias. Fonte: fac-símile/transcrição BND da edição *Primeiros Cantos* (1846), conferida com Wikisource, que indica pp. 9–10. Não chamar a modernização de transcrição diplomática.
 
 ### Referência integral e canônica da atividade
 

@@ -4,7 +4,7 @@
     jungle: "eAm9fk39c50",
     mine: "cBK2YIrY62I",
     camp: "wxAZfLenfa0",
-    boss: "i3qYmvTq6uI"
+    boss: "4J3V8VLtVe0"
   };
   const page = document.body.dataset.page;
   const world = document.body.dataset.world;

@@ -79,7 +79,7 @@ for (const target of [
   "activities/donkey-kong/jungle.html",
   "activities/donkey-kong/mine.html",
   "activities/donkey-kong/camp.html",
-  "activities/donkey-kong/king-k-rool.html",
+  "activities/donkey-kong/final-challenge.html",
   "activities/donkey-kong/assets/css/donkey-kong.css",
   "activities/donkey-kong/assets/js/checkpoints.js",
   "activities/donkey-kong/assets/js/progress.js",
@@ -89,7 +89,7 @@ for (const target of [
   "activities/donkey-kong/tests/validate-radio.mjs",
 ]) assert.ok(fs.existsSync(path.join(root, target)), `${target} exists`);
 
-for (const obsolete of ["assets", "stages", "index2.html", "index3.html", "index_final.html", "02-entrar-no-submundo.html"]) {
+for (const obsolete of ["assets", "stages", "index2.html", "index3.html", "index_final.html", "02-entrar-no-submundo.html", "activities/donkey-kong/king-k-rool.html"]) {
   assert.equal(fs.existsSync(path.join(root, obsolete)), false, `${obsolete} no longer occupies its former root path`);
 }
 

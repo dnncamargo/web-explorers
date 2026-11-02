@@ -118,7 +118,7 @@ for (const [world, expectedVideoId] of [
 
 {
   const app = boot("boss");
-  assert.equal(app.player.options.videoId, "i3qYmvTq6uI", "boss page selects its soundtrack");
+  assert.equal(app.player.options.videoId, "4J3V8VLtVe0", "boss page selects its soundtrack");
   assert.equal(app.player.options.playerVars.autoplay, 1, "boss page requests autoplay");
 }
 

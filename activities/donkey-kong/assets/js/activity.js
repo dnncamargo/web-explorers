@@ -73,7 +73,7 @@
     }).join("");
     const bossCount = progress.boss.passed ? "Missão concluída" : "8 correções · poema integral";
     host.innerHTML = cards +
-      '<a class="world-card boss-card" href="king-k-rool.html"><span class="world-number">CHEFE FINAL · REVISÃO INTEGRADA</span>' +
+      '<a class="world-card boss-card" href="final-challenge.html"><span class="world-number">CHEFE FINAL · REVISÃO INTEGRADA</span>' +
       '<h2>King K. Rool</h2><p>Recupere a Canção do Exílio com seleção, edição, acentuação, pontuação e atalhos.</p>' +
       '<span class="world-progress">' + bossCount + '</span><span class="world-action"><span>' + (progress.boss.passed ? "Rever missão" : "Entrar no desafio") + '</span><span aria-hidden="true">→</span></span></a>';
     bindGameArt(host);
@@ -2003,7 +2003,7 @@
     const total = world.checkpoints.length;
     host.innerHTML = '<section class="world-finish"><p class="eyebrow pixel">MUNDO CONCLUÍDO</p>' + renderGameArt(world, "finish-art", 4) +
       '<h2>' + escapeHTML(world.title) + '</h2><p>Você concluiu os ' + total + ' checkpoints deste mundo. O progresso foi salvo neste navegador.</p>' +
-      '<div class="finish-actions"><a class="button" href="index.html">Voltar ao mapa</a><a class="button secondary" href="king-k-rool.html">Ir ao chefe final</a></div></section>';
+      '<div class="finish-actions"><a class="button" href="index.html">Voltar ao mapa</a><a class="button secondary" href="final-challenge.html">Ir ao chefe final</a></div></section>';
     bindGameArt(host);
     const pageProgress = document.getElementById("page-progress");
     if (pageProgress) pageProgress.textContent = total + "/" + total + " checkpoints concluídos";
