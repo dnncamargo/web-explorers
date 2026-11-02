@@ -142,6 +142,20 @@ if (!browserPath) {
     assert.equal(found, true, `browser found ${selector}`);
     await waitForPath(pathname);
   }
+
+  async function pressKey(key, code, modifiers = 0) {
+    const virtualCodes = { Enter:13, ArrowRight:39, Backspace:8, Delete:46, Control:17, Shift:16, c:67, v:86, x:88, z:90, C:67, V:86, X:88, Z:90 };
+    const params = {
+      key,
+      code,
+      windowsVirtualKeyCode: virtualCodes[key] || 0,
+      nativeVirtualKeyCode: virtualCodes[key] || 0,
+      modifiers,
+      text: key.length === 1 && !modifiers ? key : undefined
+    };
+    await cdp.send("Input.dispatchKeyEvent", { ...params, type: "keyDown" });
+    await cdp.send("Input.dispatchKeyEvent", { ...params, type: "keyUp" });
+  }
   async function responsiveCatalog(width) {
     await cdp.send("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: false });
     await navigate(`${baseUrl}index.html?viewport=${width}`, "/index.html");
@@ -219,10 +233,11 @@ if (!browserPath) {
     assert.equal(await evaluate('!!document.querySelector("#start-screen")'), true, "the Kong barrel entrance overlay is visible on the island map");
     assert.equal(await evaluate('!!document.querySelector("#start-button")'), true, "the barrel entrance control is available");
     assert.equal(await evaluate('document.querySelectorAll("#world-map .world-card-art").length'), 3, "the map world cards include game character art");
+    assert.equal(await evaluate('document.querySelector("#island-gif-panel img")?.getAttribute("src")'), "https://giffiles.alphacoders.com/157/15792.gif", "the requested animated GIF is displayed on the Island of the Kongs page");
     for (const [route, titlePattern, selector] of [
       ["jungle.html", /Selva dos Kongs/, "#typing-input"],
       ["mine.html", /Mina dos Barris/, "#sequence-input"],
-      ["camp.html", /Acampamento dos Kongs/, "#native-edit-input"],
+      ["camp.html", /Acampamento dos Kongs/, "#line-break-input"],
       ["king-k-rool.html", /King K. Rool/, "#poem-editor"],
     ]) {
       await navigate(baseUrl + "activities/donkey-kong/" + route, "/activities/donkey-kong/" + route);
@@ -273,6 +288,23 @@ if (!browserPath) {
           await evaluate('(() => { const field = document.querySelector("#sequence-input"); field.value = "CROCODILO"; field.dispatchEvent(new Event("input", { bubbles: true })); })()');
           await evaluate('(() => { const field = document.querySelector("#sequence-input"); field.value = "Rinoceronte"; field.dispatchEvent(new Event("input", { bubbles: true })); })()');
           assert.equal(await evaluate('document.querySelector("#sequence-tip")?.textContent'), "Segure a tecla shift, mantenha-a pressionada e pressione O.", "the first O in the sentence gets the requested Shift instruction");
+        }
+        if (route === "camp.html") {
+          assert.equal(await evaluate('!!document.querySelector("#line-break-input")'), true, "Camp checkpoint one opens the line-break exercise");
+          assert.equal(await evaluate('Array.from(document.querySelectorAll(".shortcut-key")).some((key) => key.textContent === "ENTER")'), true, "Enter is visibly drawn in checkpoint one");
+          assert.equal(await evaluate('Array.from(document.querySelectorAll(".shortcut-key")).some((key) => key.textContent === "BACKSPACE")'), true, "Backspace is visibly drawn in checkpoint one");
+          assert.equal(await evaluate('Array.from(document.querySelectorAll(".shortcut-key")).some((key) => key.textContent === "DELETE")'), true, "Delete is visibly drawn in checkpoint one");
+          await evaluate('(() => { const field = document.querySelector("#line-break-input"); field.focus(); field.setSelectionRange(13,13); })()');
+          await pressKey("Enter", "Enter");
+          for (let index = 0; index < 8; index += 1) await pressKey("ArrowRight", "ArrowRight");
+          await pressKey("Enter", "Enter");
+          assert.equal(await evaluate('document.querySelector("#line-break-input")?.value'), "O sapo saltou\\nsobre a\\nabelha.", "checkpoint one accepts the sentence split into three lines using Enter twice");
+          assert.equal(await evaluate('document.querySelector("#continue-checkpoint")?.disabled'), false, "the three-line exercise completes automatically");
+          await evaluate('document.querySelector("#continue-checkpoint").click()');
+          assert.equal(await evaluate('document.querySelector("#select-copy-input")?.value'), "DONKEY KONG e DIDDY KONG", "checkpoint two introduces the two KONG text selections");
+          assert.equal(await evaluate('document.querySelector("#select-copy-input")?.readOnly'), true, "selection practice preserves the source text");
+          assert.equal(await evaluate('document.querySelector("#select-copy-status")?.textContent.includes("dois cliques rápidos")'), true, "checkpoint two first teaches double-click selection");
+          assert.equal(await evaluate('document.querySelectorAll(".shortcut-key").length'), 2, "checkpoint two presents Ctrl and C");
         }
         if (route === "jungle.html") {
           await evaluate('(() => { const field = document.querySelector("#typing-input"); field.value = "A"; field.dispatchEvent(new Event("input", { bubbles: true })); document.querySelector("#reset-activity").click(); })()');
