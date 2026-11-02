@@ -60,6 +60,15 @@ assert.ok(!/Diddy|Dixie|Donkey Kong/.test(data.worlds.mine.checkpoints.flatMap((
 assert.ok(data.worlds.jungle.scene && data.worlds.jungle.characters.some(({ alt }) => /Donkey Kong e Diddy/.test(alt)), "Jungle includes DK and Diddy character art");
 assert.ok(data.worlds.camp.scene && data.worlds.camp.characters.length >= 4, "Camp has a game-stage scene and multiple characters");
 assert.deepEqual(
+  JSON.parse(JSON.stringify(data.worlds.camp.mapCharacters.map(({ src }) => src))),
+  [
+    "https://media.tenor.com/HomN6gM7WcEAAAAj/diddy-kong-donkey-kong.gif",
+    "https://media.tenor.com/DG91OgOHYYoAAAAj/donkey-kong-64-gold-banana.gif",
+    "https://media.tenor.com/vv6iC0dfM70AAAAi/donkey-kong-dance.gif"
+  ],
+  "the Camp map tile uses the three requested GIFs in order"
+);
+assert.deepEqual(
   JSON.parse(JSON.stringify(data.worlds.camp.checkpoints.map(({ kind }) => kind))),
   ["line-breaks", "select-copy", "paste-build", "paste-undo", "history-sequence", "cut-paste-particles", "delete-undo-redo"],
   "Camp follows the seven requested text-operation checkpoints"

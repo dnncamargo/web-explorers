@@ -162,6 +162,11 @@
         { src: "https://media.tenor.com/HomN6gM7WcEAAAAj/diddy-kong-donkey-kong.gif", alt: "Diddy e Donkey Kong", credit: "Tenor" },
         { src: "https://media.tenor.com/GXqnaxylERQAAAAi/dk-coin-dk.gif", alt: "Moeda DK", credit: "Tenor" }
       ],
+      mapCharacters: [
+        { src: "https://media.tenor.com/HomN6gM7WcEAAAAj/diddy-kong-donkey-kong.gif", alt: "Diddy Kong e Donkey Kong", credit: "Tenor" },
+        { src: "https://media.tenor.com/DG91OgOHYYoAAAAj/donkey-kong-64-gold-banana.gif", alt: "Banana dourada de Donkey Kong 64", credit: "Tenor" },
+        { src: "https://media.tenor.com/vv6iC0dfM70AAAAi/donkey-kong-dance.gif", alt: "Donkey Kong dançando", credit: "Tenor" }
+      ],
       intro: "Organize frases em linhas e use Ctrl para copiar, colar, recortar, desfazer e refazer.",
       guide: "Neste mundo, o teclado faz mais do que escrever letras. Você vai selecionar trechos e usar combinações de teclas para copiar, colar, recortar e corrigir o texto. As ações acontecem nos campos de edição, com o teclado físico.",
       checkpoints: [

@@ -378,6 +378,12 @@ body[data-world="camp"] .world-reset-status { color:#c8f5ff; }
 .world-card-jungle { background:linear-gradient(145deg,#e4f0ca,#a6ca8e); }
 .world-card-mine { background:linear-gradient(145deg,#f0d1a0,#9f6a49); }
 .world-card-camp { background:linear-gradient(145deg,#b9edee,#3685a4); }
+.world-card-camp .world-card-art img {
+  width:30%;
+  max-width:30%;
+  height:106px;
+  object-fit:contain;
+}
 .world-character-strip {
   display:flex;
   align-items:flex-end;

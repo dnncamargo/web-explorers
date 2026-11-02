@@ -65,7 +65,11 @@
       const total = world.checkpoints.length;
       return '<a class="world-card world-card-' + world.id + '" href="' + world.page + '">' +
         '<span class="world-number">MUNDO ' + world.number + ' · ' + total + ' CHECKPOINTS</span>' +
-        renderGameArt(world, "world-card-art", 2) +
+        renderGameArt(
+          Object.assign({}, world, { characters: world.mapCharacters || world.characters }),
+          "world-card-art",
+          world.mapCharacters ? world.mapCharacters.length : 2
+        ) +
         '<h2>' + escapeHTML(world.title) + '</h2>' +
         '<p>' + escapeHTML(world.intro) + '</p>' +
         '<span class="world-progress">' + count + ' de ' + total + ' checkpoints concluídos</span>' +
