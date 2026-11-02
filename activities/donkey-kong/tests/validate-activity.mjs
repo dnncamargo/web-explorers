@@ -95,7 +95,7 @@ assert.ok(world3ActivitySource.includes('renderShortcutKeyboard([["ENTER"], ["BA
 assert.ok(world3ActivitySource.includes("event.key === \"Enter\"") && world3ActivitySource.includes("enterCount >= 2"), "checkpoint one checks two physical Enter presses before accepting three lines");
 assert.ok(world3ActivitySource.includes('input.setSelectionRange(firstBreak, firstBreak + 1)'), "checkpoint one starts with the separator space selected");
 assert.ok(world3ActivitySource.includes('event.key === "Backspace" || event.key === "Delete"'), "checkpoint one accepts Backspace or Delete to remove the selected separator");
-assert.ok(world3ActivitySource.includes("separatorRemoved && enterCount >= 2"), "checkpoint one requires the correction and two Enter actions before completion");
+assert.ok(world3ActivitySource.includes("firstSeparatorRemoved && firstLineCreated") && world3ActivitySource.includes("secondSeparatorRemoved && enterCount >= 2"), "checkpoint one requires Backspace, Delete and two Enter actions before completion");
 assert.ok(world3ActivitySource.includes('event.key.toLowerCase() !== "c"'), "the selection checkpoint observes Ctrl+C");
 assert.ok(world3ActivitySource.includes('event.key.toLowerCase() === "v"'), "paste exercises observe Ctrl+V");
 assert.ok(world3ActivitySource.includes('event.key.toLowerCase() !== "x"') && world3ActivitySource.includes("cutShortcut = true"), "cut exercise observes Ctrl+X");
