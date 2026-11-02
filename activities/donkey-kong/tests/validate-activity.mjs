@@ -70,7 +70,7 @@ assert.deepEqual(
   "Camp names match the revised learning progression"
 );
 assert.equal(data.worlds.camp.checkpoints[0].initial, "O sapo saltou sobre a abelha.", "the first Camp task begins with a familiar sentence");
-assert.equal(data.worlds.camp.checkpoints[0].expected, "O sapo saltou\\nsobre a\\nabelha.", "the first Camp task accepts exactly three lines");
+assert.equal(data.worlds.camp.checkpoints[0].expected, "O sapo saltou\nsobre a\nabelha.", "the first Camp task accepts exactly three lines");
 assert.equal(data.worlds.camp.checkpoints[1].selectionText, "KONG", "selection checkpoint targets the requested word");
 assert.equal(data.worlds.camp.checkpoints[1].source, "DONKEY KONG e DIDDY KONG", "selection checkpoint provides two KONG occurrences");
 assert.equal(data.worlds.camp.checkpoints[2].expected, "DONKEY KONG e DIDDY KONG", "paste checkpoint builds the requested phrase");
