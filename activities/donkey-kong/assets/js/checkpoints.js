@@ -151,7 +151,7 @@
       id: "camp",
       number: 3,
       title: "O Acampamento dos Kongs",
-      subtitle: "Navegação e atalhos de texto",
+      subtitle: "Funções de texto e atalhos do teclado",
       page: "camp.html",
       track: "wxAZfLenfa0",
       scene: "https://www.mezunian.com/wp-content/uploads/2020/05/donkey-kong-country-2-diddys-kong-quest-bramble-scramble-bramble-wall-near-start.png?m=1701871908",
@@ -162,19 +162,81 @@
         { src: "https://media.tenor.com/HomN6gM7WcEAAAAj/diddy-kong-donkey-kong.gif", alt: "Diddy e Donkey Kong", credit: "Tenor" },
         { src: "https://media.tenor.com/GXqnaxylERQAAAAi/dk-coin-dk.gif", alt: "Moeda DK", credit: "Tenor" }
       ],
-      intro: "Crie linhas, apague à frente, selecione trechos e use os atalhos de edição.",
-      guide: "Agora você vai praticar Enter, Delete, AltGr e atalhos com Ctrl. As seleções de texto aparecem junto das operações de Ctrl, sempre com avanço automático quando a ação correta é reconhecida.",
+      intro: "Organize frases em linhas e use Ctrl para copiar, colar, recortar, desfazer e refazer.",
+      guide: "Neste mundo, o teclado faz mais do que escrever letras. Você vai selecionar trechos e usar combinações de teclas para copiar, colar, recortar e corrigir o texto. As ações acontecem nos campos de edição, com o teclado físico.",
       checkpoints: [
-        { title: "Uma nova linha", instruction: "O cursor está entre as palavras equipe e chegou. Pressione Enter para iniciar uma nova linha.", hint: "Enter cria uma quebra de linha. O texto esperado terá duas linhas.", kind: "native-edit", initial: "A equipe chegou", caret: 8, key: "Enter", expected: "A equipe\nchegou", actionLabel: "Inserir uma quebra de linha" },
-        { title: "Apagando pela frente", instruction: "O cursor está entre K e !. Pressione Lupa (Launcher) + Backspace para apagar o caractere à direita.", hint: "Backspace sozinho apaga à esquerda. No Chromebook testado, Lupa + Backspace apaga à direita, como Delete.", kind: "native-edit", initial: "DK!", caret: 2, key: "Delete", expected: "DK", actionLabel: "Apagar pela frente" },
-        { title: "O ponto de interrogação", instruction: "Digite ? usando AltGr+W no teclado ABNT2.", hint: "Mantenha AltGr pressionado e toque W. Essa combinação produz o ponto de interrogação no layout ABNT2.", kind: "typing-sequence", caseSensitive: true, stages: [
-          { target: "?", instruction: "Produza o ponto de interrogação.", hint: "AltGr+W → ?.", altGrCodes: { "?": "KeyW" } }
-        ] },
-        { title: "A força do Ctrl", instruction: "Use Ctrl+→ para avançar uma palavra, Ctrl+Shift+→ para selecionar a palavra seguinte e Ctrl+A para selecionar todo o texto.", hint: "O campo posiciona o cursor antes de corre. A seleção é real e deve ser feita com o teclado; não use o mouse.", kind: "navigation", source: "Diddy corre pela ilha", caret: 6 },
-        { title: "Barris transportadores", instruction: "Use Ctrl+C para copiar BANANA e Ctrl+V para colar no destino. Depois, use Ctrl+X para recortar DK e Ctrl+V para colar depois de KONG.", hint: "Os campos de origem e destino usam a área de transferência nativa do navegador. Nenhum texto é copiado pelo aplicativo.", kind: "clipboard" },
-        { title: "Voltando no tempo", instruction: "Digite ! no fim de DK KONG. Depois, use Ctrl+Z para desfazer e Ctrl+Shift+Z para refazer.", hint: "Esses atalhos funcionam quando o campo de texto está focado. O navegador mantém o histórico nativo de edição.", kind: "undo", initial: "DK KONG", expectedTyped: "DK KONG!", expectedUndo: "DK KONG", expectedRedo: "DK KONG!" },
-        { title: "O recado do Cranky", instruction: "Primeiro, digite as maiúsculas acentuadas Á É Ê Õ Ú. Depois, corrija o recado: coloque maiúscula no início das duas frases, use à em chegaram à mina e termine a pergunta com !.", hint: "Para cada letra acentuada, pressione a tecla do acento e depois a vogal com Shift. O acento pode ser composto em duas teclas; confira o resultado no campo.", kind: "integrated", accents: "Á É Ê Õ Ú", initial: "os kongs\nchegaram a mina?\ntraga bananas!", expected: "Os kongs\nchegaram à mina?\nTraga bananas!" }
+        {
+          title: "Organizando três linhas",
+          instruction: "Divida a frase em três linhas. Use Enter duas vezes: depois de “saltou” e depois de “sobre a”. Se precisar corrigir uma quebra, use Backspace para apagar à esquerda ou Delete para apagar à direita.",
+          hint: "Enter cria uma nova linha. Backspace apaga o caractere à esquerda do cursor. Delete apaga o caractere à direita. O resultado deve ter exatamente três linhas.",
+          kind: "line-breaks",
+          initial: "O sapo saltou sobre a abelha.",
+          expected: "O sapo saltou\nsobre a\nabelha."
+        },
+        {
+          title: "Selecionando um trecho",
+          instruction: "Vamos selecionar a palavra KONG de duas maneiras: primeiro, dê dois toques rápidos sobre a palavra; depois, arraste sobre a outra ocorrência, do começo ao fim ou do fim ao começo. Com KONG selecionado, mantenha Ctrl pressionado e pressione C para copiar.",
+          hint: "A palavra selecionada deve ser exatamente KONG. O primeiro exercício usa dois cliques rápidos; o segundo usa arraste do mouse. Depois, Ctrl+C copia o trecho selecionado.",
+          kind: "select-copy",
+          source: "DONKEY KONG e DIDDY KONG",
+          selectionText: "KONG"
+        },
+        {
+          title: "Colando o trecho copiado",
+          instruction: "O trecho KONG está na área de transferência. Pressione Ctrl+V no primeiro espaço e novamente no segundo para formar “DONKEY KONG e DIDDY KONG”. Depois, selecione BANANA e pressione Ctrl+C para copiar outra palavra.",
+          hint: "Mantenha Ctrl pressionado enquanto toca V. O campo mostra dois espaços vazios; cada colagem preenche um deles. No fim, copie BANANA para o próximo checkpoint.",
+          kind: "paste-build",
+          initial: "DONKEY ____ e DIDDY ____",
+          firstExpected: "DONKEY KONG e DIDDY ____",
+          expected: "DONKEY KONG e DIDDY KONG",
+          copySource: "BANANA"
+        },
+        {
+          title: "Desfazendo colagens",
+          instruction: "Cole BANANA quatro vezes no campo. Depois, pressione Ctrl+Z três vezes: devem restar apenas uma BANANA. Em seguida, copie SAPO, cole no segundo campo e use Ctrl+Z para desfazer essa última colagem.",
+          hint: "Cada Ctrl+V acrescenta uma cópia. Ctrl+Z desfaz a última edição. Observe a quantidade de palavras depois de cada atalho.",
+          kind: "paste-undo",
+          text: "BANANA",
+          pasteCount: 4,
+          undoCount: 3,
+          extraCopyText: "SAPO",
+          extraPastePrefix: "Destino: "
+        },
+        {
+          title: "Desfazer e refazer",
+          instruction: "Cole SAPO quatro vezes. Pressione Ctrl+Z três vezes, depois Ctrl+Shift+Z duas vezes e, por fim, Ctrl+Z duas vezes, até restar uma única palavra. Lembre-se: Shift é a tecla com a seta para cima.",
+          hint: "Ctrl+Z desfaz. Ctrl+Shift+Z refaz. Mantenha Ctrl pressionado durante a combinação; para refazer, mantenha Shift junto com Ctrl enquanto pressiona Z.",
+          kind: "history-sequence",
+          text: "SAPO",
+          pasteCount: 4,
+          undoBeforeRedo: 3,
+          redoCount: 2,
+          undoAfterRedo: 2,
+          finalCount: 1
+        },
+        {
+          title: "Recortando e colando duas partes",
+          instruction: "Selecione BARRIL na origem e pressione Ctrl+X. Depois, clique no destino e pressione Ctrl+V. Faça o mesmo com SAPO. As duas palavras devem sair da origem e aparecer no destino.",
+          hint: "Ctrl+X recorta o trecho selecionado: ele sai do texto e vai para a área de transferência. Ctrl+V cola no campo que estiver focado.",
+          kind: "cut-paste-particles",
+          source: "BARRIL SAPO",
+          pieces: ["BARRIL", "SAPO"],
+          targetPrefix: "Destino: "
+        },
+        {
+          title: "Apagar, desfazer e refazer",
+          instruction: "Selecione DIDDY e pressione Backspace. Use Ctrl+Z para recuperar a palavra; depois Ctrl+Shift+Z para refazer a exclusão. Por último, selecione o KONG final e pressione Backspace.",
+          hint: "Backspace apaga o trecho selecionado. Ctrl+Z desfaz a exclusão e Ctrl+Shift+Z refaz. Depois, selecione a última palavra e apague novamente com Backspace.",
+          kind: "delete-undo-redo",
+          initial: "DONKEY KONG e DIDDY KONG",
+          firstDelete: "DIDDY",
+          expectedAfterDelete: "DONKEY KONG e  KONG",
+          expectedRestored: "DONKEY KONG e DIDDY KONG",
+          finalDelete: "KONG",
+          expectedFinal: "DONKEY KONG e  "
+        }
       ]
+    }
     }
   };
 
