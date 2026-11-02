@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#174d35">
+  <title>Mundo 3 — O Acampamento dos Kongs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/donkey-kong.css">
+  <script defer src="assets/js/checkpoints.js"></script><script defer src="assets/js/progress.js"></script><script defer src="assets/js/radio.js"></script><script defer src="assets/js/activity.js"></script>
+</head>
+<body data-page="world" data-world="camp">
+  <main class="app-shell">
+    <header class="topbar"><a class="brand pixel" href="index.html"><span class="brand-icon">🍌</span><span>DONKEY KONG<br>COUNTRY</span></a><a class="back-link" href="index.html">← Mapa da aventura</a></header>
+    <section class="page-hero"><div><p class="eyebrow pixel">MUNDO 3 · ATALHOS E OPERAÇÕES</p><h1 id="world-title">O Acampamento dos Kongs</h1><p id="world-description">Crie linhas, apague à frente, navegue pelo texto e use os atalhos de edição.</p></div><div id="world-character-art" class="world-hero-art" aria-hidden="true"></div></section>
+    <section class="radio-panel" aria-label="Rádio do mundo">
+      <div class="radio-copy"><span class="radio-label pixel">TRILHA DO ACAMPAMENTO</span><span id="radio-status" class="radio-status" aria-live="polite">Preparando a trilha...</span></div>
+      <div class="radio-controls"><button id="radio-toggle" class="radio-button" type="button" aria-pressed="false">♪ Ouvir trilha</button><a id="radio-fallback" class="radio-fallback" href="https://www.youtube.com/watch?v=wxAZfLenfa0" target="_blank" rel="noopener noreferrer">Abrir no YouTube</a></div>
+      <div id="radio-player" class="player-host"></div>
+    </section>
+    <p id="page-progress" class="stage-progress"></p><div id="world-content" class="world-content"><p>Carregando o acampamento...</p></div>
+    <footer class="site-footer"><p id="persistence-status" class="persistence"></p><p>Os atalhos nativos do navegador continuam disponíveis.</p></footer>
+  </main>
+</body>
+</html>
