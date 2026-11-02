@@ -77,6 +77,7 @@
       '<h2>King K. Rool</h2><p>Recupere a Canção do Exílio com seleção, edição, acentuação, pontuação e atalhos.</p>' +
       '<span class="world-progress">' + bossCount + '</span><span class="world-action"><span>' + (progress.boss.passed ? "Rever missão" : "Entrar no desafio") + '</span><span aria-hidden="true">→</span></span></a>';
     bindGameArt(host);
+    bindGameArt(document.getElementById("island-gif-panel"));
     const summary = document.getElementById("map-summary");
     const totalCheckpoints = Object.values(DATA.worlds).reduce((sum, item) => sum + item.checkpoints.length, 0);
     if (summary) summary.innerHTML = '<span>' + countComplete() + ' de ' + totalCheckpoints + ' checkpoints concluídos</span><span>' +
