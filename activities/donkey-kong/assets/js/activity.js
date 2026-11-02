@@ -219,7 +219,7 @@
     host.innerHTML = '<section class="exercise-card">' +
       '<div class="checkpoint-strip"><span class="checkpoint-name pixel">CHECKPOINT ' + number + '/' + total + '</span><span class="checkpoint-dots" aria-label="' + completedCount + ' de ' + total + ' concluídos">' + renderDots(completedCount, total) + '</span></div>' +
       '<h2>' + escapeHTML(checkpoint.title) + '</h2><p class="instruction">' + escapeHTML(checkpoint.instruction) + '</p>' +
-      (checkpoint.kind === "typing-sequence" ? "" : '<details class="demo-box"><summary>Ver demonstração e dica</summary><p>' + escapeHTML(checkpoint.hint) + '</p></details>') +
+      (checkpoint.kind === "typing-sequence" || checkpoint.kind === "select-copy" ? "" : '<details class="demo-box"><summary>Ver demonstração e dica</summary><p>' + escapeHTML(checkpoint.hint) + '</p></details>') +
       '<div id="exercise-area"></div><p id="exercise-feedback" class="feedback" role="status" aria-live="polite">Faça a atividade usando o teclado físico, sem pressa.</p>' +
       '<div class="exercise-actions"><button id="reset-activity" class="button danger" type="button">↻ Resetar atividade</button>' +
       '<button id="check-action" class="button secondary" type="button" hidden>Conferir etapa</button>' +
@@ -232,6 +232,12 @@
     const continueButton = host.querySelector("#continue-checkpoint");
     const resetButton = host.querySelector("#reset-activity");
     let completed = false;
+    let cleanupCheckpoint = () => {};
+
+    function cleanupCurrentCheckpoint() {
+      cleanupCheckpoint();
+      cleanupCheckpoint = () => {};
+    }
 
     function complete() {
       if (completed) return;
@@ -242,13 +248,16 @@
         return;
       }
       saveProgress();
+      cleanupCurrentCheckpoint();
       setFeedback(feedback, "Checkpoint concluído. Você pode continuar quando estiver pronto.", "good");
       checkButton.disabled = true;
       continueButton.disabled = false;
-      continueButton.textContent = number < total ? "Continuar para o checkpoint " + (number + 1) : "Concluir mundo";
+      continueButton.textContent = checkpoint.kind === "select-copy" ? "Avançar"
+        : number < total ? "Continuar para o checkpoint " + (number + 1) : "Concluir mundo";
     }
     function continueNext() {
       if (!completed) return;
+      cleanupCurrentCheckpoint();
       renderCheckpoint(world, host);
     }
     continueButton.addEventListener("click", continueNext);
@@ -258,6 +267,7 @@
         progress.checkpoints[world.id] = number - 1;
         saveProgress();
       }
+      cleanupCurrentCheckpoint();
       renderCheckpoint(world, host);
     });
 
@@ -266,7 +276,7 @@
     else if (checkpoint.kind === "selection") renderSelection(checkpoint, area, feedback, checkButton, complete);
     else if (checkpoint.kind === "edit-sequence") renderEditSequence(checkpoint, area, feedback, checkButton, complete);
     else if (checkpoint.kind === "line-breaks") renderLineBreaks(checkpoint, area, feedback, checkButton, complete);
-    else if (checkpoint.kind === "select-copy") renderSelectCopy(checkpoint, area, feedback, checkButton, complete);
+    else if (checkpoint.kind === "select-copy") cleanupCheckpoint = renderSelectCopy(checkpoint, area, feedback, checkButton, complete);
     else if (checkpoint.kind === "paste-build") renderPasteBuild(checkpoint, area, feedback, checkButton, complete);
     else if (checkpoint.kind === "paste-undo") renderPasteUndo(checkpoint, area, feedback, checkButton, complete);
     else if (checkpoint.kind === "history-sequence") renderHistorySequence(checkpoint, area, feedback, checkButton, complete);
@@ -890,92 +900,187 @@
   }
 
   function renderSelectCopy(checkpoint, area, feedback, checkButton, complete) {
-    let stage = 0;
+    let stageIndex = 0;
     let doubleClickObserved = false;
     let pointerDown = false;
     let dragObserved = false;
-    let copyShortcut = false;
+    let bananaReady = false;
+    let copyReady = false;
+    let copyCompleted = false;
+    let pendingCopy = null;
     let advancing = false;
-    area.innerHTML = '<label class="input-label" for="select-copy-input">Texto para selecionar</label>' +
-      '<textarea id="select-copy-input" class="exercise-area" rows="2" readonly></textarea>' +
+    const eventController = new AbortController();
+    area.innerHTML = '<div class="sequence-progress" id="select-copy-progress"></div>' +
+      '<h3 class="sequence-instruction" id="select-copy-instruction"></h3>' +
+      '<p class="sequence-hint" id="select-copy-hint"></p>' +
+      '<label class="input-label" for="select-copy-input">Texto para selecionar</label>' +
+      '<textarea id="select-copy-input" class="exercise-area" rows="1" readonly></textarea>' +
       '<div id="select-copy-keys"></div>' +
-      '<p id="select-copy-status" class="selection-status" aria-live="polite"></p>';
+      '<p id="select-copy-confirmation" class="selection-status" aria-live="polite" hidden></p>';
     const input = area.querySelector("#select-copy-input");
-    const status = area.querySelector("#select-copy-status");
+    const progress = area.querySelector("#select-copy-progress");
+    const instruction = area.querySelector("#select-copy-instruction");
+    const hint = area.querySelector("#select-copy-hint");
     const keys = area.querySelector("#select-copy-keys");
-    input.value = checkpoint.source;
-    const firstStart = checkpoint.source.indexOf(checkpoint.selectionText);
-    const secondStart = checkpoint.source.lastIndexOf(checkpoint.selectionText);
-    const end = checkpoint.selectionText.length;
+    const confirmation = area.querySelector("#select-copy-confirmation");
     checkButton.hidden = true;
+    checkButton.disabled = true;
 
-    function updateStatus() {
-      if (stage === 0) {
-        status.textContent = "ETAPA 1/3 · Dê dois cliques rápidos sobre a primeira palavra KONG para selecioná-la.";
-      } else if (stage === 1) {
-        status.textContent = "ETAPA 2/3 · Arraste sobre a segunda palavra KONG. Você pode arrastar do começo ao fim ou do fim ao começo.";
+    function showConfirmation(lines) {
+      confirmation.replaceChildren(...lines.map((line) => {
+        const span = document.createElement("span");
+        span.textContent = line;
+        return span;
+      }));
+      confirmation.hidden = false;
+    }
+
+    function clearConfirmation() {
+      confirmation.replaceChildren();
+      confirmation.hidden = true;
+    }
+
+    function renderStage() {
+      const stage = checkpoint.stages[stageIndex];
+      input.value = stage.target;
+      progress.textContent = "ETAPA " + (stageIndex + 1) + "/" + checkpoint.stages.length;
+      instruction.hidden = false;
+      instruction.textContent = stage.instruction;
+      hint.hidden = false;
+      hint.textContent = stage.hint;
+      keys.innerHTML = "";
+      clearConfirmation();
+      copyReady = false;
+      pendingCopy = null;
+      if (stageIndex === 0) {
+        checkButton.hidden = false;
+        checkButton.disabled = true;
+        checkButton.textContent = "Avançar";
       } else {
-        keys.innerHTML = renderShortcutKeyboard([["CTRL", "C"]]);
-        status.textContent = "ETAPA 3/3 · Mantenha Ctrl pressionado e pressione C com a palavra KONG selecionada.";
+        checkButton.hidden = true;
+        checkButton.disabled = true;
       }
     }
-    function selectionIs(start) {
-      return input.selectionStart === start && input.selectionEnd === start + end &&
-        input.value.slice(input.selectionStart, input.selectionEnd) === checkpoint.selectionText;
+
+    function selectionIs(text) {
+      const start = input.value.indexOf(text);
+      return start >= 0 && input.selectionStart === start && input.selectionEnd === start + text.length &&
+        input.value.slice(input.selectionStart, input.selectionEnd) === text;
     }
-    function advanceSelection() {
-      if (advancing) return;
-      const valid = stage === 0 ? doubleClickObserved && selectionIs(firstStart)
-        : stage === 1 ? dragObserved && selectionIs(secondStart) : false;
-      if (!valid) return;
+
+    function confirmBananaSelection() {
+      if (advancing || stageIndex !== 0 || bananaReady || !doubleClickObserved) return;
       advancing = true;
-      stage += 1;
-      if (stage === 1) {
-        doubleClickObserved = false;
-        input.setSelectionRange(secondStart, secondStart);
-        status.textContent = "Primeira seleção correta. Agora arraste sobre a segunda ocorrência de KONG.";
-      } else {
-        input.setSelectionRange(secondStart, secondStart + end);
-        status.textContent = "As duas formas de seleção foram praticadas. Agora copie KONG com Ctrl+C.";
+      doubleClickObserved = false;
+      if (selectionIs(checkpoint.stages[0].target)) {
+        bananaReady = true;
+        instruction.hidden = true;
+        hint.hidden = true;
+        showConfirmation([
+          "Trecho selecionado: BANANA",
+          "Você selecionou corretamente. (Clique em Avançar)"
+        ]);
+        checkButton.hidden = false;
+        checkButton.disabled = false;
+        checkButton.textContent = "Avançar";
+        setFeedback(feedback, "Seleção de BANANA reconhecida.", "good");
       }
-      setFeedback(feedback, stage === 1 ? "Seleção por dois cliques reconhecida." : "Seleção por arraste reconhecida.", "good");
       advancing = false;
-      updateStatus();
     }
-    input.addEventListener("dblclick", (event) => {
-      if (!event.isTrusted || stage !== 0) return;
-      doubleClickObserved = true;
-      global.requestAnimationFrame(advanceSelection);
+
+    function confirmKongSelection() {
+      if (advancing || stageIndex !== 1 || copyReady || !dragObserved) return;
+      advancing = true;
+      dragObserved = false;
+      if (selectionIs(checkpoint.stages[1].target)) {
+        copyReady = true;
+        instruction.hidden = true;
+        hint.hidden = true;
+        keys.innerHTML = renderShortcutKeyboard([["CTRL", "C"]]);
+        showConfirmation([
+          "Trecho selecionado: KONG",
+          checkpoint.copyInstruction
+        ]);
+        setFeedback(feedback, "Seleção de KONG reconhecida.", "good");
+      } else {
+        const start = input.value.indexOf(checkpoint.stages[1].target);
+        input.setSelectionRange(start, start);
+        setFeedback(feedback, "Selecione somente KONG e tente novamente.", "gentle");
+      }
+      advancing = false;
+    }
+
+    checkButton.addEventListener("click", () => {
+      if (stageIndex !== 0 || !bananaReady || checkButton.disabled) return;
+      stageIndex = 1;
+      bananaReady = false;
+      doubleClickObserved = false;
+      pointerDown = false;
+      dragObserved = false;
+      renderStage();
+      input.focus();
+      setFeedback(feedback, "Agora arraste para selecionar somente KONG.", "good");
     });
-    input.addEventListener("mousedown", (event) => {
-      if (!event.isTrusted || stage !== 1 || event.button !== 0) return;
+
+    input.addEventListener("dblclick", (event) => {
+      if (!event.isTrusted || stageIndex !== 0 || bananaReady) return;
+      doubleClickObserved = true;
+      global.requestAnimationFrame(confirmBananaSelection);
+    });
+    input.addEventListener("pointerdown", (event) => {
+      if (!event.isTrusted || !event.isPrimary || stageIndex !== 1 || copyReady || event.button !== 0) return;
       pointerDown = true;
       dragObserved = false;
     });
-    input.addEventListener("mousemove", () => {
-      if (!pointerDown || stage !== 1) return;
+    input.addEventListener("pointermove", (event) => {
+      if (!event.isTrusted || !pointerDown || stageIndex !== 1 || copyReady) return;
       if (input.selectionEnd > input.selectionStart) dragObserved = true;
     });
-    input.addEventListener("mouseup", (event) => {
-      if (!event.isTrusted || stage !== 1) return;
+    input.addEventListener("pointerup", (event) => {
+      if (!event.isTrusted || !pointerDown || stageIndex !== 1 || copyReady) return;
       pointerDown = false;
-      global.requestAnimationFrame(advanceSelection);
+      global.requestAnimationFrame(confirmKongSelection);
     });
-    input.addEventListener("select", advanceSelection);
-    input.addEventListener("keydown", (event) => {
-      if (!event.isTrusted || stage !== 2 || !event.ctrlKey || event.shiftKey || event.key.toLowerCase() !== "c") return;
-      if (input.value.slice(input.selectionStart, input.selectionEnd) === checkpoint.selectionText) copyShortcut = true;
+    input.addEventListener("pointercancel", () => {
+      pointerDown = false;
+      if (stageIndex === 1 && !copyReady) global.requestAnimationFrame(confirmKongSelection);
     });
-    input.addEventListener("copy", (event) => {
-      if (!event.isTrusted || stage !== 2 || !copyShortcut ||
-        input.value.slice(input.selectionStart, input.selectionEnd) !== checkpoint.selectionText) return;
-      input.readOnly = true;
-      status.textContent = "KONG foi copiado usando Ctrl+C. O próximo checkpoint vai ensinar a colar.";
+    document.addEventListener("keydown", (event) => {
+      pendingCopy = null;
+      if (!event.isTrusted || event.target !== input || document.activeElement !== input || stageIndex !== 1 ||
+        !copyReady || copyCompleted || !event.ctrlKey || event.shiftKey || event.key.toLowerCase() !== "c" ||
+        !selectionIs(checkpoint.stages[1].target)) return;
+      const attempt = {
+        inputValue: input.value,
+        selectionStart: input.selectionStart,
+        selectionEnd: input.selectionEnd,
+        selectedText: input.value.slice(input.selectionStart, input.selectionEnd),
+        expiresAt: Date.now() + 1500
+      };
+      pendingCopy = attempt;
+      global.setTimeout(() => {
+        if (pendingCopy === attempt) pendingCopy = null;
+      }, 1500);
+    }, { capture: true, signal: eventController.signal });
+    document.addEventListener("copy", (event) => {
+      const attempt = pendingCopy;
+      pendingCopy = null;
+      if (!attempt || !event.isTrusted || event.target !== input || document.activeElement !== input ||
+        Date.now() > attempt.expiresAt || stageIndex !== 1 || !copyReady || copyCompleted ||
+        input.value !== attempt.inputValue || input.selectionStart !== attempt.selectionStart ||
+        input.selectionEnd !== attempt.selectionEnd || attempt.selectedText !== checkpoint.stages[1].target ||
+        !selectionIs(checkpoint.stages[1].target)) return;
+      copyCompleted = true;
+      showConfirmation([
+        "Trecho copiado: KONG",
+        "Você selecionou e copiou corretamente. (Clique em Avançar)"
+      ]);
       setFeedback(feedback, "Seleção, Ctrl e C concluídos.", "good");
       complete();
-    });
+    }, { capture: true, signal: eventController.signal });
+    renderStage();
     input.focus();
-    updateStatus();
+    return () => eventController.abort();
   }
 
   function renderPasteBuild(checkpoint, area, feedback, checkButton, complete) {

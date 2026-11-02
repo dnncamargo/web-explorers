@@ -174,12 +174,23 @@
           expected: "Bananada\nMarmelada\nGoiabada"
         },
         {
-          title: "Selecionando um trecho",
-          instruction: "Vamos selecionar a palavra KONG de duas maneiras: primeiro, dê dois toques rápidos sobre a palavra; depois, arraste sobre a outra ocorrência, do começo ao fim ou do fim ao começo. Com KONG selecionado, mantenha Ctrl pressionado e pressione C para copiar.",
-          hint: "A palavra selecionada deve ser exatamente KONG. O primeiro exercício usa dois cliques rápidos; o segundo usa arraste do mouse. Depois, Ctrl+C copia o trecho selecionado.",
+          title: "Selecionando e copiando um trecho",
+          instruction: "Este checkpoint aborda seleção de texto e cópia nativa do navegador.",
+          hint: "",
           kind: "select-copy",
-          source: "DONKEY KONG e DIDDY KONG",
-          selectionText: "KONG"
+          stages: [
+            {
+              target: "BANANA",
+              instruction: "Dê dois cliques rápidos sobre a palavra BANANA até que ela fique selecionada em azul.",
+              hint: "Trecho a selecionar: BANANA."
+            },
+            {
+              target: "KONG",
+              instruction: "Arraste sobre a palavra KONG para selecioná-la. Você pode arrastar do início ao fim ou do fim ao início.",
+              hint: "Trecho a selecionar: KONG."
+            }
+          ],
+          copyInstruction: "Agora mantenha Ctrl pressionado e pressione C para copiar."
         },
         {
           title: "Colando o trecho copiado",

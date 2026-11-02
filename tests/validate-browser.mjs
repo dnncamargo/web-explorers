@@ -151,10 +151,73 @@ if (!browserPath) {
       windowsVirtualKeyCode: virtualCodes[key] || 0,
       nativeVirtualKeyCode: virtualCodes[key] || 0,
       modifiers,
-      text: key.length === 1 && !modifiers ? key : undefined
+      text: key === "Enter" ? "\r" : key.length === 1 && !modifiers ? key : undefined
     };
     await cdp.send("Input.dispatchKeyEvent", { ...params, type: "keyDown" });
     await cdp.send("Input.dispatchKeyEvent", { ...params, type: "keyUp" });
+  }
+  async function waitForExpression(expression, label, timeout = 5000) {
+    const deadline = Date.now() + timeout;
+    while (Date.now() < deadline) {
+      if (await evaluate(expression)) return;
+      await new Promise((resolve) => setTimeout(resolve, 30));
+    }
+    throw new Error(`Timed out waiting for ${label}`);
+  }
+  async function textPoint(selector, offset) {
+    await evaluate(`(()=>{const element=document.querySelector(${JSON.stringify(selector)});window.scrollTo(0,Math.max(0,element.getBoundingClientRect().top+window.scrollY-innerHeight/2))})()`);
+    await new Promise((resolve) => setTimeout(resolve, 40));
+    return evaluate(`(()=>{
+      const field=document.querySelector(${JSON.stringify(selector)});
+      const style=getComputedStyle(field);
+      const canvas=document.createElement("canvas");
+      const context=canvas.getContext("2d");
+      context.font=style.font;
+      const offset=${offset};
+      const whole=Math.floor(offset);
+      const prefix=field.value.slice(0,whole);
+      const partial=(offset-whole)*context.measureText(field.value[whole]||"").width;
+      const rect=field.getBoundingClientRect();
+      const left=rect.left+field.clientLeft+parseFloat(style.paddingLeft);
+      const top=rect.top+field.clientTop+parseFloat(style.paddingTop);
+      return {x:left+context.measureText(prefix).width+partial,y:top+parseFloat(style.lineHeight)/2};
+    })()`);
+  }
+  async function doubleClickText(selector, text) {
+    const start = await evaluate(`document.querySelector(${JSON.stringify(selector)}).value.indexOf(${JSON.stringify(text)})`);
+    assert.ok(start >= 0, `found ${text} in ${selector}`);
+    const point = await textPoint(selector, start + 0.5);
+    const hit = await evaluate(`(()=>{const element=document.elementFromPoint(${point.x},${point.y});return {matches:element===document.querySelector(${JSON.stringify(selector)}),tag:element?.tagName,id:element?.id,point:{x:${point.x},y:${point.y}},rect:(()=>{const r=document.querySelector(${JSON.stringify(selector)}).getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height}})()}})()`);
+    assert.equal(hit.matches, true, `double-click coordinates land on the text field: ${JSON.stringify(hit)}`);
+    await cdp.send("Input.dispatchMouseEvent", { type: "mouseMoved", ...point });
+    await cdp.send("Input.dispatchMouseEvent", { type: "mousePressed", ...point, button: "left", clickCount: 1 });
+    await cdp.send("Input.dispatchMouseEvent", { type: "mouseReleased", ...point, button: "left", clickCount: 1 });
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    await cdp.send("Input.dispatchMouseEvent", { type: "mousePressed", ...point, button: "left", clickCount: 2 });
+    await cdp.send("Input.dispatchMouseEvent", { type: "mouseReleased", ...point, button: "left", clickCount: 2 });
+  }
+  async function clickText(selector, text) {
+    const start = await evaluate(`document.querySelector(${JSON.stringify(selector)}).value.indexOf(${JSON.stringify(text)})`);
+    assert.ok(start >= 0, `found ${text} in ${selector}`);
+    const point = await textPoint(selector, start + 0.5);
+    await cdp.send("Input.dispatchMouseEvent", { type: "mouseMoved", ...point });
+    await cdp.send("Input.dispatchMouseEvent", { type: "mousePressed", ...point, button: "left", clickCount: 1 });
+    await cdp.send("Input.dispatchMouseEvent", { type: "mouseReleased", ...point, button: "left", clickCount: 1 });
+  }
+  async function dragText(selector, text, direction) {
+    const start = await evaluate(`document.querySelector(${JSON.stringify(selector)}).value.indexOf(${JSON.stringify(text)})`);
+    assert.ok(start >= 0, `found ${text} in ${selector}`);
+    const first = await textPoint(selector, start + 0.1);
+    const last = await textPoint(selector, start + text.length - 0.1);
+    const from = direction === "reverse" ? last : first;
+    const to = direction === "reverse" ? first : last;
+    await cdp.send("Input.dispatchMouseEvent", { type: "mouseMoved", ...from });
+    await cdp.send("Input.dispatchMouseEvent", { type: "mousePressed", ...from, button: "left", clickCount: 1 });
+    for (let step = 1; step <= 8; step += 1) {
+      const point = { x: from.x + (to.x - from.x) * step / 8, y: from.y + (to.y - from.y) * step / 8 };
+      await cdp.send("Input.dispatchMouseEvent", { type: "mouseMoved", ...point, button: "left", buttons: 1 });
+    }
+    await cdp.send("Input.dispatchMouseEvent", { type: "mouseReleased", ...to, button: "left", clickCount: 1 });
   }
   async function responsiveCatalog(width) {
     await cdp.send("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: false });
@@ -186,7 +249,7 @@ if (!browserPath) {
     await cdp.send("Runtime.enable");
 
     for (const width of [320, 390, 768, 1366]) await responsiveCatalog(width);
-    await cdp.send("Emulation.setDeviceMetricsOverride", { width: 1366, height: 1000, deviceScaleFactor: 1, mobile: false });
+    await cdp.send("Emulation.setDeviceMetricsOverride", { width: 1366, height: 1600, deviceScaleFactor: 1, mobile: false });
 
     // The main catalog opens the activity entry, which redirects to its first canonical stage.
     await navigate(`${baseUrl}index.html`, "/index.html");
@@ -291,22 +354,102 @@ if (!browserPath) {
         }
         if (route === "camp.html") {
           assert.equal(await evaluate('!!document.querySelector("#line-break-input")'), true, "Camp checkpoint one opens the line-break exercise");
-          assert.equal(await evaluate('Array.from(document.querySelectorAll(".shortcut-key")).some((key) => key.textContent === "ENTER")'), true, "Enter is visibly drawn in checkpoint one");
-          assert.equal(await evaluate('Array.from(document.querySelectorAll(".shortcut-key")).some((key) => key.textContent === "BACKSPACE")'), true, "Backspace is visibly drawn in checkpoint one");
-          assert.equal(await evaluate('Array.from(document.querySelectorAll(".shortcut-key")).some((key) => key.textContent === "DELETE")'), true, "Delete is visibly drawn in checkpoint one");
-          await evaluate('(() => { const field = document.querySelector("#line-break-input"); field.focus(); field.setSelectionRange(13,14); })()');
-          await pressKey("Backspace", "Backspace");
+          assert.equal(await evaluate('Array.from(document.querySelectorAll(".shortcut-key")).some((key) => key.dataset.key === "ENTER")'), true, "Enter is visibly drawn in checkpoint one");
+          assert.equal(await evaluate('Array.from(document.querySelectorAll(".shortcut-key")).some((key) => ["BACKSPACE", "DELETE"].includes(key.dataset.key))'), false, "checkpoint one shows no deletion keys");
+          assert.equal(await evaluate('document.querySelector("#line-break-input").value'), "Bananada Marmelada Goiabada", "checkpoint one begins with the current phrase");
+          await evaluate('(() => { const field = document.querySelector("#line-break-input"); window.__campKeyLog=[]; field.addEventListener("keydown", event => window.__campKeyLog.push([event.key,event.isTrusted])); field.addEventListener("beforeinput", event => window.__campKeyLog.push([event.inputType,event.isTrusted])); field.focus(); field.setSelectionRange(8,8); })()');
           await pressKey("Enter", "Enter");
-          for (let index = 0; index < 7; index += 1) await pressKey("ArrowRight", "ArrowRight");
-          await pressKey("Delete", "Delete");
+          assert.deepEqual(await evaluate('window.__campKeyLog'), [["Enter", true], ["insertLineBreak", true]], "the first physical Enter dispatches trusted keyboard and line-break events");
+          assert.equal(await evaluate('document.querySelector("#line-break-input")?.value'), "Bananada\nMarmelada Goiabada", "the first native Enter inserts a line break");
+          await evaluate('(() => { const field = document.querySelector("#line-break-input"); const end = field.value.indexOf("Marmelada") + "Marmelada".length; field.setSelectionRange(end,end); })()');
           await pressKey("Enter", "Enter");
-          assert.equal(await evaluate('document.querySelector("#line-break-input")?.value'), "O sapo saltou\nsobre a\nabelha.", "checkpoint one accepts the sentence split into three lines using Enter twice");
+          assert.equal(await evaluate('document.querySelector("#line-break-input")?.value'), "Bananada\nMarmelada\nGoiabada", "checkpoint one accepts exactly two Enter breaks in the requested phrase");
           assert.equal(await evaluate('document.querySelector("#continue-checkpoint")?.disabled'), false, "the three-line exercise completes automatically");
           await evaluate('document.querySelector("#continue-checkpoint").click()');
-          assert.equal(await evaluate('document.querySelector("#select-copy-input")?.value'), "DONKEY KONG e DIDDY KONG", "checkpoint two introduces the two KONG text selections");
-          assert.equal(await evaluate('document.querySelector("#select-copy-input")?.readOnly'), true, "selection practice preserves the source text");
-          assert.equal(await evaluate('document.querySelector("#select-copy-status")?.textContent.includes("dois cliques rápidos")'), true, "checkpoint two first teaches double-click selection");
-          assert.equal(await evaluate('document.querySelectorAll(".shortcut-key").length'), 2, "checkpoint two presents Ctrl and C");
+          assert.equal(await evaluate('document.querySelector(".checkpoint-name")?.textContent'), "CHECKPOINT 2/7", "the CP2 header keeps its checkpoint identity");
+          assert.equal(await evaluate('(()=>{const ids=["select-copy-progress","select-copy-instruction","select-copy-hint","select-copy-input"];return ids.every((id,index)=>index===ids.length-1||document.getElementById(id).compareDocumentPosition(document.getElementById(ids[index+1]))&Node.DOCUMENT_POSITION_FOLLOWING)})()'), true, "CP2 reuses the World 2 order of stage, instruction, hint and activity");
+          assert.equal(await evaluate('document.querySelector("#select-copy-progress")?.textContent'), "ETAPA 1/2", "checkpoint two starts at ETAPA 1/2");
+          assert.equal(await evaluate('document.querySelector("#select-copy-instruction")?.textContent'), "Dê dois cliques rápidos sobre a palavra BANANA até que ela fique selecionada em azul.", "checkpoint two gives one main instruction for BANANA");
+          assert.equal(await evaluate('document.querySelector("#select-copy-hint")?.textContent'), "Trecho a selecionar: BANANA.", "checkpoint two identifies BANANA as the expected selection");
+          assert.equal(await evaluate('document.querySelector("#select-copy-input")?.value'), "BANANA", "stage one displays only BANANA");
+          assert.equal(await evaluate('document.querySelector("#select-copy-input")?.readOnly'), true, "selection practice preserves the active word");
+          assert.equal(await evaluate('document.querySelector("#check-action")?.hidden'), false, "stage one uses the existing check-action button");
+          assert.equal(await evaluate('document.querySelector("#check-action")?.textContent'), "Avançar", "stage one labels the manual button Avançar");
+          assert.equal(await evaluate('document.querySelector("#check-action")?.disabled'), true, "Avançar is disabled before the BANANA selection");
+          assert.equal(await evaluate('document.querySelector("#continue-checkpoint")?.disabled'), true, "checkpoint two is incomplete before selection");
+          assert.equal(await evaluate('document.querySelectorAll("#select-copy-keys .shortcut-key").length'), 0, "checkpoint two withholds Ctrl+C until both selections are practiced");
+          await pressKey("c", "KeyC", 2);
+          assert.equal(await evaluate('document.querySelector("#continue-checkpoint")?.disabled'), true, "Ctrl+C cannot complete checkpoint two before selection practice");
+          await evaluate('(() => { const field=document.querySelector("#select-copy-input"); window.__selectionLog=[]; field.addEventListener("click", event=>window.__selectionLog.push(["click",event.detail,event.isTrusted,event.clientX,event.clientY,field.value.slice(field.selectionStart,field.selectionEnd)])); field.addEventListener("dblclick", event=>window.__selectionLog.push(["dblclick",event.detail,event.isTrusted,event.clientX,event.clientY,field.value.slice(field.selectionStart,field.selectionEnd)])); })()');
+          await clickText("#select-copy-input", "BANANA");
+          assert.equal(await evaluate('document.querySelector("#check-action")?.disabled'), true, "a single click does not validate BANANA");
+          assert.equal(await evaluate('document.querySelector("#select-copy-confirmation")?.hidden'), true, "incorrect or incomplete selection shows no success confirmation");
+          await doubleClickText("#select-copy-input", "BANANA");
+          assert.equal(await evaluate('window.__selectionLog.some(([type,detail,trusted]) => type === "dblclick" && detail === 2 && trusted)'), true, `the browser produced a trusted double-click: ${JSON.stringify(await evaluate('window.__selectionLog'))}`);
+          assert.equal(await evaluate('window.__selectionLog.some(([type,, , , , selected]) => type === "dblclick" && selected === "BANANA")'), true, `native double-click selects exactly BANANA: ${JSON.stringify(await evaluate('window.__selectionLog'))}`);
+          await waitForExpression('document.querySelector("#check-action")?.disabled === false', "BANANA double-click enables manual advance");
+          assert.equal(await evaluate('document.querySelector("#select-copy-progress")?.textContent'), "ETAPA 1/2", "correct BANANA selection remains in ETAPA 1/2");
+          assert.equal(await evaluate('document.querySelector("#select-copy-input")?.value'), "BANANA", "BANANA remains the only content before manual advance");
+          assert.deepEqual(await evaluate('Array.from(document.querySelectorAll("#select-copy-confirmation span")).map((span) => span.textContent)'), ["Trecho selecionado: BANANA", "Você selecionou corretamente. (Clique em Avançar)"], "correct double-click shows both BANANA confirmation spans");
+          assert.equal(await evaluate('document.querySelector("#continue-checkpoint")?.disabled'), true, "BANANA selection does not complete checkpoint two");
+          await doubleClickText("#select-copy-input", "BANANA");
+          assert.equal(await evaluate('document.querySelector("#select-copy-progress")?.textContent'), "ETAPA 1/2", "repeated double-click does not advance the stage");
+          assert.equal(await evaluate('document.querySelectorAll("#select-copy-confirmation span").length'), 2, "repeated double-click does not duplicate confirmations");
+          await evaluate('(() => { const button=document.querySelector("#check-action"); button.click(); button.click(); })()');
+          assert.equal(await evaluate('document.querySelector("#select-copy-progress")?.textContent'), "ETAPA 2/2", "the existing Avançar button changes to stage two only once");
+          assert.equal(await evaluate('document.querySelector("#select-copy-input")?.value'), "KONG", "stage two replaces BANANA with only KONG");
+          assert.equal(await evaluate('document.querySelector("#select-copy-instruction")?.textContent'), "Arraste sobre a palavra KONG para selecioná-la. Você pode arrastar do início ao fim ou do fim ao início.", "checkpoint two gives one main instruction for KONG");
+          assert.equal(await evaluate('document.querySelector("#select-copy-hint")?.textContent'), "Trecho a selecionar: KONG.", "checkpoint two identifies KONG as the expected selection");
+          assert.equal(await evaluate('document.querySelector("#check-action")?.hidden'), true, "stage two hides the stage-one advance control");
+          await pressKey("c", "KeyC", 2);
+          assert.equal(await evaluate('document.querySelector("#continue-checkpoint")?.disabled'), true, "Ctrl+C cannot complete checkpoint two before the KONG drag is validated");
+          await dragText("#select-copy-input", "KON", "forward");
+          assert.equal(await evaluate('document.querySelector("#select-copy-confirmation")?.hidden'), true, "a partial KONG drag shows no success confirmation");
+          assert.equal(await evaluate('document.querySelector("#continue-checkpoint")?.disabled'), true, "a partial KONG drag does not complete checkpoint two");
+          assert.equal(await evaluate('(() => { const field=document.querySelector("#select-copy-input"); return field.selectionStart === field.selectionEnd; })()'), true, "an invalid partial drag is cleared so the learner can retry");
+          await dragText("#select-copy-input", "KONG", "forward");
+          await waitForExpression('document.querySelector("#select-copy-confirmation span")?.textContent === "Trecho selecionado: KONG"', "forward KONG drag confirms selection");
+          assert.equal(await evaluate('(() => { const field=document.querySelector("#select-copy-input"); return field.value.slice(field.selectionStart,field.selectionEnd); })()'), "KONG", "a forward drag selects exactly KONG");
+          assert.equal(await evaluate('document.querySelector("#select-copy-progress")?.textContent'), "ETAPA 2/2", "KONG selection remains in ETAPA 2/2");
+          assert.equal(await evaluate('document.querySelector("#select-copy-instruction")?.hidden'), true, "drag confirmation replaces the completed selection instruction");
+          assert.deepEqual(await evaluate('Array.from(document.querySelectorAll("#select-copy-confirmation span")).map((span) => span.textContent)'), ["Trecho selecionado: KONG", "Agora mantenha Ctrl pressionado e pressione C para copiar."], "KONG selection shows both requested pre-copy messages");
+          assert.deepEqual(await evaluate('Array.from(document.querySelectorAll("#select-copy-keys .shortcut-key")).map((key) => key.dataset.key)'), ["CTRL", "C"], "checkpoint two presents Ctrl+C after selection");
+          await evaluate('(() => { window.__nativeClipboardTrace=[]; for (const type of ["keydown","copy"]) document.addEventListener(type,event=>{const field=document.querySelector("#select-copy-input");const active=document.activeElement;window.__nativeClipboardTrace.push({type,target:event.target?.id||event.target?.nodeName,active:active?.id||active?.nodeName,isTrusted:event.isTrusted,ctrlKey:!!event.ctrlKey,key:event.key||"",code:event.code||"",selectionStart:field?.selectionStart,selectionEnd:field?.selectionEnd,selected:field?.value.slice(field.selectionStart,field.selectionEnd),stage:document.querySelector("#select-copy-progress")?.textContent,continueDisabled:document.querySelector("#continue-checkpoint")?.disabled});},true); })()');
+          await pressKey("c", "KeyC", 2);
+          await waitForExpression('document.querySelector("#continue-checkpoint")?.disabled === false', "native Ctrl+C completes checkpoint two");
+          assert.equal(await evaluate('document.querySelector("#select-copy-progress")?.textContent'), "ETAPA 2/2", "the completed copy remains the second and final stage");
+          assert.equal(await evaluate('window.__nativeClipboardTrace.some(event=>event.type==="keydown"&&event.target==="select-copy-input"&&event.active==="select-copy-input"&&event.isTrusted&&event.ctrlKey&&event.key.toLowerCase()==="c"&&event.selected==="KONG")'), true, `the document observed trusted Ctrl+C from the focused KONG selection: ${JSON.stringify(await evaluate('window.__nativeClipboardTrace'))}`);
+          assert.equal(await evaluate('window.__nativeClipboardTrace.some(event=>event.type==="copy"&&event.target==="select-copy-input"&&event.active==="select-copy-input"&&event.isTrusted&&event.selected==="KONG"&&event.stage==="ETAPA 2/2"&&!event.continueDisabled)'), true, `the document observed native copy and enabled completion: ${JSON.stringify(await evaluate('window.__nativeClipboardTrace'))}`);
+          assert.equal(await evaluate('document.querySelector("#continue-checkpoint")?.textContent'), "Avançar", "native copy enables the global Avançar button");
+          assert.deepEqual(await evaluate('Array.from(document.querySelectorAll("#select-copy-confirmation span")).map((span) => span.textContent)'), ["Trecho copiado: KONG", "Você selecionou e copiou corretamente. (Clique em Avançar)"], "native copy replaces the selection messages with final confirmation");
+          await pressKey("c", "KeyC", 2);
+          assert.deepEqual(await evaluate('Array.from(document.querySelectorAll("#select-copy-confirmation span")).map((span) => span.textContent)'), ["Trecho copiado: KONG", "Você selecionou e copiou corretamente. (Clique em Avançar)"], "repeated Ctrl+C leaves the final confirmation intact");
+          assert.equal(await evaluate('document.querySelector("#continue-checkpoint")?.disabled'), false, "repeated Ctrl+C does not disable or duplicate checkpoint completion");
+          await evaluate('document.querySelector("#continue-checkpoint").click()');
+          await waitForExpression('!!document.querySelector("#paste-build-input")', "checkpoint two releases checkpoint three");
+          await pressKey("v", "KeyV", 2);
+          assert.equal(await evaluate('document.querySelector("#paste-build-input")?.value'), "DONKEY KONG e DIDDY ____", "the real copied KONG is available to checkpoint three");
+
+          await cdp.send("Storage.clearDataForOrigin", { origin: new URL(baseUrl).origin, storageTypes: "all" });
+          await navigate(baseUrl + "activities/donkey-kong/camp.html", "/activities/donkey-kong/camp.html");
+          await evaluate('document.querySelector("#start-world").click()');
+          await evaluate('(() => { const field=document.querySelector("#line-break-input"); field.focus(); field.setSelectionRange(8,8); })()');
+          await pressKey("Enter", "Enter");
+          await evaluate('(() => { const field=document.querySelector("#line-break-input"); const end=field.value.indexOf("Marmelada")+"Marmelada".length; field.setSelectionRange(end,end); })()');
+          await pressKey("Enter", "Enter");
+          await evaluate('document.querySelector("#continue-checkpoint").click()');
+          await doubleClickText("#select-copy-input", "BANANA");
+          await waitForExpression('document.querySelector("#check-action")?.disabled === false', "second attempt enables BANANA advance");
+          await evaluate('document.querySelector("#check-action").click()');
+          await dragText("#select-copy-input", "KONG", "reverse");
+          await waitForExpression('document.querySelector("#select-copy-confirmation span")?.textContent === "Trecho selecionado: KONG"', "reverse KONG drag confirms selection");
+          assert.equal(await evaluate('(() => { const field=document.querySelector("#select-copy-input"); return field.value.slice(field.selectionStart,field.selectionEnd); })()'), "KONG", "a reverse drag also selects exactly KONG");
+          assert.equal(await evaluate('document.querySelector("#select-copy-progress")?.textContent'), "ETAPA 2/2", "reverse-drag copy finalization stays in ETAPA 2/2");
+          assert.deepEqual(await evaluate('Array.from(document.querySelectorAll("#select-copy-confirmation span")).map((span) => span.textContent)'), ["Trecho selecionado: KONG", "Agora mantenha Ctrl pressionado e pressione C para copiar."], "reverse drag also shows the pre-copy messages");
+          await pressKey("c", "KeyC", 2);
+          await waitForExpression('document.querySelector("#continue-checkpoint")?.disabled === false', "reverse-drag selection copies and completes checkpoint two");
+          await evaluate('document.querySelector("#continue-checkpoint").click()');
+          await waitForExpression('!!document.querySelector("#paste-build-input")', "reverse-drag selection releases checkpoint three");
         }
         if (route === "jungle.html") {
           await evaluate('(() => { const field = document.querySelector("#typing-input"); field.value = "A"; field.dispatchEvent(new Event("input", { bubbles: true })); document.querySelector("#reset-activity").click(); })()');

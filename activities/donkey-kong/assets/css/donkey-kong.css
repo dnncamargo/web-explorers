@@ -172,6 +172,7 @@ button, a, input, textarea { outline-offset: 3px; }
 .exercise-area.single-line { min-height:48px; height:50px; resize:none; }
 .exercise-area:focus { border-color:#56865a; outline:3px solid rgba(86,134,90,.2); }
 .exercise-area::selection { background:#f4cb64; color:#24392c; }
+#select-copy-input::selection { background:#378bd6; color:#fff; }
 .input-label { display:block; margin:10px 0 6px; color:#385440; font-size:13px; font-weight:900; }
 .feedback { min-height:27px; margin:12px 0 0; color:#59695d; font-size:14px; line-height:1.5; }
 .feedback.good { color:#24653b; font-weight:900; }
@@ -903,6 +904,9 @@ body[data-world="camp"] .shortcut-chord:first-child .shortcut-key:first-child {
 }
 body[data-world="camp"] .selection-status {
   line-height:1.55;
+}
+body[data-world="camp"] #select-copy-confirmation > span {
+  display:block;
 }
 @media (max-width:520px) {
   .shortcut-keyboard { gap:6px; padding:9px; }

@@ -66,13 +66,22 @@ assert.deepEqual(
 );
 assert.deepEqual(
   JSON.parse(JSON.stringify(data.worlds.camp.checkpoints.map(({ title }) => title))),
-  ["Organizando três linhas", "Selecionando um trecho", "Colando o trecho copiado", "Desfazendo colagens", "Desfazer e refazer", "Recortando e colando duas partes", "Apagar, desfazer e refazer"],
+  ["Organizando três linhas", "Selecionando e copiando um trecho", "Colando o trecho copiado", "Desfazendo colagens", "Desfazer e refazer", "Recortando e colando duas partes", "Apagar, desfazer e refazer"],
   "Camp names match the revised learning progression"
 );
 assert.equal(data.worlds.camp.checkpoints[0].initial, "Bananada Marmelada Goiabada", "the first Camp task begins with the requested phrase");
 assert.equal(data.worlds.camp.checkpoints[0].expected, "Bananada\nMarmelada\nGoiabada", "the first Camp task accepts exactly three requested lines");
-assert.equal(data.worlds.camp.checkpoints[1].selectionText, "KONG", "selection checkpoint targets the requested word");
-assert.equal(data.worlds.camp.checkpoints[1].source, "DONKEY KONG e DIDDY KONG", "selection checkpoint provides two KONG occurrences");
+assert.deepEqual(
+  JSON.parse(JSON.stringify(data.worlds.camp.checkpoints[1].stages.map(({ target }) => target))),
+  ["BANANA", "KONG"],
+  "checkpoint two contains exactly two separate selection targets"
+);
+assert.equal(data.worlds.camp.checkpoints[1].stages[0].instruction, "Dê dois cliques rápidos sobre a palavra BANANA até que ela fique selecionada em azul.", "checkpoint two gives the requested BANANA instruction");
+assert.equal(data.worlds.camp.checkpoints[1].stages[0].hint, "Trecho a selecionar: BANANA.", "checkpoint two identifies BANANA as the first expected selection");
+assert.equal(data.worlds.camp.checkpoints[1].stages[1].instruction, "Arraste sobre a palavra KONG para selecioná-la. Você pode arrastar do início ao fim ou do fim ao início.", "checkpoint two gives the requested KONG drag instruction");
+assert.equal(data.worlds.camp.checkpoints[1].stages[1].hint, "Trecho a selecionar: KONG.", "checkpoint two identifies KONG as the second expected selection");
+assert.equal(data.worlds.camp.checkpoints[1].copyInstruction, "Agora mantenha Ctrl pressionado e pressione C para copiar.", "Ctrl+C finalization belongs to checkpoint two");
+assert.ok(!("source" in data.worlds.camp.checkpoints[1]), "checkpoint two has no combined selection text");
 assert.equal(data.worlds.camp.checkpoints[2].expected, "DONKEY KONG e DIDDY KONG", "paste checkpoint builds the requested phrase");
 assert.equal(data.worlds.camp.checkpoints[2].copySource, "BANANA", "paste checkpoint ends by copying another word");
 assert.equal(data.worlds.camp.checkpoints[3].pasteCount, 4, "checkpoint four requires four pastes");
@@ -98,9 +107,19 @@ assert.ok(lineBreakRenderer.includes("enterCount === 2") && lineBreakRenderer.in
 assert.ok(!lineBreakRenderer.includes("Backspace") && !lineBreakRenderer.includes("Delete"), "checkpoint one neither demonstrates nor requires Backspace or Delete");
 assert.ok(lineBreakRenderer.includes("input.setSelectionRange") === false, "checkpoint one leaves cursor placement to the learner");
 const selectCopyRenderer = world3ActivitySource.slice(world3ActivitySource.indexOf("function renderSelectCopy"), world3ActivitySource.indexOf("function renderPasteBuild"));
-assert.ok(selectCopyRenderer.includes('addEventListener("dblclick"') && selectCopyRenderer.includes('addEventListener("mousemove"') && selectCopyRenderer.includes("dragObserved"), "checkpoint two recognizes double-click and drag selection");
-assert.ok(selectCopyRenderer.includes('keys.innerHTML = renderShortcutKeyboard([["CTRL", "C"]])'), "checkpoint two presents Ctrl+C only after both selection methods");
-assert.ok(world3ActivitySource.includes('event.key.toLowerCase() !== "c"'), "the selection checkpoint observes Ctrl+C");
+assert.ok(selectCopyRenderer.includes('addEventListener("dblclick"') && selectCopyRenderer.includes('addEventListener("pointermove"') && selectCopyRenderer.includes("dragObserved"), "checkpoint two recognizes double-click and pointer drag selection");
+assert.ok(selectCopyRenderer.includes('class="sequence-progress" id="select-copy-progress"') && selectCopyRenderer.includes('class="sequence-instruction" id="select-copy-instruction"') && selectCopyRenderer.includes('class="sequence-hint" id="select-copy-hint"'), "checkpoint two reuses the World 2 stage components");
+assert.ok(selectCopyRenderer.includes('progress.textContent = "ETAPA " + (stageIndex + 1) + "/" + checkpoint.stages.length') && selectCopyRenderer.includes("input.value = stage.target"), "checkpoint two replaces the target and updates its two-stage indicator");
+assert.ok(selectCopyRenderer.includes('checkButton.addEventListener("click"') && selectCopyRenderer.includes('checkButton.textContent = "Avançar"') && selectCopyRenderer.includes("bananaReady = true"), "BANANA selection requires the existing Avançar button");
+assert.ok(selectCopyRenderer.includes('"Trecho selecionado: BANANA"') && selectCopyRenderer.includes('"Você selecionou corretamente. (Clique em Avançar)"'), "checkpoint two shows BANANA confirmation before manual stage advance");
+assert.ok(selectCopyRenderer.includes('keys.innerHTML = renderShortcutKeyboard([["CTRL", "C"]])') && selectCopyRenderer.includes("copyReady = true"), "checkpoint two presents Ctrl+C in the second stage after KONG is selected");
+assert.ok(selectCopyRenderer.includes('"Trecho selecionado: KONG"') && selectCopyRenderer.includes("checkpoint.copyInstruction") && selectCopyRenderer.includes('"Trecho copiado: KONG"') && selectCopyRenderer.includes('"Você selecionou e copiou corretamente. (Clique em Avançar)"'), "KONG confirmation changes only after the native copy event");
+assert.ok(selectCopyRenderer.includes('document.addEventListener("keydown"') && selectCopyRenderer.includes('document.addEventListener("copy"') && selectCopyRenderer.includes("capture: true") && selectCopyRenderer.includes("eventController.signal"), "checkpoint two observes native clipboard events in document capture phase");
+assert.ok(selectCopyRenderer.includes('event.target !== input') && selectCopyRenderer.includes("document.activeElement !== input") && selectCopyRenderer.includes('event.key.toLowerCase() !== "c"') && selectCopyRenderer.includes('selectionIs(checkpoint.stages[1].target)'), "checkpoint two requires a trusted Ctrl+C on the focused input with exactly KONG selected");
+assert.ok(selectCopyRenderer.includes("attempt.selectedText !== checkpoint.stages[1].target") && selectCopyRenderer.includes("input.selectionStart !== attempt.selectionStart") && selectCopyRenderer.includes("input.selectionEnd !== attempt.selectionEnd") && selectCopyRenderer.includes("Date.now() > attempt.expiresAt"), "native copy must match the exact unexpired selection snapshot from the shortcut");
+assert.ok(selectCopyRenderer.includes("return () => eventController.abort()") && world3ActivitySource.includes("cleanupCurrentCheckpoint();"), "checkpoint two removes document observers when it completes, resets or advances");
+assert.ok(selectCopyRenderer.includes("copyCompleted = true") && selectCopyRenderer.includes("complete();") && world3ActivitySource.includes('checkpoint.kind === "select-copy" ? "Avançar"'), "copy completion is idempotent and releases the global advance button");
+assert.ok(world3ActivityCss.includes("#select-copy-input::selection { background:#378bd6; color:#fff; }") && world3ActivityCss.includes("#select-copy-confirmation > span"), "checkpoint two preserves native selection and uses existing status styling");
 assert.ok(world3ActivitySource.includes('event.key.toLowerCase() === "v"'), "paste exercises observe Ctrl+V");
 assert.ok(world3ActivitySource.includes('event.key.toLowerCase() !== "x"') && world3ActivitySource.includes("cutShortcut = true"), "cut exercise observes Ctrl+X");
 assert.ok(world3ActivitySource.includes('event.key.toLowerCase() === "z" && event.shiftKey'), "redo exercises observe Ctrl+Shift+Z");
