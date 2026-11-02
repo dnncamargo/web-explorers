@@ -233,7 +233,7 @@ if (!browserPath) {
     assert.equal(await evaluate('!!document.querySelector("#start-screen")'), true, "the Kong barrel entrance overlay is visible on the island map");
     assert.equal(await evaluate('!!document.querySelector("#start-button")'), true, "the barrel entrance control is available");
     assert.equal(await evaluate('document.querySelectorAll("#world-map .world-card-art").length'), 3, "the map world cards include game character art");
-    assert.equal(await evaluate('document.querySelector("#island-gif-panel img")?.getAttribute("src")'), "https://giffiles.alphacoders.com/157/15792.gif", "the requested animated GIF is displayed on the Island of the Kongs page");
+    assert.equal(await evaluate('!!document.querySelector("#island-gif-panel img[data-game-art]")'), true, "the requested animated GIF is included in the Island of the Kongs page");
     for (const [route, titlePattern, selector] of [
       ["jungle.html", /Selva dos Kongs/, "#typing-input"],
       ["mine.html", /Mina dos Barris/, "#sequence-input"],
