@@ -194,24 +194,27 @@
         },
         {
           title: "Colando o trecho copiado",
-          instruction: "O trecho KONG está na área de transferência. Pressione Ctrl+V no primeiro espaço e novamente no segundo para formar “DONKEY KONG e DIDDY KONG”. Depois, selecione BANANA e pressione Ctrl+C para copiar outra palavra.",
-          hint: "Mantenha Ctrl pressionado enquanto toca V. O campo mostra dois espaços vazios; cada colagem preenche um deles. No fim, copie BANANA para o próximo checkpoint.",
+          instruction: "Complete a atividade usando os atalhos de colar e copiar indicados em cada etapa.",
+          hint: "Siga a instrução de cada etapa para usar os atalhos corretamente.",
           kind: "paste-build",
-          initial: "DONKEY ____ e DIDDY ____",
-          firstExpected: "DONKEY KONG e DIDDY ____",
-          expected: "DONKEY KONG e DIDDY KONG",
-          copySource: "BANANA"
+          initial: "DONKEY  e DIDDY",
+          firstExpected: "DONKEY KONG e DIDDY",
+          copyText: "BANANA",
+          expectedPattern: "^DONKEY ?KONG e DIDDY ?KONG$"
         },
         {
           title: "Desfazendo colagens",
-          instruction: "Cole BANANA quatro vezes no campo. Depois, pressione Ctrl+Z três vezes: devem restar apenas uma BANANA. Em seguida, copie SAPO, cole no segundo campo e use Ctrl+Z para desfazer essa última colagem.",
-          hint: "Cada Ctrl+V acrescenta uma cópia. Ctrl+Z desfaz a última edição. Observe a quantidade de palavras depois de cada atalho.",
+          instruction: "Você copiou BANANA no checkpoint anterior. Agora cole essa palavra quatro vezes usando Ctrl+V.",
+          hint: "Ctrl+V cola uma cópia no campo; a palavra original permanece no checkpoint anterior.",
           kind: "paste-undo",
+          stageCount: 5,
           text: "BANANA",
           pasteCount: 4,
           undoCount: 3,
           extraCopyText: "SAPO",
-          extraPastePrefix: "Destino: "
+          extraPastePrefix: "Destino: ",
+          extraPasteCount: 6,
+          extraUndoCount: 5
         },
         {
           title: "Desfazer e refazer",
@@ -230,9 +233,8 @@
           instruction: "Selecione BARRIL na origem e pressione Ctrl+X. Depois, clique no destino e pressione Ctrl+V. Faça o mesmo com SAPO. As duas palavras devem sair da origem e aparecer no destino.",
           hint: "Ctrl+X recorta o trecho selecionado: ele sai do texto e vai para a área de transferência. Ctrl+V cola no campo que estiver focado.",
           kind: "cut-paste-particles",
-          source: "BARRIL SAPO",
-          pieces: ["BARRIL", "SAPO"],
-          targetPrefix: "Destino: "
+          pieces: ["CHIMPANZÉ", "GORILA"],
+          targetSeparator: " "
         },
         {
           title: "Apagar, desfazer e refazer",

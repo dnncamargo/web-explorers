@@ -134,7 +134,7 @@ const donkeyStyles = read("activities/donkey-kong/assets/css/donkey-kong.css");
 assert.ok(donkeyData.includes("DK_and_Diddy.PNG") && donkeyData.includes("Dixie_rambi_and_klobble.gif"), "Donkey Kong uses the supplied DK/Diddy and Dixie/Rambi character assets");
 assert.ok(donkeyData.includes("Squawks_-_DKC2.gif") && donkeyData.includes("ZingerOrange.png") && donkeyData.includes("sprites/Krusha.png") && donkeyData.includes('alt: "Krusha", credit: "SNESMaps"'), "Donkey Kong uses and credits the current SNESMaps Krusha sprite");
 assert.ok(donkeyStyles.includes('body[data-world="jungle"]::before') && donkeyStyles.includes('body[data-world="mine"]::before') && donkeyStyles.includes('body[data-world="camp"]::before'), "each Donkey Kong world has its own gameplay backdrop");
-assert.ok(donkeyData.includes('kind: "select-copy"') && donkeyData.includes('kind: "paste-build"') && donkeyData.includes('copySource: "BANANA"'), "Camp teaches selection, paste, and copying another word");
+assert.ok(donkeyData.includes('kind: "select-copy"') && donkeyData.includes('kind: "paste-build"') && donkeyData.includes('expectedPattern: "^DONKEY ?KONG e DIDDY ?KONG$"') && donkeyData.includes("stageCount: 5") && donkeyData.includes('extraCopyText: "SAPO"') && donkeyData.includes("extraPasteCount: 6") && donkeyData.includes("extraUndoCount: 5"), "Camp teaches selection, two pastes, and the five-stage undo sequence");
 assert.ok(donkeyData.includes('title: "Acentos sem Shift · maiúsculas"') && donkeyData.includes('title: "Acentos com Shift · maiúsculas"'), "Mine includes the two uppercase accent progressions");
 
 

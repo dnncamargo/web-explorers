@@ -144,7 +144,7 @@ if (!browserPath) {
   }
 
   async function pressKey(key, code, modifiers = 0) {
-    const virtualCodes = { Enter:13, ArrowRight:39, Backspace:8, Delete:46, Control:17, Shift:16, c:67, v:86, x:88, z:90, C:67, V:86, X:88, Z:90 };
+    const virtualCodes = { Enter:13, ArrowRight:39, Backspace:8, Delete:46, Home:36, End:35, Control:17, Shift:16, c:67, v:86, x:88, z:90, C:67, V:86, X:88, Z:90 };
     const params = {
       key,
       code,
@@ -200,6 +200,12 @@ if (!browserPath) {
     const start = await evaluate(`document.querySelector(${JSON.stringify(selector)}).value.indexOf(${JSON.stringify(text)})`);
     assert.ok(start >= 0, `found ${text} in ${selector}`);
     const point = await textPoint(selector, start + 0.5);
+    await cdp.send("Input.dispatchMouseEvent", { type: "mouseMoved", ...point });
+    await cdp.send("Input.dispatchMouseEvent", { type: "mousePressed", ...point, button: "left", clickCount: 1 });
+    await cdp.send("Input.dispatchMouseEvent", { type: "mouseReleased", ...point, button: "left", clickCount: 1 });
+  }
+  async function clickTextFieldStart(selector) {
+    const point = await evaluate(`(()=>{const field=document.querySelector(${JSON.stringify(selector)});const r=field.getBoundingClientRect();return {x:r.left+field.clientLeft+18,y:r.top+field.clientTop+parseFloat(getComputedStyle(field).paddingTop)+12};})()`);
     await cdp.send("Input.dispatchMouseEvent", { type: "mouseMoved", ...point });
     await cdp.send("Input.dispatchMouseEvent", { type: "mousePressed", ...point, button: "left", clickCount: 1 });
     await cdp.send("Input.dispatchMouseEvent", { type: "mouseReleased", ...point, button: "left", clickCount: 1 });
@@ -406,7 +412,7 @@ if (!browserPath) {
           await dragText("#select-copy-input", "KON", "forward");
           assert.equal(await evaluate('document.querySelector("#select-copy-confirmation")?.hidden'), true, "a partial KONG drag shows no success confirmation");
           assert.equal(await evaluate('document.querySelector("#continue-checkpoint")?.disabled'), true, "a partial KONG drag does not complete checkpoint two");
-          assert.equal(await evaluate('(() => { const field=document.querySelector("#select-copy-input"); return field.selectionStart === field.selectionEnd; })()'), true, "an invalid partial drag is cleared so the learner can retry");
+          await waitForExpression('(() => { const field=document.querySelector("#select-copy-input"); return field.selectionStart === field.selectionEnd; })()', "an invalid partial drag is cleared so the learner can retry");
           await dragText("#select-copy-input", "KONG", "forward");
           await waitForExpression('document.querySelector("#select-copy-confirmation span")?.textContent === "Trecho selecionado: KONG"', "forward KONG drag confirms selection");
           assert.equal(await evaluate('(() => { const field=document.querySelector("#select-copy-input"); return field.value.slice(field.selectionStart,field.selectionEnd); })()'), "KONG", "a forward drag selects exactly KONG");
@@ -427,8 +433,223 @@ if (!browserPath) {
           assert.equal(await evaluate('document.querySelector("#continue-checkpoint")?.disabled'), false, "repeated Ctrl+C does not disable or duplicate checkpoint completion");
           await evaluate('document.querySelector("#continue-checkpoint").click()');
           await waitForExpression('!!document.querySelector("#paste-build-input")', "checkpoint two releases checkpoint three");
+          assert.equal(await evaluate('document.querySelector("#paste-build-progress")?.textContent'), "ETAPA 1/3", "checkpoint three starts at ETAPA 1/3");
+          assert.equal(await evaluate('document.querySelector("#paste-build-input")?.value'), "DONKEY  e DIDDY", "checkpoint three begins with the exact unfilled phrase");
+          assert.equal(await evaluate('document.querySelector("#paste-build-input")?.selectionStart'), 7, "the insertion cursor starts after DONKEY's first separator");
+          assert.equal(await evaluate('!!document.querySelector("#paste-build-source")'), false, "checkpoint three has no separate BANANA source field");
+          assert.equal(await evaluate('document.querySelector(".exercise-card")?.innerText.includes("BANANA")'), false, "checkpoint three does not mention or display BANANA");
+          assert.equal(await evaluate('document.querySelector("#paste-build-input")?.value.includes("____")'), false, "checkpoint three has no placeholder underscores");
+          assert.deepEqual(await evaluate('Array.from(document.querySelectorAll("#paste-build-keys .shortcut-key")).map((key) => key.dataset.key)'), ["CTRL", "V"], "checkpoint three starts with Ctrl+V");
+          assert.equal(await evaluate('document.querySelector("#continue-checkpoint")?.disabled'), true, "checkpoint three starts incomplete");
+          await cdp.send("Input.insertText", { text: "KONG" });
+          assert.equal(await evaluate('document.querySelector("#paste-build-input")?.value'), "DONKEY KONG e DIDDY", "typing the expected first text does not substitute for Ctrl+V");
+          assert.equal(await evaluate('document.querySelector("#continue-checkpoint")?.disabled'), true, "manual typing cannot advance checkpoint three");
+          await evaluate('document.querySelector("#reset-activity").click()');
+          assert.equal(await evaluate('document.querySelector("#paste-build-input")?.value'), "DONKEY  e DIDDY", "reset restores the exact first-paste starting text");
+          await evaluate('(() => { window.__cp3PasteTrace=[]; for(const type of ["keydown","paste","input","copy"]) document.addEventListener(type,event=>{const field=document.querySelector("#paste-build-input");window.__cp3PasteTrace.push({type,target:event.target?.id,active:document.activeElement?.id,isTrusted:event.isTrusted,ctrlKey:!!event.ctrlKey,key:event.key||"",inputType:event.inputType||"",value:field?.value,selected:field?.value.slice(field.selectionStart,field.selectionEnd),stage:document.querySelector("#paste-build-progress")?.textContent});},true); })()');
           await pressKey("v", "KeyV", 2);
-          assert.equal(await evaluate('document.querySelector("#paste-build-input")?.value'), "DONKEY KONG e DIDDY ____", "the real copied KONG is available to checkpoint three");
+          await waitForExpression('document.querySelector("#paste-build-progress")?.textContent === "ETAPA 2/3"', "native first paste advances checkpoint three to step two");
+          assert.equal(await evaluate('document.querySelector("#paste-build-input")?.value'), "DONKEY KONG e DIDDY ", "the first paste inserts KONG after DONKEY");
+          assert.equal(await evaluate('document.querySelector("#paste-build-instruction")?.textContent'), "Agora pressione Ctrl+V novamente para colar KONG após DIDDY.", "the first paste updates the second-stage instruction");
+          assert.equal(await evaluate('document.querySelector("#paste-build-input")?.selectionStart'), "DONKEY KONG e DIDDY ".length, "the cursor moves to the insertion point after DIDDY");
+          assert.equal(await evaluate('document.querySelector("#continue-checkpoint")?.disabled'), true, "the first paste does not finish checkpoint three");
+          await pressKey("v", "KeyV", 2);
+          await waitForExpression('document.querySelector("#paste-build-progress")?.textContent === "ETAPA 3/3"', "the second native paste advances checkpoint three to its BANANA copy stage");
+          assert.equal(await evaluate('document.querySelector("#paste-build-input")?.value'), "BANANA", "checkpoint three replaces the phrase with only BANANA in its final stage");
+          assert.equal(await evaluate('document.querySelector("#paste-build-instruction")?.textContent'), "Selecione a palavra BANANA e pressione Ctrl+C para copiá-la. Depois, clique em Avançar.", "checkpoint three instructs the final BANANA copy");
+          assert.equal(await evaluate('document.querySelector("#paste-build-input")?.readOnly'), true, "the final BANANA source remains protected while selectable");
+          assert.equal(await evaluate('document.querySelector("#continue-checkpoint")?.disabled'), true, "the two pastes do not finish checkpoint three before BANANA is copied");
+          assert.deepEqual(await evaluate('Array.from(document.querySelectorAll("#paste-build-keys .shortcut-key")).map((key) => key.dataset.key)'), ["CTRL", "C"], "checkpoint three changes the visual shortcut to Ctrl+C");
+          assert.equal(await evaluate('window.__cp3PasteTrace.filter(event=>event.type==="keydown"&&event.target==="paste-build-input"&&event.isTrusted&&event.ctrlKey&&event.key.toLowerCase()==="v").length'), 2, "both paste shortcuts are real trusted Ctrl+V keydowns");
+          assert.equal(await evaluate('window.__cp3PasteTrace.filter(event=>event.type==="paste"&&event.target==="paste-build-input"&&event.isTrusted).length'), 2, "both paste operations dispatch native paste events");
+          assert.equal(await evaluate('window.__cp3PasteTrace.filter(event=>event.type==="input"&&event.target==="paste-build-input"&&event.isTrusted).length'), 2, "both native pastes change the field through trusted input events");
+          await doubleClickText("#paste-build-input", "BANANA");
+          assert.equal(await evaluate('(() => {const field=document.querySelector("#paste-build-input");return field.value.slice(field.selectionStart,field.selectionEnd);})()'), "BANANA", "the learner natively selects all of BANANA");
+          await pressKey("c", "KeyC", 2);
+          await waitForExpression('document.querySelector("#continue-checkpoint")?.disabled === false', "native BANANA copy completes checkpoint three");
+          assert.equal(await evaluate('document.querySelector("#paste-build-progress")?.textContent'), "ETAPA 3/3", "the final copy remains in ETAPA 3/3");
+          assert.equal(await evaluate('window.__cp3PasteTrace.some(event=>event.type==="keydown"&&event.target==="paste-build-input"&&event.active==="paste-build-input"&&event.isTrusted&&event.ctrlKey&&event.key.toLowerCase()==="c"&&event.selected==="BANANA")'), true, "the final stage observes trusted Ctrl+C with BANANA selected");
+          assert.equal(await evaluate('window.__cp3PasteTrace.some(event=>event.type==="copy"&&event.target==="paste-build-input"&&event.active==="paste-build-input"&&event.isTrusted&&event.selected==="BANANA")'), true, "the final stage receives the native BANANA copy event");
+          assert.deepEqual(await evaluate('Array.from(document.querySelectorAll("#paste-build-status span")).map((span) => span.textContent)'), ["Trecho copiado: BANANA", "Você copiou corretamente. Clique em Avançar para iniciar o próximo checkpoint."], "the copy confirmation remains visible until manual advance");
+          assert.deepEqual(await evaluate('Array.from(document.querySelectorAll("#paste-build-status span")).map((span) => getComputedStyle(span).display)'), ["block", "block"], "checkpoint three renders its two confirmation messages as separate blocks");
+          assert.equal(await evaluate('getComputedStyle(document.querySelector("#paste-build-status span + span")).marginTop'), "8px", "checkpoint three separates the confirmation blocks with visible spacing");
+          assert.equal(await evaluate('document.querySelector("#paste-build-input")?.value'), "BANANA", "the original BANANA remains visible after copying");
+          assert.equal(await evaluate('document.activeElement?.id'), "paste-build-input", "copy confirmation keeps focus on the visible BANANA field");
+          assert.equal(await evaluate('document.querySelector("#paste-build-input")?.value.slice(document.querySelector("#paste-build-input").selectionStart,document.querySelector("#paste-build-input").selectionEnd)'), "BANANA", "copy confirmation preserves the native selection");
+          assert.equal(await evaluate('document.querySelector("#continue-checkpoint")?.disabled'), false, "the two real pastes enable the global advance button");
+          assert.equal(await evaluate('document.querySelector("#continue-checkpoint")?.textContent'), "Avançar", "checkpoint three's copy message matches the global advance label");
+          await evaluate('document.querySelector("#continue-checkpoint").click()');
+          await waitForExpression('!!document.querySelector("#paste-undo-input")', "checkpoint three releases checkpoint four");
+
+          assert.equal(await evaluate('document.querySelector("#paste-undo-progress")?.textContent'), "ETAPA 1/5", "checkpoint four begins directly at its first of five stages");
+          assert.equal(await evaluate('document.querySelector("#paste-undo-instruction")?.textContent'), "Você copiou BANANA no checkpoint anterior. Agora vamos colar essa palavra quatro vezes usando Ctrl+V.", "checkpoint four explains that it uses BANANA copied in checkpoint three");
+          assert.equal(await evaluate('!!document.querySelector("#paste-undo-banana")'), false, "checkpoint four does not ask to copy BANANA again");
+          assert.equal(await evaluate('document.querySelector("#paste-undo-input")?.value'), "", "checkpoint four begins with an empty paste field");
+          assert.deepEqual(await evaluate('Array.from(document.querySelectorAll("#paste-undo-keys .shortcut-key")).map((key) => key.dataset.key)'), ["CTRL", "V"], "checkpoint four starts with Ctrl+V");
+          await evaluate('(() => { window.__cp4ClipboardTrace=[]; for(const type of ["keydown","copy","paste","input"]) document.addEventListener(type,event=>{const field=event.target?.id?document.getElementById(event.target.id):null;window.__cp4ClipboardTrace.push({type,target:event.target?.id,active:document.activeElement?.id,isTrusted:event.isTrusted,ctrlKey:!!event.ctrlKey,key:event.key||"",inputType:event.inputType||"",selected:field?.value?.slice(field.selectionStart,field.selectionEnd),value:field?.value,stage:document.querySelector("#paste-undo-progress")?.textContent});},true); })()');
+          await pressKey("v", "KeyV", 2);
+          await waitForExpression('document.querySelector("#paste-undo-input")?.value === "BANANA"', "CP4 reads BANANA from the real clipboard");
+          for (let pasteIndex = 2; pasteIndex <= 4; pasteIndex += 1) await pressKey("v", "KeyV", 2);
+          await waitForExpression('document.querySelector("#paste-undo-progress")?.textContent === "ETAPA 2/5"', "four native BANANA pastes begin the undo phase");
+          assert.equal(await evaluate('document.querySelector("#paste-undo-input")?.value'), "BANANABANANABANANABANANA", "CP4 preserves the four-paste result");
+          assert.equal(await evaluate('window.__cp4ClipboardTrace.filter(event=>event.type==="paste"&&event.target==="paste-undo-input"&&event.isTrusted).length'), 4, "all four BANANA insertions use native paste events");
+          assert.equal(await evaluate('window.__cp4ClipboardTrace.filter(event=>event.type==="input"&&event.target==="paste-undo-input"&&event.isTrusted&&event.inputType==="insertFromPaste").length'), 4, "all four BANANA pastes change the field through trusted input events");
+          for (let undoIndex = 1; undoIndex <= 3; undoIndex += 1) await pressKey("z", "KeyZ", 2);
+          await waitForExpression('document.querySelector("#paste-undo-progress")?.textContent === "ETAPA 3/5"', "three native undos leave one BANANA and advance to SAPO");
+          assert.equal(await evaluate('document.querySelector("#paste-undo-input")?.value'), "BANANA", "three Ctrl+Z operations leave one BANANA");
+          assert.equal(await evaluate('window.__cp4ClipboardTrace.filter(event=>event.type==="input"&&event.target==="paste-undo-input"&&event.isTrusted&&event.inputType==="historyUndo").length'), 3, "the original three Ctrl+Z operations each undo an edit");
+          assert.equal(await evaluate('document.querySelector("#paste-undo-copy-container")?.hidden'), false, "the SAPO copy source appears at its original sequence point");
+          assert.equal(await evaluate('document.querySelector("#paste-undo-copy")?.value.slice(document.querySelector("#paste-undo-copy").selectionStart,document.querySelector("#paste-undo-copy").selectionEnd)'), "SAPO", "the original SAPO source remains selected for copying");
+          await pressKey("c", "KeyC", 2);
+          await waitForExpression('document.querySelector("#paste-undo-progress")?.textContent === "ETAPA 4/5"', "native SAPO copy begins the destination paste stage");
+          assert.equal(await evaluate('window.__cp4ClipboardTrace.some(event=>event.type==="copy"&&event.target==="paste-undo-copy"&&event.isTrusted&&event.selected==="SAPO")'), true, "the existing SAPO copy still uses a native copy event");
+          assert.equal(await evaluate('document.querySelector("#paste-undo-copy")?.value'), "SAPO", "Ctrl+C keeps the SAPO original in its source field");
+          assert.equal(await evaluate('document.activeElement?.id'), "paste-undo-copy", "copying SAPO does not move focus to the destination");
+          assert.equal(await evaluate('document.querySelector("#paste-undo-extra-container")?.hidden'), false, "the original second destination appears at its sequence point");
+          const destinationPoint = await evaluate('(()=>{const field=document.querySelector("#paste-undo-extra");const rect=field.getBoundingClientRect();return {x:rect.left+rect.width/2,y:rect.top+rect.height/2};})()');
+          assert.equal(await evaluate(`document.elementFromPoint(${destinationPoint.x},${destinationPoint.y}) === document.querySelector("#paste-undo-extra")`), true, "the destination field receives the learner's click");
+          await cdp.send("Input.dispatchMouseEvent", { type: "mouseMoved", ...destinationPoint });
+          await cdp.send("Input.dispatchMouseEvent", { type: "mousePressed", ...destinationPoint, button: "left", clickCount: 1 });
+          await cdp.send("Input.dispatchMouseEvent", { type: "mouseReleased", ...destinationPoint, button: "left", clickCount: 1 });
+          await pressKey("End", "End");
+          assert.equal(await evaluate('document.activeElement?.id'), "paste-undo-extra", "the learner manually focuses the destination field");
+          assert.equal(await evaluate('document.querySelector("#paste-undo-extra")?.selectionStart'), "Destino: ".length, "the manual click places the insertion cursor after the destination label");
+          assert.equal(await evaluate('document.querySelector("#paste-undo-instruction")?.textContent'), "Clique no campo Destino e pressione Ctrl+V seis vezes para colar SAPO.", "checkpoint four explains the six-paste destination action");
+          assert.equal(await evaluate('document.querySelector("#paste-undo-hint")?.textContent'), "Ctrl+C copiou SAPO e o original continua no campo acima. Clique no destino para colar seis cópias.", "checkpoint four explains why the learner must focus the destination");
+          assert.equal(await evaluate('document.querySelector("#continue-checkpoint")?.disabled'), true, "checkpoint four cannot be completed before six pastes and five undos");
+          for (let pasteIndex = 1; pasteIndex <= 6; pasteIndex += 1) {
+            await pressKey("v", "KeyV", 2);
+            await waitForExpression(`document.querySelector("#paste-undo-extra")?.value === ${JSON.stringify("Destino: " + "SAPO".repeat(pasteIndex))}`, `native SAPO paste ${pasteIndex}/6 reaches the destination`);
+            if (pasteIndex < 6) assert.equal(await evaluate('document.querySelector("#paste-undo-hint")?.textContent'), `Colagens: ${pasteIndex}/6`, `checkpoint four reports paste progress ${pasteIndex}/6`);
+          }
+          await waitForExpression('document.querySelector("#paste-undo-progress")?.textContent === "ETAPA 5/5"', "six native SAPO pastes advance to the five-undo final stage");
+          assert.equal(await evaluate('document.querySelector("#paste-undo-instruction")?.textContent'), "Agora pressione Ctrl+Z cinco vezes. Deve restar apenas um SAPO.", "checkpoint four explains the five-undo requirement");
+          assert.equal(await evaluate('document.querySelector("#paste-undo-hint")?.textContent'), "Colagens: 6/6", "checkpoint four confirms all six real pastes before undo begins");
+          assert.deepEqual(await evaluate('Array.from(document.querySelectorAll("#paste-undo-keys .shortcut-key")).map((key) => key.dataset.key)'), ["CTRL", "Z"], "the final stage keeps Ctrl+Z visible");
+          assert.equal(await evaluate('window.__cp4ClipboardTrace.filter(event=>event.type==="paste"&&event.target==="paste-undo-extra"&&event.isTrusted).length'), 6, "all six SAPO insertions use native paste events");
+          assert.equal(await evaluate('window.__cp4ClipboardTrace.filter(event=>event.type==="keydown"&&event.target==="paste-undo-extra"&&event.isTrusted&&event.ctrlKey&&event.key.toLowerCase()==="v").length'), 6, "all six destination pastes begin with real trusted Ctrl+V keydowns");
+          assert.equal(await evaluate('window.__cp4ClipboardTrace.filter(event=>event.type==="input"&&event.target==="paste-undo-extra"&&event.isTrusted&&event.inputType==="insertFromPaste").length'), 6, "all six native SAPO pastes change the field through trusted input events");
+          for (let undoIndex = 1; undoIndex <= 5; undoIndex += 1) {
+            await pressKey("z", "KeyZ", 2);
+            const remaining = 6 - undoIndex;
+            await waitForExpression(`document.querySelector("#paste-undo-extra")?.value === ${JSON.stringify("Destino: " + "SAPO".repeat(remaining))}`, `native SAPO undo ${undoIndex}/5 leaves ${remaining} SAPO`);
+            if (undoIndex < 5) {
+              assert.equal(await evaluate('document.querySelector("#paste-undo-hint")?.textContent'), `Desfeitas: ${undoIndex}/5`, `checkpoint four reports undo progress ${undoIndex}/5`);
+              assert.equal(await evaluate('document.querySelector("#continue-checkpoint")?.disabled'), true, "the checkpoint stays locked until all five undos finish");
+            }
+          }
+          await waitForExpression('document.querySelector("#continue-checkpoint")?.disabled === false', "five native undos leave one SAPO and complete checkpoint four");
+          assert.equal(await evaluate('document.querySelector("#paste-undo-input")?.value'), "BANANA", "CP4 finishes with one BANANA remaining");
+          assert.equal(await evaluate('document.querySelector("#paste-undo-extra")?.value'), "Destino: SAPO", "five Ctrl+Z operations leave one SAPO in the destination");
+          assert.equal(await evaluate('window.__cp4ClipboardTrace.filter(event=>event.type==="input"&&event.target==="paste-undo-extra"&&event.isTrusted&&event.inputType==="historyUndo").length'), 5, "all five Ctrl+Z operations natively undo an edit");
+          assert.equal(await evaluate('document.querySelector("#paste-undo-progress")?.textContent'), "ETAPA 5/5", "checkpoint four completes without adding a preparation stage");
+          assert.equal(await evaluate('document.querySelector("#paste-undo-instruction")?.textContent'), "Agora pressione Ctrl+Z cinco vezes. Deve restar apenas um SAPO.", "checkpoint four retains the final stage instruction after completion");
+          assert.equal(await evaluate('document.querySelector("#paste-undo-hint")?.textContent'), "Restou uma única palavra SAPO. Você concluiu o checkpoint. Clique em Continuar para o checkpoint 5.", "checkpoint four confirms exactly one remaining SAPO");
+          assert.equal(await evaluate('document.querySelector("#exercise-feedback")?.textContent'), "Desfeitas: 5/5. Desfazer colagens concluído.", "checkpoint four displays the completed five-undo counter with success feedback");
+          assert.equal(await evaluate('(document.querySelector("#paste-undo-extra")?.value.slice("Destino: ".length).match(/SAPO/g)||[]).length'), 1, "exactly one SAPO occurrence remains after five undos");
+          assert.equal(await evaluate('window.__cp4ClipboardTrace.filter(event=>event.type==="keydown"&&event.target==="paste-undo-extra"&&event.isTrusted&&event.ctrlKey&&event.key.toLowerCase()==="z").length'), 5, "all five destination undos begin with real trusted Ctrl+Z keydowns");
+          assert.equal(await evaluate('document.querySelector(".checkpoint-name")?.textContent'), "CHECKPOINT 4/7", "the final result stays on checkpoint four until the learner advances manually");
+          assert.deepEqual(await evaluate('Array.from(document.querySelectorAll("#paste-undo-keys .shortcut-key")).map((key) => key.dataset.key)'), ["CTRL", "Z"], "the final shortcut keys remain visible after completion");
+          await evaluate('document.querySelector("#continue-checkpoint").click()');
+          await waitForExpression('!!document.querySelector("#history-sequence-input")', "checkpoint four releases checkpoint five");
+
+          assert.equal(await evaluate('document.querySelector("#history-sequence-input")?.value'), "", "checkpoint five begins with an empty practice field");
+          for (let pasteIndex = 1; pasteIndex <= 4; pasteIndex += 1) {
+            await pressKey("v", "KeyV", 2);
+            await waitForExpression(`document.querySelector("#history-sequence-input")?.value === ${JSON.stringify("SAPO".repeat(pasteIndex))}`, `CP5 native paste ${pasteIndex}/4`);
+          }
+          for (let undoIndex = 1; undoIndex <= 3; undoIndex += 1) {
+            await pressKey("z", "KeyZ", 2);
+            await waitForExpression(`document.querySelector("#history-sequence-input")?.value === ${JSON.stringify("SAPO".repeat(4 - undoIndex))}`, `CP5 native undo ${undoIndex}/3`);
+          }
+          for (let redoIndex = 1; redoIndex <= 2; redoIndex += 1) {
+            await pressKey("z", "KeyZ", 10);
+            await waitForExpression(`document.querySelector("#history-sequence-input")?.value === ${JSON.stringify("SAPO".repeat(1 + redoIndex))}`, `CP5 native redo ${redoIndex}/2`);
+          }
+          for (let undoIndex = 1; undoIndex <= 2; undoIndex += 1) {
+            await pressKey("z", "KeyZ", 2);
+            await waitForExpression(`document.querySelector("#history-sequence-input")?.value === ${JSON.stringify("SAPO".repeat(3 - undoIndex))}`, `CP5 final native undo ${undoIndex}/2`);
+          }
+          await waitForExpression('document.querySelector("#continue-checkpoint")?.disabled === false', "CP5 finishes with one SAPO for CP6");
+          await evaluate('document.querySelector("#continue-checkpoint").click()');
+          await waitForExpression('!!document.querySelector("#cut-paste-source")', "checkpoint five releases checkpoint six");
+
+          assert.equal(await evaluate('document.querySelector("#cut-paste-progress")?.textContent'), "ETAPA 1/2", "checkpoint six begins at ETAPA 1/2");
+          assert.equal(await evaluate('document.querySelector("#cut-paste-source")?.value'), "CHIMPANZÉ", "checkpoint six source contains only CHIMPANZÉ");
+          assert.equal(await evaluate('document.querySelector("#cut-paste-target")?.value'), "", "checkpoint six destination starts completely empty");
+          assert.equal(await evaluate('document.querySelector("#cut-paste-target")?.labels?.[0]?.textContent'), "Destino", "Destino exists only in the visible label, not in the textarea");
+          assert.equal(await evaluate('document.querySelector("#cut-paste-source")?.value.includes("GORILA")'), false, "the first source stage does not show GORILA");
+          assert.equal(await evaluate('(() => {const label=document.querySelector("label[for=cut-paste-source]");const style=getComputedStyle(label);return style.color==="rgb(242, 239, 207)"&&style.fontWeight==="900"&&parseFloat(style.fontSize)>=16;})()'), true, "Origem label has readable light color, bold weight and legible size");
+          assert.equal(await evaluate('(() => {const label=document.querySelector("label[for=cut-paste-target]");const style=getComputedStyle(label);return style.color==="rgb(242, 239, 207)"&&style.fontWeight==="900"&&parseFloat(style.fontSize)>=16;})()'), true, "Destino label has readable light color, bold weight and legible size");
+          assert.equal(await evaluate('document.querySelector("#cut-paste-instruction")?.textContent'), "Selecione toda a palavra CHIMPANZÉ e pressione Ctrl+X para recortá-la.", "the first stage instructs an exact native cut");
+          assert.deepEqual(await evaluate('Array.from(document.querySelectorAll("#cut-paste-keys .shortcut-key")).map((key)=>key.dataset.key)'), ["CTRL", "X"], "the first stage shows Ctrl+X");
+          assert.equal(await evaluate('document.querySelector("#continue-checkpoint")?.disabled'), true, "CP6 cannot release CP7 before either paste");
+          await evaluate('(() => {window.__cp6Trace=[];for(const type of ["keydown","cut","paste","input"])document.addEventListener(type,event=>{const field=event.target?.id?document.getElementById(event.target.id):null;window.__cp6Trace.push({type,target:event.target?.id,active:document.activeElement?.id,isTrusted:event.isTrusted,ctrlKey:!!event.ctrlKey,key:event.key||"",inputType:event.inputType||"",selected:field?.value?.slice(field.selectionStart,field.selectionEnd),value:field?.value,stage:document.querySelector("#cut-paste-progress")?.textContent});},true);})()');
+
+          await evaluate('(() => {const field=document.querySelector("#cut-paste-source");field.value="";field.dispatchEvent(new InputEvent("input",{bubbles:true,inputType:"deleteByCut"}));field.value="CHIMPANZÉ";})()');
+          assert.equal(await evaluate('document.querySelector("#cut-paste-progress")?.textContent'), "ETAPA 1/2", "untrusted manual text mutation cannot advance the cut phase");
+          assert.equal(await evaluate('document.querySelector("#continue-checkpoint")?.disabled'), true, "untrusted text changes cannot complete CP6");
+          await clickTextFieldStart("#cut-paste-source");
+          assert.equal(await evaluate('document.activeElement?.id'), "cut-paste-source", "a physical pointer click focuses the source");
+          await pressKey("Home", "Home");
+          await pressKey("End", "End", 8);
+          assert.equal(await evaluate('(() => {const field=document.querySelector("#cut-paste-source");return {selected:field.value.slice(field.selectionStart,field.selectionEnd),value:field.value,start:field.selectionStart,end:field.selectionEnd,active:document.activeElement?.id};})()').then((state) => state.selected), "CHIMPANZÉ", `the learner selects exactly the source word before cutting: ${JSON.stringify(await evaluate('(()=>{const field=document.querySelector("#cut-paste-source");return {selected:field.value.slice(field.selectionStart,field.selectionEnd),value:field.value,start:field.selectionStart,end:field.selectionEnd,active:document.activeElement?.id};})()'))}`);
+          await pressKey("x", "KeyX", 2);
+          await waitForExpression('document.querySelector("#cut-paste-instruction")?.textContent.includes("Agora clique no campo Destino")', "native CHIMPANZÉ cut changes the instruction to manual paste");
+          assert.equal(await evaluate('document.querySelector("#cut-paste-source")?.value'), "", "native Ctrl+X removes CHIMPANZÉ from Origem");
+          assert.equal(await evaluate('document.querySelector("#cut-paste-target")?.value'), "", "cut does not change the unfocused Destino");
+          assert.equal(await evaluate('document.activeElement?.id'), "cut-paste-source", "the cut does not move focus to Destino");
+          assert.equal(await evaluate('document.querySelector("#cut-paste-progress")?.textContent'), "ETAPA 1/2", "cut confirmation stays in the first stage");
+          assert.deepEqual(await evaluate('Array.from(document.querySelectorAll("#cut-paste-keys .shortcut-key")).map((key)=>key.dataset.key)'), ["CTRL", "V"], "after cutting, the visual shortcut changes to Ctrl+V");
+          assert.equal(await evaluate('window.__cp6Trace.some(event=>event.type==="keydown"&&event.target==="cut-paste-source"&&event.active==="cut-paste-source"&&event.isTrusted&&event.ctrlKey&&event.key.toLowerCase()==="x"&&event.selected==="CHIMPANZÉ")'), true, "the source observes trusted Ctrl+X with the full word selected");
+          assert.equal(await evaluate('window.__cp6Trace.some(event=>event.type==="cut"&&event.target==="cut-paste-source"&&event.active==="cut-paste-source"&&event.isTrusted)'), true, "the browser dispatches the real trusted cut event");
+          assert.equal(await evaluate('window.__cp6Trace.some(event=>event.type==="input"&&event.target==="cut-paste-source"&&event.isTrusted&&event.inputType==="deleteByCut"&&event.value==="")'), true, "native cut removes the source through trusted deleteByCut input");
+          assert.equal(await evaluate('document.querySelector("#check-action")?.hidden'), true, "stage advance remains unavailable until the destination paste");
+
+          const firstTargetPoint = await evaluate('(()=>{const field=document.querySelector("#cut-paste-target");const r=field.getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2};})()');
+          assert.equal(await evaluate(`document.elementFromPoint(${firstTargetPoint.x},${firstTargetPoint.y})===document.querySelector("#cut-paste-target")`), true, "the empty destination receives a manual learner click");
+          await cdp.send("Input.dispatchMouseEvent", { type:"mouseMoved", ...firstTargetPoint });
+          await cdp.send("Input.dispatchMouseEvent", { type:"mousePressed", ...firstTargetPoint, button:"left", clickCount:1 });
+          await cdp.send("Input.dispatchMouseEvent", { type:"mouseReleased", ...firstTargetPoint, button:"left", clickCount:1 });
+          assert.equal(await evaluate('document.activeElement?.id'), "cut-paste-target", "the learner manually focuses the first destination");
+          await pressKey("v", "KeyV", 2);
+          await waitForExpression('document.querySelector("#cut-paste-target")?.value === "CHIMPANZÉ"', "native paste puts CHIMPANZÉ in Destino");
+          assert.deepEqual(await evaluate('Array.from(document.querySelectorAll("#cut-paste-status span")).map((span)=>span.textContent)'), ["CHIMPANZÉ foi colado corretamente no Destino.", "Clique em Avançar para continuar."], "the first paste confirmation and manual advance remain visible");
+          assert.equal(await evaluate('document.querySelector("#check-action")?.textContent'), "Avançar", "the first stage offers its manual Avançar control");
+          assert.equal(await evaluate('document.querySelector("#check-action")?.disabled'), false, "the first stage advance is enabled only after native paste");
+          assert.equal(await evaluate('document.querySelector("#continue-checkpoint")?.disabled'), true, "the global CP7 advance remains disabled after only the first word");
+          assert.equal(await evaluate('window.__cp6Trace.some(event=>event.type==="keydown"&&event.target==="cut-paste-target"&&event.active==="cut-paste-target"&&event.isTrusted&&event.ctrlKey&&event.key.toLowerCase()==="v")'), true, "destination observes trusted Ctrl+V");
+          assert.equal(await evaluate('window.__cp6Trace.some(event=>event.type==="paste"&&event.target==="cut-paste-target"&&event.active==="cut-paste-target"&&event.isTrusted)'), true, "destination receives the native trusted paste event");
+          assert.equal(await evaluate('window.__cp6Trace.some(event=>event.type==="input"&&event.target==="cut-paste-target"&&event.isTrusted&&event.inputType==="insertFromPaste"&&event.value==="CHIMPANZÉ")'), true, "native paste inserts the exact word through trusted input");
+          await evaluate('(() => {const button=document.querySelector("#check-action");button.click();button.click();})()');
+          assert.equal(await evaluate('document.querySelector("#cut-paste-progress")?.textContent'), "ETAPA 2/2", "repeated advance clicks change to the second stage only once");
+          assert.equal(await evaluate('document.querySelector("#cut-paste-source")?.value'), "GORILA", "the second source stage contains only GORILA");
+          assert.equal(await evaluate('document.querySelector("#cut-paste-target")?.value.trimEnd()'), "CHIMPANZÉ", "the second stage preserves CHIMPANZÉ in Destino");
+          assert.equal(await evaluate('document.querySelector("#cut-paste-instruction")?.textContent'), "Selecione toda a palavra GORILA e pressione Ctrl+X para recortá-la.", "the second stage begins with its exact cut instruction");
+
+          await clickTextFieldStart("#cut-paste-source");
+          assert.equal(await evaluate('document.activeElement?.id'), "cut-paste-source", "a physical pointer click focuses the second source");
+          await pressKey("Home", "Home");
+          await pressKey("End", "End", 8);
+          assert.equal(await evaluate('(() => {const field=document.querySelector("#cut-paste-source");return field.value.slice(field.selectionStart,field.selectionEnd);})()'), "GORILA", "the learner selects exactly GORILA before cutting");
+          await pressKey("x", "KeyX", 2);
+          await waitForExpression('document.querySelector("#cut-paste-instruction")?.textContent.includes("Agora clique no campo Destino")', "native GORILA cut changes the instruction to manual paste");
+          assert.equal(await evaluate('document.querySelector("#cut-paste-source")?.value'), "", "native Ctrl+X removes GORILA from Origem");
+          assert.equal(await evaluate('document.activeElement?.id'), "cut-paste-source", "second cut leaves focus in Origem until the learner moves it");
+          const secondTargetPoint = await textPoint("#cut-paste-target", "CHIMPANZÉ ".length - 0.1);
+          await cdp.send("Input.dispatchMouseEvent", { type:"mouseMoved", ...secondTargetPoint });
+          await cdp.send("Input.dispatchMouseEvent", { type:"mousePressed", ...secondTargetPoint, button:"left", clickCount:1 });
+          await cdp.send("Input.dispatchMouseEvent", { type:"mouseReleased", ...secondTargetPoint, button:"left", clickCount:1 });
+          assert.equal(await evaluate('document.activeElement?.id'), "cut-paste-target", "the learner manually focuses the second destination");
+          await pressKey("v", "KeyV", 2);
+          await waitForExpression('document.querySelector("#cut-paste-target")?.value === "CHIMPANZÉ GORILA"', "native paste appends GORILA to the destination");
+          await waitForExpression('document.querySelector("#continue-checkpoint")?.disabled === false', "the second native paste completes checkpoint six");
+          assert.equal(await evaluate('document.querySelector("#cut-paste-target")?.value'), "CHIMPANZÉ GORILA", "the final destination matches the exact requested phrase");
+          assert.deepEqual(await evaluate('Array.from(document.querySelectorAll("#cut-paste-status span")).map((span)=>span.textContent)'), ["GORILA foi colado corretamente no Destino.", "Você concluiu as duas etapas. Clique em Continuar para o checkpoint 7."], "the final confirmation waits for manual CP7 advance");
+          assert.equal(await evaluate('document.querySelector("#continue-checkpoint")?.textContent'), "Continuar para o checkpoint 7", "the global button advances to CP7 only after the second paste");
+          assert.equal(await evaluate('document.querySelector(".checkpoint-name")?.textContent'), "CHECKPOINT 6/7", "CP6 stays visible until the learner clicks Continuar");
+          assert.equal(await evaluate('window.__cp6Trace.filter(event=>event.type==="cut"&&event.target==="cut-paste-source"&&event.isTrusted).length'), 2, "exactly two trusted native cut events complete the two stages");
+          assert.equal(await evaluate('window.__cp6Trace.filter(event=>event.type==="paste"&&event.target==="cut-paste-target"&&event.isTrusted).length'), 2, "exactly two trusted native paste events complete the two stages");
 
           await cdp.send("Storage.clearDataForOrigin", { origin: new URL(baseUrl).origin, storageTypes: "all" });
           await navigate(baseUrl + "activities/donkey-kong/camp.html", "/activities/donkey-kong/camp.html");
