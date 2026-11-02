@@ -35,7 +35,7 @@ assert.equal(data.worlds.jungle.checkpoints[0].title, "Mão esquerda", "the old 
 assert.equal(data.worlds.mine.checkpoints.length, 7, "Mine keeps seven planned checkpoints");
 assert.ok(data.worlds.mine.checkpoints.every(({ kind }) => kind === "typing-sequence"), "all Mine checkpoints use automatic typing sequences");
 assert.deepEqual(
-  data.worlds.mine.checkpoints.map(({ title }) => title),
+  JSON.parse(JSON.stringify(data.worlds.mine.checkpoints.map(({ title }) => title))),
   ["Maiúsculas e minúsculas", "Shift, números e símbolos", "Acentos sem Shift · minúsculas", "Acentos com Shift · minúsculas", "Acentos sem Shift · maiúsculas", "Acentos com Shift · maiúsculas", "Misturando acentos e símbolos"],
   "Mine follows the seven-step Shift and accent progression"
 );
@@ -60,17 +60,17 @@ assert.ok(!/Diddy|Dixie|Donkey Kong/.test(data.worlds.mine.checkpoints.flatMap((
 assert.ok(data.worlds.jungle.scene && data.worlds.jungle.characters.some(({ alt }) => /Donkey Kong e Diddy/.test(alt)), "Jungle includes DK and Diddy character art");
 assert.ok(data.worlds.camp.scene && data.worlds.camp.characters.length >= 4, "Camp has a game-stage scene and multiple characters");
 assert.deepEqual(
-  data.worlds.camp.checkpoints.map(({ kind }) => kind),
+  JSON.parse(JSON.stringify(data.worlds.camp.checkpoints.map(({ kind }) => kind))),
   ["line-breaks", "select-copy", "paste-build", "paste-undo", "history-sequence", "cut-paste-particles", "delete-undo-redo"],
   "Camp follows the seven requested text-operation checkpoints"
 );
 assert.deepEqual(
-  data.worlds.camp.checkpoints.map(({ title }) => title),
+  JSON.parse(JSON.stringify(data.worlds.camp.checkpoints.map(({ title }) => title))),
   ["Organizando três linhas", "Selecionando um trecho", "Colando o trecho copiado", "Desfazendo colagens", "Desfazer e refazer", "Recortando e colando duas partes", "Apagar, desfazer e refazer"],
   "Camp names match the revised learning progression"
 );
-assert.equal(data.worlds.camp.checkpoints[0].initial, "O sapo saltou sobre a abelha.", "the first Camp task begins with a familiar sentence");
-assert.equal(data.worlds.camp.checkpoints[0].expected, "O sapo saltou\nsobre a\nabelha.", "the first Camp task accepts exactly three lines");
+assert.equal(data.worlds.camp.checkpoints[0].initial, "Bananada Marmelada Goiabada", "the first Camp task begins with the requested phrase");
+assert.equal(data.worlds.camp.checkpoints[0].expected, "Bananada\nMarmelada\nGoiabada", "the first Camp task accepts exactly three requested lines");
 assert.equal(data.worlds.camp.checkpoints[1].selectionText, "KONG", "selection checkpoint targets the requested word");
 assert.equal(data.worlds.camp.checkpoints[1].source, "DONKEY KONG e DIDDY KONG", "selection checkpoint provides two KONG occurrences");
 assert.equal(data.worlds.camp.checkpoints[2].expected, "DONKEY KONG e DIDDY KONG", "paste checkpoint builds the requested phrase");
@@ -82,25 +82,34 @@ assert.equal(data.worlds.camp.checkpoints[4].pasteCount, 4, "checkpoint five sta
 assert.equal(data.worlds.camp.checkpoints[4].undoBeforeRedo, 3, "checkpoint five practices undo before redo");
 assert.equal(data.worlds.camp.checkpoints[4].redoCount, 2, "checkpoint five practises redo twice");
 assert.equal(data.worlds.camp.checkpoints[4].undoAfterRedo, 2, "checkpoint five returns to one copy with two final undos");
-assert.deepEqual(data.worlds.camp.checkpoints[5].pieces, ["BARRIL", "SAPO"], "checkpoint six recuts two different text particles");
+assert.deepEqual(JSON.parse(JSON.stringify(data.worlds.camp.checkpoints[5].pieces)), ["BARRIL", "SAPO"], "checkpoint six recuts two different text particles");
 assert.equal(data.worlds.camp.checkpoints[6].firstDelete, "DIDDY", "checkpoint seven starts by deleting a selected word");
 assert.equal(data.worlds.camp.checkpoints[6].finalDelete, "KONG", "checkpoint seven ends by deleting the final selected word");
 
 const world3ActivitySource = read("assets/js/activity.js");
 const world3ActivityCss = read("assets/css/donkey-kong.css");
 const islandMapHtml = read("index.html");
+assert.ok(data.worlds.camp.characters.some(({ alt, src, credit }) => alt === "Krusha" && src === "https://snesmaps.com/maps/DonkeyKongCountry/sprites/Krusha.png" && credit === "SNESMaps"), "Camp uses and credits the verified SNESMaps Krusha sprite");
 assert.ok(islandMapHtml.includes('src="https://giffiles.alphacoders.com/157/15792.gif"'), "the requested GIF appears on the Island of the Kongs map");
 assert.ok(world3ActivitySource.includes('function renderShortcutKeyboard'), "World 3 draws native shortcut keys");
-assert.ok(world3ActivitySource.includes('renderShortcutKeyboard([["ENTER"], ["BACKSPACE"], ["DELETE"]])'), "checkpoint one visibly draws Enter, Backspace and Delete");
-assert.ok(world3ActivitySource.includes("event.key === \"Enter\"") && world3ActivitySource.includes("enterCount >= 2"), "checkpoint one checks two physical Enter presses before accepting three lines");
-assert.ok(world3ActivitySource.includes('input.setSelectionRange(firstBreak, firstBreak + 1)'), "checkpoint one starts with the separator space selected");
-assert.ok(world3ActivitySource.includes('event.key === "Backspace" || event.key === "Delete"'), "checkpoint one accepts Backspace or Delete to remove the selected separator");
-assert.ok(world3ActivitySource.includes("firstSeparatorRemoved && firstLineCreated") && world3ActivitySource.includes("secondSeparatorRemoved && enterCount >= 2"), "checkpoint one requires Backspace, Delete and two Enter actions before completion");
+const lineBreakRenderer = world3ActivitySource.slice(world3ActivitySource.indexOf("function renderLineBreaks"), world3ActivitySource.indexOf("function renderSelectCopy"));
+assert.ok(lineBreakRenderer.includes('renderShortcutKeyboard([["ENTER"]])'), "checkpoint one draws only the Enter key");
+assert.ok(lineBreakRenderer.includes("enterCount === 2") && lineBreakRenderer.includes('split("\\n").length === 3'), "checkpoint one requires exactly two real Enter breaks and exactly three lines");
+assert.ok(!lineBreakRenderer.includes("Backspace") && !lineBreakRenderer.includes("Delete"), "checkpoint one neither demonstrates nor requires Backspace or Delete");
+assert.ok(lineBreakRenderer.includes("input.setSelectionRange") === false, "checkpoint one leaves cursor placement to the learner");
+const selectCopyRenderer = world3ActivitySource.slice(world3ActivitySource.indexOf("function renderSelectCopy"), world3ActivitySource.indexOf("function renderPasteBuild"));
+assert.ok(selectCopyRenderer.includes('addEventListener("dblclick"') && selectCopyRenderer.includes('addEventListener("mousemove"') && selectCopyRenderer.includes("dragObserved"), "checkpoint two recognizes double-click and drag selection");
+assert.ok(selectCopyRenderer.includes('keys.innerHTML = renderShortcutKeyboard([["CTRL", "C"]])'), "checkpoint two presents Ctrl+C only after both selection methods");
 assert.ok(world3ActivitySource.includes('event.key.toLowerCase() !== "c"'), "the selection checkpoint observes Ctrl+C");
 assert.ok(world3ActivitySource.includes('event.key.toLowerCase() === "v"'), "paste exercises observe Ctrl+V");
 assert.ok(world3ActivitySource.includes('event.key.toLowerCase() !== "x"') && world3ActivitySource.includes("cutShortcut = true"), "cut exercise observes Ctrl+X");
 assert.ok(world3ActivitySource.includes('event.key.toLowerCase() === "z" && event.shiftKey'), "redo exercises observe Ctrl+Shift+Z");
 assert.ok(world3ActivitySource.includes('event.key === "Backspace"'), "the final checkpoint observes Backspace");
+assert.ok(world3ActivitySource.includes("function renderShortcutKeyboard") && world3ActivitySource.includes('CTRL: ["⌃", "CTRL"]') && world3ActivitySource.includes('SHIFT: ["⇧", "SHIFT"]') && world3ActivitySource.includes('BACKSPACE: ["⌫", "BACKSPACE"]') && world3ActivitySource.includes('DELETE: ["⌦", "DELETE"]'), "physical shortcut keycaps include recognizable modifier and deletion symbols");
+const cutPasteRenderer = world3ActivitySource.slice(world3ActivitySource.indexOf("function renderCutPasteParticles"), world3ActivitySource.indexOf("function renderDeleteUndoRedo"));
+assert.ok(!cutPasteRenderer.includes("cut-paste-focus-target") && !cutPasteRenderer.includes("target.focus()"), "checkpoint six never moves focus to the destination automatically");
+assert.ok(cutPasteRenderer.includes("target.addEventListener(\"keydown\"") && cutPasteRenderer.includes("target.addEventListener(\"paste\""), "checkpoint six waits for Ctrl+V in the destination field");
+assert.ok(world3ActivityCss.includes("max-width:min(100%,280px)") && world3ActivityCss.includes("max-height:150px") && world3ActivityCss.includes("width:auto") && world3ActivityCss.includes("height:auto"), "island GIF has responsive 280 by 150 pixel bounds and preserves its aspect ratio");
 assert.ok(world3ActivityCss.includes(".shortcut-keyboard") && world3ActivityCss.includes(".shortcut-key"), "shortcut keys have a drawn keyboard style");
 
 const letters = "abcdefghijklmnopqrstuvwxyzç";
@@ -226,4 +235,4 @@ assert.equal(memorySave.mode, "memory", "memory fallback is reported");
 assert.equal(memorySave.persisted, false, "memory fallback does not claim durable storage");
 assert.equal(memoryStore.load().progress.checkpoints.camp, 0, "new memory-only store starts clean");
 
-console.log("OK: 22 checkpoints, familiar Mine vocabulary, full ABNT2 keyboard, live tips, Backspace correction, Shift arrows, sprites, accents and poem");
+console.log("OK: 22 ordered checkpoints, familiar Mine vocabulary, Camp operations, shortcut keycaps, responsive island art, sprites, progress and poem");

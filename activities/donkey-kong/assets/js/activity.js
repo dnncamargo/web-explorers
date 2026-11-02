@@ -819,71 +819,73 @@
   }
 
   function renderShortcutKeyboard(chords) {
+    const visuals = {
+      CTRL: ["⌃", "CTRL"], SHIFT: ["⇧", "SHIFT"], ENTER: ["↵", "ENTER"],
+      BACKSPACE: ["⌫", "BACKSPACE"], DELETE: ["⌦", "DELETE"]
+    };
     return '<div class="shortcut-keyboard" aria-label="Teclas usadas nesta atividade">' +
       chords.map((chord) => '<div class="shortcut-chord">' +
         chord.map((key, index) => (index ? '<span class="shortcut-plus" aria-hidden="true">+</span>' : '') +
-          '<kbd class="shortcut-key">' + escapeHTML(key) + '</kbd>').join("") +
+          '<kbd class="shortcut-key" data-key="' + escapeHTML(key) + '">' +
+          (visuals[key] ? '<span class="shortcut-key-symbol" aria-hidden="true">' + visuals[key][0] + '</span><span class="shortcut-key-label">' + visuals[key][1] + '</span>' : escapeHTML(key)) +
+          '</kbd>').join("") +
       '</div>').join("") + '</div>';
   }
 
   function renderLineBreaks(checkpoint, area, feedback, checkButton, complete) {
-    area.innerHTML = renderShortcutKeyboard([["ENTER"], ["BACKSPACE"], ["DELETE"]]) +
+    area.innerHTML = renderShortcutKeyboard([["ENTER"]]) +
       '<label class="input-label" for="line-break-input">Frase para organizar</label>' +
       '<textarea id="line-break-input" class="exercise-area" rows="3" spellcheck="false"></textarea>' +
       '<p id="line-break-status" class="selection-status" aria-live="polite"></p>';
     const input = area.querySelector("#line-break-input");
     const status = area.querySelector("#line-break-status");
     let enterCount = 0;
-    let firstSeparatorRemoved = false;
-    let secondSeparatorRemoved = false;
-    let firstLineCreated = false;
+    let pendingEnter = false;
     let completed = false;
     checkButton.hidden = true;
     input.value = checkpoint.initial;
-    const firstBreak = checkpoint.initial.indexOf(" sobre");
     input.focus();
-    input.setSelectionRange(firstBreak, firstBreak + 1);
-    status.textContent = "O espaço entre “saltou” e “sobre” está selecionado. Pressione Backspace para removê-lo; depois pressione Enter.";
+    status.textContent = "Clique entre as palavras Bananada, Marmelada e Goiabada; pressione Enter duas vezes para criar três linhas.";
 
     input.addEventListener("keydown", (event) => {
       if (!event.isTrusted || event.isComposing || event.repeat) return;
-      if (event.key === "Enter") enterCount += 1;
-      if (event.key === "Backspace" && !firstSeparatorRemoved &&
-        input.selectionStart === firstBreak && input.selectionEnd === firstBreak + 1) {
-        firstSeparatorRemoved = true;
-        status.textContent = "Backspace removeu o primeiro espaço. Pressione Enter para criar a primeira quebra.";
-      }
-      if (event.key === "Delete" && firstLineCreated && !secondSeparatorRemoved) {
-        const secondBreak = input.value.indexOf(" abelha.");
-        if (secondBreak >= 0 && input.selectionStart === secondBreak && input.selectionEnd === secondBreak) {
-          secondSeparatorRemoved = true;
-          status.textContent = "Delete removeu o espaço antes de “abelha”. Agora pressione Enter para criar a terceira linha.";
-        } else {
-          status.textContent = "Mova o cursor para depois de “sobre a” e use Delete para apagar o espaço à direita.";
-        }
-      }
-      if (event.key === "Backspace" && firstSeparatorRemoved) {
-        status.textContent = "Use Enter para criar a quebra depois de “saltou”; depois mova o cursor até depois de “sobre a”.";
+      if (event.key === "Enter") {
+        pendingEnter = true;
+        status.textContent = "Enter reconhecido. Clique entre as duas palavras restantes e pressione Enter mais uma vez.";
       }
     });
-    input.addEventListener("input", () => {
-      if (completed) return;
-      const lineCount = input.value.split("\n").length;
-      if (firstSeparatorRemoved && !firstLineCreated && input.value.startsWith("O sapo saltou\n")) {
-        firstLineCreated = true;
-        status.textContent = "Primeira linha criada. Mova o cursor com as setas para depois de “sobre a” e pressione Delete para apagar o próximo espaço.";
+    input.addEventListener("beforeinput", (event) => {
+      if (!event.isTrusted || !pendingEnter || (event.inputType !== "insertLineBreak" && event.inputType !== "insertParagraph")) return;
+      enterCount += 1;
+      const position = input.selectionStart;
+      let start = position;
+      let end = input.selectionEnd;
+      if (start === end && input.value[start] === " ") end += 1;
+      else if (start === end && input.value[start - 1] === " ") start -= 1;
+      if (start !== end && input.value.slice(start, end) === " ") {
+        event.preventDefault();
+        input.setRangeText("\n", start, end, "end");
+        pendingEnter = false;
+        evaluate();
       }
-      if (input.value === checkpoint.expected && firstSeparatorRemoved && firstLineCreated &&
-        secondSeparatorRemoved && enterCount >= 2 && lineCount === 3) {
+    });
+    function evaluate() {
+      if (completed) return;
+      if (input.value === checkpoint.expected && enterCount === 2 && input.value.split("\n").length === 3) {
         completed = true;
         input.readOnly = true;
-        status.textContent = "Backspace, Delete e Enter organizaram a frase em três linhas.";
-        setFeedback(feedback, "Backspace, Delete e Enter concluídos. Muito bem!", "good");
+        status.textContent = "Duas quebras com Enter organizaram a frase em três linhas.";
+        setFeedback(feedback, "As três linhas estão corretas.", "good");
         complete();
-      } else if (lineCount > 3) {
-        status.textContent = "Há mais de três linhas. Use Backspace ou Delete para ajustar as quebras.";
-        setFeedback(feedback, "Confira as quebras de linha e corrija com Backspace ou Delete.", "gentle");
+      } else if (input.value.split("\n").length > 3 || enterCount > 2) {
+        status.textContent = "O objetivo é criar exatamente duas quebras com Enter e três linhas.";
+      } else if (input.value.split("\n").length === 2) {
+        status.textContent = "Primeira quebra criada. Clique entre as duas palavras restantes e pressione Enter mais uma vez.";
       }
+    }
+    input.addEventListener("input", () => {
+      pendingEnter = false;
+      evaluate();
     });
   }
 
@@ -896,10 +898,11 @@
     let advancing = false;
     area.innerHTML = '<label class="input-label" for="select-copy-input">Texto para selecionar</label>' +
       '<textarea id="select-copy-input" class="exercise-area" rows="2" readonly></textarea>' +
-      renderShortcutKeyboard([["CTRL", "C"]]) +
+      '<div id="select-copy-keys"></div>' +
       '<p id="select-copy-status" class="selection-status" aria-live="polite"></p>';
     const input = area.querySelector("#select-copy-input");
     const status = area.querySelector("#select-copy-status");
+    const keys = area.querySelector("#select-copy-keys");
     input.value = checkpoint.source;
     const firstStart = checkpoint.source.indexOf(checkpoint.selectionText);
     const secondStart = checkpoint.source.lastIndexOf(checkpoint.selectionText);
@@ -912,6 +915,7 @@
       } else if (stage === 1) {
         status.textContent = "ETAPA 2/3 · Arraste sobre a segunda palavra KONG. Você pode arrastar do começo ao fim ou do fim ao começo.";
       } else {
+        keys.innerHTML = renderShortcutKeyboard([["CTRL", "C"]]);
         status.textContent = "ETAPA 3/3 · Mantenha Ctrl pressionado e pressione C com a palavra KONG selecionada.";
       }
     }
@@ -1160,17 +1164,21 @@
     let pasteObserved = false;
     area.innerHTML = '<label class="input-label" for="history-sequence-input">Campo de prática</label>' +
       '<textarea id="history-sequence-input" class="exercise-area" rows="3"></textarea>' +
-      renderShortcutKeyboard([["CTRL", "V"], ["CTRL", "Z"], ["CTRL", "SHIFT", "Z"]]) +
+      '<div id="history-sequence-keys"></div>' +
       '<p id="history-sequence-status" class="selection-status" aria-live="polite"></p>';
     const input = area.querySelector("#history-sequence-input");
     const status = area.querySelector("#history-sequence-status");
+    const keys = area.querySelector("#history-sequence-keys");
     checkButton.hidden = true;
     input.focus();
+    keys.innerHTML = renderShortcutKeyboard([["CTRL", "V"]]);
     status.textContent = "ETAPA 1/4 · Cole SAPO quatro vezes com Ctrl+V.";
     function setPhase(next, message) {
       phase = next;
       pendingShortcut = "";
       status.textContent = message;
+      const chord = next === "paste" ? ["CTRL", "V"] : next === "redo" ? ["CTRL", "SHIFT", "Z"] : ["CTRL", "Z"];
+      keys.innerHTML = renderShortcutKeyboard([chord]);
     }
     input.addEventListener("keydown", (event) => {
       if (!event.isTrusted || event.repeat) return;
@@ -1249,13 +1257,12 @@
       '<textarea id="cut-paste-source" class="exercise-area" rows="2"></textarea></div>' +
       '<div><label class="input-label" for="cut-paste-target">Destino</label>' +
       '<textarea id="cut-paste-target" class="exercise-area" rows="2"></textarea></div></div>' +
-      '<div class="exercise-actions"><button class="button secondary small" id="cut-paste-focus-source" type="button">Focar origem</button>' +
-      '<button class="button secondary small" id="cut-paste-focus-target" type="button">Focar destino</button></div>' +
-      renderShortcutKeyboard([["CTRL", "X"], ["CTRL", "V"]]) +
+      '<div id="cut-paste-keys"></div>' +
       '<p id="cut-paste-status" class="selection-status" aria-live="polite"></p>';
     const source = area.querySelector("#cut-paste-source");
     const target = area.querySelector("#cut-paste-target");
     const status = area.querySelector("#cut-paste-status");
+    const keys = area.querySelector("#cut-paste-keys");
     source.value = checkpoint.source;
     target.value = checkpoint.targetPrefix;
     checkButton.hidden = true;
@@ -1266,13 +1273,13 @@
       cutObserved = false;
       source.focus();
       source.setSelectionRange(0, 0);
+      keys.innerHTML = renderShortcutKeyboard([["CTRL", "X"]]);
       status.textContent = "ETAPA " + (stage + 1) + "/2 · Selecione " + currentPiece() + " na origem e pressione Ctrl+X.";
     }
     function preparePaste() {
       pasteShortcut = false;
       pasteObserved = false;
-      target.focus();
-      target.setSelectionRange(target.value.length, target.value.length);
+      keys.innerHTML = renderShortcutKeyboard([["CTRL", "V"]]);
       status.textContent = "ETAPA " + (stage + 1) + "/2 · A parte foi recortada. Foque o destino e pressione Ctrl+V.";
     }
     source.addEventListener("keydown", (event) => {
@@ -1313,11 +1320,6 @@
         complete();
       }
     });
-    area.querySelector("#cut-paste-focus-source").addEventListener("click", () => source.focus());
-    area.querySelector("#cut-paste-focus-target").addEventListener("click", () => {
-      target.focus();
-      target.setSelectionRange(target.value.length, target.value.length);
-    });
     prepareSelection();
   }
 
@@ -1327,10 +1329,11 @@
     let advancing = false;
     area.innerHTML = '<label class="input-label" for="delete-undo-input">Texto para editar</label>' +
       '<textarea id="delete-undo-input" class="exercise-area" rows="2"></textarea>' +
-      renderShortcutKeyboard([["BACKSPACE"], ["CTRL", "Z"], ["CTRL", "SHIFT", "Z"]]) +
+      '<div id="delete-undo-keys"></div>' +
       '<p id="delete-undo-status" class="selection-status" aria-live="polite"></p>';
     const input = area.querySelector("#delete-undo-input");
     const status = area.querySelector("#delete-undo-status");
+    const keys = area.querySelector("#delete-undo-keys");
     input.value = checkpoint.initial;
     checkButton.hidden = true;
     function rangeFor(text, fromEnd) {
@@ -1342,6 +1345,8 @@
       phase = next;
       shortcutObserved = false;
       status.textContent = message;
+      const chord = next === "undo" ? ["CTRL", "Z"] : next === "redo" ? ["CTRL", "SHIFT", "Z"] : ["BACKSPACE"];
+      keys.innerHTML = renderShortcutKeyboard([chord]);
     }
     input.addEventListener("select", () => {
       if (phase === "select-first" && selectedText() === checkpoint.firstDelete) {
@@ -1390,6 +1395,7 @@
       }
     });
     input.focus();
+    keys.innerHTML = renderShortcutKeyboard([["BACKSPACE"]]);
     const firstRange = rangeFor(checkpoint.firstDelete, false);
     if (firstRange) input.setSelectionRange(firstRange.start, firstRange.start);
     status.textContent = "ETAPA 1/4 · Selecione DIDDY com o mouse e pressione Backspace.";

@@ -157,7 +157,7 @@
       scene: "https://www.mezunian.com/wp-content/uploads/2020/05/donkey-kong-country-2-diddys-kong-quest-bramble-scramble-bramble-wall-near-start.png?m=1701871908",
       characters: [
         { src: "https://static.wikia.nocookie.net/donkeykong/images/7/7b/Squawks_-_DKC2.gif/revision/latest?cb=20190113015723", alt: "Squawks, o papagaio", credit: "Donkey Kong Wiki" },
-        { src: "https://static.wikia.nocookie.net/donkeykong/images/8/8e/Krusha_4.png/revision/latest?cb=20190503205924&path-prefix=pt", alt: "Krusha", credit: "Donkey Kong Wiki" },
+        { src: "https://snesmaps.com/maps/DonkeyKongCountry/sprites/Krusha.png", alt: "Krusha", credit: "SNESMaps" },
         { src: "https://snesmaps.com/maps/DonkeyKongCountry/sprites/Necky.png", alt: "Necky", credit: "SNESMaps" },
         { src: "https://media.tenor.com/HomN6gM7WcEAAAAj/diddy-kong-donkey-kong.gif", alt: "Diddy e Donkey Kong", credit: "Tenor" },
         { src: "https://media.tenor.com/GXqnaxylERQAAAAi/dk-coin-dk.gif", alt: "Moeda DK", credit: "Tenor" }
@@ -167,11 +167,11 @@
       checkpoints: [
         {
           title: "Organizando três linhas",
-          instruction: "Divida a frase em três linhas. Use Enter duas vezes: depois de “saltou” e depois de “sobre a”. Se precisar corrigir uma quebra, use Backspace para apagar à esquerda ou Delete para apagar à direita.",
-          hint: "Enter cria uma nova linha. Backspace apaga o caractere à esquerda do cursor. Delete apaga o caractere à direita. O resultado deve ter exatamente três linhas.",
+          instruction: "Divida a frase em três linhas usando Enter duas vezes: depois de “Bananada” e depois de “Marmelada”. Clique entre as palavras para posicionar o cursor.",
+          hint: "Clique entre as palavras e pressione Enter duas vezes. O resultado deve ter exatamente três linhas.",
           kind: "line-breaks",
-          initial: "O sapo saltou sobre a abelha.",
-          expected: "O sapo saltou\nsobre a\nabelha."
+          initial: "Bananada Marmelada Goiabada",
+          expected: "Bananada\nMarmelada\nGoiabada"
         },
         {
           title: "Selecionando um trecho",
