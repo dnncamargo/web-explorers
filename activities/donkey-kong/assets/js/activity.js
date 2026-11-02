@@ -264,6 +264,13 @@
     else if (checkpoint.kind === "typing-sequence") renderTypingSequence(checkpoint, area, feedback, checkButton, continueButton, complete);
     else if (checkpoint.kind === "selection") renderSelection(checkpoint, area, feedback, checkButton, complete);
     else if (checkpoint.kind === "edit-sequence") renderEditSequence(checkpoint, area, feedback, checkButton, complete);
+    else if (checkpoint.kind === "line-breaks") renderLineBreaks(checkpoint, area, feedback, checkButton, complete);
+    else if (checkpoint.kind === "select-copy") renderSelectCopy(checkpoint, area, feedback, checkButton, complete);
+    else if (checkpoint.kind === "paste-build") renderPasteBuild(checkpoint, area, feedback, checkButton, complete);
+    else if (checkpoint.kind === "paste-undo") renderPasteUndo(checkpoint, area, feedback, checkButton, complete);
+    else if (checkpoint.kind === "history-sequence") renderHistorySequence(checkpoint, area, feedback, checkButton, complete);
+    else if (checkpoint.kind === "cut-paste-particles") renderCutPasteParticles(checkpoint, area, feedback, checkButton, complete);
+    else if (checkpoint.kind === "delete-undo-redo") renderDeleteUndoRedo(checkpoint, area, feedback, checkButton, complete);
     else if (checkpoint.kind === "native-edit") renderNativeEdit(checkpoint, area, feedback, checkButton, complete);
     else if (checkpoint.kind === "navigation") renderNavigation(checkpoint, area, feedback, checkButton, complete);
     else if (checkpoint.kind === "clipboard") renderClipboard(area, feedback, checkButton, complete);
@@ -808,6 +815,559 @@
       }
     });
     prepareStage();
+  }
+
+  function renderShortcutKeyboard(chords) {
+    return '<div class="shortcut-keyboard" aria-label="Teclas usadas nesta atividade">' +
+      chords.map((chord) => '<div class="shortcut-chord">' +
+        chord.map((key, index) => (index ? '<span class="shortcut-plus" aria-hidden="true">+</span>' : '') +
+          '<kbd class="shortcut-key">' + escapeHTML(key) + '</kbd>').join("") +
+      '</div>').join("") + '</div>';
+  }
+
+  function renderLineBreaks(checkpoint, area, feedback, checkButton, complete) {
+    area.innerHTML = renderShortcutKeyboard([["ENTER"], ["BACKSPACE"], ["DELETE"]]) +
+      '<label class="input-label" for="line-break-input">Frase para organizar</label>' +
+      '<textarea id="line-break-input" class="exercise-area" rows="3" spellcheck="false"></textarea>' +
+      '<p id="line-break-status" class="selection-status" aria-live="polite"></p>';
+    const input = area.querySelector("#line-break-input");
+    const status = area.querySelector("#line-break-status");
+    let enterCount = 0;
+    let completed = false;
+    checkButton.hidden = true;
+    input.value = checkpoint.initial;
+    const firstBreak = checkpoint.initial.indexOf(" sobre");
+    input.focus();
+    input.setSelectionRange(firstBreak + 1, firstBreak + 1);
+    status.textContent = "ENTER cria uma linha nova. Backspace apaga à esquerda; Delete apaga à direita. O resultado precisa ter três linhas.";
+
+    input.addEventListener("keydown", (event) => {
+      if (!event.isTrusted || event.isComposing || event.repeat) return;
+      if (event.key === "Enter") enterCount += 1;
+      if (event.key === "Backspace") status.textContent = "Backspace: apaga o caractere ou a quebra de linha à esquerda do cursor.";
+      if (event.key === "Delete") status.textContent = "Delete: apaga o caractere ou a quebra de linha à direita do cursor.";
+    });
+    input.addEventListener("input", () => {
+      if (completed) return;
+      const lineCount = input.value.split("\n").length;
+      if (input.value === checkpoint.expected && enterCount >= 2 && lineCount === 3) {
+        completed = true;
+        input.readOnly = true;
+        status.textContent = "A frase ficou organizada em três linhas. Enter foi usado duas vezes.";
+        setFeedback(feedback, "Três linhas criadas. Muito bem!", "good");
+        complete();
+      } else if (lineCount > 3) {
+        status.textContent = "Há mais de três linhas. Use Backspace ou Delete para ajustar as quebras.";
+        setFeedback(feedback, "Confira as quebras de linha e corrija com Backspace ou Delete.", "gentle");
+      } else {
+        status.textContent = "Use Enter duas vezes para separar a frase em três linhas. Você pode corrigir a posição com Backspace ou Delete.";
+      }
+    });
+  }
+
+  function renderSelectCopy(checkpoint, area, feedback, checkButton, complete) {
+    let stage = 0;
+    let doubleClickObserved = false;
+    let pointerDown = false;
+    let dragObserved = false;
+    let copyShortcut = false;
+    let advancing = false;
+    area.innerHTML = '<label class="input-label" for="select-copy-input">Texto para selecionar</label>' +
+      '<textarea id="select-copy-input" class="exercise-area" rows="2" readonly></textarea>' +
+      renderShortcutKeyboard([["CTRL", "C"]]) +
+      '<p id="select-copy-status" class="selection-status" aria-live="polite"></p>';
+    const input = area.querySelector("#select-copy-input");
+    const status = area.querySelector("#select-copy-status");
+    input.value = checkpoint.source;
+    const firstStart = checkpoint.source.indexOf(checkpoint.selectionText);
+    const secondStart = checkpoint.source.lastIndexOf(checkpoint.selectionText);
+    const end = checkpoint.selectionText.length;
+    checkButton.hidden = true;
+
+    function updateStatus() {
+      if (stage === 0) {
+        status.textContent = "ETAPA 1/3 · Dê dois cliques rápidos sobre a primeira palavra KONG para selecioná-la.";
+      } else if (stage === 1) {
+        status.textContent = "ETAPA 2/3 · Arraste sobre a segunda palavra KONG. Você pode arrastar do começo ao fim ou do fim ao começo.";
+      } else {
+        status.textContent = "ETAPA 3/3 · Mantenha Ctrl pressionado e pressione C com a palavra KONG selecionada.";
+      }
+    }
+    function selectionIs(start) {
+      return input.selectionStart === start && input.selectionEnd === start + end &&
+        input.value.slice(input.selectionStart, input.selectionEnd) === checkpoint.selectionText;
+    }
+    function advanceSelection() {
+      if (advancing) return;
+      const valid = stage === 0 ? doubleClickObserved && selectionIs(firstStart)
+        : stage === 1 ? dragObserved && selectionIs(secondStart) : false;
+      if (!valid) return;
+      advancing = true;
+      stage += 1;
+      if (stage === 1) {
+        doubleClickObserved = false;
+        input.setSelectionRange(secondStart, secondStart);
+        status.textContent = "Primeira seleção correta. Agora arraste sobre a segunda ocorrência de KONG.";
+      } else {
+        input.setSelectionRange(secondStart, secondStart + end);
+        status.textContent = "As duas formas de seleção foram praticadas. Agora copie KONG com Ctrl+C.";
+      }
+      setFeedback(feedback, stage === 1 ? "Seleção por dois cliques reconhecida." : "Seleção por arraste reconhecida.", "good");
+      advancing = false;
+      updateStatus();
+    }
+    input.addEventListener("dblclick", (event) => {
+      if (!event.isTrusted || stage !== 0) return;
+      doubleClickObserved = true;
+      global.requestAnimationFrame(advanceSelection);
+    });
+    input.addEventListener("mousedown", (event) => {
+      if (!event.isTrusted || stage !== 1 || event.button !== 0) return;
+      pointerDown = true;
+      dragObserved = false;
+    });
+    input.addEventListener("mousemove", () => {
+      if (!pointerDown || stage !== 1) return;
+      if (input.selectionEnd > input.selectionStart) dragObserved = true;
+    });
+    input.addEventListener("mouseup", (event) => {
+      if (!event.isTrusted || stage !== 1) return;
+      pointerDown = false;
+      global.requestAnimationFrame(advanceSelection);
+    });
+    input.addEventListener("select", advanceSelection);
+    input.addEventListener("keydown", (event) => {
+      if (!event.isTrusted || stage !== 2 || !event.ctrlKey || event.shiftKey || event.key.toLowerCase() !== "c") return;
+      if (input.value.slice(input.selectionStart, input.selectionEnd) === checkpoint.selectionText) copyShortcut = true;
+    });
+    input.addEventListener("copy", (event) => {
+      if (!event.isTrusted || stage !== 2 || !copyShortcut ||
+        input.value.slice(input.selectionStart, input.selectionEnd) !== checkpoint.selectionText) return;
+      input.readOnly = true;
+      status.textContent = "KONG foi copiado usando Ctrl+C. O próximo checkpoint vai ensinar a colar.";
+      setFeedback(feedback, "Seleção, Ctrl e C concluídos.", "good");
+      complete();
+    });
+    input.focus();
+    updateStatus();
+  }
+
+  function renderPasteBuild(checkpoint, area, feedback, checkButton, complete) {
+    let stage = 0;
+    let ctrlVObserved = false;
+    let pasteObserved = false;
+    let copyShortcut = false;
+    area.innerHTML = '<label class="input-label" for="paste-build-input">Complete a frase colando a palavra copiada</label>' +
+      '<textarea id="paste-build-input" class="exercise-area" rows="2" spellcheck="false"></textarea>' +
+      '<label class="input-label" for="paste-build-source">Outra palavra para copiar</label>' +
+      '<textarea id="paste-build-source" class="exercise-area single-line" rows="1" readonly></textarea>' +
+      renderShortcutKeyboard([["CTRL", "C"], ["CTRL", "V"]]) +
+      '<p id="paste-build-status" class="selection-status" aria-live="polite"></p>';
+    const target = area.querySelector("#paste-build-input");
+    const source = area.querySelector("#paste-build-source");
+    const status = area.querySelector("#paste-build-status");
+    const placeholder = "____";
+    checkButton.hidden = true;
+    target.value = checkpoint.initial;
+    source.value = checkpoint.copySource;
+    let firstSlot = target.value.indexOf(placeholder);
+    target.focus();
+    target.setSelectionRange(firstSlot, firstSlot + placeholder.length);
+    status.textContent = "ETAPA 1/3 · Pressione Ctrl+V para colar KONG no primeiro espaço.";
+    function prepareSecondPaste() {
+      stage = 1;
+      const secondSlot = target.value.lastIndexOf(placeholder);
+      target.focus();
+      target.setSelectionRange(secondSlot, secondSlot + placeholder.length);
+      ctrlVObserved = false;
+      pasteObserved = false;
+      status.textContent = "ETAPA 2/3 · Pressione Ctrl+V novamente para completar DIDDY KONG.";
+    }
+    function prepareCopy() {
+      stage = 2;
+      source.focus();
+      source.select();
+      status.textContent = "ETAPA 3/3 · BANANA está selecionada. Pressione Ctrl+C para copiá-la.";
+    }
+    target.addEventListener("keydown", (event) => {
+      if (event.isTrusted && event.ctrlKey && !event.shiftKey && event.key.toLowerCase() === "v") ctrlVObserved = true;
+    });
+    target.addEventListener("paste", (event) => {
+      if (event.isTrusted && ctrlVObserved) pasteObserved = true;
+    });
+    target.addEventListener("input", () => {
+      if (stage > 1 || !ctrlVObserved || !pasteObserved) return;
+      const expected = stage === 0 ? checkpoint.firstExpected : checkpoint.expected;
+      if (target.value !== expected) return;
+      setFeedback(feedback, "Ctrl+V reconhecido. A palavra foi colada no lugar certo.", "good");
+      if (stage === 0) prepareSecondPaste();
+      else prepareCopy();
+    });
+    source.addEventListener("keydown", (event) => {
+      if (event.isTrusted && event.ctrlKey && !event.shiftKey && event.key.toLowerCase() === "c" &&
+        source.value.slice(source.selectionStart, source.selectionEnd) === checkpoint.copySource) copyShortcut = true;
+    });
+    source.addEventListener("copy", (event) => {
+      if (!event.isTrusted || !copyShortcut ||
+        source.value.slice(source.selectionStart, source.selectionEnd) !== checkpoint.copySource) return;
+      source.readOnly = true;
+      target.readOnly = true;
+      status.textContent = "A frase está completa e BANANA foi copiada com Ctrl+C.";
+      setFeedback(feedback, "Duas colagens e uma cópia realizadas.", "good");
+      complete();
+    });
+  }
+
+  function renderPasteUndo(checkpoint, area, feedback, checkButton, complete) {
+    let phase = "paste-four";
+    let pasteCount = 0;
+    let undoCount = 0;
+    let pendingShortcut = "";
+    let pasteObserved = false;
+    let copyObserved = false;
+    let extraPasteObserved = false;
+    let extraUndoObserved = false;
+    area.innerHTML = '<label class="input-label" for="paste-undo-input">Cole a palavra repetidas vezes</label>' +
+      '<textarea id="paste-undo-input" class="exercise-area" rows="3"></textarea>' +
+      '<label class="input-label" for="paste-undo-copy">Outra partícula para copiar</label>' +
+      '<textarea id="paste-undo-copy" class="exercise-area single-line" rows="1" readonly></textarea>' +
+      '<label class="input-label" for="paste-undo-extra">Destino da segunda colagem</label>' +
+      '<textarea id="paste-undo-extra" class="exercise-area single-line" rows="1"></textarea>' +
+      renderShortcutKeyboard([["CTRL", "V"], ["CTRL", "Z"], ["CTRL", "C"]]) +
+      '<p id="paste-undo-status" class="selection-status" aria-live="polite"></p>';
+    const target = area.querySelector("#paste-undo-input");
+    const source = area.querySelector("#paste-undo-copy");
+    const extra = area.querySelector("#paste-undo-extra");
+    const status = area.querySelector("#paste-undo-status");
+    source.value = checkpoint.extraCopyText;
+    extra.value = checkpoint.extraPastePrefix;
+    checkButton.hidden = true;
+    target.focus();
+    status.textContent = "ETAPA 1/4 · Pressione Ctrl+V quatro vezes para colar BANANA quatro vezes.";
+    function enterUndoPhase() {
+      phase = "undo-three";
+      undoCount = 0;
+      pendingShortcut = "";
+      status.textContent = "ETAPA 2/4 · Pressione Ctrl+Z três vezes. Deve restar uma BANANA.";
+    }
+    function enterCopyPhase() {
+      phase = "copy-extra";
+      source.focus();
+      source.select();
+      status.textContent = "ETAPA 3/4 · SAPO está selecionado. Pressione Ctrl+C para copiar outra partícula.";
+    }
+    target.addEventListener("keydown", (event) => {
+      if (!event.isTrusted || event.repeat) return;
+      if (event.ctrlKey && !event.shiftKey && event.key.toLowerCase() === "v") pendingShortcut = "paste";
+      else if (event.ctrlKey && !event.shiftKey && event.key.toLowerCase() === "z") pendingShortcut = "undo";
+      else if (event.key === "Backspace" || event.key === "Delete") pendingShortcut = "";
+    });
+    target.addEventListener("paste", (event) => {
+      if (event.isTrusted && pendingShortcut === "paste") pasteObserved = true;
+    });
+    target.addEventListener("input", () => {
+      if (phase === "paste-four" && pendingShortcut === "paste" && pasteObserved) {
+        pasteCount = target.value.length / checkpoint.text.length;
+        if (Number.isInteger(pasteCount) && pasteCount >= 1 && pasteCount <= checkpoint.pasteCount &&
+          target.value === checkpoint.text.repeat(pasteCount)) {
+          pasteObserved = false;
+          pendingShortcut = "";
+          if (pasteCount === checkpoint.pasteCount) enterUndoPhase();
+          else status.textContent = "Colagem " + pasteCount + "/" + checkpoint.pasteCount + ". Continue com Ctrl+V.";
+        }
+        return;
+      }
+      if (phase === "undo-three" && pendingShortcut === "undo") {
+        undoCount += 1;
+        const expected = checkpoint.text.repeat(checkpoint.pasteCount - undoCount);
+        if (target.value === expected) {
+          pendingShortcut = "";
+          if (undoCount === checkpoint.undoCount) enterCopyPhase();
+          else status.textContent = "Desfeito " + undoCount + "/" + checkpoint.undoCount + ". Continue com Ctrl+Z.";
+        } else {
+          undoCount = Math.max(0, undoCount - 1);
+          setFeedback(feedback, "O histórico ainda não chegou ao resultado esperado. Confira o campo e tente novamente.", "gentle");
+        }
+      }
+    });
+    source.addEventListener("keydown", (event) => {
+      if (event.isTrusted && event.ctrlKey && !event.shiftKey && event.key.toLowerCase() === "c" &&
+        source.value.slice(source.selectionStart, source.selectionEnd) === checkpoint.extraCopyText) copyObserved = true;
+    });
+    source.addEventListener("copy", (event) => {
+      if (!event.isTrusted || !copyObserved) return;
+      phase = "paste-extra";
+      extra.focus();
+      extra.setSelectionRange(extra.value.length, extra.value.length);
+      status.textContent = "ETAPA 4/4 · Cole SAPO com Ctrl+V e depois pressione Ctrl+Z para desfazer essa colagem.";
+    });
+    extra.addEventListener("keydown", (event) => {
+      if (!event.isTrusted || event.repeat) return;
+      if (event.ctrlKey && !event.shiftKey && event.key.toLowerCase() === "v") pendingShortcut = "extra-paste";
+      else if (event.ctrlKey && !event.shiftKey && event.key.toLowerCase() === "z") pendingShortcut = "extra-undo";
+    });
+    extra.addEventListener("paste", (event) => {
+      if (event.isTrusted && pendingShortcut === "extra-paste") extraPasteObserved = true;
+    });
+    extra.addEventListener("input", () => {
+      if (phase === "paste-extra" && pendingShortcut === "extra-paste" && extraPasteObserved &&
+        extra.value === checkpoint.extraPastePrefix + checkpoint.extraCopyText) {
+        pendingShortcut = "";
+        extraPasteObserved = false;
+        status.textContent = "Agora pressione Ctrl+Z para desfazer a colagem de SAPO.";
+      } else if (phase === "paste-extra" && pendingShortcut === "extra-undo") {
+        if (extra.value === checkpoint.extraPastePrefix) {
+          phase = "done";
+          extra.readOnly = true;
+          target.readOnly = true;
+          status.textContent = "Uma BANANA permaneceu e a colagem de SAPO foi desfeita.";
+          setFeedback(feedback, "Desfazer colagens concluído.", "good");
+          complete();
+        }
+      }
+    });
+  }
+
+  function renderHistorySequence(checkpoint, area, feedback, checkButton, complete) {
+    let phase = "paste";
+    let pasteCount = 0;
+    let undoCount = 0;
+    let redoCount = 0;
+    let finalUndoCount = 0;
+    let pendingShortcut = "";
+    let pasteObserved = false;
+    area.innerHTML = '<label class="input-label" for="history-sequence-input">Campo de prática</label>' +
+      '<textarea id="history-sequence-input" class="exercise-area" rows="3"></textarea>' +
+      renderShortcutKeyboard([["CTRL", "V"], ["CTRL", "Z"], ["CTRL", "SHIFT", "Z"]]) +
+      '<p id="history-sequence-status" class="selection-status" aria-live="polite"></p>';
+    const input = area.querySelector("#history-sequence-input");
+    const status = area.querySelector("#history-sequence-status");
+    checkButton.hidden = true;
+    input.focus();
+    status.textContent = "ETAPA 1/4 · Cole SAPO quatro vezes com Ctrl+V.";
+    function setPhase(next, message) {
+      phase = next;
+      pendingShortcut = "";
+      status.textContent = message;
+    }
+    input.addEventListener("keydown", (event) => {
+      if (!event.isTrusted || event.repeat) return;
+      if (event.ctrlKey && event.key.toLowerCase() === "v") pendingShortcut = "paste";
+      else if (event.ctrlKey && event.key.toLowerCase() === "z" && event.shiftKey) pendingShortcut = "redo";
+      else if (event.ctrlKey && event.key.toLowerCase() === "z" && !event.shiftKey) pendingShortcut = "undo";
+    });
+    input.addEventListener("paste", (event) => {
+      if (event.isTrusted && pendingShortcut === "paste") pasteObserved = true;
+    });
+    input.addEventListener("input", () => {
+      if (phase === "paste" && pendingShortcut === "paste" && pasteObserved) {
+        pasteCount = input.value.length / checkpoint.text.length;
+        if (Number.isInteger(pasteCount) && pasteCount >= 1 && pasteCount <= checkpoint.pasteCount &&
+          input.value === checkpoint.text.repeat(pasteCount)) {
+          pasteObserved = false;
+          pendingShortcut = "";
+          if (pasteCount === checkpoint.pasteCount) setPhase("undo-before-redo", "ETAPA 2/4 · Pressione Ctrl+Z três vezes. Deve restar uma palavra.");
+          else status.textContent = "Colagem " + pasteCount + "/" + checkpoint.pasteCount + ". Continue com Ctrl+V.";
+        }
+        return;
+      }
+      if (phase === "undo-before-redo" && pendingShortcut === "undo") {
+        undoCount += 1;
+        if (input.value === checkpoint.text.repeat(checkpoint.pasteCount - undoCount)) {
+          pendingShortcut = "";
+          if (undoCount === checkpoint.undoBeforeRedo) setPhase("redo", "ETAPA 3/4 · Refaça duas vezes com Ctrl+Shift+Z. Devem aparecer três palavras.");
+          else status.textContent = "Desfeito " + undoCount + "/" + checkpoint.undoBeforeRedo + ". Continue com Ctrl+Z.";
+        } else {
+          undoCount = Math.max(0, undoCount - 1);
+          pendingShortcut = "";
+        }
+        return;
+      }
+      if (phase === "redo" && pendingShortcut === "redo") {
+        redoCount += 1;
+        if (input.value === checkpoint.text.repeat(checkpoint.pasteCount - checkpoint.undoBeforeRedo + redoCount)) {
+          pendingShortcut = "";
+          if (redoCount === checkpoint.redoCount) setPhase("undo-final", "ETAPA 4/4 · Desfaça duas vezes com Ctrl+Z até restar uma palavra.");
+          else status.textContent = "Refeito " + redoCount + "/" + checkpoint.redoCount + ". Continue com Ctrl+Shift+Z.";
+        } else {
+          redoCount = Math.max(0, redoCount - 1);
+          pendingShortcut = "";
+        }
+        return;
+      }
+      if (phase === "undo-final" && pendingShortcut === "undo") {
+        finalUndoCount += 1;
+        if (input.value === checkpoint.text.repeat(checkpoint.finalCount)) {
+          pendingShortcut = "";
+          if (finalUndoCount === checkpoint.undoAfterRedo) {
+            phase = "done";
+            input.readOnly = true;
+            status.textContent = "Você desfez, refez e voltou a deixar uma única palavra.";
+            setFeedback(feedback, "Ctrl+Z e Ctrl+Shift+Z concluídos.", "good");
+            complete();
+          } else status.textContent = "Restou uma palavra. Confira a sequência final.";
+        } else {
+          finalUndoCount = Math.max(0, finalUndoCount - 1);
+          pendingShortcut = "";
+        }
+      }
+    });
+  }
+
+  function renderCutPasteParticles(checkpoint, area, feedback, checkButton, complete) {
+    let stage = 0;
+    let cutObserved = false;
+    let pasteObserved = false;
+    let cutShortcut = false;
+    let pasteShortcut = false;
+    area.innerHTML = '<div class="clipboard-grid"><div><label class="input-label" for="cut-paste-source">Origem</label>' +
+      '<textarea id="cut-paste-source" class="exercise-area" rows="2"></textarea></div>' +
+      '<div><label class="input-label" for="cut-paste-target">Destino</label>' +
+      '<textarea id="cut-paste-target" class="exercise-area" rows="2"></textarea></div></div>' +
+      '<div class="exercise-actions"><button class="button secondary small" id="cut-paste-focus-source" type="button">Focar origem</button>' +
+      '<button class="button secondary small" id="cut-paste-focus-target" type="button">Focar destino</button></div>' +
+      renderShortcutKeyboard([["CTRL", "X"], ["CTRL", "V"]]) +
+      '<p id="cut-paste-status" class="selection-status" aria-live="polite"></p>';
+    const source = area.querySelector("#cut-paste-source");
+    const target = area.querySelector("#cut-paste-target");
+    const status = area.querySelector("#cut-paste-status");
+    source.value = checkpoint.source;
+    target.value = checkpoint.targetPrefix;
+    checkButton.hidden = true;
+    function currentPiece() { return checkpoint.pieces[stage]; }
+    function selectedPiece() { return source.value.slice(source.selectionStart, source.selectionEnd); }
+    function prepareSelection() {
+      cutShortcut = false;
+      cutObserved = false;
+      source.focus();
+      source.setSelectionRange(0, 0);
+      status.textContent = "ETAPA " + (stage + 1) + "/2 · Selecione " + currentPiece() + " na origem e pressione Ctrl+X.";
+    }
+    function preparePaste() {
+      pasteShortcut = false;
+      pasteObserved = false;
+      target.focus();
+      target.setSelectionRange(target.value.length, target.value.length);
+      status.textContent = "ETAPA " + (stage + 1) + "/2 · A parte foi recortada. Foque o destino e pressione Ctrl+V.";
+    }
+    source.addEventListener("keydown", (event) => {
+      if (!event.isTrusted || !event.ctrlKey || event.shiftKey || event.key.toLowerCase() !== "x") return;
+      if (selectedPiece() !== currentPiece()) {
+        event.preventDefault();
+        setFeedback(feedback, "Selecione exatamente " + currentPiece() + " antes de usar Ctrl+X.", "gentle");
+        return;
+      }
+      cutShortcut = true;
+    });
+    source.addEventListener("cut", (event) => { if (event.isTrusted && cutShortcut) cutObserved = true; });
+    source.addEventListener("input", () => {
+      if (!cutObserved || stage > 1) return;
+      const expectedSource = stage === 0 ? " SAPO" : " ";
+      if (source.value !== expectedSource) return;
+      cutObserved = false;
+      preparePaste();
+    });
+    target.addEventListener("keydown", (event) => {
+      if (event.isTrusted && event.ctrlKey && !event.shiftKey && event.key.toLowerCase() === "v") pasteShortcut = true;
+    });
+    target.addEventListener("paste", (event) => { if (event.isTrusted && pasteShortcut) pasteObserved = true; });
+    target.addEventListener("input", () => {
+      if (!pasteObserved) return;
+      const expected = checkpoint.targetPrefix + checkpoint.pieces.slice(0, stage + 1).join(" ");
+      if (target.value !== expected) return;
+      pasteObserved = false;
+      if (stage === 0) {
+        stage = 1;
+        setFeedback(feedback, "Primeira parte recortada e colada. Agora faça o mesmo com SAPO.", "good");
+        prepareSelection();
+      } else {
+        source.readOnly = true;
+        target.readOnly = true;
+        status.textContent = "BARRIL e SAPO saíram da origem e foram colados no destino.";
+        setFeedback(feedback, "Duas partículas recortadas e coladas.", "good");
+        complete();
+      }
+    });
+    area.querySelector("#cut-paste-focus-source").addEventListener("click", () => source.focus());
+    area.querySelector("#cut-paste-focus-target").addEventListener("click", () => {
+      target.focus();
+      target.setSelectionRange(target.value.length, target.value.length);
+    });
+    prepareSelection();
+  }
+
+  function renderDeleteUndoRedo(checkpoint, area, feedback, checkButton, complete) {
+    let phase = "select-first";
+    let shortcutObserved = false;
+    let advancing = false;
+    area.innerHTML = '<label class="input-label" for="delete-undo-input">Texto para editar</label>' +
+      '<textarea id="delete-undo-input" class="exercise-area" rows="2"></textarea>' +
+      renderShortcutKeyboard([["BACKSPACE"], ["CTRL", "Z"], ["CTRL", "SHIFT", "Z"]]) +
+      '<p id="delete-undo-status" class="selection-status" aria-live="polite"></p>';
+    const input = area.querySelector("#delete-undo-input");
+    const status = area.querySelector("#delete-undo-status");
+    input.value = checkpoint.initial;
+    checkButton.hidden = true;
+    function rangeFor(text, fromEnd) {
+      const index = fromEnd ? input.value.lastIndexOf(text) : input.value.indexOf(text);
+      return index < 0 ? null : { start: index, end: index + text.length };
+    }
+    function selectedText() { return input.value.slice(input.selectionStart, input.selectionEnd); }
+    function setPhase(next, message) {
+      phase = next;
+      shortcutObserved = false;
+      status.textContent = message;
+    }
+    input.addEventListener("select", () => {
+      if (phase === "select-first" && selectedText() === checkpoint.firstDelete) {
+        status.textContent = "DIDDY está selecionado. Pressione Backspace para apagá-lo.";
+      }
+      if (phase === "select-final" && selectedText() === checkpoint.finalDelete) {
+        status.textContent = "KONG está selecionado. Pressione Backspace para apagá-lo também.";
+      }
+    });
+    input.addEventListener("keydown", (event) => {
+      if (!event.isTrusted || event.repeat) return;
+      if (phase === "select-first" || phase === "select-final") {
+        const word = phase === "select-first" ? checkpoint.firstDelete : checkpoint.finalDelete;
+        if (event.key === "Backspace") {
+          if (selectedText() !== word) {
+            event.preventDefault();
+            status.textContent = "Selecione " + word + " antes de pressionar Backspace.";
+          } else shortcutObserved = true;
+        }
+      } else if (phase === "undo" && event.ctrlKey && !event.shiftKey && event.key.toLowerCase() === "z") {
+        shortcutObserved = true;
+      } else if (phase === "redo" && event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "z") {
+        shortcutObserved = true;
+      }
+    });
+    input.addEventListener("input", () => {
+      if (advancing || !shortcutObserved) return;
+      if (phase === "select-first" && input.value === checkpoint.expectedAfterDelete) {
+        advancing = true;
+        setPhase("undo", "ETAPA 2/4 · Pressione Ctrl+Z para recuperar DIDDY.");
+        setFeedback(feedback, "Backspace apagou a palavra selecionada.", "good");
+        advancing = false;
+      } else if (phase === "undo" && input.value === checkpoint.expectedRestored) {
+        setPhase("redo", "ETAPA 3/4 · Pressione Ctrl+Shift+Z para refazer a exclusão. Lembre-se de manter Shift pressionado junto com Ctrl.");
+        setFeedback(feedback, "A palavra foi recuperada.", "good");
+      } else if (phase === "redo" && input.value === checkpoint.expectedAfterDelete) {
+        const range = rangeFor(checkpoint.finalDelete, true);
+        setPhase("select-final", "ETAPA 4/4 · Selecione o KONG final e pressione Backspace.");
+        if (range) input.setSelectionRange(range.start, range.end);
+        setFeedback(feedback, "A exclusão foi refeita.", "good");
+      } else if (phase === "select-final" && input.value === checkpoint.expectedFinal) {
+        input.readOnly = true;
+        status.textContent = "Você apagou, desfez, refez e apagou novamente com Backspace.";
+        setFeedback(feedback, "Sequência de edição concluída.", "good");
+        complete();
+      }
+    });
+    input.focus();
+    const firstRange = rangeFor(checkpoint.firstDelete, false);
+    if (firstRange) input.setSelectionRange(firstRange.start, firstRange.start);
+    status.textContent = "ETAPA 1/4 · Selecione DIDDY com o mouse e pressione Backspace.";
   }
 
   function renderNativeEdit(checkpoint, area, feedback, checkButton, complete) {
