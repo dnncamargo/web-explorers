@@ -302,6 +302,10 @@ if (!browserPath) {
     assert.equal(await evaluate('!!document.querySelector("#start-screen")'), true, "the Kong barrel entrance overlay is visible on the island map");
     assert.equal(await evaluate('!!document.querySelector("#start-button")'), true, "the barrel entrance control is available");
     assert.equal(await evaluate('document.querySelectorAll("#world-map .world-card-art").length'), 3, "the map world cards include game character art");
+    assert.equal(await evaluate('document.querySelector("#world-map .boss-card h2")?.textContent'), "Desafio do Poema", "the final map tile is named Desafio do Poema");
+    assert.equal(await evaluate('document.querySelector("#world-map .boss-card")?.getAttribute("href")'), "final-challenge.html", "the final map tile opens the renamed challenge page");
+    assert.equal(await evaluate('document.querySelector("#world-map .boss-card .boss-card-art img")?.getAttribute("src")'), "https://static.wikia.nocookie.net/donkeykong/images/f/f5/Funky-Kong.gif/revision/latest?cb=20120711220651", "the final map tile includes the requested Funky Kong GIF");
+
     assert.equal(await evaluate('!!document.querySelector("#island-gif-panel img[data-game-art]")'), true, "the requested animated GIF is included in the Island of the Kongs page");
     for (const [route, titlePattern, selector] of [
       ["jungle.html", /Selva dos Kongs/, "#typing-input"],

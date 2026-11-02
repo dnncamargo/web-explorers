@@ -115,6 +115,11 @@ const world3ActivityCss = read("assets/css/donkey-kong.css");
 const islandMapHtml = read("index.html");
 assert.ok(data.worlds.camp.characters.some(({ alt, src, credit }) => alt === "Krusha" && src === "https://snesmaps.com/maps/DonkeyKongCountry/sprites/Krusha.png" && credit === "SNESMaps"), "Camp uses and credits the verified SNESMaps Krusha sprite");
 assert.ok(islandMapHtml.includes('src="https://giffiles.alphacoders.com/157/15792.gif"'), "the requested GIF appears on the Island of the Kongs map");
+assert.ok(world3ActivitySource.includes('<h2>Desafio do Poema</h2>'), "the final map tile is named Desafio do Poema");
+assert.ok(world3ActivitySource.includes('href="final-challenge.html"'), "the final map tile opens the renamed challenge page");
+assert.ok(world3ActivitySource.includes('class="world-card-art boss-card-art"'), "the final map tile renders dedicated Funky Kong artwork");
+assert.ok(world3ActivitySource.includes('https://static.wikia.nocookie.net/donkeykong/images/f/f5/Funky-Kong.gif/revision/latest?cb=20120711220651'), "the final map tile uses the requested Funky Kong GIF");
+
 assert.ok(world3ActivitySource.includes('function renderShortcutKeyboard'), "World 3 draws native shortcut keys");
 const lineBreakRenderer = world3ActivitySource.slice(world3ActivitySource.indexOf("function renderLineBreaks"), world3ActivitySource.indexOf("function renderSelectCopy"));
 assert.ok(lineBreakRenderer.includes('renderShortcutKeyboard([["ENTER"]])'), "checkpoint one draws only the Enter key");

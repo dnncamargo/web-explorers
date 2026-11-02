@@ -187,7 +187,7 @@ A seleção de texto foi retirada da Mina e ficou no exercício de navegação/s
 
 A seleção por mouse é intencional no CP2: o aluno aprende que um trecho precisa estar selecionado antes de usar a função de copiar. Os exercícios seguintes mantêm o foco em operações nativas, não em cliques em botões de simulação. O CP1 mostra as teclas Enter, Backspace e Delete de forma explícita, para que os alunos saibam qual tecla podem usar ao organizar e corrigir as linhas.
 
-## 10. Chefe Final — King K. Rool
+## 10. Desafio do Poema — King K. Rool
 
 **Rádio:** `4J3V8VLtVe0`. Reconstruir uma versão explicitamente modernizada de *Canção do Exílio* por Gonçalves Dias. Fonte: fac-símile/transcrição BND da edição *Primeiros Cantos* (1846), conferida com Wikisource, que indica pp. 9–10. Não chamar a modernização de transcrição diplomática.
 

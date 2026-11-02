@@ -73,9 +73,12 @@
     }).join("");
     const bossCount = progress.boss.passed ? "Missão concluída" : "8 correções · poema integral";
     host.innerHTML = cards +
-      '<a class="world-card boss-card" href="final-challenge.html"><span class="world-number">CHEFE FINAL · REVISÃO INTEGRADA</span>' +
-      '<h2>King K. Rool</h2><p>Recupere a Canção do Exílio com seleção, edição, acentuação, pontuação e atalhos.</p>' +
-      '<span class="world-progress">' + bossCount + '</span><span class="world-action"><span>' + (progress.boss.passed ? "Rever missão" : "Entrar no desafio") + '</span><span aria-hidden="true">→</span></span></a>';
+      '<a class="world-card boss-card" href="final-challenge.html"><span class="world-number">DESAFIO FINAL · POEMA</span>' +
+      '<div class="world-card-art boss-card-art" aria-label="Funky Kong no Desafio do Poema">' +
+      '<img data-game-art src="https://static.wikia.nocookie.net/donkeykong/images/f/f5/Funky-Kong.gif/revision/latest?cb=20120711220651" alt="Funky Kong" title="Funky Kong · Donkey Kong Wiki" loading="lazy" referrerpolicy="no-referrer">' +
+      '<span class="world-art-credit">Arte: Donkey Kong Wiki</span></div>' +
+      '<h2>Desafio do Poema</h2><p>Recupere a Canção do Exílio com seleção, edição, acentuação, pontuação e atalhos.</p>' +
+      '<span class="world-progress">' + bossCount + '</span><span class="world-action"><span>' + (progress.boss.passed ? "Rever desafio" : "Entrar no desafio") + '</span><span aria-hidden="true">→</span></span></a>';
     bindGameArt(host);
     bindGameArt(document.getElementById("island-gif-panel"));
     const summary = document.getElementById("map-summary");

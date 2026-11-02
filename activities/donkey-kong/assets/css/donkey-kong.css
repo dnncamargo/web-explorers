@@ -373,6 +373,8 @@ body[data-world="camp"] .world-reset-status { color:#c8f5ff; }
   image-rendering:auto;
   filter:drop-shadow(3px 4px 0 rgba(0,0,0,.38));
 }
+.boss-card-art { justify-content:center; }
+.boss-card-art img { max-width:100%; }
 .world-card-jungle { background:linear-gradient(145deg,#e4f0ca,#a6ca8e); }
 .world-card-mine { background:linear-gradient(145deg,#f0d1a0,#9f6a49); }
 .world-card-camp { background:linear-gradient(145deg,#b9edee,#3685a4); }
