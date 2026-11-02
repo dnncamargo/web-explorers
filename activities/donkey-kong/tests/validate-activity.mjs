@@ -88,7 +88,7 @@ assert.equal(data.worlds.camp.checkpoints[6].finalDelete, "KONG", "checkpoint se
 
 const activitySource = read("assets/js/activity.js");
 const activityCss = read("assets/css/donkey-kong.css");
-const mapHtml = read("../donkey-kong/index.html");
+const mapHtml = read("index.html");
 assert.ok(mapHtml.includes('src="https://giffiles.alphacoders.com/157/15792.gif"'), "the requested GIF appears on the Island of the Kongs map");
 assert.ok(activitySource.includes('function renderShortcutKeyboard'), "World 3 draws native shortcut keys");
 assert.ok(activitySource.includes('renderShortcutKeyboard([["ENTER"], ["BACKSPACE"], ["DELETE"]])'), "checkpoint one visibly draws Enter, Backspace and Delete");
@@ -199,7 +199,7 @@ assert.ok(activitySource.includes('class="shift-arrow">↑'), "Shift is shown wi
 assert.ok(activitySource.includes('const showShift=!!action.shift'), "Shift highlighting follows the next character");
 assert.ok(activitySource.includes('renderShift("left")') && activitySource.includes('renderShift("right")') && activitySource.includes('data-key="shift-'), "left and right Shift keys have independent physical positions");
 assert.ok(activitySource.includes('"1":["1","!"]') && activitySource.includes('"2":["2","@"]') && activitySource.includes('"6":["6","¨"]') && activitySource.includes('"7":["7","&"]') && activitySource.includes('"=":["=","+"]'), "the complete ABNT2 keyboard shows the number-row symbols");
-assert.ok(activitySource.includes('ALTGR + W produz ?'), "the visible ABNT2 keyboard explains AltGr+W");
+assert.ok(!data.worlds.camp.checkpoints.some((checkpoint) => checkpoint.kind === "typing-sequence"), "Camp now focuses on text operations rather than the old AltGr typing exercise");
 assert.ok(activitySource.includes("playFromGesture()"), "barrel interaction calls the radio gesture method");
 assert.ok(activitySource.includes('continueButton.focus({ preventScroll: true })'), "typing completion moves focus to the continue button");
 assert.ok(activitySource.includes('id="sequence-tip"') && activitySource.includes('function updateSequenceTip'), "typing sequences render a live tip span that updates with progress");
