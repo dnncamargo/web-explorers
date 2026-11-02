@@ -91,11 +91,11 @@ Não embutir/baixar os sete até confirmar permissão. Registrar crédito/licen�
 
 ChromiumOS lista Brazil (ABNT2), `xkb:br::por`, e diferencia ABNT1; o Google avisa que a tabela genérica de atalhos de Chromebook é US QWERTY e que teclas podem ser reconfiguradas. Usar o mapa do Yoshi: esquerda A/Q/Z mínimo, S/W/X anelar, D/E/C médio, F/R/T/G/V/B indicador; direita J/Y/U/H/N/M indicador, K/I médio, L/O anelar, Ç/P mínimo; espaço com polegares. Fileiras `QWERTYUIOP`, `ASDFGHJKLÇ`, `ZXCVBNM`. Ilustração com duas mãos, dez dedos, marcas F/J e espaço. Cor/dedo é orientação visual; só professor acompanha dedo real.
 
-**AltGr:** `/` não é mais praticado na Mina. O ponto de interrogação `?` fica no checkpoint 3 do Acampamento e usa AltGr+W, conforme a decisão pedagógica do professor. O exercício verifica a camada AltGr e a tecla física W.
+**AltGr:** a proposta anterior de ensinar AltGr+W no Acampamento foi retirada. O Mundo 3 agora se concentra em operações textuais com seleção e atalhos Ctrl.
 
 **Acentos:** o professor confirmou que a acentuação funciona no Chromebook usado. Na Mina, o agudo e o til são preparados sem Shift; o circunflexo usa Shift. Nas etapas de maiúsculas, a tecla morta é preparada primeiro e Shift é usado na vogal. O resultado é validado após composição no `input` e NFC.
 
-**Backspace/Delete:** Backspace apaga antes do cursor. No Chromebook testado pelo professor, Lupa (Launcher) + Backspace apaga o caractere à direita. A atividade ensina essa combinação no Mundo 3 e exige o efeito no texto; confirmar em outros modelos/perfis antes de usar em toda a frota. Não interceptar ou simular em JS uma tecla que o aluno deve aprender como Delete.
+**Backspace/Delete:** Backspace apaga antes do cursor; Delete apaga à direita. No CP1 do Acampamento, as duas teclas são desenhadas e o aluno pode usar qualquer uma para remover o espaço selecionado antes de criar a quebra. No Chromebook testado pelo professor, Lupa (Launcher) + Backspace também apaga à direita; pode ser usado como Delete quando não houver tecla física dedicada, mas deve ser confirmado em cada modelo/perfil.
 
 ### Edição, seleção e atalhos
 
@@ -286,7 +286,7 @@ A reordenação 2 deixará linha das aves sem vírgula, de forma que o alvo 8 fa
 |---|---|---|
 | Selva | 1 F/J; 2 mão esq.; 3 direita/Ç; 4 coordenação; 5 fileira superior; 6 inferior; 7 palavras; 8 frase curta; 9 completa | Técnica acompanhada em todos, espaço e teclado completo antes de frases. |
 | Mina | 1 maiúsculas/minúsculas; 2 Shift, números e símbolos; 3–6 acentos em minúsculas/maiúsculas; 7 mistura | Seleção foi transferida para o Acampamento; AltGr não é ensinado na Mina. |
-| Acampamento | 1 Enter; 2 Delete; 3 AltGr+W; 4 Ctrl/seleção; 5 copiar/recortar/colar; 6 undo/redo; 7 integração | Revisa Shift, acentos, símbolos, pontuação, teclado e quebras. |
+| Acampamento | 1 Enter/Backspace/Delete e três linhas; 2 seleção por duplo clique/arraste e Ctrl+C; 3 Ctrl+V e nova cópia; 4 quatro colagens, três Ctrl+Z e desfazer uma colagem adicional; 5 Ctrl+Z/Ctrl+Shift+Z; 6 Ctrl+X/Ctrl+V em duas partículas; 7 Backspace/Ctrl+Z/Ctrl+Shift+Z/Backspace. | Operações textuais nativas no navegador. |
 | Chefe | Corrigir 8 alvos em poema integral | Caixa, ordenação, acentos, pontuação, seleção, apagar/substituir, linhas, desfazer/refazer/consulta. |
 
 ## 12. Validação pedagógica e critério de avanço
@@ -301,7 +301,7 @@ A implementação inclui testes de dados/progresso e amplia os testes de reposit
 |---|---|---|
 | Mundo 1 | Alvos e ordem; só teclas ensinadas; NFC/case; tecla incorreta não avança; evento sintético não conclui; frases; dica/reset; foco; armazenamento por checkpoint. | Identificar F/J tácteis, posicionar dez dedos, polegares, retornar à base; professor observa. |
 | Mundo 2 | Sequências automáticas de caixa, Shift, Shift+1/7/=, ponto/vírgula sem Shift, teclas mortas `´ ~ ^`, NFC e prefixo correto; próxima etapa aparece sem botão. | Shift esq./dir., fileira numérica ABNT2, teclas de agudo/til/circunflexo e maiúsculas acentuadas no Chromebook real. |
-| Mundo 3 | Enter/LF; Delete pela frente; AltGr+W→?; Ctrl+setas/Shift/Ctrl+A com seleção real; eventos copy/cut/paste; undo/redo; recado integrado. | Search vs Launcher + Backspace, AltGr+W, Ctrl+Shift+Z e configurações/perfil ChromeOS reais. |
+| Mundo 3 | Quebra real de linha; seleção real por mouse; eventos copy/cut/paste; contagem de colagens e estados do histórico; Backspace. | Duplo clique, arraste nos dois sentidos, Ctrl+C/V/X/Z, Ctrl+Shift+Z e Backspace/Delete no perfil ChromeOS real. |
 | Chefe | Seleções reais e offsets contextuais; cada alvo; resposta errada não avança; reordenação; painel expandir/fechar sem perda; rascunho/sincronização; LF; conclusão só com texto exato. | Clareza da seleção, consulta/rolagem e digitação do poema no notebook. |
 | Geral | Navegação nas cinco páginas, retomar, storage local/session/memória/dados inválidos, layout responsivo, arquivos locais, console, ausência de regressões/arquivos legados modificados. | Chromebook/tela/zoom/rede, touchpad só para navegação, contraste, instruções e teste de sala. |
 | Rádio | Mock da IFrame API para ID/segmento/volume/estados/erro/autoplay-blocked/botão/fallback e continuidade da atividade sem áudio. | Tocar os cinco players no domínio publicado; segmento, disponibilidade, bloqueio, filtros e login da rede escolar. |
@@ -314,14 +314,14 @@ A implementação inclui testes de dados/progresso e amplia os testes de reposit
 | Direitos das gravações são distintos da composição. | Apenas embed YouTube, sem download; conferir disponibilidade e regras da escola, audição e segmentos. |
 | Autoplay/bloqueio do YouTube. | Tentativa ao abrir, status, controles visíveis e fallback; atividade sem áudio continua. |
 | Layout ABNT2 e teclas administradas variam. | Antes da liberação verificar modelos, layout ativo, `key`/texto, Shift, AltGr, acentos. |
-| Search+Backspace/Delete e redo variam. | Validar nos Chromebooks; não ensinar/simular combinação desconhecida. |
+| Delete e redo podem variar por perfil/modelo. | Confirmar o acionamento de Delete e o Ctrl+Shift+Z nos Chromebooks escolares antes da aula. |
 | Clipboard e dead keys podem variar por browser. | Provar fluxo no ChromeOS; observar `input`/ranges; jamais substituir teclado por texto inserido. |
 | Progresso local pode estar indisponível/apagado. | Fallback session/memória com aviso, salvamento do draft e reinício explícito. |
 | Variantes de edição do poema divergem. | Declarar modernização e manter texto canônico único no editor, referência, dados e teste. |
 | Offsets do poema mudam com edição Unicode. | Recalcular no valor corrente com linha/contexto, atualizar estado do draft junto ao próximo alvo. |
 | Software não mede dedo nem postura. | Professor acompanha técnica; mostrar no app só resultado de digitação. |
 
-Pendências antes da liberação para a turma: (1) confirmar a combinação Lupa/Launcher + Backspace em cada modelo/perfil de Chromebook; (2) validar AltGr+W no perfil escolar; (3) observar as letras Á É Ê Õ Ú, Ctrl+Shift+Z e a área de transferência no campo real da atividade; (4) ouvir os cinco vídeos e testar a reprodução na rede escolar; (5) revisar os direitos/termos de uso dos cenários e sprites remotos; (6) realizar teste visual e pedagógico com professor e alunos. O poema, os cenários e a progressão automática dos mundos já estão implementados.
+Pendências antes da liberação para a turma: (1) testar duplo clique e arraste de seleção nos Chromebooks; (2) observar Ctrl+C/V/X/Z e Ctrl+Shift+Z e o histórico de colagem no campo real; (3) confirmar como acionar Delete nos modelos sem tecla dedicada; (4) ouvir os cinco vídeos e testar reprodução na rede escolar; (5) revisar os direitos dos cenários, sprites e GIF remoto; (6) executar o Chromium e a validação pedagógica em sala.
 
 ## 15. Fontes de evidência
 
@@ -428,17 +428,9 @@ Esta revisão substitui as propostas anteriores de conteúdo dos mundos 2 e 3 de
 
 Os sete checkpoints da Mina somam 34 sequências curtas. Cada sequência usa palavras, expressões ou frases com significado; o campo valida o prefixo e o resultado completo e, ao terminar, a próxima aparece e recebe foco automaticamente. Não existe botão “Conferir etapa” nos mundos 2 e 3.
 
-### Mundo 3 — O Acampamento dos Kongs (7 checkpoints)
+### Mundo 3 — O Acampamento dos Kongs
 
-1. Enter para criar uma nova linha.
-2. Delete para apagar à direita (Lupa/Launcher + Backspace no Chromebook testado).
-3. AltGr+W para produzir `?`.
-4. Ctrl+seta, Ctrl+Shift+seta e Ctrl+A para navegação e seleção real de texto.
-5. Ctrl+C, Ctrl+X e Ctrl+V com a área de transferência nativa.
-6. Ctrl+Z e Ctrl+Shift+Z para desfazer/refazer.
-7. Exercício integrado de acentuação, Shift, edição e pontuação no recado de Cranky.
-
-Os exercícios de Enter, Delete, AltGr, Ctrl, clipboard e undo/redo avançam automaticamente quando o evento e o resultado correspondem à operação esperada. A seleção foi movida de Mundo 2 para a sequência de Ctrl em Mundo 3.
+A proposta inicial desta seção foi substituída pela progressão de sete exercícios textuais registrada na seção 22.
 
 ### Teclado ABNT2 específico da Mina
 
@@ -450,7 +442,7 @@ Os exercícios de Enter, Delete, AltGr, Ctrl, clipboard e undo/redo avançam aut
 - A fileira de números apresenta a camada Shift do ABNT2: `! @ # $ % ¨ & * ( ) _ +`. As demais fileiras mostram acento agudo/crase, colchetes/chaves, til/circunflexo, barra vertical, vírgula/menor, ponto/maior, ponto e vírgula/dois-pontos e barra/interrogação.
 - As duas setas de Shift brilham simultaneamente à tecla que precisa do modificador. Para acentos, o realce começa na tecla morta e passa para a vogal depois do primeiro toque.
 - Agudo `´` e til `~` são preparados sem Shift; circunflexo `^` é preparado com Shift. A vogal é pressionada depois da tecla morta.
-- AltGr+W → `?` permanece exclusivo do Mundo 3.
+- AltGr+W → `?` não integra mais a sequência pedagógica atual do Acampamento; a seção 22 registra a retirada desse antigo checkpoint.
 
 ### Validação desta revisão
 
@@ -489,3 +481,17 @@ Os PNGs antigos hospedados em Donkey Kong Wiki foram substituídos porque aparec
 - CP7 exige seleção de DIDDY + Backspace, Ctrl+Z, Ctrl+Shift+Z, seleção da última ocorrência de KONG e Backspace.
 - Os renderizadores verificam eventos confiáveis do navegador (copy, cut, paste, keydown e input) e os valores dos campos; não usam botões para simular atalhos.
 - Validação local desta revisão: sintaxe de JS/MJS conferida; `validate-radio.mjs` e `validate-activity.mjs` passaram em harness JavaScript isolado. O teste Chromium foi atualizado para CP1/CP2 e GIF, mas ainda não foi executado em navegador real neste ambiente.
+
+## 22. Revisão do Mundo 3 e GIF da Ilha dos Kongs — 01/11/2026
+
+- A página `activities/donkey-kong/index.html` inclui o GIF fornecido pelo professor: https://giffiles.alphacoders.com/157/15792.gif. A imagem é carregada externamente junto à introdução da Ilha dos Kongs e usa o fallback de imagens externas; o arquivo não é copiado para o repositório.
+- O currículo do Acampamento foi substituído por sete operações nativas de texto, detalhadas na seção 9. A sequência antiga de AltGr+W, Ctrl+setas/Ctrl+A, clipboard combinado, exercício simples de undo/redo e recado do Cranky já não define o Mundo 3.
+- CP1 desenha as teclas ENTER, BACKSPACE e DELETE. O espaço entre “saltou” e “sobre” começa selecionado; o aluno o remove com Backspace ou Delete, pressiona Enter e insere a segunda quebra para formar três linhas. A conclusão confere o texto final e as duas pressões físicas de Enter.
+- CP2 usa duas ocorrências de KONG. O aluno seleciona a primeira por duplo clique e a segunda por arraste, em qualquer direção. Ctrl+C só é reconhecido com KONG selecionado e o evento copy nativo.
+- CP3 parte da cópia de KONG, exige duas colagens nativas com Ctrl+V para formar DONKEY KONG e DIDDY KONG, e termina copiando BANANA com Ctrl+C.
+- CP4 exige quatro colagens de BANANA, três Ctrl+Z deixando uma cópia, cópia de SAPO, colagem em outro campo e Ctrl+Z para desfazer essa colagem.
+- CP5 exige quatro colagens de SAPO, três Ctrl+Z, duas Ctrl+Shift+Z e duas Ctrl+Z finais, verificando a sequência de estados até sobrar uma palavra. A instrução lembra que Shift é a tecla com seta para cima.
+- CP6 exige Ctrl+X sobre BARRIL e SAPO no campo de origem e Ctrl+V no campo de destino, em duas operações distintas.
+- CP7 exige seleção de DIDDY + Backspace, Ctrl+Z, Ctrl+Shift+Z, seleção da última ocorrência de KONG e Backspace.
+- Os renderizadores verificam eventos confiáveis do navegador (copy, cut, paste, keydown e input) e os valores dos campos; nenhum botão simula as combinações.
+- Validação local desta revisão: sintaxe JS/MJS conferida; `validate-activity.mjs` e `validate-radio.mjs` passaram em harness JavaScript isolado. O teste Chromium foi atualizado para CP1/CP2 e o GIF, mas ainda não foi executado em navegador real neste ambiente.
