@@ -86,19 +86,19 @@ assert.deepEqual(data.worlds.camp.checkpoints[5].pieces, ["BARRIL", "SAPO"], "ch
 assert.equal(data.worlds.camp.checkpoints[6].firstDelete, "DIDDY", "checkpoint seven starts by deleting a selected word");
 assert.equal(data.worlds.camp.checkpoints[6].finalDelete, "KONG", "checkpoint seven ends by deleting the final selected word");
 
-const activitySource = read("assets/js/activity.js");
-const activityCss = read("assets/css/donkey-kong.css");
+const world3ActivitySource = read("assets/js/activity.js");
+const world3ActivityCss = read("assets/css/donkey-kong.css");
 const islandMapHtml = read("index.html");
 assert.ok(islandMapHtml.includes('src="https://giffiles.alphacoders.com/157/15792.gif"'), "the requested GIF appears on the Island of the Kongs map");
-assert.ok(activitySource.includes('function renderShortcutKeyboard'), "World 3 draws native shortcut keys");
-assert.ok(activitySource.includes('renderShortcutKeyboard([["ENTER"], ["BACKSPACE"], ["DELETE"]])'), "checkpoint one visibly draws Enter, Backspace and Delete");
-assert.ok(activitySource.includes("event.key === \"Enter\"") && activitySource.includes("enterCount >= 2"), "checkpoint one checks two physical Enter presses before accepting three lines");
-assert.ok(activitySource.includes('event.key.toLowerCase() !== "c"'), "the selection checkpoint observes Ctrl+C");
-assert.ok(activitySource.includes('event.key.toLowerCase() === "v"'), "paste exercises observe Ctrl+V");
-assert.ok(activitySource.includes('event.key.toLowerCase() === "x"'), "cut exercise observes Ctrl+X");
-assert.ok(activitySource.includes('event.key.toLowerCase() === "z" && event.shiftKey'), "redo exercises observe Ctrl+Shift+Z");
-assert.ok(activitySource.includes('event.key === "Backspace"'), "the final checkpoint observes Backspace");
-assert.ok(activityCss.includes(".shortcut-keyboard") && activityCss.includes(".shortcut-key"), "shortcut keys have a drawn keyboard style");
+assert.ok(world3ActivitySource.includes('function renderShortcutKeyboard'), "World 3 draws native shortcut keys");
+assert.ok(world3ActivitySource.includes('renderShortcutKeyboard([["ENTER"], ["BACKSPACE"], ["DELETE"]])'), "checkpoint one visibly draws Enter, Backspace and Delete");
+assert.ok(world3ActivitySource.includes("event.key === \"Enter\"") && world3ActivitySource.includes("enterCount >= 2"), "checkpoint one checks two physical Enter presses before accepting three lines");
+assert.ok(world3ActivitySource.includes('event.key.toLowerCase() !== "c"'), "the selection checkpoint observes Ctrl+C");
+assert.ok(world3ActivitySource.includes('event.key.toLowerCase() === "v"'), "paste exercises observe Ctrl+V");
+assert.ok(world3ActivitySource.includes('event.key.toLowerCase() === "x"'), "cut exercise observes Ctrl+X");
+assert.ok(world3ActivitySource.includes('event.key.toLowerCase() === "z" && event.shiftKey'), "redo exercises observe Ctrl+Shift+Z");
+assert.ok(world3ActivitySource.includes('event.key === "Backspace"'), "the final checkpoint observes Backspace");
+assert.ok(world3ActivityCss.includes(".shortcut-keyboard") && world3ActivityCss.includes(".shortcut-key"), "shortcut keys have a drawn keyboard style");
 
 const letters = "abcdefghijklmnopqrstuvwxyzç";
 for (const letter of letters) assert.ok(data.fingers[letter], "finger guidance exists for " + letter);
