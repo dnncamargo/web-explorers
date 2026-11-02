@@ -834,34 +834,47 @@
     const input = area.querySelector("#line-break-input");
     const status = area.querySelector("#line-break-status");
     let enterCount = 0;
+    let separatorRemoved = false;
     let completed = false;
     checkButton.hidden = true;
     input.value = checkpoint.initial;
     const firstBreak = checkpoint.initial.indexOf(" sobre");
     input.focus();
-    input.setSelectionRange(firstBreak, firstBreak);
-    status.textContent = "ENTER cria uma linha nova. Backspace apaga à esquerda; Delete apaga à direita. O resultado precisa ter três linhas.";
+    input.setSelectionRange(firstBreak, firstBreak + 1);
+    status.textContent = "O espaço entre “saltou” e “sobre” está selecionado. Pressione Backspace ou Delete para removê-lo; depois use Enter para criar a primeira linha nova.";
 
     input.addEventListener("keydown", (event) => {
       if (!event.isTrusted || event.isComposing || event.repeat) return;
       if (event.key === "Enter") enterCount += 1;
-      if (event.key === "Backspace") status.textContent = "Backspace: apaga o caractere ou a quebra de linha à esquerda do cursor.";
-      if (event.key === "Delete") status.textContent = "Delete: apaga o caractere ou a quebra de linha à direita do cursor.";
+      if (event.key === "Backspace" || event.key === "Delete") {
+        if (input.selectionStart === firstBreak && input.selectionEnd === firstBreak + 1) {
+          separatorRemoved = true;
+          status.textContent = event.key === "Backspace"
+            ? "Backspace removeu o espaço selecionado. Agora pressione Enter para criar a quebra."
+            : "Delete removeu o espaço selecionado. Agora pressione Enter para criar a quebra.";
+        } else {
+          status.textContent = event.key === "Backspace"
+            ? "Backspace apaga à esquerda do cursor ou remove o trecho selecionado."
+            : "Delete apaga à direita do cursor ou remove o trecho selecionado.";
+        }
+      }
     });
     input.addEventListener("input", () => {
       if (completed) return;
       const lineCount = input.value.split("\n").length;
-      if (input.value === checkpoint.expected && enterCount >= 2 && lineCount === 3) {
+      if (input.value === checkpoint.expected && separatorRemoved && enterCount >= 2 && lineCount === 3) {
         completed = true;
         input.readOnly = true;
-        status.textContent = "A frase ficou organizada em três linhas. Enter foi usado duas vezes.";
-        setFeedback(feedback, "Três linhas criadas. Muito bem!", "good");
+        status.textContent = "O espaço foi corrigido e a frase ficou organizada em três linhas. Enter foi usado duas vezes.";
+        setFeedback(feedback, "Backspace/Delete e Enter concluídos. Muito bem!", "good");
         complete();
       } else if (lineCount > 3) {
         status.textContent = "Há mais de três linhas. Use Backspace ou Delete para ajustar as quebras.";
         setFeedback(feedback, "Confira as quebras de linha e corrija com Backspace ou Delete.", "gentle");
       } else {
-        status.textContent = "Use Enter duas vezes para separar a frase em três linhas. Você pode corrigir a posição com Backspace ou Delete.";
+        status.textContent = separatorRemoved
+          ? "Use Enter duas vezes: depois de “saltou” e depois de “sobre a”."
+          : "Use Backspace ou Delete para remover o espaço selecionado; depois use Enter duas vezes para criar três linhas.";
       }
     });
   }
