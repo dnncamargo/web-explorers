@@ -95,7 +95,7 @@ assert.ok(world3ActivitySource.includes('renderShortcutKeyboard([["ENTER"], ["BA
 assert.ok(world3ActivitySource.includes("event.key === \"Enter\"") && world3ActivitySource.includes("enterCount >= 2"), "checkpoint one checks two physical Enter presses before accepting three lines");
 assert.ok(world3ActivitySource.includes('event.key.toLowerCase() !== "c"'), "the selection checkpoint observes Ctrl+C");
 assert.ok(world3ActivitySource.includes('event.key.toLowerCase() === "v"'), "paste exercises observe Ctrl+V");
-assert.ok(world3ActivitySource.includes('event.key.toLowerCase() === "x"'), "cut exercise observes Ctrl+X");
+assert.ok(world3ActivitySource.includes('event.key.toLowerCase() !== "x"') && world3ActivitySource.includes("cutShortcut = true"), "cut exercise observes Ctrl+X");
 assert.ok(world3ActivitySource.includes('event.key.toLowerCase() === "z" && event.shiftKey'), "redo exercises observe Ctrl+Shift+Z");
 assert.ok(world3ActivitySource.includes('event.key === "Backspace"'), "the final checkpoint observes Backspace");
 assert.ok(world3ActivityCss.includes(".shortcut-keyboard") && world3ActivityCss.includes(".shortcut-key"), "shortcut keys have a drawn keyboard style");
