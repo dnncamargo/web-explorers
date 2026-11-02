@@ -298,7 +298,7 @@ if (!browserPath) {
           await pressKey("Enter", "Enter");
           for (let index = 0; index < 8; index += 1) await pressKey("ArrowRight", "ArrowRight");
           await pressKey("Enter", "Enter");
-          assert.equal(await evaluate('document.querySelector("#line-break-input")?.value'), "O sapo saltou\\nsobre a\\nabelha.", "checkpoint one accepts the sentence split into three lines using Enter twice");
+          assert.equal(await evaluate('document.querySelector("#line-break-input")?.value'), "O sapo saltou\nsobre a\nabelha.", "checkpoint one accepts the sentence split into three lines using Enter twice");
           assert.equal(await evaluate('document.querySelector("#continue-checkpoint")?.disabled'), false, "the three-line exercise completes automatically");
           await evaluate('document.querySelector("#continue-checkpoint").click()');
           assert.equal(await evaluate('document.querySelector("#select-copy-input")?.value'), "DONKEY KONG e DIDDY KONG", "checkpoint two introduces the two KONG text selections");
