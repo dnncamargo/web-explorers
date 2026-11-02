@@ -59,19 +59,46 @@ assert.ok(data.worlds.jungle.characters.some(({ alt, src }) => alt === "Necky" &
 assert.ok(!/Diddy|Dixie|Donkey Kong/.test(data.worlds.mine.checkpoints.flatMap(({ stages }) => stages.map(({ target }) => target)).join(" ")), "Mine typing exercises avoid unfamiliar Kong names");
 assert.ok(data.worlds.jungle.scene && data.worlds.jungle.characters.some(({ alt }) => /Donkey Kong e Diddy/.test(alt)), "Jungle includes DK and Diddy character art");
 assert.ok(data.worlds.camp.scene && data.worlds.camp.characters.length >= 4, "Camp has a game-stage scene and multiple characters");
-assert.equal(data.worlds.camp.checkpoints[2].title, "O ponto de interrogação", "AltGr+W is taught in Camp, not Mine");
-assert.equal(data.worlds.camp.checkpoints[2].stages[0].altGrCodes["?"], "KeyW", "the question mark uses AltGr+W");
-assert.equal(data.worlds.camp.checkpoints[3].kind, "navigation", "Ctrl text selection belongs to Camp");
-assert.equal(data.worlds.mine.checkpoints[0].requireShift, undefined, "case distinction is taught directly instead of only requiring Shift");
-assert.equal(data.worlds.jungle.checkpoints[1].target, "JKLÇ ÇLKJ", "the right home row includes Ç");
-assert.ok(data.worlds.jungle.checkpoints.every(({ target }) => !/[áàâãéêíóôõú,;.!?]/i.test(target)), "Jungle targets do not demand accents or punctuation");
-assert.ok(data.worlds.mine.checkpoints[2].stages.some(({ target }) => target === "café") && data.worlds.mine.checkpoints[2].stages.some(({ target }) => target === "maçã"), "Mine practices real accented words");
-assert.equal(data.worlds.camp.checkpoints[1].key, "Delete", "Camp teaches forward delete");
-assert.ok(data.worlds.camp.checkpoints[1].instruction.includes("Lupa (Launcher) + Backspace"), "Delete instruction uses the Chromebook shortcut confirmed by the teacher");
-assert.equal(data.worlds.camp.checkpoints[5].expectedUndo, "DK KONG", "undo target is defined");
-assert.equal(data.worlds.camp.checkpoints[5].expectedRedo, "DK KONG!", "redo target is defined");
-assert.ok(data.worlds.camp.checkpoints[2].stages[0].altGrCodes["?"], "Camp requires AltGr+W for the question mark");
-assert.equal(data.worlds.camp.checkpoints[3].source, "Diddy corre pela ilha", "Ctrl selection practice follows the AltGr checkpoint");
+assert.deepEqual(
+  data.worlds.camp.checkpoints.map(({ kind }) => kind),
+  ["line-breaks", "select-copy", "paste-build", "paste-undo", "history-sequence", "cut-paste-particles", "delete-undo-redo"],
+  "Camp follows the seven requested text-operation checkpoints"
+);
+assert.deepEqual(
+  data.worlds.camp.checkpoints.map(({ title }) => title),
+  ["Organizando três linhas", "Selecionando um trecho", "Colando o trecho copiado", "Desfazendo colagens", "Desfazer e refazer", "Recortando e colando duas partes", "Apagar, desfazer e refazer"],
+  "Camp names match the revised learning progression"
+);
+assert.equal(data.worlds.camp.checkpoints[0].initial, "O sapo saltou sobre a abelha.", "the first Camp task begins with a familiar sentence");
+assert.equal(data.worlds.camp.checkpoints[0].expected, "O sapo saltou\\nsobre a\\nabelha.", "the first Camp task accepts exactly three lines");
+assert.equal(data.worlds.camp.checkpoints[1].selectionText, "KONG", "selection checkpoint targets the requested word");
+assert.equal(data.worlds.camp.checkpoints[1].source, "DONKEY KONG e DIDDY KONG", "selection checkpoint provides two KONG occurrences");
+assert.equal(data.worlds.camp.checkpoints[2].expected, "DONKEY KONG e DIDDY KONG", "paste checkpoint builds the requested phrase");
+assert.equal(data.worlds.camp.checkpoints[2].copySource, "BANANA", "paste checkpoint ends by copying another word");
+assert.equal(data.worlds.camp.checkpoints[3].pasteCount, 4, "checkpoint four requires four pastes");
+assert.equal(data.worlds.camp.checkpoints[3].undoCount, 3, "checkpoint four requires three undos, leaving one copy");
+assert.equal(data.worlds.camp.checkpoints[3].extraCopyText, "SAPO", "checkpoint four copies another text particle");
+assert.equal(data.worlds.camp.checkpoints[4].pasteCount, 4, "checkpoint five starts with four pastes");
+assert.equal(data.worlds.camp.checkpoints[4].undoBeforeRedo, 3, "checkpoint five practices undo before redo");
+assert.equal(data.worlds.camp.checkpoints[4].redoCount, 2, "checkpoint five practises redo twice");
+assert.equal(data.worlds.camp.checkpoints[4].undoAfterRedo, 2, "checkpoint five returns to one copy with two final undos");
+assert.deepEqual(data.worlds.camp.checkpoints[5].pieces, ["BARRIL", "SAPO"], "checkpoint six recuts two different text particles");
+assert.equal(data.worlds.camp.checkpoints[6].firstDelete, "DIDDY", "checkpoint seven starts by deleting a selected word");
+assert.equal(data.worlds.camp.checkpoints[6].finalDelete, "KONG", "checkpoint seven ends by deleting the final selected word");
+
+const activitySource = read("assets/js/activity.js");
+const activityCss = read("assets/css/donkey-kong.css");
+const mapHtml = read("../donkey-kong/index.html");
+assert.ok(mapHtml.includes('src="https://giffiles.alphacoders.com/157/15792.gif"'), "the requested GIF appears on the Island of the Kongs map");
+assert.ok(activitySource.includes('function renderShortcutKeyboard'), "World 3 draws native shortcut keys");
+assert.ok(activitySource.includes('renderShortcutKeyboard([["ENTER"], ["BACKSPACE"], ["DELETE"]])'), "checkpoint one visibly draws Enter, Backspace and Delete");
+assert.ok(activitySource.includes("event.key === \"Enter\"") && activitySource.includes("enterCount >= 2"), "checkpoint one checks two physical Enter presses before accepting three lines");
+assert.ok(activitySource.includes('event.key.toLowerCase() !== "c"'), "the selection checkpoint observes Ctrl+C");
+assert.ok(activitySource.includes('event.key.toLowerCase() === "v"'), "paste exercises observe Ctrl+V");
+assert.ok(activitySource.includes('event.key.toLowerCase() === "x"'), "cut exercise observes Ctrl+X");
+assert.ok(activitySource.includes('event.key.toLowerCase() === "z" && event.shiftKey'), "redo exercises observe Ctrl+Shift+Z");
+assert.ok(activitySource.includes('event.key === "Backspace"'), "the final checkpoint observes Backspace");
+assert.ok(activityCss.includes(".shortcut-keyboard") && activityCss.includes(".shortcut-key"), "shortcut keys have a drawn keyboard style");
 
 const letters = "abcdefghijklmnopqrstuvwxyzç";
 for (const letter of letters) assert.ok(data.fingers[letter], "finger guidance exists for " + letter);
