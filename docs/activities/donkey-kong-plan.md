@@ -468,20 +468,6 @@ Os sprites dos personagens usam as URLs fornecidas pelo professor; os créditos 
 - Necky: [SNESMaps — Necky](https://snesmaps.com/maps/DonkeyKongCountry/sprites/Necky.png), sprite PNG 61×45.
 
 Os PNGs antigos hospedados em Donkey Kong Wiki foram substituídos porque apareciam quebrados na página. As URLs novas foram abertas e retornaram os sprites. A origem do conteúdo de jogo continua protegida por direitos; o host do arquivo não é uma licença de redistribuição.
-## 22. Revisão dos exercícios do Mundo 3 e GIF da ilha — 01/11/2026
-
-- A página `activities/donkey-kong/index.html` inclui o GIF fornecido pelo professor (`https://giffiles.alphacoders.com/157/15792.gif`) após a introdução da Ilha dos Kongs. O GIF usa o mesmo fallback de imagens externas: se falhar, é ocultado sem bloquear o mapa.
-- O currículo do Acampamento foi substituído por sete operações nativas de texto, detalhadas na seção 9. A sequência antiga de AltGr+W, Ctrl+setas/Ctrl+A, clipboard combinado, exercício simples de undo/redo e recado do Cranky já não define o Mundo 3.
-- CP1 desenha as teclas ENTER, BACKSPACE e DELETE e aceita exatamente três linhas na frase do sapo. O aluno usa Enter duas vezes; Backspace e Delete são apresentados para corrigir a posição das quebras.
-- CP2 usa um textarea readonly com duas ocorrências de KONG. O duplo clique deve selecionar a primeira palavra; arrastar deve selecionar a segunda. Ctrl+C é reconhecido somente quando KONG está selecionado e o evento copy nativo acontece.
-- CP3 parte da cópia de KONG, requer duas colagens nativas com Ctrl+V para formar DONKEY KONG e DIDDY KONG e termina com Ctrl+C sobre BANANA.
-- CP4 exige quatro colagens de BANANA, três Ctrl+Z deixando uma cópia, cópia de SAPO, colagem em outro campo e Ctrl+Z para desfazer a última colagem.
-- CP5 exige quatro colagens de SAPO, três Ctrl+Z, duas combinações Ctrl+Shift+Z e duas Ctrl+Z finais, verificando a sequência de estados até sobrar uma palavra. A instrução lembra a tecla Shift pela seta para cima.
-- CP6 exige Ctrl+X sobre BARRIL e SAPO no campo de origem e Ctrl+V no campo de destino, em duas operações distintas.
-- CP7 exige seleção de DIDDY + Backspace, Ctrl+Z, Ctrl+Shift+Z, seleção da última ocorrência de KONG e Backspace.
-- Os renderizadores verificam eventos confiáveis do navegador (copy, cut, paste, keydown e input) e os valores dos campos; não usam botões para simular atalhos.
-- Validação local desta revisão: sintaxe de JS/MJS conferida; `validate-radio.mjs` e `validate-activity.mjs` passaram em harness JavaScript isolado. O teste Chromium foi atualizado para CP1/CP2 e GIF, mas ainda não foi executado em navegador real neste ambiente.
-
 ## 22. Revisão do Mundo 3 e GIF da Ilha dos Kongs — 01/11/2026
 
 - A página `activities/donkey-kong/index.html` inclui o GIF fornecido pelo professor: https://giffiles.alphacoders.com/157/15792.gif. A imagem é carregada externamente junto à introdução da Ilha dos Kongs e usa o fallback de imagens externas; o arquivo não é copiado para o repositório.
