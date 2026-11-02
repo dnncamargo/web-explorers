@@ -95,7 +95,7 @@ ChromiumOS lista Brazil (ABNT2), `xkb:br::por`, e diferencia ABNT1; o Google avi
 
 **Acentos:** o professor confirmou que a acentuação funciona no Chromebook usado. Na Mina, o agudo e o til são preparados sem Shift; o circunflexo usa Shift. Nas etapas de maiúsculas, a tecla morta é preparada primeiro e Shift é usado na vogal. O resultado é validado após composição no `input` e NFC.
 
-**Backspace/Delete:** Backspace apaga antes do cursor; Delete apaga à direita. No CP1 do Acampamento, as duas teclas são desenhadas e o aluno pode usar qualquer uma para remover o espaço selecionado antes de criar a quebra. No Chromebook testado pelo professor, Lupa (Launcher) + Backspace também apaga à direita; pode ser usado como Delete quando não houver tecla física dedicada, mas deve ser confirmado em cada modelo/perfil.
+**Backspace/Delete:** Backspace apaga antes do cursor; Delete apaga à direita. No CP1 do Acampamento, Backspace remove o espaço antes de “sobre”; depois de Enter e da navegação até “sobre a”, Delete remove o espaço seguinte antes da segunda quebra com Enter. No Chromebook testado pelo professor, Lupa (Launcher) + Backspace também apaga à direita; pode ser usado como Delete quando não houver tecla física dedicada, mas deve ser confirmado em cada modelo/perfil.
 
 ### Edição, seleção e atalhos
 
@@ -177,7 +177,7 @@ A seleção de texto foi retirada da Mina e ficou no exercício de navegação/s
 
 | # | Habilidade e ação do aluno | Resultado verificado |
 |---|---|---|
-| 1. **Organizando três linhas** | Apresenta visualmente Enter, Backspace e Delete. O aluno transforma `O sapo saltou sobre a abelha.` em três linhas, usando Enter duas vezes. Backspace apaga à esquerda; Delete, à direita. | A frase fica exatamente em três linhas. O exercício exige duas pressões físicas confiáveis de Enter e valida o texto final. |
+| 1. **Organizando três linhas** | Apresenta visualmente Enter, Backspace e Delete. Backspace remove o espaço antes de “sobre”; Enter cria a primeira quebra; o aluno move o cursor até depois de “sobre a”, usa Delete para remover o espaço à direita e pressiona Enter novamente. | A frase fica exatamente em três linhas. O exercício exige Backspace, Delete e duas pressões físicas confiáveis de Enter. |
 | 2. **Selecionando um trecho** | Duas etapas de seleção real da palavra `KONG` em `DONKEY KONG e DIDDY KONG`: duplo clique na primeira ocorrência e arraste na segunda, em qualquer direção. Depois, com `KONG` selecionado, manter Ctrl e pressionar C. | A seleção deve corresponder exatamente à palavra. O evento copy nativo confirma Ctrl+C com a seleção correta. |
 | 3. **Colando o trecho copiado** | Apresenta Ctrl+C e Ctrl+V. O aluno cola `KONG` nos dois espaços para formar `DONKEY KONG e DIDDY KONG`; em seguida, seleciona `BANANA` e copia outra palavra com Ctrl+C. | Cada colagem exige Ctrl+V e evento paste nativo; a frase completa precisa coincidir. A cópia de BANANA prepara a prática seguinte. |
 | 4. **Desfazendo colagens** | Cola BANANA quatro vezes, pressiona Ctrl+Z três vezes e deixa uma cópia. Depois copia SAPO, cola em outra textarea e usa Ctrl+Z para desfazer essa colagem. | O campo precisa mostrar quatro, depois uma, e por fim o destino deve voltar ao prefixo vazio após o Ctrl+Z. |
@@ -472,7 +472,7 @@ Os PNGs antigos hospedados em Donkey Kong Wiki foram substituídos porque aparec
 
 - A página `activities/donkey-kong/index.html` inclui o GIF fornecido pelo professor: https://giffiles.alphacoders.com/157/15792.gif. A imagem é carregada externamente junto à introdução da Ilha dos Kongs e usa o fallback de imagens externas; o arquivo não é copiado para o repositório.
 - O currículo do Acampamento foi substituído por sete operações nativas de texto, detalhadas na seção 9. A sequência antiga de AltGr+W, Ctrl+setas/Ctrl+A, clipboard combinado, exercício simples de undo/redo e recado do Cranky já não define o Mundo 3.
-- CP1 desenha as teclas ENTER, BACKSPACE e DELETE. O espaço entre “saltou” e “sobre” começa selecionado; o aluno o remove com Backspace ou Delete, pressiona Enter e insere a segunda quebra para formar três linhas. A conclusão confere o texto final e as duas pressões físicas de Enter.
+- CP1 desenha ENTER, BACKSPACE e DELETE. O primeiro espaço começa selecionado; Backspace o remove. Depois de Enter e da navegação até “sobre a”, Delete remove o espaço seguinte e outro Enter cria a terceira linha. A conclusão confere o texto final, Backspace, Delete e as duas pressões de Enter.
 - CP2 usa duas ocorrências de KONG. O aluno seleciona a primeira por duplo clique e a segunda por arraste, em qualquer direção. Ctrl+C só é reconhecido com KONG selecionado e o evento copy nativo.
 - CP3 parte da cópia de KONG, exige duas colagens nativas com Ctrl+V para formar DONKEY KONG e DIDDY KONG, e termina copiando BANANA com Ctrl+C.
 - CP4 exige quatro colagens de BANANA, três Ctrl+Z deixando uma cópia, cópia de SAPO, colagem em outro campo e Ctrl+Z para desfazer essa colagem.
