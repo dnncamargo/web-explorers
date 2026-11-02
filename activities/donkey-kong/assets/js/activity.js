@@ -839,7 +839,7 @@
     input.value = checkpoint.initial;
     const firstBreak = checkpoint.initial.indexOf(" sobre");
     input.focus();
-    input.setSelectionRange(firstBreak + 1, firstBreak + 1);
+    input.setSelectionRange(firstBreak, firstBreak);
     status.textContent = "ENTER cria uma linha nova. Backspace apaga à esquerda; Delete apaga à direita. O resultado precisa ter três linhas.";
 
     input.addEventListener("keydown", (event) => {
@@ -1198,15 +1198,18 @@
       }
       if (phase === "undo-final" && pendingShortcut === "undo") {
         finalUndoCount += 1;
-        if (input.value === checkpoint.text.repeat(checkpoint.finalCount)) {
+        const countAfterUndo = checkpoint.pasteCount - checkpoint.undoBeforeRedo + checkpoint.redoCount - finalUndoCount;
+        if (input.value === checkpoint.text.repeat(countAfterUndo)) {
           pendingShortcut = "";
-          if (finalUndoCount === checkpoint.undoAfterRedo) {
+          if (finalUndoCount === checkpoint.undoAfterRedo && countAfterUndo === checkpoint.finalCount) {
             phase = "done";
             input.readOnly = true;
             status.textContent = "Você desfez, refez e voltou a deixar uma única palavra.";
             setFeedback(feedback, "Ctrl+Z e Ctrl+Shift+Z concluídos.", "good");
             complete();
-          } else status.textContent = "Restou uma palavra. Confira a sequência final.";
+          } else {
+            status.textContent = "Agora restam " + countAfterUndo + " palavras. Continue com Ctrl+Z.";
+          }
         } else {
           finalUndoCount = Math.max(0, finalUndoCount - 1);
           pendingShortcut = "";
@@ -1356,7 +1359,7 @@
       } else if (phase === "redo" && input.value === checkpoint.expectedAfterDelete) {
         const range = rangeFor(checkpoint.finalDelete, true);
         setPhase("select-final", "ETAPA 4/4 · Selecione o KONG final e pressione Backspace.");
-        if (range) input.setSelectionRange(range.start, range.end);
+        if (range) input.setSelectionRange(range.start, range.start);
         setFeedback(feedback, "A exclusão foi refeita.", "good");
       } else if (phase === "select-final" && input.value === checkpoint.expectedFinal) {
         input.readOnly = true;
