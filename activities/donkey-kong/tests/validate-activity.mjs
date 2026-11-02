@@ -88,8 +88,8 @@ assert.equal(data.worlds.camp.checkpoints[6].finalDelete, "KONG", "checkpoint se
 
 const activitySource = read("assets/js/activity.js");
 const activityCss = read("assets/css/donkey-kong.css");
-const mapHtml = read("index.html");
-assert.ok(mapHtml.includes('src="https://giffiles.alphacoders.com/157/15792.gif"'), "the requested GIF appears on the Island of the Kongs map");
+const islandMapHtml = read("index.html");
+assert.ok(islandMapHtml.includes('src="https://giffiles.alphacoders.com/157/15792.gif"'), "the requested GIF appears on the Island of the Kongs map");
 assert.ok(activitySource.includes('function renderShortcutKeyboard'), "World 3 draws native shortcut keys");
 assert.ok(activitySource.includes('renderShortcutKeyboard([["ENTER"], ["BACKSPACE"], ["DELETE"]])'), "checkpoint one visibly draws Enter, Backspace and Delete");
 assert.ok(activitySource.includes("event.key === \"Enter\"") && activitySource.includes("enterCount >= 2"), "checkpoint one checks two physical Enter presses before accepting three lines");
