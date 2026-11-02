@@ -7,7 +7,7 @@
 
 Aventura curta para transferir técnica de digitação no ABNT2 e edição de texto pelo teclado. São 22 checkpoints em três mundos e uma missão final. Sem cronômetro, vidas ou velocidade. A validação automática mede conteúdo e operações observáveis; o professor observa o posicionamento real dos dedos. Um texto correto nunca será tratado como prova de qual dedo foi usado.
 
-A progressão apresenta mãos/fileiras antes de frases; depois diferenciação de maiúsculas/minúsculas, Shift, símbolos e acentos; por fim, Enter, Delete, AltGr+W, seleção e operações Ctrl. Mundo 1 não cobra acento nem pontuação. Toda tecla nova é demonstrada antes de seu uso.
+A progressão apresenta mãos/fileiras antes de frases; depois diferenciação de maiúsculas/minúsculas, Shift, símbolos e acentos; por fim, edição de linhas, seleção real e operações nativas Ctrl. Mundo 1 não cobra acento nem pontuação. Toda tecla nova é demonstrada antes de seu uso.
 
 ## 2. Auditoria — fontes locais
 
@@ -50,7 +50,7 @@ Exploradores é a referência estrutural: mapa ilustrado, cenários de fase em t
 | `index.html` | Capa, rádio da seleção, cartões dos quatro mundos, progresso e retomar. |
 | `jungle.html` | Treino ABNT2 + 8 checkpoints consecutivos. |
 | `mine.html` | 7 checkpoints automáticos de maiúsculas/minúsculas, Shift, símbolos e acentuação. |
-| `camp.html` | 7 checkpoints automáticos de Enter, Delete, AltGr+W, seleção/Ctrl, clipboard, undo/redo e integração. |
+| `camp.html` | 7 checkpoints de Enter e quebra de linhas, seleção real, Ctrl+C/V/X/Z, Ctrl+Shift+Z e Backspace. |
 | `king-k-rool.html` | Editor e referência do poema. |
 
 Um cartão por vez; sequência é interna à página, não 22 rotas. Mapa permite abrir qualquer mundo, mesmo sem concluir o anterior; conserva sequência dentro do mundo e progresso por checkpoint. Sem exigência de conclusão total para considerar evidência de aprendizagem. Navegação por teclado e foco visível. Em tela estreita, painéis empilhados; consulta do poema expansível e com rolagem própria.
@@ -173,18 +173,19 @@ A seleção de texto foi retirada da Mina e ficou no exercício de navegação/s
 
 ## 9. Mundo 3 — O Acampamento dos Kongs
 
-**Nota:** a tabela abaixo registra a primeira proposta. O currículo implementado de sete checkpoints, incluindo AltGr+W no terceiro, está descrito na seção 21.
+**Rádio:** `wxAZfLenfa0`. Este mundo introduz funções de edição de texto com combinações de teclas. Os sete checkpoints usam campos reais e eventos nativos do navegador; não substituem Ctrl+C/V/X/Z, Ctrl+Shift+Z, Backspace ou Enter por botões que simulam essas ações.
 
-**Rádio:** `wxAZfLenfa0`. Apresentar cada combinação antes do uso. Search/Backspace só vira conteúdo pedagógico depois da prova física.
+| # | Habilidade e ação do aluno | Resultado verificado |
+|---|---|---|
+| 1. **Organizando três linhas** | Apresenta visualmente Enter, Backspace e Delete. O aluno transforma `O sapo saltou sobre a abelha.` em três linhas, usando Enter duas vezes. Backspace apaga à esquerda; Delete, à direita. | A frase fica exatamente em três linhas. O exercício exige duas pressões físicas confiáveis de Enter e valida o texto final. |
+| 2. **Selecionando um trecho** | Duas etapas de seleção real da palavra `KONG` em `DONKEY KONG e DIDDY KONG`: duplo clique na primeira ocorrência e arraste na segunda, em qualquer direção. Depois, com `KONG` selecionado, manter Ctrl e pressionar C. | A seleção deve corresponder exatamente à palavra. O evento copy nativo confirma Ctrl+C com a seleção correta. |
+| 3. **Colando o trecho copiado** | Apresenta Ctrl+C e Ctrl+V. O aluno cola `KONG` nos dois espaços para formar `DONKEY KONG e DIDDY KONG`; em seguida, seleciona `BANANA` e copia outra palavra com Ctrl+C. | Cada colagem exige Ctrl+V e evento paste nativo; a frase completa precisa coincidir. A cópia de BANANA prepara a prática seguinte. |
+| 4. **Desfazendo colagens** | Cola BANANA quatro vezes, pressiona Ctrl+Z três vezes e deixa uma cópia. Depois copia SAPO, cola em outra textarea e usa Ctrl+Z para desfazer essa colagem. | O campo precisa mostrar quatro, depois uma, e por fim o destino deve voltar ao prefixo vazio após o Ctrl+Z. |
+| 5. **Desfazer e refazer** | Cola SAPO quatro vezes; Ctrl+Z três vezes; Ctrl+Shift+Z duas vezes; Ctrl+Z duas vezes. A instrução lembra que Shift é a tecla com a seta para cima. | O número de palavras passa por quatro → uma → três → uma. Cada operação depende do atalho nativo e do valor observado. |
+| 6. **Recortando e colando duas partes** | Seleciona BARRIL na origem, usa Ctrl+X e Ctrl+V no destino; repete com SAPO. | As duas partículas saem da origem e aparecem no destino, verificadas pelos eventos cut/paste e pelos valores dos campos. |
+| 7. **Apagar, desfazer e refazer** | Seleciona DIDDY e pressiona Backspace; usa Ctrl+Z para recuperar; Ctrl+Shift+Z para refazer a exclusão; seleciona o KONG final e pressiona Backspace. | O texto acompanha a sequência de estados: exclusão, restauração, nova exclusão e exclusão final. |
 
-| # Nome | Habilidade e demonstração; conteúdo/ação | Resultado e critério | Erro, feedback, repetir/evidência |
-|---|---|---|---|
-| 1 Uma nova linha | Enter e quebra. Texto `A equipe chegou`; cursor após equipe. “Enter cria outra linha aqui.” | Aluno insere Enter entre palavras; valor `A equipe\nchegou` com LF único. | Quebra em posição errada: mostrar cursor. Restaurar texto; verificar ação via valor. |
-| 2 Apagando pela frente | Delete oposto ao Backspace. Mostrar `DK|!`; após validação nos Chromebooks, “Search/Launcher+Backspace apaga à frente”; uma combinação. | `DK!` vira `DK`; verificar input e exclusão frontal. Não simular com Backspace. | Se abre launcher/atalho diferente, suspender (sem penalizar), validar configuração. Dica compara antes/depois do cursor. |
-| 3 A força do Ctrl | Ctrl+setas, Ctrl+Shift+setas e Ctrl+A. Demo em `Diddy corre pela ilha`, caret antes de corre; mover/selecionar palavra; Ctrl+A em textarea focalizado. | Validar ranges reais, texto selecionado e Ctrl+A apenas no campo; ajustar seleção de palavra segundo teste ChromeOS. | Seleção de limite errado: “Ctrl+seta salta uma palavra; Shift mantém a seleção.” Restaurar caret. Evidência: navegação/seleção maior sem alterar conteúdo. |
-| 4 Barris transportadores | Ctrl+C/X/V por etapas. `BANANA` selecionada→copiar→colar em destino vazio; depois recortar `DK` do campo-fonte e colar ao fim do campo `KONG ` (com espaço final). | Destino da cópia `BANANA`; após recorte, fonte vazia e destino `KONG DK`. Observar copy/cut/paste/input quando browser permitir; sem clipboard programático. | Se perdeu seleção/foco, orientar a focar campo e repetir; conferir conteúdo final; registrar se clipboard bloqueado. |
-| 5 Voltando no tempo | Ctrl+Z desfaz e Ctrl+Shift+Z refaz, demonstrações separadas. Texto `DK KONG`; digitar `!` no final. | Estados `DK KONG!`→`DK KONG`→`DK KONG!`; valor/evento compatível necessário, clique não substitui atalho. | Se redo for diferente naquela configuração, testar ChromeOS e adaptar antes. Repor valor. Evidência bidirecional. |
-| 6 O recado do Cranky | Consolidar acentos maiúsculos. Demo acento morto seguido de Shift+vogal: `´`, Shift+A→`Á`; `´`, Shift+E→`É`; `^`, Shift+E→`Ê`; `~`, Shift+O→`Õ`; `´`, Shift+U→`Ú`. A tecla inicia composição e Shift modifica a vogal seguinte; não manter Shift sobre a tecla morta sem conferir equipamento. | Primeiro digitar `Á É Ê Õ Ú` em campo curto e validar NFC; depois corrigir recado inicial `os kongs\nchegaram a mina?\ntraga bananas!` para `Os Kongs\nchegaram à mina!\nTraga bananas!`. Demonstrar cada combinação isoladamente. | Se composição divergir, rever ABNT2/local; reset da sequência ou do recado atual. Evidência: cinco maiúsculas acentuadas e mensagem final integrada. |
+A seleção por mouse é intencional no CP2: o aluno aprende que um trecho precisa estar selecionado antes de usar a função de copiar. Os exercícios seguintes mantêm o foco em operações nativas, não em cliques em botões de simulação. O CP1 mostra as teclas Enter, Backspace e Delete de forma explícita, para que os alunos saibam qual tecla podem usar ao organizar e corrigir as linhas.
 
 ## 10. Chefe Final — King K. Rool
 
@@ -342,7 +343,7 @@ Pendências antes da liberação para a turma: (1) confirmar a combinação Lupa
 
 ## 16. Revisão e conclusão da especificação
 
-A implementação agora contém 22 checkpoints. Mundo 1 ensina mãos/fileiras antes das frases; Mundo 2 pratica diferenciação de maiúsculas/minúsculas com vocabulário familiar, usa um teclado ABNT2 completo e pratica Shift, símbolos e acentos; Mundo 3 introduz Enter, Delete, AltGr+W e operações Ctrl, incluindo seleção real. Os exercícios de Mundo 2 e 3 avançam automaticamente entre etapas na mesma página. O chefe mantém a missão integral da Canção do Exílio. Direitos das imagens, áudio e políticas de reprodução dos Chromebooks permanecem riscos declarados.
+A implementação contém 22 checkpoints. Mundo 1 ensina mãos/fileiras; Mundo 2 pratica caixa, Shift, símbolos e acentos em português; Mundo 3 ensina operações reais de edição com Enter, seleção, cópia, colagem, recorte, desfazer, refazer e Backspace. O chefe mantém a missão integral da Canção do Exílio. Direitos das imagens, áudio e políticas do Chromebook continuam a exigir validação.
 
 **Entrega:** planejamento e implementação incremental nesta branch. A atividade possui mapa, três mundos, 22 checkpoints, identidade visual distinta em cada mundo, personagens e cenários carregados externamente, chefe final com oito correções, progresso local isolado e rádio em todas as páginas. A validação de sintaxe e de dados foi executada nesta sessão; os testes Node completos, o Chromium automatizado e a conferência das imagens na rede escolar permanecem pendentes. Não houve merge.
 
@@ -350,11 +351,11 @@ A implementação agora contém 22 checkpoints. Mundo 1 ensina mãos/fileiras an
 
 - Criadas as cinco páginas estáticas, estilos e módulos de dados, progresso, fluxo e rádio em `activities/donkey-kong/`.
 - O catálogo raiz apresenta agora três atividades. O progresso DK usa chave própria e não lê nem altera o progresso de Yoshi.
-- Mundo 1 implementa oito exercícios de digitação com orientação de F/J, mãos, fileiras e frases; Mundo 2 implementa sete checkpoints automáticos de Shift, maiúsculas/minúsculas, símbolos, acentos e revisão; Mundo 3 implementa sete checkpoints de Enter, Delete, AltGr+W, navegação/seleção Ctrl, clipboard, undo/redo e texto integrado.
+- Mundo 1 implementa oito exercícios de digitação com orientação de F/J, mãos, fileiras e frases; Mundo 2 implementa sete checkpoints automáticos de Shift, maiúsculas/minúsculas, símbolos, acentos e revisão; Mundo 3 implementa sete checkpoints de Enter/linhas, seleção real, Ctrl+C/V/X/Z, Ctrl+Shift+Z e Backspace.
 - Chefe final implementa textarea editável, referência separada e oito correções da versão modernizada de *Canção do Exílio*. A missão só conclui com igualdade integral do texto e das quebras de linha.
 - Os cinco rádios YouTube usam IFrame API; controles ficam visíveis, o player tenta autoplay, inicia em 25/100 e mantém link de fallback. A reprodução depende da disponibilidade do YouTube e da política do navegador/rede escolar.
 - Evidência relatada pelo professor: acentuação funciona; Lupa (Launcher) + Backspace apaga à direita; Ctrl+Z, Ctrl+X, Ctrl+C e Ctrl+V funcionaram na atividade Exploradores; Ctrl+Shift+Z funcionou na atividade de navegador, mas não no aplicativo Text. O exercício usa os atalhos nativos dentro dos campos e não generaliza o comportamento de Text.
-- A combinação AltGr+W para `?` foi definida para o Mundo 3. Os sprites e cenários são carregados por URLs externas, com créditos, sem copiar os arquivos para o repositório.
+- O GIF da Ilha dos Kongs é carregado remotamente em `index.html`; sprites e cenários também são externos, com créditos, sem copiar os arquivos para o repositório.
 - Validação executada nesta sessão: análise sintática dos scripts JS/MJS (após remover imports e a expressão import.meta.url para a checagem de parsing), carregamento dos dados/progresso em runtime, contagem 8+7+7, oito passos do poema, reconstrução exata da referência e progressão sequencial de checkpoints. Não foram executados os arquivos de teste Node no repositório nem o Chromium automatizado; testes físicos e visuais continuam necessários.
 - Branch `codex/donkey-kong-planning`, PR #21 permanece draft e sem merge: https://github.com/dnncamargo/web-explorers/pull/21.
 ### Como executar a prévia local
@@ -475,3 +476,16 @@ Os sprites dos personagens usam as URLs fornecidas pelo professor; os créditos 
 - Necky: [SNESMaps — Necky](https://snesmaps.com/maps/DonkeyKongCountry/sprites/Necky.png), sprite PNG 61×45.
 
 Os PNGs antigos hospedados em Donkey Kong Wiki foram substituídos porque apareciam quebrados na página. As URLs novas foram abertas e retornaram os sprites. A origem do conteúdo de jogo continua protegida por direitos; o host do arquivo não é uma licença de redistribuição.
+## 22. Revisão dos exercícios do Mundo 3 e GIF da ilha — 01/11/2026
+
+- A página `activities/donkey-kong/index.html` inclui o GIF fornecido pelo professor (`https://giffiles.alphacoders.com/157/15792.gif`) após a introdução da Ilha dos Kongs. O GIF usa o mesmo fallback de imagens externas: se falhar, é ocultado sem bloquear o mapa.
+- O currículo do Acampamento foi substituído por sete operações nativas de texto, detalhadas na seção 9. A sequência antiga de AltGr+W, Ctrl+setas/Ctrl+A, clipboard combinado, exercício simples de undo/redo e recado do Cranky já não define o Mundo 3.
+- CP1 desenha as teclas ENTER, BACKSPACE e DELETE e aceita exatamente três linhas na frase do sapo. O aluno usa Enter duas vezes; Backspace e Delete são apresentados para corrigir a posição das quebras.
+- CP2 usa um textarea readonly com duas ocorrências de KONG. O duplo clique deve selecionar a primeira palavra; arrastar deve selecionar a segunda. Ctrl+C é reconhecido somente quando KONG está selecionado e o evento copy nativo acontece.
+- CP3 parte da cópia de KONG, requer duas colagens nativas com Ctrl+V para formar DONKEY KONG e DIDDY KONG e termina com Ctrl+C sobre BANANA.
+- CP4 exige quatro colagens de BANANA, três Ctrl+Z deixando uma cópia, cópia de SAPO, colagem em outro campo e Ctrl+Z para desfazer a última colagem.
+- CP5 exige quatro colagens de SAPO, três Ctrl+Z, duas combinações Ctrl+Shift+Z e duas Ctrl+Z finais, verificando a sequência de estados até sobrar uma palavra. A instrução lembra a tecla Shift pela seta para cima.
+- CP6 exige Ctrl+X sobre BARRIL e SAPO no campo de origem e Ctrl+V no campo de destino, em duas operações distintas.
+- CP7 exige seleção de DIDDY + Backspace, Ctrl+Z, Ctrl+Shift+Z, seleção da última ocorrência de KONG e Backspace.
+- Os renderizadores verificam eventos confiáveis do navegador (copy, cut, paste, keydown e input) e os valores dos campos; não usam botões para simular atalhos.
+- Validação local desta revisão: sintaxe de JS/MJS conferida; `validate-radio.mjs` e `validate-activity.mjs` passaram em harness JavaScript isolado. O teste Chromium foi atualizado para CP1/CP2 e GIF, mas ainda não foi executado em navegador real neste ambiente.
