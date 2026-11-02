@@ -294,7 +294,8 @@ if (!browserPath) {
           assert.equal(await evaluate('Array.from(document.querySelectorAll(".shortcut-key")).some((key) => key.textContent === "ENTER")'), true, "Enter is visibly drawn in checkpoint one");
           assert.equal(await evaluate('Array.from(document.querySelectorAll(".shortcut-key")).some((key) => key.textContent === "BACKSPACE")'), true, "Backspace is visibly drawn in checkpoint one");
           assert.equal(await evaluate('Array.from(document.querySelectorAll(".shortcut-key")).some((key) => key.textContent === "DELETE")'), true, "Delete is visibly drawn in checkpoint one");
-          await evaluate('(() => { const field = document.querySelector("#line-break-input"); field.focus(); field.setSelectionRange(13,13); })()');
+          await evaluate('(() => { const field = document.querySelector("#line-break-input"); field.focus(); field.setSelectionRange(13,14); })()');
+          await pressKey("Backspace", "Backspace");
           await pressKey("Enter", "Enter");
           for (let index = 0; index < 8; index += 1) await pressKey("ArrowRight", "ArrowRight");
           await pressKey("Enter", "Enter");
