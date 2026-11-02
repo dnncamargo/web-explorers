@@ -301,7 +301,7 @@ if (!browserPath) {
     assert.equal(await evaluate('document.querySelectorAll("#world-map .world-card").length'), 4, "Donkey Kong map offers three worlds and the final boss");
     assert.equal(await evaluate('!!document.querySelector("#start-screen")'), true, "the Kong barrel entrance overlay is visible on the island map");
     assert.equal(await evaluate('!!document.querySelector("#start-button")'), true, "the barrel entrance control is available");
-    assert.equal(await evaluate('document.querySelectorAll("#world-map .world-card-art").length'), 3, "the map world cards include game character art");
+    assert.equal(await evaluate('document.querySelectorAll("#world-map .world-card-art").length'), 4, "the three world tiles and the poem challenge include game character art");
     assert.deepEqual(
       await evaluate('Array.from(document.querySelectorAll("#world-map .world-card-camp .world-card-art img")).map(image => image.getAttribute("src"))'),
       [
