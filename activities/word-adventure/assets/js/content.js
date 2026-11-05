@@ -28,7 +28,7 @@
   const bonus={id:"story-city",number:5,title:"Cidade das Histórias",subtitle:"Ler para compreender e fazer acontecer",theme:"city",goal:"Usar leitura e escuta para compreender mensagens e pequenas situações.",skills:["Compreensão literal","Leitura de bilhetes, listas e placas","Relação entre texto e ação"],bncc:["EF12LP02","EF12LP04"],stages:[
     {title:"A placa da cidade",objective:"Ler placa e localizar destino",kind:"sign-task",prompt:"Leia a placa e escolha para onde ela aponta.",items:[{message:"VÁ AO MAPA",target:"MAPA",options:[{word:"MALA",emoji:"🧳"},{word:"MAPA",emoji:"🗺️"},{word:"PIPA",emoji:"🪁"}]}]},
     {title:"O bilhete",objective:"Compreender informação explícita em bilhete curto",kind:"note-task",prompt:"Leia o bilhete. O que a pessoa pediu?",items:[{message:"LEVE A BOLA.",target:"BOLA",options:[{word:"PATO",emoji:"🦆"},{word:"BOLA",emoji:"⚽"},{word:"MALA",emoji:"🧳"}]}]},
-    {title:"A frase ganha sentido",objective:"Organizar palavras para formar uma frase significativa",kind:"sentence-order",prompt:"Coloque as palavras na ordem para formar a mensagem.",items:[{words:["A","PIPA","É","MINHA"],answer:["A","PIPA","É","MINHA"],hint:"A frase precisa dizer que a pipa pertence a alguém."}]}
+    {title:"A frase ganha sentido",objective:"Organizar palavras para formar uma frase significativa",kind:"sentence-order",prompt:"Coloque as palavras na ordem para formar a mensagem.",items:[{words:["MINHA","É","PIPA","A"],answer:["A","PIPA","É","MINHA"],hint:"A frase precisa dizer que a pipa pertence a alguém."}]}
   ]};
   global.WordAdventureContent={worlds,bonus};
 })(window);
