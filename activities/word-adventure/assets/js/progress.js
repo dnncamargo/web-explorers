@@ -29,7 +29,7 @@
     for (const name of ["localStorage", "sessionStorage"]) {
       try {
         const raw = getStore(name).getItem(KEY);
-        if (raw) return { progress: normalize(JSON.parse(raw)), mode: name };
+        if (raw) { const progress = normalize(JSON.parse(raw)); MEMORY.value = JSON.stringify(progress); return { progress, mode: name }; }
       } catch { /* managed browsers can disable storage */ }
     }
     return { progress: fresh(), mode: "memory" };
@@ -39,6 +39,7 @@
     for (const name of [preferred, "localStorage", "sessionStorage", "memory"].filter((v, i, a) => v && a.indexOf(v) === i)) {
       try {
         getStore(name).setItem(KEY, JSON.stringify(snapshot));
+        MEMORY.value = JSON.stringify(snapshot);
         return { mode: name, persisted: name !== "memory" };
       } catch { /* fall through */ }
     }
