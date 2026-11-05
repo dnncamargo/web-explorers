@@ -29,6 +29,29 @@ web-explorers/
 
 O catálogo da raiz apresenta quatro atividades independentes. Cada experiência conserva seus próprios recursos e progresso.
 
+## Como executar localmente
+
+Execute o servidor a partir da pasta raiz do repositório, onde está o arquivo `index.html`.
+
+**Windows (PowerShell):**
+
+```powershell
+py -m http.server 8000
+```
+
+**Linux ou Linux (Penguin) no Chromebook:**
+
+```bash
+python3 -m http.server 8000
+```
+
+Em seguida, abra no navegador:
+
+- Catálogo: [http://localhost:8000/](http://localhost:8000/)
+- Aventura das Palavras: [http://localhost:8000/activities/word-adventure/](http://localhost:8000/activities/word-adventure/)
+
+Para encerrar o servidor, volte ao terminal e pressione `Ctrl+C`. Mantenha o terminal aberto enquanto estiver usando a versão local.
+
 ## Exploradores do Mundo Digital
 
 A primeira atividade é uma aventura de exploração informática inspirada em Super Mario Bros. e Super Mario World. As páginas canônicas dos mundos ficam em `activities/digital-explorers/stages/`; aliases de compatibilidade e o material público de download são mantidos em seus caminhos publicados.
@@ -63,9 +86,13 @@ O plano pedagógico, a referência curricular, a progressão e os critérios de 
 
 ## Testes
 
-- `node activities/word-adventure/tests/validate-activity.mjs`
-- `node activities/word-adventure/tests/validate-repository.mjs`
-- `node tests/validate-repository.mjs`
+Execute a partir da raiz do repositório:
+
+```bash
+node activities/word-adventure/tests/validate-activity.mjs
+node activities/word-adventure/tests/validate-repository.mjs
+node tests/validate-repository.mjs
+```
 
 ## Organização de futuras atividades
 
