@@ -281,10 +281,11 @@
     if (stage.kind === "sentence-order") {
       const item=stage.items[0];
       let sequence=[];
+      let pool = item.words.slice();
       challenge.innerHTML='<div class="sentence-builder"><div class="sentence-slots" id="sentence-slots"></div><div class="sentence-pool" id="sentence-pool"></div></div><p class="micro-instruction">Escolha as palavras para montar a frase.</p>';
       function draw() {
         challenge.querySelector("#sentence-slots").innerHTML=item.answer.map((_,i)=>'<span class="sentence-slot">' + esc(sequence[i] || "·") + '</span>').join("");
-        challenge.querySelector("#sentence-pool").innerHTML=item.words.map((word,index)=>'<button class="word-token" type="button" data-word="' + esc(word) + '" data-index="' + index + '"' + (sequence.includes(word) ? " disabled" : "") + '>' + esc(word) + '</button>').join("");
+        challenge.querySelector("#sentence-pool").innerHTML=pool.map((word,index)=>'<button class="word-token" type="button" data-word="' + esc(word) + '" data-index="' + index + '"' + (sequence.includes(word) ? " disabled" : "") + '>' + esc(word) + '</button>').join("");
         challenge.querySelectorAll(".word-token").forEach((button)=>button.addEventListener("click",()=>{
           if(complete || button.disabled) return;
           const expected=item.answer[sequence.length];
@@ -294,6 +295,7 @@
             else draw();
           } else {
             sequence=[];
+            pool = pool.slice().reverse();
             draw();
             wrong("Observe o começo da frase. Qual palavra deve vir primeiro?");
           }
