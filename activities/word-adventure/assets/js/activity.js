@@ -192,10 +192,12 @@
     if (stage.kind === "find-letter" || stage.kind === "sound-letter" || stage.kind === "word-initial") {
       const item = stage.items[(number-1)%stage.items.length];
       const key = item.letter;
+      const showInitial = stage.kind !== "sound-letter";
       challenge.innerHTML = '<div class="sound-target"><div class="big-emoji">' + (item.emoji || "🔤") + '</div>' +
-        (item.word ? '<div class="word-display">' + item.word.split("").map((char,i)=>'<span class="' + (i===0?"first-letter":"") + '">' + esc(char) + '</span>').join("") + '</div>' : "") +
-        (stage.kind === "sound-letter" ? '<p class="micro-instruction">Ouça o som inicial. A letra representa esse som.</p>' : '') +
-        '<div class="target-letter">' + esc(key) + '</div>' + speakButton(item.word || key) + '</div>';
+        (item.word && showInitial ? '<div class="word-display">' + item.word.split("").map((char,i)=>'<span class="' + (i===0?"first-letter":"") + '">' + esc(char) + '</span>').join("") + '</div>' : '') +
+        (stage.kind === "sound-letter" ? '<p class="micro-instruction">Ouça a palavra e perceba o som que aparece no começo.</p>' : '') +
+        (stage.kind === "word-initial" ? '<p class="word-display">' + esc(item.word) + '</p>' : '') +
+        speakButton(item.word || key) + '</div>';
       renderChoices(item.options, value => {
         if (value === key) finish("Você encontrou a letra " + key + ". Ela representa o som que aparece no começo!");
         else wrong("Observe a forma da letra e escute o começo da palavra novamente.");
