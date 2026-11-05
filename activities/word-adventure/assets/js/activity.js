@@ -28,7 +28,7 @@
     if (!("speechSynthesis" in global) || !text) return false;
     try {
       global.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(String(text));
+      const utterance = new global.SpeechSynthesisUtterance(String(text));
       utterance.lang = "pt-BR";
       utterance.rate = 0.82;
       global.speechSynthesis.speak(utterance);
