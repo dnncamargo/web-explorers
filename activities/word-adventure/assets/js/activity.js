@@ -191,7 +191,8 @@
       const key = item.letter;
       challenge.innerHTML = '<div class="sound-target"><div class="big-emoji">' + (item.emoji || "🔤") + '</div>' +
         (item.word ? '<div class="word-display">' + item.word.split("").map((char,i)=>'<span class="' + (i===0?"first-letter":"") + '">' + esc(char) + '</span>').join("") + '</div>' : "") +
-        '<div class="target-letter">' + esc(stage.kind==="case-match" ? item.letter : key) + '</div>' + speakButton(item.word || key) + '</div>';
+        (stage.kind === "sound-letter" ? '<p class="micro-instruction">Ouça o som inicial. A letra representa esse som.</p>' : '') +
+        '<div class="target-letter">' + esc(key) + '</div>' + speakButton(item.word || key) + '</div>';
       renderChoices(item.options, value => {
         if (value === key) finish("Você encontrou a letra " + key + ". Ela representa o som que aparece no começo!");
         else wrong("Observe a forma da letra e escute o começo da palavra novamente.");
