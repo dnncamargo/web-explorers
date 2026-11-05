@@ -129,8 +129,11 @@
       setFeedback(message || "Vamos observar novamente. Tente outra vez.", "gentle");
     }
     function renderChoices(items, onAnswer, className = "") {
-      challenge.innerHTML = '<div class="choice-grid ' + className + '">' + items.map((item,i)=>optionButton(item,i)).join("") + '</div>';
-      challenge.querySelectorAll("[data-choice]").forEach((button) => {
+      const choiceGrid = document.createElement("div");
+      choiceGrid.className = "choice-grid " + className;
+      choiceGrid.innerHTML = items.map((item,i)=>optionButton(item,i)).join("");
+      challenge.append(choiceGrid);
+      choiceGrid.querySelectorAll("[data-choice]").forEach((button) => {
         button.addEventListener("click", () => {
           if (complete) return;
           onAnswer(button.dataset.choice, Number(button.dataset.choiceIndex), button);
