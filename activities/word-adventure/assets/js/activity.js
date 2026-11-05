@@ -35,6 +35,16 @@
       return true;
     } catch { return false; }
   }
+  function stopSpeech() {
+    try { global.speechSynthesis?.cancel(); } catch { /* voice is optional */ }
+  }
+  function renderPrompt(world, stage, item, promptText) {
+    const spokenText = promptText || item?.word || stage.prompt;
+    const prompt = document.getElementById("stage-prompt");
+    if (prompt) prompt.textContent = promptText || stage.prompt;
+    const host = document.getElementById("prompt-audio");
+    if (host) host.innerHTML = speakButton(spokenText, "Ouvir instrução");
+  }
   function speakButton(text, label = "Ouvir palavra") {
     return '<button class="audio-button" type="button" data-speak="' + esc(text) + '" aria-label="' + esc(label) + '">🔊 Ouvir</button>';
   }
@@ -72,7 +82,7 @@
     return '<section class="stage-card"><div class="stage-top"><a class="map-link" href="#">← Mapa</a><span>MUNDO ' + world.number + ' · FASE ' + number + '/' + world.stages.length + '</span></div>' +
       '<div class="stage-progress">' + progressDots(number-1, world.stages.length) + '</div>' +
       '<h1>' + esc(stage.title) + '</h1><p class="objective">' + esc(stage.objective) + '</p>' +
-      '<p class="prompt" id="stage-prompt">' + esc(stage.prompt) + '</p>' +
+      '<div class="prompt-row"><p class="prompt" id="stage-prompt">' + esc(stage.prompt) + '</p><span id="prompt-audio">' + speakButton(stage.prompt, "Ouvir instrução") + '</span></div>' +
       '<div class="stage-support"><span>1. Escute</span><span>2. Observe</span><span>3. Escolha</span></div>' +
       '<div id="challenge" class="challenge"></div>' +
       '<p id="feedback" class="feedback" role="status" aria-live="polite">Faça com calma. Você pode ouvir novamente.</p>' +
@@ -127,8 +137,8 @@
       });
     }
     function audioWord(word) {
-      spoken(word);
-      setFeedback("Escute com atenção: " + word + ". Repita em voz alta, se puder.");
+      if (!spoken(word)) setFeedback("A leitura em voz alta não está disponível neste navegador. Peça ao professor para falar a palavra e continue a missão.", "hint");
+      else setFeedback("Escute com atenção e repita em voz alta, se puder.");
     }
 
     if (stage.kind === "listen-picture") {
@@ -284,7 +294,11 @@
     document.getElementById("help-button").addEventListener("click",()=>{
       const first=itemForHint(stage);
       if(first) setFeedback(first,"hint");
-      spoken(stage.prompt);
+      if (!spoken(stage.prompt)) setFeedback(first + " A voz não está disponível; o professor pode ler a instrução.", "hint");
+    });
+    const promptAudio = document.getElementById("prompt-audio");
+    promptAudio?.querySelector("[data-speak]")?.addEventListener("click", () => {
+      if (!spoken(stage.prompt)) setFeedback("Peça ao professor para ler a instrução.", "hint");
     });
     next.addEventListener("click",()=>{
       if(!complete)return;
@@ -304,7 +318,8 @@
     return "Peça ao professor para falar a palavra devagar e mostrar como ela começa.";
   }
   function route() {
-    const id=decodeURIComponent(location.hash.replace(/^#/,""));
+    stopSpeech();
+    const id=decodeURIComponent(global.location.hash.replace(/^#/,""));
     if(!id){renderMap();return;}
     const world=worldList().find(item=>item.id===id);
     if(world){renderWorld(world);return;}
@@ -312,12 +327,21 @@
   }
   document.addEventListener("click",(event)=>{
     const button=event.target.closest("[data-speak]");
-    if(button){spoken(button.dataset.speak);}
+    if(button && !button.closest("#prompt-audio")) {
+      if (!spoken(button.dataset.speak)) {
+        const feedback = document.getElementById("feedback");
+        if (feedback) {
+          feedback.className = "feedback hint";
+          feedback.textContent = "A leitura em voz alta não está disponível. Peça ao professor para falar a palavra.";
+        }
+      }
+    }
   });
   document.getElementById("reset-progress").addEventListener("click",()=>{
     if(!global.confirm("Apagar somente o progresso da Aventura das Palavras neste navegador?"))return;
     progress=STORE.reset();storageMode="localStorage";save();renderMap();
   });
   global.addEventListener("hashchange",route);
+  global.addEventListener("pagehide",stopSpeech);
   route();
 })(window);
