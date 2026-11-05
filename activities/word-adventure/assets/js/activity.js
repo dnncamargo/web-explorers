@@ -284,13 +284,19 @@
       challenge.innerHTML='<div class="sentence-builder"><div class="sentence-slots" id="sentence-slots"></div><div class="sentence-pool" id="sentence-pool"></div></div><p class="micro-instruction">Escolha as palavras para montar a frase.</p>';
       function draw() {
         challenge.querySelector("#sentence-slots").innerHTML=item.answer.map((_,i)=>'<span class="sentence-slot">' + esc(sequence[i] || "·") + '</span>').join("");
-        challenge.querySelector("#sentence-pool").innerHTML=item.answer.map(word=>'<button class="word-token" type="button" data-word="' + esc(word) + '">' + esc(word) + '</button>').join("");
+        challenge.querySelector("#sentence-pool").innerHTML=item.words.map((word,index)=>'<button class="word-token" type="button" data-word="' + esc(word) + '" data-index="' + index + '"' + (sequence.includes(word) ? " disabled" : "") + '>' + esc(word) + '</button>').join("");
         challenge.querySelectorAll(".word-token").forEach((button)=>button.addEventListener("click",()=>{
-          if(complete) return;
-          sequence.push(button.dataset.word);
-          if(sequence.join("|")===item.answer.join("|")) finish("Você montou uma frase com sentido!");
-          else if(sequence.length===item.answer.length){sequence=[];draw();wrong("Vamos reler e organizar as palavras para a frase fazer sentido.");}
-          else draw();
+          if(complete || button.disabled) return;
+          const expected=item.answer[sequence.length];
+          if(button.dataset.word===expected) {
+            sequence.push(button.dataset.word);
+            if(sequence.length===item.answer.length) finish("Você organizou as palavras e formou uma frase com sentido!");
+            else draw();
+          } else {
+            sequence=[];
+            draw();
+            wrong("Observe o começo da frase. Qual palavra deve vir primeiro?");
+          }
         }));
       }
       draw();
