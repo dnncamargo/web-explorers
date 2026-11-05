@@ -92,7 +92,8 @@
   function renderWorld(world) {
     const current = count(world);
     if (current >= world.stages.length) {
-      app.innerHTML = '<section class="finish-card"><div class="finish-art">' + worldArt(world.id) + '</div><p class="eyebrow">MISSÃO CONCLUÍDA</p><h1>Você explorou ' + esc(world.title) + '!</h1><p>As palavras têm sons, partes e significados. Você pode voltar para praticar novamente.</p><div class="finish-actions"><a href="#" class="primary-link">Voltar ao mapa</a><button type="button" class="secondary-button" id="review-world">Rever o mundo</button></div></section>';
+      app.innerHTML = '<section class="finish-card"><div class="finish-art">' + worldArt(world.id) + '</div><p class="eyebrow">MISSÃO CONCLUÍDA</p><h1>Você explorou ' + esc(world.title) + '!</h1><p>As palavras têm sons, partes e significados. Você pode voltar para praticar novamente.</p><div class="finish-actions"><a href="#" class="primary-link" id="return-map">Voltar ao mapa</a><button type="button" class="secondary-button" id="review-world">Rever o mundo</button></div></section>';
+      document.getElementById("return-map").addEventListener("click", (event) => { event.preventDefault(); global.location.hash = ""; renderMap(); });
       document.getElementById("review-world").addEventListener("click", () => renderStage(world, 1));
       return;
     }
@@ -302,10 +303,11 @@
     });
     next.addEventListener("click",()=>{
       if(!complete)return;
+      stopSpeech();
       if(number<world.stages.length)renderStage(world,number+1);
       else renderWorld(world);
     });
-    document.querySelector(".map-link").addEventListener("click",(event)=>{event.preventDefault();renderMap();});
+    document.querySelector(".map-link").addEventListener("click",(event)=>{event.preventDefault();stopSpeech();global.location.hash="";renderMap();});
     updateStorageStatus();
   }
   function itemForHint(stage) {
