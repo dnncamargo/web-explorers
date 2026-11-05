@@ -87,6 +87,13 @@ for (const target of [
   "activities/donkey-kong/assets/js/activity.js",
   "activities/donkey-kong/tests/validate-activity.mjs",
   "activities/donkey-kong/tests/validate-radio.mjs",
+  "activities/word-adventure/index.html",
+  "activities/word-adventure/assets/css/word-adventure.css",
+  "activities/word-adventure/assets/js/content.js",
+  "activities/word-adventure/assets/js/progress.js",
+  "activities/word-adventure/assets/js/activity.js",
+  "activities/word-adventure/tests/validate-activity.mjs",
+  "activities/word-adventure/tests/validate-repository.mjs",
 ]) assert.ok(fs.existsSync(path.join(root, target)), `${target} exists`);
 
 for (const obsolete of ["assets", "stages", "index2.html", "index3.html", "index_final.html", "02-entrar-no-submundo.html", "activities/donkey-kong/king-k-rool.html"]) {
