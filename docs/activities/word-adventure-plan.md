@@ -261,7 +261,7 @@ Cada etapa deve ser desenvolvida em mudanças pequenas, testadas, e revisada ant
 - A música fornecida toca sem exibir o vídeo e repete a faixa inteira; não há corte por temporizador.
 - O player fica oculto e é removido ao entrar em qualquer mundo. Se a música estava tocando, o botão “Mapa” retoma a faixa ao retornar; se estava pausada, continua pausada.
 - A conclusão dos cinco mundos obrigatórios apresenta a imagem da capivara com uma mensagem de gratidão; o Diário de Bordo segue opcional.
-- Ao voltar ao mapa, o player não começa sozinho.
+- A música não inicia sozinha ao carregar o mapa; a reprodução inicial exige toque na imagem. No retorno pelo botão “Mapa”, retoma somente se estava tocando antes da missão.
 - Os cinco mundos obrigatórios apresentam exatamente 25 checkpoints; o Diário de Bordo tem três checkpoints opcionais.
 - Cada checkpoint obrigatório tem de três a cinco microatividades, com conteúdo variado e a mesma habilidade-alvo.
 - A sessão completa foi planejada para cerca de 40 minutos, sem impor duração máxima.
