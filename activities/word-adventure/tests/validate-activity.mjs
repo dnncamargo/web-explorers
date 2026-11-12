@@ -37,8 +37,11 @@ assert.equal(camp.stages[2].rounds[3].options[0].color, "orange", "the star is o
 assert.match(camp.stages[3].prompt, /mochila para um acampamento/i, "the backpack instruction explains the camping purpose");
 assert.equal(camp.stages[3].rounds[1].item.word, "Bússola", "the second backpack item is a compass");
 assert.equal(camp.stages[3].rounds[1].item.emoji, "🧭", "the compass uses its matching compass emoji");
-assert.equal(camp.stages[3].rounds[1].options[0].word, "Bússola", "the correct backpack option is the compass");
-assert.equal(camp.stages[3].rounds[1].options[0].emoji, "🧭", "the compass option displays the same matching symbol");
+assert.deepEqual(Array.from(camp.stages[3].rounds[0].options, (option) => option.word), ["Folha", "Lanterna", "Pedra", "Nuvem"], "the first backpack task places the flashlight second");
+assert.deepEqual(Array.from(camp.stages[3].rounds[1].options, (option) => option.word), ["Flor", "Nuvem", "Bola", "Bússola"], "the second backpack task places the compass fourth");
+assert.deepEqual(Array.from(camp.stages[3].rounds[2].options, (option) => option.word), ["Concha", "Maçã", "Mapa", "Flor"], "the third backpack task places the map third");
+assert.deepEqual(Array.from(camp.stages[3].rounds, (round) => round.options.findIndex((option) => option.word === round.item.word)), [1, 3, 2], "the three correct backpack answers occupy different positions");
+assert.equal(camp.stages[3].rounds[1].options[3].emoji, "🧭", "the compass option displays the matching symbol");
 assert.ok(camp.stages[3].rounds.every((round) => round.options.length === 4), "each backpack task has four alternatives");
 
 assert.ok(activity.includes("ROTEIRO ' + world.number + ' · PARADA ' + number + '/' + world.stages.length"), "checkpoint progress uses route and stop vocabulary");
