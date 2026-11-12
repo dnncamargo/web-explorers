@@ -84,9 +84,22 @@
   function resetCheckpoint(progress, worldId, checkpoint) {
     if (!WORLD_IDS.includes(worldId) || !Number.isInteger(checkpoint)) return false;
     const current = completedCount(progress, worldId);
-    if (checkpoint !== current + 1 || checkpoint > LIMITS[worldId]) return false;
-    delete progress.rounds[worldId];
-    return true;
+
+    // The active checkpoint can be restarted at any point in its microactivities.
+    if (checkpoint === current + 1 && checkpoint <= LIMITS[worldId]) {
+      delete progress.rounds[worldId];
+      return true;
+    }
+
+    // The last microactivity marks the checkpoint complete immediately. Keep the
+    // current screen restartable by reopening only that most recently completed checkpoint.
+    if (checkpoint === current && current > 0) {
+      progress.completed[worldId] = current - 1;
+      delete progress.rounds[worldId];
+      return true;
+    }
+
+    return false;
   }
   function completeRound(progress, worldId, checkpoint, roundIndex, roundsTotal) {
     if (!WORLD_IDS.includes(worldId) || !Number.isInteger(roundIndex) || !Number.isInteger(roundsTotal) || roundsTotal < 1) return false;
