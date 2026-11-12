@@ -1,6 +1,6 @@
 (function (global) {
   const choice = (prompt, target, options, speech = "") => ({ prompt, target, options, speech });
-  const pic = (word, emoji) => ({ word, emoji });
+  const pic = (word, emoji, visual = "") => ({ word, emoji, ...(visual ? { visual } : {}) });
   const shapePic = (word, shape, color) => ({ word, value: word, shape, color });
   const stage = (title, objective, kind, prompt, rounds) => ({ title, objective, kind, prompt, rounds });
 
@@ -11,8 +11,8 @@
       skills: ["Movimento do ponteiro", "Clique e seleção", "Formas e cores", "Organização de objetos"], bncc: ["Cultura digital", "EF01CO06"],
       stages: [
         stage("O primeiro clique", "Perceber que o clique provoca uma ação na tela", "click-target", "Encontre o objeto pedido e clique nele.", [
-          choice("Clique na lanterna para acender a luz.", "Lanterna", [pic("Cantil", "🥤"), pic("Lanterna", "🔦"), pic("Mapa", "🗺️")]),
-          choice("Clique na barraca onde vamos dormir durante o acampamento.", "Barraca", [pic("Mochila", "🎒"), pic("Barraca", "⛺"), pic("Fogueira", "🔥")]),
+          choice("Clique na lanterna para acender a luz.", "Lanterna", [pic("Lanterna", "🔦"), pic("Cantil", "🥤"), pic("Mapa", "🗺️")]),
+          choice("Clique na barraca onde vamos dormir durante o acampamento.", "Barraca", [pic("Mochila", "🎒"), pic("Fogueira", "🔥"), pic("Barraca", "⛺")]),
           choice("Clique na pegada para descobrir quem passou por aqui.", "Pegada", [pic("Folha", "🍃"), pic("Pegada", "🐾"), pic("Pedra", "🪨")])
         ]),
         stage("Siga as pegadas", "Movimentar o ponteiro e acompanhar uma sequência de pontos", "connect-dots", "Ligue os pontos na ordem. Você também pode clicar em cada ponto.", [
@@ -28,7 +28,7 @@
         ]),
         stage("Arrume a mochila", "Preparar o que vamos usar para explorar a natureza durante o acampamento", "place-item", "Estamos arrumando a mochila para um acampamento. Escolha o objeto pedido e guarde-o na mochila. Você pode arrastar ou clicar no objeto e depois na mochila.", [
           { prompt: "Estamos arrumando a mochila para um acampamento. Escolha a lanterna, que vai iluminar nosso caminho quando escurecer.", item: pic("Lanterna", "🔦"), target: "Mochila", options: [pic("Lanterna", "🔦"), pic("Folha", "🍃"), pic("Pedra", "🪨"), pic("Nuvem", "☁️")] },
-          { prompt: "Estamos arrumando a mochila para um acampamento. Vamos levar os binóculos para observar os pássaros e outros animais. Escolha os binóculos.", item: pic("Binóculos", "🔭"), target: "Mochila", options: [pic("Binóculos", "🔭"), pic("Flor", "🌼"), pic("Nuvem", "☁️"), pic("Bola", "⚽")] },
+          { prompt: "Estamos arrumando a mochila para um acampamento. Vamos levar os binóculos para observar os pássaros e outros animais. Escolha os binóculos.", item: pic("Binóculos", "", "binoculars"), target: "Mochila", options: [pic("Binóculos", "", "binoculars"), pic("Flor", "🌼"), pic("Nuvem", "☁️"), pic("Bola", "⚽")] },
           { prompt: "Estamos arrumando a mochila para um acampamento. O mapa vai nos ajudar a encontrar o caminho e explorar a natureza. Escolha o mapa e coloque-o na mochila.", item: pic("Mapa", "🗺️"), target: "Mochila", options: [pic("Mapa", "🗺️"), pic("Concha", "🐚"), pic("Maçã", "🍎"), pic("Flor", "🌼")] }
         ])
       ]
