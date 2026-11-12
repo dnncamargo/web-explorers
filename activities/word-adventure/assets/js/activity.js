@@ -57,7 +57,7 @@
   }
   function musicIntroPanel() {
     return '<section class="music-intro" aria-labelledby="music-title">' +
-      '<div class="music-copy"><span class="music-kicker">♪ MÚSICA DE ABERTURA</span><h2 id="music-title">Vamos começar a expedição?</h2><p>Toque na imagem para ouvir a música. A trilha fica no mapa inicial e para quando você entrar em uma missão.</p></div>' +
+      '<div class="music-copy"><span class="music-kicker">♪ MÚSICA DA EXPEDIÇÃO</span><h2 id="music-title">A trilha da natureza</h2><p>A música acompanha sua exploração do mapa. Use a imagem para pausar ou retomar a faixa.</p></div>' +
       '<div class="music-image-wrap"><button id="map-music-toggle" class="music-image-button" type="button" aria-pressed="false" aria-label="Iniciar música da Expedição Natureza"><img src="' + MAP_MUSIC_IMAGE + '" alt="" loading="lazy"><span class="music-image-caption">▶ Toque na imagem para ouvir</span></button></div>' +
       '<p id="map-music-status" class="music-status" role="status" aria-live="polite">A música começa quando você tocar na imagem.</p>' +
       '<div id="map-music-player" class="player-host" aria-hidden="true"></div></section>';
@@ -84,6 +84,34 @@
     document.getElementById("map-music-toggle").addEventListener("click", toggleMapMusic);
     updateStorageStatus();
   }
+  function setupMapEntryOverlay() {
+    const screen = document.getElementById("capi-entry-screen");
+    const button = document.getElementById("capi-entry-button");
+    const shell = document.querySelector(".shell");
+    if (!screen || !button) return;
+
+    if (global.location.hash) {
+      screen.remove();
+      return;
+    }
+
+    if (shell) shell.inert = true;
+    global.document.body.classList.add("entry-locked");
+    button.focus({ preventScroll: true });
+    button.addEventListener("click", () => {
+      if (button.disabled) return;
+      button.disabled = true;
+      toggleMapMusic();
+      button.classList.add("entering");
+      screen.classList.add("leaving");
+      global.setTimeout(() => {
+        screen.remove();
+        if (shell) shell.inert = false;
+        global.document.body.classList.remove("entry-locked");
+      }, 520);
+    });
+  }
+
   function setMapMusicControl(playing, message) {
     const button = document.getElementById("map-music-toggle");
     const status = document.getElementById("map-music-status");
@@ -476,4 +504,5 @@
   global.addEventListener("hashchange", route);
   global.addEventListener("pagehide", () => { stopSpeech(); stopMapMusic(); });
   route();
+  setupMapEntryOverlay();
 })(window);
