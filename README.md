@@ -69,7 +69,7 @@ A atividade de alfabetização, letramento e familiarização com o computador c
 
 O percurso principal tem **cinco mundos e 25 checkpoints**, com três a cinco microatividades por checkpoint e duração de referência de aproximadamente 40 minutos:
 
-1. **Acampamento Base** — primeiro clique, movimento do ponteiro, ligar pontos, formas, cores e organização da mochila.
+1. **Acampamento Base** — primeiro clique, trilhas numéricas, formas desenhadas em SVG, cores e organização da mochila para o acampamento com lanterna, binóculos e mapa.
 2. **Lagoa dos Sons** — associação entre palavra e imagem, segmentação oral de sílabas, rimas e comparação de sílabas iniciais.
 3. **Trilha das Letras** — vogais, reconhecimento de grafemas, maiúsculas/minúsculas, traçado pontilhado e sons iniciais.
 4. **Oficina das Palavras** — famílias silábicas CV, completar e ordenar sílabas e decodificação gradual de palavras ensinadas.
@@ -81,13 +81,13 @@ A atividade combina cliques, seleção, conexão de pontos, arrastar e soltar, m
 
 ### Música e áudio
 
-A música de abertura aparece **somente no mapa inicial**. A imagem de introdução funciona como controle para iniciar ou pausar a faixa escolhida. O player do YouTube permanece fora da área visível, sem exibir vídeo nem controles, e repete a música inteira com `loop=1` e `playlist` apontando para o mesmo ID. Ao entrar em um mundo, o player é removido; ao voltar ao mapa, a música não reinicia sozinha. Os mundos não têm música de fundo nem trilha sonora contínua: usam apenas fala e áudio curto necessário ao exercício.
+A música de abertura aparece **somente no mapa inicial**. A imagem de introdução funciona como controle para iniciar ou pausar a faixa escolhida. O player do YouTube permanece fora da área visível, sem exibir vídeo nem controles, e repete a música inteira com `loop=1` e `playlist` apontando para o mesmo ID. Ao entrar em um mundo, o player é removido. Se a música estava tocando, o botão “Mapa” retoma a faixa ao retornar; se estava pausada, continua pausada. Os mundos não têm música de fundo nem trilha sonora contínua: usam apenas fala e áudio curto necessário ao exercício.
 
 Ao concluir os cinco mundos obrigatórios, a tela final apresenta uma mensagem de gratidão da Capi com a imagem da capivara segurando uma rosa. O Diário de Bordo continua opcional.
 
 ### Progresso
 
-O progresso da nova expedição usa a chave `exploradores.expedicao-natureza.progress.v2`, separada da chave v1 da antiga Aventura das Palavras. O progresso anterior não é apagado nem convertido em checkpoints novos. A versão atual registra checkpoints e a microatividade em andamento para permitir retomada local.
+O progresso da nova expedição usa a chave `exploradores.expedicao-natureza.progress.v2`, separada da chave v1 da antiga Aventura das Palavras. O progresso anterior não é apagado nem convertido em checkpoints novos. A versão atual registra checkpoints e a microatividade em andamento para permitir retomada local. Durante um checkpoint, há também uma ação para reiniciá-lo desde a primeira microatividade sem apagar checkpoints anteriores.
 
 O plano pedagógico, a sequência curricular, as interações, a política de áudio e os critérios de aceite estão em [docs/activities/word-adventure-plan.md](docs/activities/word-adventure-plan.md). A proposta se relaciona às habilidades de consciência fonológica, sistema alfabético, decodificação e compreensão de textos cotidianos da BNCC, com mediação docente.
 
