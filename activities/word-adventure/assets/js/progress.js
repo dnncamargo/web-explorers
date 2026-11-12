@@ -81,6 +81,13 @@
     const saved = progress.rounds[worldId];
     return saved && saved.checkpoint === checkpoint ? saved.roundIndex : 0;
   }
+  function resetCheckpoint(progress, worldId, checkpoint) {
+    if (!WORLD_IDS.includes(worldId) || !Number.isInteger(checkpoint)) return false;
+    const current = completedCount(progress, worldId);
+    if (checkpoint !== current + 1 || checkpoint > LIMITS[worldId]) return false;
+    delete progress.rounds[worldId];
+    return true;
+  }
   function completeRound(progress, worldId, checkpoint, roundIndex, roundsTotal) {
     if (!WORLD_IDS.includes(worldId) || !Number.isInteger(roundIndex) || !Number.isInteger(roundsTotal) || roundsTotal < 1) return false;
     const current = completedCount(progress, worldId);
@@ -95,5 +102,5 @@
     }
     return true;
   }
-  global.WordAdventureProgress = { KEY, LEGACY_KEY, WORLD_IDS, LIMITS, fresh, normalize, load, save, reset, completedCount, currentRound, completeRound };
+  global.WordAdventureProgress = { KEY, LEGACY_KEY, WORLD_IDS, LIMITS, fresh, normalize, load, save, reset, completedCount, currentRound, resetCheckpoint, completeRound };
 })(window);
