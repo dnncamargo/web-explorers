@@ -13,7 +13,7 @@ web-explorers/
 │   ├── yoshi-typing/             # Floresta do Yoshi
 │   ├── donkey-kong/              # Donkey Kong Country
 │   └── word-adventure/           # Expedição Natureza
-│       ├── index.html            # mapa inicial, capa musical e agradecimento
+│       ├── index.html            # entrada pela Capi, mapa, música e agradecimento
 │       ├── worlds/               # aliases de compatibilidade dos mundos
 │       ├── assets/css/
 │       ├── assets/js/            # conteúdo, progresso e interação
@@ -81,7 +81,7 @@ A atividade combina cliques, seleção, conexão de pontos, arrastar e soltar, m
 
 ### Música e áudio
 
-A música de abertura aparece **somente no mapa inicial**. A imagem de introdução funciona como controle para iniciar ou pausar a faixa escolhida. O player do YouTube permanece fora da área visível, sem exibir vídeo nem controles, e repete a música inteira com `loop=1` e `playlist` apontando para o mesmo ID. Ao entrar em um mundo, o player é removido. Se a música estava tocando, o botão “Mapa” retoma a faixa ao retornar; se estava pausada, continua pausada. Os mundos não têm música de fundo nem trilha sonora contínua: usam apenas fala e áudio curto necessário ao exercício.
+A primeira tela apresenta a Capi no centro: ao clicar nela, o mapa de atividades é aberto e a música começa no mesmo gesto. No mapa, a imagem de introdução funciona como controle para pausar ou retomar a faixa. O player do YouTube permanece fora da área visível, sem exibir vídeo nem controles, e repete a música inteira com `loop=1` e `playlist` apontando para o mesmo ID. Ao entrar em um mundo, o player é removido. Se a música estava tocando, o botão “Mapa” retoma a faixa ao retornar; se estava pausada, continua pausada. Os mundos não têm música de fundo nem trilha sonora contínua: usam apenas fala e áudio curto necessário ao exercício.
 
 Ao concluir os cinco mundos obrigatórios, a tela final apresenta uma mensagem de gratidão da Capi com a imagem da capivara segurando uma rosa. O Diário de Bordo continua opcional.
 
