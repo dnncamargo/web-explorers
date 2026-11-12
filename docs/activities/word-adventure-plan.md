@@ -54,7 +54,7 @@ O avanço do checkpoint só ocorre depois de completar sua pequena sequência. A
 | # | Checkpoint | Microatividades previstas |
 |---:|---|---|
 | 1 | **O primeiro clique** | Clicar em uma lanterna para acendê-la; tocar em objetos grandes para revelar uma animação; selecionar um botão evidente para iniciar uma ação. O retorno visual confirma que a ação da criança funcionou. |
-| 2 | **Siga as pegadas** | Acompanhar uma trilha larga com o ponteiro; conectar 4–6 pontos em sequência; repetir o caminho com novos pontos e destino. Oferecer também a alternativa de clicar nos pontos em ordem, sem arrastar. |
+| 2 | **Siga as pegadas** | Acompanhar uma trilha larga com o ponteiro; conectar pontos numerados; na terceira microatividade, apresentar os dez pontos em uma única linha horizontal, em ordem visual embaralhada. A sequência correta de clique é `1–3–2–4–5–6–8–7–6–9`; cada ponto correto fica marcado e não pode ser reutilizado, enquanto cliques fora da ordem são rejeitados. |
 | 3 | **Formas na mochila** | Encontrar círculos, quadrados e triângulos; selecionar a forma solicitada; colocar formas em espaços correspondentes. A forma, o contorno e o nome falado acompanham a cor. |
 | 4 | **Arrume a mochila** | Selecionar lanterna, cantil e mapa; arrastar cada item para a mochila; repetir por seleção do item e depois do destino. Reforçar que clicar e soltar produz uma mudança controlada pelo aluno. |
 
