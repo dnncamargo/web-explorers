@@ -44,6 +44,18 @@ assert.deepEqual(Array.from(camp.stages[3].rounds, (round) => round.options.find
 assert.equal(camp.stages[3].rounds[1].options[3].emoji, "🧭", "the compass option displays the matching symbol");
 assert.ok(camp.stages[3].rounds.every((round) => round.options.length === 4), "each backpack task has four alternatives");
 
+const lagoon = data.worlds[1];
+assert.equal(lagoon.stages[0].rounds[3].target, "ARARA", "the fourth listening task now expects the macaw");
+assert.match(lagoon.stages[0].rounds[3].prompt, /ave.*lagoa/i, "the animal prompt refers to a bird near the lagoon");
+assert.deepEqual(Array.from(lagoon.stages[0].rounds[3].options, (option) => option.word), ["Macaco", "Arara", "Tartaruga"], "the macaw replaces the frog and the distractors use distinct animals");
+assert.equal(lagoon.stages[1].kind, "syllable-tap", "the second lagoon checkpoint requires tapping syllables");
+assert.deepEqual(Array.from(lagoon.stages[1].rounds, (round) => round.word), ["SAPO", "JACARÉ", "MACACO", "ELEFANTE"], "the syllable activity uses the four requested animals");
+assert.deepEqual(Array.from(lagoon.stages[1].rounds, (round) => Array.from(round.syllables)), [["SA", "PO"], ["JA", "CA", "RÉ"], ["MA", "CA", "CO"], ["E", "LE", "FAN", "TE"]], "each animal is divided into its spoken syllables");
+assert.ok(!lagoon.stages[1].prompt.includes("pedaço") && lagoon.stages[1].prompt.includes("parte"), "the syllable instruction uses the word parte");
+assert.ok(activity.includes('stage.kind === "syllable-tap"') && activity.includes('spoken(syllable.toLocaleLowerCase("pt-BR"))'), "tapping a syllable speaks its lowercase sound");
+assert.ok(activity.includes('index !== currentPart') && activity.includes('button.classList.add("heard")') && activity.includes('button.disabled = true;'), "syllables must be tapped in order, once each, and change color when heard");
+assert.ok(styles.includes(".syllable-tap-part.heard") && styles.includes(".syllable-tap-separator"), "tapped syllables change color and are separated by centered dots");
+
 assert.ok(activity.includes("ROTEIRO ' + world.number + ' · PARADA ' + number + '/' + world.stages.length"), "checkpoint progress uses route and stop vocabulary");
 assert.ok(activity.includes("DESCOBERTA ' + (roundIndex + 1) + ' DE ' + rounds"), "microactivity progress uses discovery vocabulary");
 assert.ok(!activity.includes("ATIVIDADE ' + (roundIndex + 1)"), "the generic activity label is no longer shown");
