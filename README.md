@@ -13,7 +13,7 @@ web-explorers/
 │   ├── yoshi-typing/             # Floresta do Yoshi
 │   ├── donkey-kong/              # Donkey Kong Country
 │   └── word-adventure/           # Expedição Natureza
-│       ├── index.html            # mapa inicial e Rádio do Acampamento
+│       ├── index.html            # mapa inicial, capa musical e agradecimento
 │       ├── worlds/               # aliases de compatibilidade dos mundos
 │       ├── assets/css/
 │       ├── assets/js/            # conteúdo, progresso e interação
@@ -79,9 +79,11 @@ O **Diário de Bordo** é um bônus opcional de sequência narrativa, compreens�
 
 A atividade combina cliques, seleção, conexão de pontos, arrastar e soltar, montagem de palavras e compreensão de textos curtos. Toda ação de arrastar possui alternativa por seleção do item e do destino. A criança não precisa digitar no teclado físico nem ler sozinha as instruções. Não há cronômetro, vidas ou penalização por erros; pausas e repetição fazem parte da proposta.
 
-### Rádio e áudio
+### Música e áudio
 
-A Rádio do Acampamento aparece **somente no mapa inicial**. O vídeo do YouTube é carregado por ação do usuário e configurado para repetir o vídeo inteiro, do início ao fim, usando `loop=1` e `playlist` com o mesmo ID. Ao entrar em um mundo, o player é removido. Os mundos não têm rádio nem trilha sonora contínua: usam apenas fala e áudio curto necessário ao exercício.
+A música de abertura aparece **somente no mapa inicial**. A imagem de introdução funciona como controle para iniciar ou pausar a faixa escolhida. O player do YouTube permanece fora da área visível, sem exibir vídeo nem controles, e repete a música inteira com `loop=1` e `playlist` apontando para o mesmo ID. Ao entrar em um mundo, o player é removido; ao voltar ao mapa, a música não reinicia sozinha. Os mundos não têm rádio nem trilha sonora contínua: usam apenas fala e áudio curto necessário ao exercício.
+
+Ao concluir os cinco mundos obrigatórios, a tela final apresenta uma mensagem de gratidão da Capi com a imagem da capivara segurando uma rosa. O Diário de Bordo continua opcional.
 
 ### Progresso
 
