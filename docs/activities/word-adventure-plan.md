@@ -176,7 +176,7 @@ A música aparece **somente no mapa inicial** da atividade, apresentado em `acti
 
 ### Áudio nos mundos
 
-Os mundos **não terão rádio nem trilha sonora contínua**. As atividades já utilizam som para apresentar instruções, palavras, sílabas e respostas.
+Os mundos **não terão música de fundo nem trilha sonora contínua**. As atividades já utilizam som para apresentar instruções, palavras, sílabas e respostas.
 
 - Usar síntese de voz pt-BR ou gravações curtas e específicas para a tarefa.
 - A fala deve ser acionada pela instrução da atividade ou por botão de repetição.
@@ -271,9 +271,9 @@ Cada etapa deve ser desenvolvida em mudanças pequenas, testadas, e revisada ant
 - A criança não precisa digitar no teclado físico nem ler instruções sozinha.
 - A progressão silábica é coerente: não se exige decodificação independente de grafias ainda não ensinadas.
 - Imagens não permitem concluir tarefas de decodificação sem considerar a palavra escrita.
-- Áudio falado tem opção de repetição e não se sobrepõe à rádio.
+- Áudio falado tem opção de repetição e não se sobrepõe à música de abertura, que é interrompida ao entrar em um mundo.
 - Armazenamento indisponível não impede a atividade; o fallback informa a limitação.
-- Testes verificam conteúdo, contagem e ordem de checkpoints, rodadas, persistência, retomada, rotas, rádio e alternativa acessível a cada interação.
+- Testes verificam conteúdo, contagem e ordem de checkpoints, rodadas, persistência, retomada, rotas, player de áudio oculto, encerramento com gratidão e alternativa acessível a cada interação.
 - Validar visualmente e funcionalmente em Chromebook, mouse/touchpad e tela sensível ao toque.
 
 ## 13. Referências
