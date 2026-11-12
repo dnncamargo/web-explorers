@@ -157,23 +157,22 @@ Regras obrigatórias:
 - Respeitar `prefers-reduced-motion`.
 - Não usar sons de fundo, animações contínuas ou efeitos que concorram com a atenção.
 
-## 6. Rádio da página inicial e política de áudio
+## 6. Música da página inicial e política de áudio
 
-### Rádio do Acampamento
+### Música de abertura
 
-A rádio aparece **somente no mapa inicial** da atividade, apresentado em `activities/word-adventure/index.html` quando nenhum mundo está aberto.
+A música aparece **somente no mapa inicial** da atividade, apresentado em `activities/word-adventure/index.html` quando nenhum mundo está aberto.
 
-- Fonte fornecida: https://www.youtube.com/watch?v=Uf1g5vvsr3s
-- ID do vídeo: `Uf1g5vvsr3s`
-- O player pode exibir o vídeo do YouTube, com controles acessíveis e uma apresentação visual compacta chamada “Rádio do Acampamento”.
-- Não iniciar reprodução automática. A pessoa deve iniciar pelo controle do player, pois navegadores restringem reprodução com áudio sem interação.
-- Reproduzir o vídeo inteiro, desde o início até a duração final original; não usar um temporizador arbitrário nem cortar alguns segundos antes do fim.
-- Repetir o mesmo vídeo desde o início depois que a reprodução terminar. Na incorporação de vídeo único, usar `loop=1` com `playlist=Uf1g5vvsr3s`, conforme a documentação oficial do YouTube.
-- Se futuramente houver necessidade de tocar apenas um trecho, definir início e fim de forma explícita com a API IFrame Player, validar os limites e reiniciar no início exato do trecho. Não sincronizar por `setTimeout`.
-- O elemento do player deve existir apenas no conteúdo do mapa inicial. Não colocá-lo no cabeçalho, rodapé global ou em um contêiner que permaneça montado durante os desafios.
-- Ao entrar em qualquer mundo, o iframe deve ser removido ou a reprodução deve ser interrompida. Ao retornar ao mapa, o player permanece pausado; a reprodução só recomeça quando o aluno clicar novamente.
-- Se o YouTube não carregar, oferecer o link original como alternativa e não impedir a navegação.
+- Faixa fornecida: https://www.youtube.com/watch?v=01pN6rnaJy8
+- ID do vídeo: `01pN6rnaJy8`
+- A imagem de introdução fornecida funciona como botão acessível para iniciar ou pausar a música.
+- Não iniciar reprodução automática. A faixa começa somente após o aluno tocar na imagem, em resposta às restrições dos navegadores para reprodução com áudio.
+- O player do YouTube fica fora da área visível, sem exibir vídeo nem controles. A faixa inteira deve ser reproduzida e repetida desde o início, usando `loop=1` e `playlist=01pN6rnaJy8`.
+- Não usar temporizador para cortar a faixa nem sincronizar a reprodução com duração estimada.
+- O elemento do player existe somente no conteúdo do mapa inicial. Não colocá-lo no cabeçalho, rodapé global ou em um contêiner que permaneça montado durante os desafios.
+- Ao entrar em qualquer mundo, o iframe deve ser removido. Ao retornar ao mapa, a música permanece pausada; só recomeça quando o aluno tocar novamente na imagem.
 - O player não é requisito para concluir a atividade.
+- Imagem de gratidão: ao concluir os cinco mundos obrigatórios, a tela final apresenta a capivara segurando uma rosa e agradece pela participação. O Diário de Bordo continua opcional.
 
 ### Áudio nos mundos
 
@@ -233,12 +232,12 @@ Não converter esses registros em nota automática ou rótulo de nível. A media
 
 Manter a estrutura técnica atual e os caminhos publicados:
 
-- `activities/word-adventure/index.html` — mapa inicial, rádio e ponto de entrada.
+- `activities/word-adventure/index.html` — mapa inicial, introdução musical e ponto de entrada.
 - `activities/word-adventure/worlds/` — aliases de acesso aos mundos, preservando compatibilidade.
 - `activities/word-adventure/assets/css/word-adventure.css` — identidade visual da expedição e interações.
 - `activities/word-adventure/assets/js/content.js` — cinco mundos, 25 checkpoints, rodadas e conteúdo do bônus.
 - `activities/word-adventure/assets/js/progress.js` — persistência v2 e retomada de microdesafios.
-- `activities/word-adventure/assets/js/activity.js` — mapa, rádio, renderização de checkpoints e microatividades.
+- `activities/word-adventure/assets/js/activity.js` — mapa, música de abertura, tela de gratidão, renderização de checkpoints e microatividades.
 - `activities/word-adventure/tests/` — testes específicos de conteúdo, progresso, rotas e interações.
 - `docs/activities/word-adventure-plan.md` — esta especificação.
 
@@ -246,7 +245,7 @@ A lógica de cada tipo de interação deve ser reutilizável. Evitar uma impleme
 
 ## 11. Etapas sugeridas de implementação
 
-1. **Fundação:** versão de progresso v2, modelos de mundo/checkpoint/rodada, mapa ilustrado e rádio exclusivo da página inicial.
+1. **Fundação:** versão de progresso v2, modelos de mundo/checkpoint/rodada, mapa ilustrado e música exclusiva da página inicial.
 2. **Interação digital:** cliques, formas, cores, conectar pontos, seleção e arrastar com alternativa por toque.
 3. **Consciência fonológica:** cinco checkpoints da Lagoa dos Sons.
 4. **Letras e traçado:** vogais, M/P/L/T/B, maiúsculas/minúsculas, som inicial e trilhas pontilhadas.
@@ -258,9 +257,10 @@ Cada etapa deve ser desenvolvida em mudanças pequenas, testadas, e revisada ant
 
 ## 12. Testes de aceite
 
-- A página inicial apresenta o mapa da Expedição Natureza e o rádio do Acampamento.
-- O player usa o vídeo fornecido, reproduz o vídeo inteiro e repete a partir do início; não há corte por temporizador.
-- O rádio não está montado em telas de mundo nem continua tocando depois de entrar em um checkpoint.
+- A página inicial apresenta o mapa da Expedição Natureza e a imagem que inicia a música.
+- A música fornecida toca sem exibir o vídeo e repete a faixa inteira; não há corte por temporizador.
+- O player fica oculto e é removido ao entrar em qualquer mundo; ao voltar ao mapa, não inicia sozinho.
+- A conclusão dos cinco mundos obrigatórios apresenta a imagem da capivara com uma mensagem de gratidão; o Diário de Bordo segue opcional.
 - Ao voltar ao mapa, o player não começa sozinho.
 - Os cinco mundos obrigatórios apresentam exatamente 25 checkpoints; o Diário de Bordo tem três checkpoints opcionais.
 - Cada checkpoint obrigatório tem três ou quatro microatividades, com conteúdo variado e a mesma habilidade-alvo.
