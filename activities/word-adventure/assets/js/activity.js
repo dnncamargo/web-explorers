@@ -290,14 +290,33 @@
       renderChoiceRound({ showTarget, showWord, className: stage.kind === "find-letter" || stage.kind === "sound-letter" || stage.kind === "case-match" ? "letter-choices" : "" });
     }
 
-    if (stage.kind === "syllable-count") {
-      challenge.innerHTML = '<div class="sound-target"><div class="big-emoji">' + esc(round.emoji) + '</div><div class="word-display">' + esc(round.word) + '</div>' + speakButton(round.word, "Ouvir palavra") + '</div><p class="micro-instruction">Fale devagar e bata uma palma para cada pedaço.</p>';
+    if (stage.kind === "syllable-tap") {
+      let currentPart = 0;
+      challenge.innerHTML = '<div class="sound-target"><div class="big-emoji">' + esc(round.emoji) + '</div><div class="syllable-tap-word" role="group" aria-label="Partes da palavra ' + esc(round.word) + '">' + round.syllables.map((value, index) => (index ? '<span class="syllable-tap-separator" aria-hidden="true">·</span>' : "") + '<button type="button" class="syllable-tap-part" data-syllable-index="' + index + '" aria-label="Ouvir parte ' + esc(value) + '" aria-pressed="false">' + esc(value) + '</button>').join("") + '</div>' + speakButton(round.word, "Ouvir palavra inteira") + '</div><p class="micro-instruction">Toque uma vez em cada parte da palavra, da esquerda para a direita. Ouça o som de cada parte.</p><p class="syllable-tap-status" id="syllable-tap-status" role="status" aria-live="polite">Primeiro, toque em ' + esc(round.syllables[0]) + '.</p>';
       challenge.querySelector(".audio-button").addEventListener("click", () => audioFor(round.word));
-      setTimeout(() => spoken(round.word), 180);
-      renderChoices(["1", "2", "3", "4"], (value) => {
-        if (Number(value) === round.syllables.length) finish("Isso! " + round.word + " tem " + round.syllables.length + " partes: " + round.syllables.join(" · ") + ".");
-        else wrong("Vamos falar devagar e bater palmas mais uma vez.");
-      }, "compact-choices");
+      const status = challenge.querySelector("#syllable-tap-status");
+      challenge.querySelectorAll("[data-syllable-index]").forEach((button) => button.addEventListener("click", () => {
+        if (complete || button.disabled) return;
+        const index = Number(button.dataset.syllableIndex);
+        const expected = round.syllables[currentPart];
+        if (index !== currentPart) {
+          wrong("Agora toque em " + expected + ". Siga da esquerda para a direita.");
+          return;
+        }
+        const syllable = round.syllables[currentPart];
+        button.disabled = true;
+        button.setAttribute("aria-pressed", "true");
+        button.classList.add("heard");
+        spoken(syllable.toLocaleLowerCase("pt-BR"));
+        currentPart += 1;
+        if (currentPart === round.syllables.length) {
+          status.textContent = "Todas as partes foram ouvidas: " + round.syllables.join(" · ") + ".";
+          finish("Muito bem! Você ouviu todas as partes de " + round.word + ".");
+          return;
+        }
+        status.textContent = "Muito bem! Agora toque em " + round.syllables[currentPart] + ".";
+        setFeedback("Você ouviu " + syllable + ". Continue com a próxima parte.", "good");
+      }));
     }
 
     if (stage.kind === "first-syllable") {
