@@ -259,13 +259,16 @@ Cada etapa deve ser desenvolvida em mudanças pequenas, testadas, e revisada ant
 
 - A página inicial apresenta o mapa da Expedição Natureza e a imagem que inicia a música.
 - A música fornecida toca sem exibir o vídeo e repete a faixa inteira; não há corte por temporizador.
-- O player fica oculto e é removido ao entrar em qualquer mundo; ao voltar ao mapa, não inicia sozinho.
+- O player fica oculto e é removido ao entrar em qualquer mundo. Se a música estava tocando, o botão “Mapa” retoma a faixa ao retornar; se estava pausada, continua pausada.
 - A conclusão dos cinco mundos obrigatórios apresenta a imagem da capivara com uma mensagem de gratidão; o Diário de Bordo segue opcional.
 - Ao voltar ao mapa, o player não começa sozinho.
 - Os cinco mundos obrigatórios apresentam exatamente 25 checkpoints; o Diário de Bordo tem três checkpoints opcionais.
-- Cada checkpoint obrigatório tem três ou quatro microatividades, com conteúdo variado e a mesma habilidade-alvo.
+- Cada checkpoint obrigatório tem de três a cinco microatividades, com conteúdo variado e a mesma habilidade-alvo.
 - A sessão completa foi planejada para cerca de 40 minutos, sem impor duração máxima.
 - O aluno consegue pausar/fechar e retomar checkpoint e microatividade a partir do progresso v2.
+- O aluno pode reiniciar o checkpoint atual; isso volta à primeira microatividade sem apagar checkpoints anteriores.
+- No Acampamento Base, as formas são ilustrações SVG com geometria e cores exatas; as trilhas numéricas respeitam a sequência apresentada.
+- O exercício da mochila comunica que os objetos estão sendo preparados para explorar a natureza no acampamento; cada rodada oferece quatro alternativas.
 - O progresso v1 antigo não é sobrescrito nem interpretado como conclusão dos novos mundos.
 - Todos os arrastes têm alternativa por seleção e destino; ligar pontos tem alternativa por cliques sequenciais.
 - A criança não precisa digitar no teclado físico nem ler instruções sozinha.
