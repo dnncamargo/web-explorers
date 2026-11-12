@@ -18,7 +18,7 @@
         stage("Siga as pegadas", "Movimentar o ponteiro e acompanhar uma sequência de pontos", "connect-dots", "Ligue os pontos na ordem. Você também pode clicar em cada ponto.", [
           { prompt: "Ligue os quatro pontos seguindo os números.", sequence: ["1", "2", "3", "4"] },
           { prompt: "Continue a trilha: encontre os pontos de 4 a 9.", sequence: ["4", "5", "6", "7", "8", "9"] },
-          { prompt: "Os números estão embaralhados. Clique seguindo a ordem: 1, 3, 2, 4, 5, 6, 8, 7, 6, 9.", sequence: ["1", "3", "2", "4", "5", "6", "8", "7", "6", "9"], displayOrder: ["6", "2", "9", "1", "7", "3", "8", "5", "4", "6"] }
+          { prompt: "Os números aparecem fora de ordem. Clique em ordem crescente, do 1 ao 9.", sequence: ["1", "2", "3", "4", "5", "6", "7", "8", "9"], displayOrder: ["1", "3", "2", "4", "5", "6", "8", "7", "6", "9"] }
         ]),
         stage("Formas na mochila", "Reconhecer formas e cores sem depender somente da cor", "find-shape", "Encontre a forma indicada.", [
           choice("Encontre o círculo azul.", "Círculo azul", [shapePic("Círculo azul", "circle", "blue"), shapePic("Quadrado verde", "square", "green"), shapePic("Triângulo amarelo", "triangle", "yellow")]),
