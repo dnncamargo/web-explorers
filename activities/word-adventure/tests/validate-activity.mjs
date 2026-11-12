@@ -15,7 +15,7 @@ assert.ok(activity.includes('const MAP_MUSIC_ID = "01pN6rnaJy8"'), "the home map
 assert.ok(activity.includes("https://http2.mlstatic.com/D_NQ_NP_2X_737962-MLA81129374435_122024-F.webp"), "the supplied image introduces the home music");
 assert.ok(activity.includes('id="map-music-toggle"') && activity.includes("toggleMapMusic"), "the introduction image is the music control");
 assert.ok(activity.includes("controls=0&disablekb=1&loop=1&playlist="), "the YouTube player is hidden and loops the complete track");
-assert.ok(activity.includes("function stopMapMusic()") && activity.includes("stopMapMusic();\\n    const world = worldList().find"), "map music is removed when leaving the home map");
+assert.ok(activity.includes("function stopMapMusic()") && activity.includes("stopMapMusic();\n    const world = worldList().find"), "map music is removed when leaving the home map");
 assert.ok(activity.includes("mainRouteComplete = DATA.worlds.every"), "the activity finish depends on all five required worlds");
 assert.ok(activity.includes("https://marketplace.canva.com/bJxi8/MAHCGsbJxi8/1/tl/canva-uma-capivara-fofa-segurando-uma-rosa.-MAHCGsbJxi8.png"), "the final thank-you uses the supplied capybara image");
 assert.ok(activity.includes('alt="Uma capivara fofa segurando uma rosa"'), "the gratitude image has descriptive alternative text");
