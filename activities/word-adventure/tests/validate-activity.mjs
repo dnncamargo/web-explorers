@@ -12,10 +12,13 @@ const activity = read("../assets/js/activity.js");
 const styles = read("../assets/css/word-adventure.css");
 
 const camp = data.worlds[0];
+assert.deepEqual(Array.from(camp.stages[0].rounds[0].options, (option) => option.word), ["Lanterna", "Cantil", "Mapa"], "the first click task places the lantern first");
+assert.deepEqual(Array.from(camp.stages[0].rounds[1].options, (option) => option.word), ["Mochila", "Fogueira", "Barraca"], "the second click task places the tent last");
+assert.deepEqual(Array.from(camp.stages[0].rounds[2].options, (option) => option.word), ["Folha", "Pegada", "Pedra"], "the third click task places the footprint in the middle");
+assert.deepEqual(Array.from(camp.stages[0].rounds, (round) => round.options.findIndex((option) => option.word === round.target)), [0, 2, 1], "the three correct answers occupy different positions");
 assert.equal(camp.stages[0].rounds[1].target, "Barraca", "the second click task asks the learner to find the tent");
 assert.match(camp.stages[0].rounds[1].prompt, /Clique na barraca/i, "the question clearly asks for the tent");
-assert.deepEqual(Array.from(camp.stages[0].rounds[1].options, (option) => option.word), ["Mochila", "Barraca", "Fogueira"], "the click task uses three distinct camping objects");
-assert.deepEqual(Array.from(camp.stages[0].rounds[1].options, (option) => option.emoji), ["🎒", "⛺", "🔥"], "the camping choices use clear, matching pictograms");
+assert.deepEqual(Array.from(camp.stages[0].rounds[1].options, (option) => option.emoji), ["🎒", "🔥", "⛺"], "the camping choices use clear, matching pictograms");
 assert.deepEqual(Array.from(camp.stages[1].rounds[1].sequence), ["4", "5", "6", "7", "8", "9"], "the second trail starts at four and ends at nine");
 assert.deepEqual(Array.from(camp.stages[1].rounds[2].displayOrder), ["1", "3", "2", "4", "6", "8", "7", "5", "9"], "the third trail displays the exact requested visual order");
 assert.deepEqual(Array.from(camp.stages[1].rounds[2].sequence), ["1", "2", "3", "4", "5", "6", "7", "8", "9"], "the third trail accepts only ascending clicks from one through nine");
@@ -33,6 +36,10 @@ assert.equal(camp.stages[2].rounds[3].options[0].shape, "star", "the fourth shap
 assert.equal(camp.stages[2].rounds[3].options[0].color, "orange", "the star is orange");
 assert.match(camp.stages[3].prompt, /mochila para um acampamento/i, "the backpack instruction explains the camping purpose");
 assert.equal(camp.stages[3].rounds[1].item.word, "Binóculos", "the second backpack item is binoculars");
+assert.equal(camp.stages[3].rounds[1].item.visual, "binoculars", "the backpack item uses a dedicated binocular illustration");
+assert.equal(camp.stages[3].rounds[1].item.emoji, "", "the binoculars are not represented by a telescope emoji");
+assert.equal(camp.stages[3].rounds[1].options[0].visual, "binoculars", "the correct backpack option also uses the binocular illustration");
+assert.ok(activity.includes('item.visual === "binoculars"') && activity.includes("binocular-visual"), "the binocular illustration is rendered as a dedicated SVG");
 assert.ok(camp.stages[3].rounds.every((round) => round.options.length === 4), "each backpack task has four alternatives");
 
 assert.ok(activity.includes("ROTEIRO ' + world.number + ' · PARADA ' + number + '/' + world.stages.length"), "checkpoint progress uses route and stop vocabulary");
