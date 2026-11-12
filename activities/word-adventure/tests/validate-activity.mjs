@@ -12,9 +12,10 @@ const activity = read("../assets/js/activity.js");
 const styles = read("../assets/css/word-adventure.css");
 
 const camp = data.worlds[0];
-assert.equal(camp.stages[0].rounds[1].target, "Apito", "the second click task targets a camp whistle, not another command button");
-assert.deepEqual(Array.from(camp.stages[0].rounds[1].options, (option) => option.word), ["Cantil", "Apito", "Binóculos"], "the click task uses distinct camping objects");
-assert.equal(camp.stages[0].rounds[1].options.find((option) => option.word === "Apito")?.emoji, "🪈", "the whistle uses a wind-instrument emoji instead of a megaphone");
+assert.equal(camp.stages[0].rounds[1].target, "Barraca", "the second click task asks the learner to find the tent");
+assert.match(camp.stages[0].rounds[1].prompt, /Clique na barraca/i, "the question clearly asks for the tent");
+assert.deepEqual(Array.from(camp.stages[0].rounds[1].options, (option) => option.word), ["Mochila", "Barraca", "Fogueira"], "the click task uses three distinct camping objects");
+assert.deepEqual(Array.from(camp.stages[0].rounds[1].options, (option) => option.emoji), ["🎒", "⛺", "🔥"], "the camping choices use clear, matching pictograms");
 assert.deepEqual(Array.from(camp.stages[1].rounds[1].sequence), ["4", "5", "6", "7", "8", "9"], "the second trail starts at four and ends at nine");
 assert.deepEqual(Array.from(camp.stages[1].rounds[2].sequence), ["1", "2", "3", "4", "5", "6", "7", "8", "9"], "the third trail follows ascending numerical order");
 assert.ok(camp.stages[2].rounds.every((round) => round.options.every((option) => option.shape && option.color)), "all shape choices use explicit SVG geometry and colors");
