@@ -32,13 +32,19 @@
       ? "O navegador não permite salvar o progresso. Ele ficará disponível enquanto esta página estiver aberta."
       : "Progresso salvo neste navegador. Você pode voltar depois.";
   }
-  function spoken(text) {
+  function spoken(text, onComplete) {
     if (!("speechSynthesis" in global) || !text) return false;
     try {
       global.speechSynthesis.cancel();
       const utterance = new global.SpeechSynthesisUtterance(String(text));
       utterance.lang = "pt-BR";
       utterance.rate = 0.82;
+      if (typeof onComplete === "function") {
+        let completed = false;
+        const complete = () => { if (!completed) { completed = true; onComplete(); } };
+        utterance.onend = complete;
+        utterance.onerror = complete;
+      }
       global.speechSynthesis.speak(utterance);
       return true;
     } catch { return false; }
@@ -292,11 +298,12 @@
 
     if (stage.kind === "syllable-tap") {
       let currentPart = 0;
-      challenge.innerHTML = '<div class="sound-target"><div class="big-emoji">' + esc(round.emoji) + '</div><div class="syllable-tap-word" role="group" aria-label="Partes da palavra ' + esc(round.word) + '">' + round.syllables.map((value, index) => (index ? '<span class="syllable-tap-separator" aria-hidden="true">·</span>' : "") + '<button type="button" class="syllable-tap-part" data-syllable-index="' + index + '" aria-label="Ouvir parte ' + esc(value) + '" aria-pressed="false">' + esc(value) + '</button>').join("") + '</div>' + speakButton(round.word, "Ouvir palavra inteira") + '</div><p class="micro-instruction">Toque uma vez em cada parte da palavra, da esquerda para a direita. Ouça o som de cada parte.</p><p class="syllable-tap-status" id="syllable-tap-status" role="status" aria-live="polite">Primeiro, toque em ' + esc(round.syllables[0]) + '.</p>';
-      challenge.querySelector(".audio-button").addEventListener("click", () => audioFor(round.word));
+      let speakingPart = false;
+      challenge.innerHTML = '<div class="sound-target"><div class="big-emoji">' + esc(round.emoji) + '</div><div class="syllable-tap-word" role="group" aria-label="Partes da palavra ' + esc(round.word) + '">' + round.syllables.map((value, index) => (index ? '<span class="syllable-tap-separator" aria-hidden="true">·</span>' : "") + '<button type="button" class="syllable-tap-part" data-syllable-index="' + index + '" aria-label="Ouvir parte ' + esc(value) + '" aria-pressed="false">' + esc(value) + '</button>').join("") + '</div></div><p class="micro-instruction">Toque uma vez em cada parte da palavra, da esquerda para a direita. Ouça o som de cada parte.</p><p class="syllable-tap-status" id="syllable-tap-status" role="status" aria-live="polite">Primeiro, toque em ' + esc(round.syllables[0]) + '.</p>';
       const status = challenge.querySelector("#syllable-tap-status");
       challenge.querySelectorAll("[data-syllable-index]").forEach((button) => button.addEventListener("click", () => {
         if (complete || button.disabled) return;
+        if (speakingPart) { wrong("Ouça o som da sílaba até o fim antes de continuar."); return; }
         const index = Number(button.dataset.syllableIndex);
         const expected = round.syllables[currentPart];
         if (index !== currentPart) {
@@ -307,15 +314,30 @@
         button.disabled = true;
         button.setAttribute("aria-pressed", "true");
         button.classList.add("heard");
-        spoken(syllable.toLocaleLowerCase("pt-BR"));
         currentPart += 1;
-        if (currentPart === round.syllables.length) {
-          status.textContent = "Todas as partes foram ouvidas: " + round.syllables.join(" · ") + ".";
-          finish("Muito bem! Você ouviu todas as partes de " + round.word + ".");
-          return;
+        speakingPart = true;
+        const isLastPart = currentPart === round.syllables.length;
+        const finishAfterSound = () => {
+          speakingPart = false;
+          if (isLastPart) {
+            status.textContent = "Todas as partes foram ouvidas: " + round.syllables.join(" · ") + ".";
+            finish("Muito bem! Você ouviu todas as partes de " + round.word + ".");
+          } else {
+            status.textContent = "Muito bem! Agora toque em " + round.syllables[currentPart] + ".";
+            setFeedback("Você ouviu " + syllable + ". Continue com a próxima parte.", "good");
+          }
+        };
+        status.textContent = "Ouça a parte " + syllable + ".";
+        if (!spoken(syllable.toLocaleLowerCase("pt-BR"), finishAfterSound)) {
+          speakingPart = false;
+          if (isLastPart) {
+            status.textContent = "Todas as partes foram tocadas: " + round.syllables.join(" · ") + ".";
+            finish("Todas as partes foram tocadas. Peça ao professor para conferir os sons.");
+          } else {
+            status.textContent = "Agora toque em " + round.syllables[currentPart] + ".";
+            setFeedback("A voz não está disponível neste navegador. Peça ao professor para falar esta parte.", "hint");
+          }
         }
-        status.textContent = "Muito bem! Agora toque em " + round.syllables[currentPart] + ".";
-        setFeedback("Você ouviu " + syllable + ". Continue com a próxima parte.", "good");
       }));
     }
 
