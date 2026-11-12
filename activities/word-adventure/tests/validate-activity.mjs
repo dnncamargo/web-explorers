@@ -35,11 +35,10 @@ assert.equal(camp.stages[2].rounds[2].options[1].color, "yellow", "the triangle 
 assert.equal(camp.stages[2].rounds[3].options[0].shape, "star", "the fourth shape exercise uses a star");
 assert.equal(camp.stages[2].rounds[3].options[0].color, "orange", "the star is orange");
 assert.match(camp.stages[3].prompt, /mochila para um acampamento/i, "the backpack instruction explains the camping purpose");
-assert.equal(camp.stages[3].rounds[1].item.word, "Binóculos", "the second backpack item is binoculars");
-assert.equal(camp.stages[3].rounds[1].item.visual, "binoculars", "the backpack item uses a dedicated binocular illustration");
-assert.equal(camp.stages[3].rounds[1].item.emoji, "", "the binoculars are not represented by a telescope emoji");
-assert.equal(camp.stages[3].rounds[1].options[0].visual, "binoculars", "the correct backpack option also uses the binocular illustration");
-assert.ok(activity.includes('item.visual === "binoculars"') && activity.includes("binocular-visual"), "the binocular illustration is rendered as a dedicated SVG");
+assert.equal(camp.stages[3].rounds[1].item.word, "Bússola", "the second backpack item is a compass");
+assert.equal(camp.stages[3].rounds[1].item.emoji, "🧭", "the compass uses its matching compass emoji");
+assert.equal(camp.stages[3].rounds[1].options[0].word, "Bússola", "the correct backpack option is the compass");
+assert.equal(camp.stages[3].rounds[1].options[0].emoji, "🧭", "the compass option displays the same matching symbol");
 assert.ok(camp.stages[3].rounds.every((round) => round.options.length === 4), "each backpack task has four alternatives");
 
 assert.ok(activity.includes("ROTEIRO ' + world.number + ' · PARADA ' + number + '/' + world.stages.length"), "checkpoint progress uses route and stop vocabulary");
