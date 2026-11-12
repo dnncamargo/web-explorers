@@ -294,12 +294,12 @@
     if (stage.kind === "connect-dots" || stage.kind === "trace-letter") {
       const sequence = stage.kind === "trace-letter" ? round.points : round.sequence;
       const target = stage.kind === "trace-letter" ? '<div class="trace-letter">' + esc(round.letter) + '</div>' : '<div class="trail-illustration" aria-hidden="true">🐾</div>';
-      challenge.innerHTML = target + '<p class="micro-instruction">' + (stage.kind === "trace-letter" ? "Acompanhe o caminho da letra, do primeiro ao último ponto." : "Clique nos pontos na ordem. Não precisa ter pressa.") + '</p><div class="dot-board" role="group" aria-label="Pontos para conectar">' + sequence.map((value, index) => '<button type="button" class="trail-dot" data-dot="' + index + '" aria-label="Ponto ' + value + '">' + esc(value) + '</button>').join("") + '</div><p class="trail-status" id="trail-status">Próximo ponto ' + esc(sequence[0]) + ' (1 de ' + sequence.length + ')</p>';
+      challenge.innerHTML = target + '<p class="micro-instruction">' + (stage.kind === "trace-letter" ? "Acompanhe o caminho da letra, do primeiro ao último ponto." : "Clique nos pontos na ordem. Não precisa ter pressa.") + '</p><div class="dot-board" role="group" aria-label="Pontos para conectar">' + sequence.map((value, index) => '<button type="button" class="trail-dot" data-dot="' + esc(value) + '" aria-label="Ponto ' + value + '">' + esc(value) + '</button>').join("") + '</div><p class="trail-status" id="trail-status">Próximo ponto ' + esc(sequence[0]) + ' (1 de ' + sequence.length + ')</p>';
       let at = 0;
       challenge.querySelectorAll("[data-dot]").forEach((button) => button.addEventListener("click", () => {
         if (complete) return;
-        const index = Number(button.dataset.dot);
-        if (index !== at) { wrong("Procure o próximo número da sequência: " + sequence[at] + "."); return; }
+        const value = button.dataset.dot;
+        if (value !== String(sequence[at])) { wrong("Procure o próximo número da sequência: " + sequence[at] + "."); return; }
         button.classList.add("connected");
         at += 1;
         challenge.querySelector("#trail-status").textContent = at < sequence.length ? "Próximo ponto " + sequence[at] + " (" + (at + 1) + " de " + sequence.length + ")" : "Caminho completo!";
