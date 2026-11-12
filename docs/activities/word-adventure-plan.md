@@ -165,12 +165,13 @@ A música aparece **somente no mapa inicial** da atividade, apresentado em `acti
 
 - Faixa fornecida: https://www.youtube.com/watch?v=01pN6rnaJy8
 - ID do vídeo: `01pN6rnaJy8`
-- A imagem de introdução fornecida funciona como botão acessível para iniciar ou pausar a música.
-- Não iniciar reprodução automática. A faixa começa somente após o aluno tocar na imagem, em resposta às restrições dos navegadores para reprodução com áudio.
+- A tela inicial apresenta a Capi no centro como botão acessível de entrada. Ao clicar na Capi, o mapa de atividades é revelado e a faixa começa no mesmo gesto.
+- No mapa, a imagem de introdução permanece como controle acessível para pausar ou retomar a música.
+- Não iniciar reprodução automática ao carregar a página. A faixa começa somente após o aluno clicar na Capi, em resposta às restrições dos navegadores para reprodução com áudio.
 - O player do YouTube fica fora da área visível, sem exibir vídeo nem controles. A faixa inteira deve ser reproduzida e repetida desde o início, usando `loop=1` e `playlist=01pN6rnaJy8`.
 - Não usar temporizador para cortar a faixa nem sincronizar a reprodução com duração estimada.
 - O elemento do player existe somente no conteúdo do mapa inicial. Não colocá-lo no cabeçalho, rodapé global ou em um contêiner que permaneça montado durante os desafios.
-- Ao entrar em qualquer mundo, o iframe deve ser removido. Ao retornar ao mapa, a música permanece pausada; só recomeça quando o aluno tocar novamente na imagem.
+- Ao entrar em qualquer mundo, o iframe deve ser removido. Ao retornar ao mapa, a música retoma somente se estava tocando antes da entrada no mundo.
 - O player não é requisito para concluir a atividade.
 - Imagem de gratidão: ao concluir os cinco mundos obrigatórios, a tela final apresenta a capivara segurando uma rosa e agradece pela participação. O Diário de Bordo continua opcional.
 
@@ -232,7 +233,7 @@ Não converter esses registros em nota automática ou rótulo de nível. A media
 
 Manter a estrutura técnica atual e os caminhos publicados:
 
-- `activities/word-adventure/index.html` — mapa inicial, introdução musical e ponto de entrada.
+- `activities/word-adventure/index.html` — tela inicial com entrada pela Capi, mapa e introdução musical.
 - `activities/word-adventure/worlds/` — aliases de acesso aos mundos, preservando compatibilidade.
 - `activities/word-adventure/assets/css/word-adventure.css` — identidade visual da expedição e interações.
 - `activities/word-adventure/assets/js/content.js` — cinco mundos, 25 checkpoints, rodadas e conteúdo do bônus.
@@ -257,11 +258,11 @@ Cada etapa deve ser desenvolvida em mudanças pequenas, testadas, e revisada ant
 
 ## 12. Testes de aceite
 
-- A página inicial apresenta o mapa da Expedição Natureza e a imagem que inicia a música.
+- A página inicial apresenta uma tela de entrada com a Capi central; clicar nela abre o mapa de atividades e inicia a música.
 - A música fornecida toca sem exibir o vídeo e repete a faixa inteira; não há corte por temporizador.
 - O player fica oculto e é removido ao entrar em qualquer mundo. Se a música estava tocando, o botão “Mapa” retoma a faixa ao retornar; se estava pausada, continua pausada.
 - A conclusão dos cinco mundos obrigatórios apresenta a imagem da capivara com uma mensagem de gratidão; o Diário de Bordo segue opcional.
-- A música não inicia sozinha ao carregar o mapa; a reprodução inicial exige toque na imagem. No retorno pelo botão “Mapa”, retoma somente se estava tocando antes da missão.
+- A música não inicia sozinha ao carregar a página; a reprodução inicial exige clique na Capi, que também abre o mapa. No mapa, a imagem musical pausa ou retoma a faixa. No retorno pelo botão “Mapa”, retoma somente se estava tocando antes da missão.
 - Os cinco mundos obrigatórios apresentam exatamente 25 checkpoints; o Diário de Bordo tem três checkpoints opcionais.
 - Cada checkpoint obrigatório tem de três a cinco microatividades, com conteúdo variado e a mesma habilidade-alvo.
 - A sessão completa foi planejada para cerca de 40 minutos, sem impor duração máxima.
