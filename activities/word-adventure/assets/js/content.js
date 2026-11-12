@@ -28,7 +28,7 @@
         ]),
         stage("Arrume a mochila", "Preparar o que vamos usar para explorar a natureza durante o acampamento", "place-item", "Estamos arrumando a mochila para um acampamento. Escolha o objeto pedido e guarde-o na mochila. Você pode arrastar ou clicar no objeto e depois na mochila.", [
           { prompt: "Estamos arrumando a mochila para um acampamento. Escolha a lanterna, que vai iluminar nosso caminho quando escurecer.", item: pic("Lanterna", "🔦"), target: "Mochila", options: [pic("Lanterna", "🔦"), pic("Folha", "🍃"), pic("Pedra", "🪨"), pic("Nuvem", "☁️")] },
-          { prompt: "Estamos arrumando a mochila para um acampamento. Vamos levar os binóculos para observar os pássaros e outros animais. Escolha os binóculos.", item: pic("Binóculos", "", "binoculars"), target: "Mochila", options: [pic("Binóculos", "", "binoculars"), pic("Flor", "🌼"), pic("Nuvem", "☁️"), pic("Bola", "⚽")] },
+          { prompt: "Estamos arrumando a mochila para um acampamento. Vamos levar uma bússola para nos orientar durante a expedição. Escolha a bússola.", item: pic("Bússola", "🧭"), target: "Mochila", options: [pic("Bússola", "🧭"), pic("Flor", "🌼"), pic("Nuvem", "☁️"), pic("Bola", "⚽")] },
           { prompt: "Estamos arrumando a mochila para um acampamento. O mapa vai nos ajudar a encontrar o caminho e explorar a natureza. Escolha o mapa e coloque-o na mochila.", item: pic("Mapa", "🗺️"), target: "Mochila", options: [pic("Mapa", "🗺️"), pic("Concha", "🐚"), pic("Maçã", "🍎"), pic("Flor", "🌼")] }
         ])
       ]
