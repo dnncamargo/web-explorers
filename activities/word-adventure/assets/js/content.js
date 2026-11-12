@@ -12,7 +12,7 @@
       stages: [
         stage("O primeiro clique", "Perceber que o clique provoca uma ação na tela", "click-target", "Encontre o objeto pedido e clique nele.", [
           choice("Clique na lanterna para acender a luz.", "Lanterna", [pic("Cantil", "🥤"), pic("Lanterna", "🔦"), pic("Mapa", "🗺️")]),
-          choice("Clique no apito para chamar o grupo para perto do acampamento.", "Apito", [pic("Cantil", "🥤"), pic("Apito", "🪈"), pic("Binóculos", "🔭")]),
+          choice("Clique na barraca onde vamos dormir durante o acampamento.", "Barraca", [pic("Mochila", "🎒"), pic("Barraca", "⛺"), pic("Fogueira", "🔥")]),
           choice("Clique na pegada para descobrir quem passou por aqui.", "Pegada", [pic("Folha", "🍃"), pic("Pegada", "🐾"), pic("Pedra", "🪨")])
         ]),
         stage("Siga as pegadas", "Movimentar o ponteiro e acompanhar uma sequência de pontos", "connect-dots", "Ligue os pontos na ordem. Você também pode clicar em cada ponto.", [
