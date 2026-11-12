@@ -43,7 +43,7 @@ assert.ok(activity.includes("function optionVisual(item)"), "the activity render
 assert.ok(activity.includes("shape-option") && activity.includes("circle:") && activity.includes("square:") && activity.includes("triangle:") && activity.includes("star:"), "circle, square, triangle and star have dedicated SVG geometry");
 assert.ok(activity.includes("restart-checkpoint") && activity.includes("STORE.resetCheckpoint"), "the current checkpoint has a restart control");
 assert.ok(activity.includes('const value = button.dataset.dot;') && activity.includes('value !== String(sequence[at])'), "trail validation checks the displayed number, not the button position");
-assert.ok(activity.includes("round.displayOrder || sequence") && activity.includes('button.classList.add("connected")'), "the trail validates ascending clicks and disables both copies after the first six");
+assert.ok(activity.includes("round.displayOrder || sequence") && activity.includes("button.disabled = true;") && activity.includes('button.classList.add("connected")'), "the trail validates ascending clicks and disables each selected point");
 assert.ok(styles.includes(".shuffled-dot-board{display:flex;flex-wrap:nowrap;"), "the shuffled numeric points are displayed in one horizontal line, not a matrix");
 assert.ok(activity.includes("if (resumeMusic) toggleMapMusic();") && activity.includes("function returnToMap()"), "returning through the map control resumes previously playing music");
 
