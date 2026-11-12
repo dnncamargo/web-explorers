@@ -162,9 +162,9 @@
   }
   function stageShell(world, stage, number, roundIndex) {
     const rounds = stage.rounds.length;
-    return '<section class="stage-card"><div class="stage-top"><a class="map-link" href="#">← Mapa</a><span>PARADA ' + world.number + ' · CHECKPOINT ' + number + '/' + world.stages.length + '</span></div>' +
+    return '<section class="stage-card"><div class="stage-top"><a class="map-link" href="#">← Mapa</a><span>ROTEIRO ' + world.number + ' · PARADA ' + number + '/' + world.stages.length + '</span></div>' +
       '<div class="stage-progress">' + progressDots(number - 1, world.stages.length) + '</div>' +
-      '<div class="stage-heading"><span class="checkpoint-tag">MISSÃO ' + number + '</span><span class="round-tag">ATIVIDADE ' + (roundIndex + 1) + ' DE ' + rounds + '</span></div>' +
+      '<div class="stage-heading"><span class="checkpoint-tag">MISSÃO ' + number + '</span><span class="round-tag">DESCOBERTA ' + (roundIndex + 1) + ' DE ' + rounds + '</span></div>' +
       '<h1>' + esc(stage.title) + '</h1><p class="objective">' + esc(stage.objective) + '</p>' +
       '<div class="prompt-row"><p class="prompt" id="stage-prompt">' + esc(stage.rounds[roundIndex].prompt || stage.prompt) + '</p><span id="prompt-audio">' + speakButton(stage.rounds[roundIndex].prompt || stage.prompt, "Ouvir instrução") + '</span></div>' +
       '<div class="stage-support"><span>1. Escute</span><span>2. Observe</span><span>3. Experimente</span></div>' +
