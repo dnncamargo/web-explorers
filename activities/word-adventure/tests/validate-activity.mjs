@@ -26,6 +26,10 @@ assert.match(camp.stages[3].prompt, /mochila para um acampamento/i, "the backpac
 assert.equal(camp.stages[3].rounds[1].item.word, "Binóculos", "the second backpack item is binoculars");
 assert.ok(camp.stages[3].rounds.every((round) => round.options.length === 4), "each backpack task has four alternatives");
 
+assert.ok(activity.includes("ROTEIRO ' + world.number + ' · PARADA ' + number + '/' + world.stages.length"), "checkpoint progress uses route and stop vocabulary");
+assert.ok(activity.includes("DESCOBERTA ' + (roundIndex + 1) + ' DE ' + rounds"), "microactivity progress uses discovery vocabulary");
+assert.ok(!activity.includes("ATIVIDADE ' + (roundIndex + 1)"), "the generic activity label is no longer shown");
+assert.ok(!activity.includes("· CHECKPOINT ' + number"), "the technical checkpoint label is no longer shown");
 assert.ok(activity.includes("function optionVisual(item)"), "the activity renders custom SVG option illustrations");
 assert.ok(activity.includes("shape-option") && activity.includes("circle:") && activity.includes("square:") && activity.includes("triangle:") && activity.includes("star:"), "circle, square, triangle and star have dedicated SVG geometry");
 assert.ok(activity.includes("restart-checkpoint") && activity.includes("STORE.resetCheckpoint"), "the current checkpoint has a restart control");
