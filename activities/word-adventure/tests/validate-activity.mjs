@@ -12,9 +12,10 @@ const activity = read("../assets/js/activity.js");
 const styles = read("../assets/css/word-adventure.css");
 
 const camp = data.worlds[0];
-assert.equal(camp.stages[0].rounds[1].options.find((option) => option.value === "Abrir")?.visual, "open-button", "the tent action is shown as a clear ABRIR button");
+assert.equal(camp.stages[0].rounds[1].target, "Apito", "the second click task targets a camp whistle, not another command button");
+assert.deepEqual(Array.from(camp.stages[0].rounds[1].options, (option) => option.word), ["Cantil", "Apito", "Binóculos"], "the click task uses distinct camping objects");
 assert.deepEqual(Array.from(camp.stages[1].rounds[1].sequence), ["4", "5", "6", "7", "8", "9"], "the second trail starts at four and ends at nine");
-assert.deepEqual(Array.from(camp.stages[1].rounds[2].sequence), ["1", "3", "2", "4", "6", "8", "7", "6", "9"], "the third trail follows the requested winding sequence");
+assert.deepEqual(Array.from(camp.stages[1].rounds[2].sequence), ["1", "2", "3", "4", "5", "6", "7", "8", "9"], "the third trail follows ascending numerical order");
 assert.ok(camp.stages[2].rounds.every((round) => round.options.every((option) => option.shape && option.color)), "all shape choices use explicit SVG geometry and colors");
 assert.equal(camp.stages[2].rounds[1].options[1].shape, "square", "the green square is a true square");
 assert.equal(camp.stages[2].rounds[1].options[1].color, "green", "the square is green");
@@ -33,6 +34,7 @@ assert.ok(!activity.includes("· CHECKPOINT ' + number"), "the technical checkpo
 assert.ok(activity.includes("function optionVisual(item)"), "the activity renders custom SVG option illustrations");
 assert.ok(activity.includes("shape-option") && activity.includes("circle:") && activity.includes("square:") && activity.includes("triangle:") && activity.includes("star:"), "circle, square, triangle and star have dedicated SVG geometry");
 assert.ok(activity.includes("restart-checkpoint") && activity.includes("STORE.resetCheckpoint"), "the current checkpoint has a restart control");
+assert.ok(activity.includes('const value = button.dataset.dot;') && activity.includes('value !== String(sequence[at])'), "trail validation checks the displayed number, not the button position");
 assert.ok(activity.includes("if (resumeMusic) toggleMapMusic();") && activity.includes("function returnToMap()"), "returning through the map control resumes previously playing music");
 
 
@@ -90,6 +92,23 @@ assert.equal(progress.completedCount(restartState, "sound-island"), 1, "restarti
 assert.equal(progress.currentRound(restartState, "sound-island", 2), 0, "the next checkpoint restarts at its first microactivity");
 assert.equal(progress.resetCheckpoint(restartState, "sound-island", 3), false, "a future checkpoint cannot be reset");
 assert.equal(progress.resetCheckpoint(restartState, "unknown-world", 1), false, "unknown worlds cannot be reset");
+
+const finishedState = progress.fresh();
+for (let index = 0; index < 3; index += 1) {
+  assert.equal(progress.completeRound(finishedState, "sound-island", 1, index, 3), true);
+}
+assert.equal(progress.completedCount(finishedState, "sound-island"), 1, "the last microactivity immediately completes the checkpoint");
+assert.equal(progress.resetCheckpoint(finishedState, "sound-island", 1), true, "the checkpoint can still be restarted from its completion screen");
+assert.equal(progress.completedCount(finishedState, "sound-island"), 0, "restarting the latest completed checkpoint reopens it");
+assert.equal(progress.currentRound(finishedState, "sound-island", 1), 0, "reopened checkpoint starts from its first microactivity");
+
+const olderFinishedState = progress.fresh();
+for (let checkpoint = 1; checkpoint <= 2; checkpoint += 1) {
+  for (let index = 0; index < 3; index += 1) {
+    assert.equal(progress.completeRound(olderFinishedState, "sound-island", checkpoint, index, 3), true);
+  }
+}
+assert.equal(progress.resetCheckpoint(olderFinishedState, "sound-island", 1), false, "restarting does not reopen an older completed checkpoint");
 assert.equal(progress.currentRound(p, "sound-island", 2), 0, "the next checkpoint starts at its first microactivity");
 assert.equal(progress.completeRound(p, "sound-lagoon", 2, 0, 3), false, "checkpoints cannot be skipped");
 assert.equal(progress.completeRound(p, "unknown-world", 1, 0, 3), false, "unknown worlds are rejected");
