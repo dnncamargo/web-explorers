@@ -1,28 +1,25 @@
 # Web Explorers
 
-Atividade de exploração informática em formato de fases.
+Atividades independentes de exploração informática, alfabetização e letramento, organizadas em experiências por fases.
 
 ## Menu principal e organização
 
 ```text
 web-explorers/
 ├── index.html                    # catálogo principal das atividades
-├── public/
-│   ├── 02-entrar-no-submundo.html # material de download; segue para o Mundo 2
-│   └── flower.png                # asset público existente, preservado
+├── public/                       # materiais públicos e assets existentes
 ├── activities/
 │   ├── digital-explorers/        # Exploradores do Mundo Digital
 │   ├── yoshi-typing/             # Floresta do Yoshi
 │   ├── donkey-kong/              # Donkey Kong Country
-│   └── word-adventure/           # Aventura das Palavras (alfabetização e letramento)
-│       ├── index.html
-│       ├── worlds/               # aliases das cinco áreas temáticas
+│   └── word-adventure/           # Expedição Natureza
+│       ├── index.html            # mapa inicial e Rádio do Acampamento
+│       ├── worlds/               # aliases de compatibilidade dos mundos
 │       ├── assets/css/
-│       ├── assets/js/            # conteúdo pedagógico, progresso e interação
+│       ├── assets/js/            # conteúdo, progresso e interação
 │       └── tests/
 ├── docs/activities/
-│   ├── donkey-kong-plan.md
-│   └── word-adventure-plan.md    # fundamentação, sequência e critérios
+│   └── word-adventure-plan.md    # plano pedagógico e critérios de aceite
 └── tests/
     └── validate-repository.mjs
 ```
@@ -48,7 +45,7 @@ python3 -m http.server 8000
 Em seguida, abra no navegador:
 
 - Catálogo: [http://localhost:8000/](http://localhost:8000/)
-- Aventura das Palavras: [http://localhost:8000/activities/word-adventure/](http://localhost:8000/activities/word-adventure/)
+- Expedição Natureza: [http://localhost:8000/activities/word-adventure/](http://localhost:8000/activities/word-adventure/)
 
 Para encerrar o servidor, volte ao terminal e pressione `Ctrl+C`. Mantenha o terminal aberto enquanto estiver usando a versão local.
 
@@ -66,23 +63,31 @@ A atividade independente de digitação começa em `activities/yoshi-typing/inde
 
 A atividade de consolidação começa em `activities/donkey-kong/index.html`. O mapa organiza três mundos de treino e um desafio final, com práticas de digitação, seleção, edição, acentuação, pontuação e atalhos. O conteúdo está em `assets/js/checkpoints.js`; lógica e progresso ficam em módulos separados. Os testes específicos estão em `activities/donkey-kong/tests/`.
 
-## Aventura das Palavras
+## Expedição Natureza — O Mapa das Descobertas
 
-A atividade independente de alfabetização e letramento começa em `activities/word-adventure/index.html`.
+A atividade de alfabetização, letramento e familiarização com o computador começa em `activities/word-adventure/index.html`. Capi, uma capivara-guia, acompanha a expedição por ambientes naturais brasileiros.
 
-Quatro mundos obrigatórios:
-1. **Ilha dos Sons** — escuta, segmentação oral de palavras em sílabas e comparação de sons iniciais.
-2. **Vila das Letras** — reconhecimento de grafemas, associação entre som inicial e letra e relação entre maiúsculas/minúsculas.
-3. **Oficina das Sílabas** — famílias silábicas CV, combinação de blocos e decodificação de palavras regulares previamente ensinadas.
-4. **Mercado das Palavras** — leitura de palavras familiares, etiquetas, listas e mensagens de uso cotidiano.
+O percurso principal tem **cinco mundos e 25 checkpoints**, com três a cinco microatividades por checkpoint e duração de referência de aproximadamente 40 minutos:
 
-O quinto mundo, **Cidade das Histórias**, é um bônus de compreensão de placas, bilhetes e pequenas mensagens.
+1. **Acampamento Base** — primeiro clique, movimento do ponteiro, ligar pontos, formas, cores e organização da mochila.
+2. **Lagoa dos Sons** — associação entre palavra e imagem, segmentação oral de sílabas, rimas e comparação de sílabas iniciais.
+3. **Trilha das Letras** — vogais, reconhecimento de grafemas, maiúsculas/minúsculas, traçado pontilhado e sons iniciais.
+4. **Oficina das Palavras** — famílias silábicas CV, completar e ordenar sílabas e decodificação gradual de palavras ensinadas.
+5. **Posto de Pesquisa** — etiquetas, listas, placas, bilhetes e diário de campo para usar a leitura em situações com propósito.
 
-O percurso parte da oralidade e da palavra com significado, explicita a ligação entre som e representação escrita e retoma as mesmas relações em tarefas variadas. As imagens ajudam a construir sentido, mas não substituem a leitura. A digitação no teclado físico não é requisito; as respostas iniciais são feitas por seleção/toque. O professor pode falar as palavras, bater palmas junto com a criança e apoiar a interpretação.
+O **Diário de Bordo** é um bônus opcional de sequência narrativa, compreensão e registro de observações.
 
-A atividade não diagnostica nem rotula o aluno. Seu progresso é local e registra somente checkpoints concluídos. A mediação docente e as experiências reais de leitura e escrita seguem indispensáveis.
+A atividade combina cliques, seleção, conexão de pontos, arrastar e soltar, montagem de palavras e compreensão de textos curtos. Toda ação de arrastar possui alternativa por seleção do item e do destino. A criança não precisa digitar no teclado físico nem ler sozinha as instruções. Não há cronômetro, vidas ou penalização por erros; pausas e repetição fazem parte da proposta.
 
-O plano pedagógico, a referência curricular, a progressão e os critérios de aceite estão em [docs/activities/word-adventure-plan.md](docs/activities/word-adventure-plan.md). A sequência se relaciona especialmente às habilidades BNCC EF01LP04–EF01LP11 e EF12LP01/EF12LP04. O marco nacional vigente usado como referência é o Compromisso Nacional Criança Alfabetizada (Decreto nº 11.556/2023). O Decreto nº 9.765/2019, da antiga Política Nacional de Alfabetização, foi revogado e não é tratado como política vigente.
+### Rádio e áudio
+
+A Rádio do Acampamento aparece **somente no mapa inicial**. O vídeo do YouTube é carregado por ação do usuário e configurado para repetir o vídeo inteiro, do início ao fim, usando `loop=1` e `playlist` com o mesmo ID. Ao entrar em um mundo, o player é removido. Os mundos não têm rádio nem trilha sonora contínua: usam apenas fala e áudio curto necessário ao exercício.
+
+### Progresso
+
+O progresso da nova expedição usa a chave `exploradores.expedicao-natureza.progress.v2`, separada da chave v1 da antiga Aventura das Palavras. O progresso anterior não é apagado nem convertido em checkpoints novos. A versão atual registra checkpoints e a microatividade em andamento para permitir retomada local.
+
+O plano pedagógico, a sequência curricular, as interações, a política de áudio e os critérios de aceite estão em [docs/activities/word-adventure-plan.md](docs/activities/word-adventure-plan.md). A proposta se relaciona às habilidades de consciência fonológica, sistema alfabético, decodificação e compreensão de textos cotidianos da BNCC, com mediação docente.
 
 ## Testes
 

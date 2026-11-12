@@ -3,37 +3,42 @@ import fs from "node:fs";
 import vm from "node:vm";
 
 const read = (path) => fs.readFileSync(new URL(path, import.meta.url), "utf8");
-const contentSource = read("../assets/js/content.js");
-const progressSource = read("../assets/js/progress.js");
 const context = { window: {}, Date };
-vm.runInNewContext(contentSource, context);
-vm.runInNewContext(progressSource, context);
+vm.runInNewContext(read("../assets/js/content.js"), context);
+vm.runInNewContext(read("../assets/js/progress.js"), context);
 const data = context.window.WordAdventureContent;
 const progress = context.window.WordAdventureProgress;
 
-assert.equal(data.worlds.length, 4, "four required worlds exist");
-assert.equal(data.bonus.id, "story-city", "story city is separate optional bonus");
-for (const world of data.worlds) {
-  assert.equal(world.stages.length, 4, world.id + " has four short stages");
-  assert.ok(world.skills.length >= 2, world.id + " declares learning goals");
-  assert.ok(world.bncc.length > 0, world.id + " maps to BNCC skills");
-  for (const stage of world.stages) {
-    assert.ok(stage.title && stage.objective && stage.kind && stage.prompt, "each stage has a defined objective and prompt");
-    assert.ok(Array.isArray(stage.items) && stage.items.length > 0, "each stage has actual activity data");
-  }
+assert.equal(data.worlds.length, 5, "five required nature expedition worlds exist");
+assert.equal(data.bonus.id, "field-journal", "the field journal is optional");
+assert.deepEqual(Array.from(data.worlds, (world) => world.stages.length), [4, 5, 5, 6, 5]);
+assert.equal(data.worlds.reduce((sum, world) => sum + world.stages.length, 0), 25, "the main route has exactly 25 checkpoints");
+assert.ok(data.worlds.every((world) => world.stages.every((checkpoint) => checkpoint.rounds.length >= 3 && checkpoint.rounds.length <= 5)), "each main checkpoint offers three to five microactivities");
+assert.ok(data.worlds.every((world) => world.skills.length >= 2 && world.bncc.length > 0), "worlds declare learning goals and curriculum links");
+assert.ok(data.worlds.every((world) => world.stages.every((checkpoint) => checkpoint.title && checkpoint.objective && checkpoint.kind && checkpoint.prompt)), "all checkpoints have an objective and instruction");
+
+const kinds = new Set(data.worlds.flatMap((world) => world.stages.map((checkpoint) => checkpoint.kind)));
+for (const kind of ["click-target", "connect-dots", "find-shape", "place-item", "listen-picture", "syllable-count", "rhyme", "initial-syllable", "first-syllable", "find-letter", "case-match", "trace-letter", "sound-letter", "syllable-family", "complete-word", "build-word", "decode-word", "read-label", "list-task", "sign-task", "note-task", "sentence-order"]) {
+  assert.ok(kinds.has(kind), `the experience includes ${kind}`);
 }
-assert.ok(data.worlds[0].stages.some((stage) => stage.kind === "syllable-count"), "sound island includes oral syllable segmentation");
-assert.ok(data.worlds[0].stages.some((stage) => stage.kind === "initial-sound"), "sound island compares initial sounds");
-assert.ok(data.worlds[1].stages.some((stage) => stage.kind === "find-letter"), "letter village teaches grapheme recognition");
-assert.ok(data.worlds[2].stages.some((stage) => stage.kind === "syllable-family"), "syllable workshop teaches CV families");
-assert.ok(data.worlds[3].stages.some((stage) => stage.kind === "list-task"), "word market includes meaningful functional reading");
-assert.ok(data.bonus.stages.some((stage) => stage.kind === "note-task"), "story city includes short text comprehension");
+assert.equal(data.worlds[0].id, "sound-island", "the camp keeps the original world route for compatibility");
+assert.equal(data.worlds[1].id, "sound-lagoon", "sound awareness precedes letter trail");
+assert.equal(data.worlds[2].id, "letter-trail", "letter recognition follows oral sound awareness");
+assert.equal(data.worlds[3].id, "syllable-workshop", "syllable decoding follows letters");
+assert.equal(data.worlds[4].id, "research-post", "functional literacy follows decoding");
 
 const p = progress.fresh();
-assert.equal(progress.complete(p, "sound-island", 1), true);
-assert.equal(progress.complete(p, "sound-island", 1), false, "duplicate checkpoint cannot be completed twice");
-assert.equal(progress.complete(p, "letter-village", 2), false, "out-of-order checkpoint cannot be skipped");
-assert.equal(progress.complete(p, "letter-village", 1), true);
-assert.equal(progress.complete(p, "invalid-world", 1), false, "unknown world is rejected");
-assert.equal(progress.normalize({version:1,completed:{"sound-island":99}}).completed["sound-island"], 4, "stored counts are bounded");
-console.log("OK: four worlds, optional literacy bonus, BNCC mapping, task coverage and progress invariants");
+assert.equal(p.version, 2);
+assert.notEqual(progress.KEY, progress.LEGACY_KEY, "v2 uses a separate storage key");
+assert.equal(progress.completeRound(p, "sound-island", 1, 0, 3), true, "the first microactivity is saved");
+assert.equal(progress.currentRound(p, "sound-island", 1), 1, "the next microactivity is restored");
+assert.equal(progress.completeRound(p, "sound-island", 1, 0, 3), false, "a saved microactivity cannot be completed twice");
+assert.equal(progress.completeRound(p, "sound-island", 1, 1, 3), true);
+assert.equal(progress.completeRound(p, "sound-island", 1, 2, 3), true);
+assert.equal(progress.completedCount(p, "sound-island"), 1, "a checkpoint is completed only after its last microactivity");
+assert.equal(progress.currentRound(p, "sound-island", 2), 0, "the next checkpoint starts at its first microactivity");
+assert.equal(progress.completeRound(p, "sound-lagoon", 2, 0, 3), false, "checkpoints cannot be skipped");
+assert.equal(progress.completeRound(p, "unknown-world", 1, 0, 3), false, "unknown worlds are rejected");
+assert.equal(progress.normalize({ version: 2, completed: { "sound-island": 99 } }).completed["sound-island"], 4, "stored progress is bounded");
+assert.equal((progress.normalize({ version: 1, completed: { "sound-island": 4 } }).completed["sound-island"] || 0), 0, "v1 data is not misread as v2 completion");
+console.log("OK: 5 worlds, 25 checkpoints, microactivities, task coverage and resumable v2 progress");
