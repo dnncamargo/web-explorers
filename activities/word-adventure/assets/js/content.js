@@ -12,13 +12,13 @@
       stages: [
         stage("O primeiro clique", "Perceber que o clique provoca uma ação na tela", "click-target", "Encontre o objeto pedido e clique nele.", [
           choice("Clique na lanterna para acender a luz.", "Lanterna", [pic("Cantil", "🥤"), pic("Lanterna", "🔦"), pic("Mapa", "🗺️")]),
-          choice("Clique no botão ABRIR para abrir a barraca e começar o acampamento.", "Abrir", [pic("Fechar", "🚪"), { word: "ABRIR", value: "Abrir", visual: "open-button" }, pic("Ajuda", "❔")]),
+          choice("Clique no apito para chamar o grupo para perto do acampamento.", "Apito", [pic("Cantil", "🥤"), pic("Apito", "📣"), pic("Binóculos", "🔭")]),
           choice("Clique na pegada para descobrir quem passou por aqui.", "Pegada", [pic("Folha", "🍃"), pic("Pegada", "🐾"), pic("Pedra", "🪨")])
         ]),
         stage("Siga as pegadas", "Movimentar o ponteiro e acompanhar uma sequência de pontos", "connect-dots", "Ligue os pontos na ordem. Você também pode clicar em cada ponto.", [
           { prompt: "Ligue os quatro pontos seguindo os números.", sequence: ["1", "2", "3", "4"] },
           { prompt: "Continue a trilha: encontre os pontos de 4 a 9.", sequence: ["4", "5", "6", "7", "8", "9"] },
-          { prompt: "A trilha faz algumas curvas. Siga os números na ordem indicada.", sequence: ["1", "3", "2", "4", "6", "8", "7", "6", "9"] }
+          { prompt: "Complete a trilha seguindo os números em ordem crescente, de 1 a 9.", sequence: ["1", "2", "3", "4", "5", "6", "7", "8", "9"] }
         ]),
         stage("Formas na mochila", "Reconhecer formas e cores sem depender somente da cor", "find-shape", "Encontre a forma indicada.", [
           choice("Encontre o círculo azul.", "Círculo azul", [shapePic("Círculo azul", "circle", "blue"), shapePic("Quadrado verde", "square", "green"), shapePic("Triângulo amarelo", "triangle", "yellow")]),
