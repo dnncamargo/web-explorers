@@ -14,12 +14,12 @@ const styles = read("../assets/css/word-adventure.css");
 assert.ok(activity.includes('const MAP_MUSIC_ID = "01pN6rnaJy8"'), "the home map uses the selected soundtrack");
 assert.ok(activity.includes("https://http2.mlstatic.com/D_NQ_NP_2X_737962-MLA81129374435_122024-F.webp"), "the supplied image introduces the home music");
 assert.ok(activity.includes('id="map-music-toggle"') && activity.includes("toggleMapMusic"), "the introduction image is the music control");
-assert.match(activity, /controls=0[\\s\\S]*?loop=1&playlist=/, "the YouTube player is hidden and loops the complete track");
-assert.match(activity, /function stopMapMusic\\(\\)[\\s\\S]*?host\\.replaceChildren\\(\\)/, "map music is removed when leaving the home map");
-assert.match(activity, /mainRouteComplete = DATA\\.worlds\\.every/, "the activity finish depends on all five required worlds");
+assert.ok(activity.includes("controls=0&disablekb=1&loop=1&playlist="), "the YouTube player is hidden and loops the complete track");
+assert.ok(activity.includes("function stopMapMusic()") && activity.includes("stopMapMusic();\\n    const world = worldList().find"), "map music is removed when leaving the home map");
+assert.ok(activity.includes("mainRouteComplete = DATA.worlds.every"), "the activity finish depends on all five required worlds");
 assert.ok(activity.includes("https://marketplace.canva.com/bJxi8/MAHCGsbJxi8/1/tl/canva-uma-capivara-fofa-segurando-uma-rosa.-MAHCGsbJxi8.png"), "the final thank-you uses the supplied capybara image");
-assert.match(activity, /alt="Uma capivara fofa segurando uma rosa"/, "the gratitude image has descriptive alternative text");
-assert.match(styles, /\\.player-host\\{[^}]*left:-240px/, "the YouTube player remains outside the visible page");
+assert.ok(activity.includes('alt="Uma capivara fofa segurando uma rosa"'), "the gratitude image has descriptive alternative text");
+assert.ok(styles.includes(".player-host{position:fixed;top:0;left:-240px"), "the YouTube player remains outside the visible page");
 assert.ok(styles.includes(".music-image-button") && styles.includes(".gratitude-image"), "the music introduction and gratitude image have responsive styling");
 
 assert.equal(data.worlds.length, 5, "five required nature expedition worlds exist");
