@@ -11,6 +11,27 @@ const progress = context.window.WordAdventureProgress;
 const activity = read("../assets/js/activity.js");
 const styles = read("../assets/css/word-adventure.css");
 
+const camp = data.worlds[0];
+assert.equal(camp.stages[0].rounds[1].options.find((option) => option.value === "Abrir")?.visual, "open-button", "the tent action is shown as a clear ABRIR button");
+assert.deepEqual(Array.from(camp.stages[1].rounds[1].sequence), ["4", "5", "6", "7", "8", "9"], "the second trail starts at four and ends at nine");
+assert.deepEqual(Array.from(camp.stages[1].rounds[2].sequence), ["1", "3", "2", "4", "6", "8", "7", "6", "9"], "the third trail follows the requested winding sequence");
+assert.ok(camp.stages[2].rounds.every((round) => round.options.every((option) => option.shape && option.color)), "all shape choices use explicit SVG geometry and colors");
+assert.equal(camp.stages[2].rounds[1].options[1].shape, "square", "the green square is a true square");
+assert.equal(camp.stages[2].rounds[1].options[1].color, "green", "the square is green");
+assert.equal(camp.stages[2].rounds[2].options[1].shape, "triangle", "the third exercise uses a triangle");
+assert.equal(camp.stages[2].rounds[2].options[1].color, "yellow", "the triangle is yellow");
+assert.equal(camp.stages[2].rounds[3].options[0].shape, "star", "the fourth shape exercise uses a star");
+assert.equal(camp.stages[2].rounds[3].options[0].color, "orange", "the star is orange");
+assert.match(camp.stages[3].prompt, /mochila para um acampamento/i, "the backpack instruction explains the camping purpose");
+assert.equal(camp.stages[3].rounds[1].item.word, "Binóculos", "the second backpack item is binoculars");
+assert.ok(camp.stages[3].rounds.every((round) => round.options.length === 4), "each backpack task has four alternatives");
+
+assert.ok(activity.includes("function optionVisual(item)"), "the activity renders custom SVG option illustrations");
+assert.ok(activity.includes("shape-option") && activity.includes('circle: \'<circle') && activity.includes('square: \'<rect') && activity.includes('triangle: \'<polygon') && activity.includes('star: \'<polygon'), "circle, square, triangle and star have dedicated SVG geometry");
+assert.ok(activity.includes('id=\\"restart-checkpoint\\"') && activity.includes("STORE.resetCheckpoint"), "the current checkpoint has a restart control");
+assert.ok(activity.includes("if (resumeMusic) toggleMapMusic();") && activity.includes("function returnToMap()"), "returning through the map control resumes previously playing music");
+
+
 assert.ok(activity.includes('const MAP_MUSIC_ID = "01pN6rnaJy8"'), "the home map uses the selected soundtrack");
 assert.ok(activity.includes("https://http2.mlstatic.com/D_NQ_NP_2X_737962-MLA81129374435_122024-F.webp"), "the supplied image introduces the home music");
 assert.ok(activity.includes('id="map-music-toggle"') && activity.includes("toggleMapMusic"), "the introduction image is the music control");
