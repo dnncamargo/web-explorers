@@ -41,11 +41,13 @@
           choice("Quem chamou?", "SAPO", [pic("Pato", "🦆"), pic("Sapo", "🐸"), pic("Peixe", "🐟")], "SAPO"),
           choice("Quem está na lagoa?", "PATO", [pic("Pato", "🦆"), pic("Gato", "🐱"), pic("Sapo", "🐸")], "PATO"),
           choice("Encontre o peixe.", "PEIXE", [pic("Pássaro", "🐦"), pic("Peixe", "🐟"), pic("Tartaruga", "🐢")], "PEIXE"),
-          choice("Quem está perto da água?", "RÃ", [pic("Rã", "🐸"), pic("Arara", "🦜"), pic("Macaco", "🐒")], "RÃ")
+          choice("Qual ave podemos encontrar perto da lagoa?", "ARARA", [pic("Macaco", "🐒"), pic("Arara", "🦜"), pic("Tartaruga", "🐢")], "ARARA")
         ]),
-        stage("Palmas na lagoa", "Segmentar oralmente palavras em sílabas", "syllable-count", "Fale devagar e bata uma palma para cada pedaço.", [
-          { word: "SAPO", emoji: "🐸", syllables: ["SA", "PO"] }, { word: "PATO", emoji: "🦆", syllables: ["PA", "TO"] },
-          { word: "MACACO", emoji: "🐒", syllables: ["MA", "CA", "CO"] }, { word: "TATU", emoji: "🦔", syllables: ["TA", "TU"] }
+        stage("Toque nas sílabas", "Reconhecer e ouvir cada parte da palavra, na ordem", "syllable-tap", "Toque uma vez em cada parte, da esquerda para a direita, e ouça o seu som.", [
+          { word: "SAPO", emoji: "🐸", syllables: ["SA", "PO"] },
+          { word: "JACARÉ", emoji: "🐊", syllables: ["JA", "CA", "RÉ"] },
+          { word: "MACACO", emoji: "🐒", syllables: ["MA", "CA", "CO"] },
+          { word: "ELEFANTE", emoji: "🐘", syllables: ["E", "LE", "FAN", "TE"] }
         ]),
         stage("Rimas entre amigos", "Perceber palavras com terminações sonoras semelhantes", "rhyme", "Ouça a palavra e encontre outra que termina com som parecido.", [
           choice("Qual palavra rima com PATO?", "GATO", [pic("Gato", "🐱"), pic("PIPA", "🪁"), pic("MALA", "🧳")], "PATO"),
