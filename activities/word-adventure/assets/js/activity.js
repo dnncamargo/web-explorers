@@ -11,6 +11,9 @@
   const MAP_MUSIC_ID = "01pN6rnaJy8";
   const MAP_MUSIC_IMAGE = "https://http2.mlstatic.com/D_NQ_NP_2X_737962-MLA81129374435_122024-F.webp";
   const GRATITUDE_IMAGE = "https://marketplace.canva.com/bJxi8/MAHCGsbJxi8/1/tl/canva-uma-capivara-fofa-segurando-uma-rosa.-MAHCGsbJxi8.png";
+  const SHAPE_COLORS = { blue: "#287bd1", green: "#36a65c", yellow: "#f3c632", red: "#d94d4d", orange: "#f28b27" };
+  let resumeMapMusicOnReturn = false;
+  let ignoreMapHashChange = false;
 
   function esc(value) {
     return String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -97,9 +100,11 @@
     if (!host) return;
     if (host.firstElementChild) {
       host.replaceChildren();
+      resumeMapMusicOnReturn = false;
       setMapMusicControl(false, "Música pausada. Toque na imagem quando quiser ouvir novamente.");
       return;
     }
+    resumeMapMusicOnReturn = false;
     const iframe = document.createElement("iframe");
     iframe.title = "Trilha sonora da Expedição Natureza";
     iframe.width = "200";
@@ -113,18 +118,46 @@
   }
   function stopMapMusic() {
     const host = document.getElementById("map-music-player");
+    if (host?.firstElementChild) resumeMapMusicOnReturn = true;
     if (host) host.replaceChildren();
     setMapMusicControl(false, "A música foi pausada ao sair do mapa inicial.");
+  }
+  function returnToMap() {
+    const resumeMusic = resumeMapMusicOnReturn;
+    resumeMapMusicOnReturn = false;
+    stopSpeech();
+    if (global.location.hash) {
+      ignoreMapHashChange = true;
+      global.location.hash = "";
+    }
+    renderMap();
+    if (resumeMusic) toggleMapMusic();
   }
   function optionValue(item) {
     if (typeof item === "string") return item;
     return item.value ?? String(item.word ?? item.label ?? "");
   }
+  function optionVisual(item) {
+    if (!item || typeof item === "string") return "";
+    if (item.visual === "open-button") {
+      return '<svg class="option-illustration open-button-visual" viewBox="0 0 100 76" aria-hidden="true" focusable="false"><rect x="7" y="11" width="86" height="54" rx="9" fill="#2f965c" stroke="#1d7041" stroke-width="4"/><path d="M29 38h33m-12-12 12 12-12 12" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    }
+    if (item.shape) {
+      const fill = SHAPE_COLORS[item.color] || "#777";
+      const geometry = {
+        circle: '<circle cx="50" cy="50" r="35" fill="' + fill + '"/>',
+        square: '<rect x="16" y="16" width="68" height="68" rx="3" fill="' + fill + '"/>',
+        triangle: '<polygon points="50,10 91,86 9,86" fill="' + fill + '"/>',
+        star: '<polygon points="50,5 61,36 94,36 67,56 77,90 50,70 23,90 33,56 6,36 39,36" fill="' + fill + '"/>'
+      }[item.shape] || "";
+      return '<svg class="option-illustration shape-option" viewBox="0 0 100 100" aria-hidden="true" focusable="false">' + geometry + '</svg>';
+    }
+    return item.emoji ? '<span class="option-emoji" aria-hidden="true">' + esc(item.emoji) + '</span>' : "";
+  }
   function optionButton(item, index, selected = false) {
     const isString = typeof item === "string";
     const label = isString ? item : (item.word ?? item.label ?? "Opção");
-    const emoji = !isString && item.emoji ? '<span class="option-emoji" aria-hidden="true">' + esc(item.emoji) + '</span>' : '';
-    const content = emoji + '<span class="option-word">' + esc(label) + '</span>';
+    const content = optionVisual(item) + '<span class="option-word">' + esc(label) + '</span>';
     return '<button type="button" class="choice-card' + (selected ? " selected" : "") + '" data-value="' + esc(optionValue(item)) + '" data-index="' + index + '">' + content + '</button>';
   }
   function stageShell(world, stage, number, roundIndex) {
@@ -137,12 +170,12 @@
       '<div class="stage-support"><span>1. Escute</span><span>2. Observe</span><span>3. Experimente</span></div>' +
       '<div id="challenge" class="challenge"></div>' +
       '<div class="capi-feedback">' + capi() + '<p id="feedback" class="feedback" role="status" aria-live="polite">Faça com calma. A Capi está aqui para ajudar.</p></div>' +
-      '<div class="stage-actions"><button id="help-button" class="secondary-button" type="button">💡 Dica da Capi</button><button id="next-button" class="primary-button" type="button" disabled>Continuar</button></div>' +
+      '<div class="stage-actions"><button id="help-button" class="secondary-button" type="button">💡 Dica da Capi</button><button id="restart-checkpoint" class="secondary-button" type="button">↻ Reiniciar checkpoint</button><button id="next-button" class="primary-button" type="button" disabled>Continuar</button></div>' +
       '<p class="skill-tag">' + esc(stage.objective) + '</p></section>';
   }
   function renderActivityFinish() {
     app.innerHTML = '<section class="finish-card activity-finish"><div class="finish-art">🌿🌼</div><p class="eyebrow">EXPEDIÇÃO CONCLUÍDA</p><h1>Obrigado por explorar comigo!</h1><p>Você percorreu os cinco mundos, descobriu sons, letras, sílabas e palavras. Cada passo foi uma grande descoberta!</p><img class="gratitude-image" src="' + GRATITUDE_IMAGE + '" alt="Uma capivara fofa segurando uma rosa" loading="lazy"><p class="gratitude-caption">Com carinho, Capi 💚</p><p class="bonus-reminder">O Diário de Bordo continua disponível como atividade bônus no mapa.</p><div class="finish-actions"><a href="#" class="primary-link" id="return-map">Voltar ao mapa</a></div></section>';
-    document.getElementById("return-map").addEventListener("click", (event) => { event.preventDefault(); global.location.hash = ""; renderMap(); });
+    document.getElementById("return-map").addEventListener("click", (event) => { event.preventDefault(); returnToMap(); });
   }
   function renderWorld(world) {
     const current = count(world);
@@ -153,7 +186,7 @@
         return;
       }
       app.innerHTML = '<section class="finish-card"><div class="finish-art">' + esc(world.art) + '</div><p class="eyebrow">PARADA CONCLUÍDA</p><h1>Você explorou ' + esc(world.title) + '!</h1><p>A Capi está muito feliz com sua descoberta. Você pode voltar ao mapa para continuar a expedição.</p><div class="finish-actions"><a href="#" class="primary-link" id="return-map">Voltar ao mapa</a></div></section>';
-      document.getElementById("return-map").addEventListener("click", (event) => { event.preventDefault(); global.location.hash = ""; renderMap(); });
+      document.getElementById("return-map").addEventListener("click", (event) => { event.preventDefault(); returnToMap(); });
       return;
     }
     const checkpoint = current + 1;
@@ -168,6 +201,7 @@
     const challenge = document.getElementById("challenge");
     const feedback = document.getElementById("feedback");
     const next = document.getElementById("next-button");
+    const restart = document.getElementById("restart-checkpoint");
     let complete = false;
     let selected = [];
     let selectedValue = null;
@@ -260,7 +294,7 @@
     if (stage.kind === "connect-dots" || stage.kind === "trace-letter") {
       const sequence = stage.kind === "trace-letter" ? round.points : round.sequence;
       const target = stage.kind === "trace-letter" ? '<div class="trace-letter">' + esc(round.letter) + '</div>' : '<div class="trail-illustration" aria-hidden="true">🐾</div>';
-      challenge.innerHTML = target + '<p class="micro-instruction">' + (stage.kind === "trace-letter" ? "Acompanhe o caminho da letra, do primeiro ao último ponto." : "Clique nos pontos na ordem. Não precisa ter pressa.") + '</p><div class="dot-board" role="group" aria-label="Pontos para conectar">' + sequence.map((value, index) => '<button type="button" class="trail-dot" data-dot="' + index + '" aria-label="Ponto ' + value + '">' + esc(value) + '</button>').join("") + '</div><p class="trail-status" id="trail-status">Ponto 1 de ' + sequence.length + '</p>';
+      challenge.innerHTML = target + '<p class="micro-instruction">' + (stage.kind === "trace-letter" ? "Acompanhe o caminho da letra, do primeiro ao último ponto." : "Clique nos pontos na ordem. Não precisa ter pressa.") + '</p><div class="dot-board" role="group" aria-label="Pontos para conectar">' + sequence.map((value, index) => '<button type="button" class="trail-dot" data-dot="' + index + '" aria-label="Ponto ' + value + '">' + esc(value) + '</button>').join("") + '</div><p class="trail-status" id="trail-status">Próximo ponto ' + esc(sequence[0]) + ' (1 de ' + sequence.length + ')</p>';
       let at = 0;
       challenge.querySelectorAll("[data-dot]").forEach((button) => button.addEventListener("click", () => {
         if (complete) return;
@@ -268,7 +302,7 @@
         if (index !== at) { wrong("Procure o próximo número da sequência: " + sequence[at] + "."); return; }
         button.classList.add("connected");
         at += 1;
-        challenge.querySelector("#trail-status").textContent = at < sequence.length ? "Ponto " + (at + 1) + " de " + sequence.length : "Caminho completo!";
+        challenge.querySelector("#trail-status").textContent = at < sequence.length ? "Próximo ponto " + sequence[at] + " (" + (at + 1) + " de " + sequence.length + ")" : "Caminho completo!";
         if (at === sequence.length) finish(stage.kind === "trace-letter" ? "Você acompanhou o caminho da letra " + round.letter + "!" : "Você completou a trilha de pegadas!");
       }));
     }
@@ -380,6 +414,17 @@
     document.getElementById("prompt-audio")?.querySelector("[data-speak]")?.addEventListener("click", () => {
       if (!spoken(round.prompt || stage.prompt)) setFeedback("Peça ao professor para ler a instrução.", "hint");
     });
+    restart.addEventListener("click", () => {
+      if (!global.confirm("Reiniciar este checkpoint? As atividades deste checkpoint serão refeitas, mas os checkpoints anteriores continuarão concluídos.")) return;
+      stopSpeech();
+      if (!STORE.resetCheckpoint(progress, world.id, number)) {
+        setFeedback("Não foi possível reiniciar este checkpoint. Volte ao mapa e entre novamente.", "gentle");
+        return;
+      }
+      save();
+      renderStage(world, number, 0);
+      global.scrollTo?.(0, 0);
+    });
     next.addEventListener("click", () => {
       if (!complete) return;
       stopSpeech();
@@ -388,14 +433,23 @@
       global.scrollTo?.(0, 0);
     });
     document.querySelector(".map-link").addEventListener("click", (event) => {
-      event.preventDefault(); stopSpeech(); global.location.hash = ""; renderMap();
+      event.preventDefault();
+      returnToMap();
     });
     updateStorageStatus();
   }
   function route() {
     stopSpeech();
+    if (ignoreMapHashChange && !global.location.hash) {
+      ignoreMapHashChange = false;
+      return;
+    }
     const id = decodeURIComponent(global.location.hash.replace(/^#/, ""));
-    if (!id) { renderMap(); return; }
+    if (!id) {
+      renderMap();
+      if (resumeMapMusicOnReturn) setMapMusicControl(false, "Toque na imagem para retomar a música do acampamento.");
+      return;
+    }
     stopMapMusic();
     const world = worldList().find((item) => item.id === id);
     if (world) { renderWorld(world); return; }
