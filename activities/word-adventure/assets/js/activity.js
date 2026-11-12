@@ -8,7 +8,9 @@
   let storageMode = loaded.mode;
   const legacyFound = loaded.legacyFound;
   const app = document.getElementById("app");
-  const RADIO_ID = "Uf1g5vvsr3s";
+  const MAP_MUSIC_ID = "01pN6rnaJy8";
+  const MAP_MUSIC_IMAGE = "https://http2.mlstatic.com/D_NQ_NP_2X_737962-MLA81129374435_122024-F.webp";
+  const GRATITUDE_IMAGE = "https://marketplace.canva.com/bJxi8/MAHCGsbJxi8/1/tl/canva-uma-capivara-fofa-segurando-uma-rosa.-MAHCGsbJxi8.png";
 
   function esc(value) {
     return String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -50,8 +52,12 @@
   function capi(size = "normal") {
     return '<span class="capi-avatar capi-' + size + '" role="img" aria-label="Capi, a capivara guia"><span class="capi-ear left"></span><span class="capi-ear right"></span><span class="capi-eye left"></span><span class="capi-eye right"></span><span class="capi-muzzle"></span></span>';
   }
-  function radioPanel() {
-    return '<section class="radio-card" aria-labelledby="radio-title"><div class="radio-copy"><span class="radio-kicker">📻 RÁDIO DO ACAMPAMENTO</span><h2 id="radio-title">Uma música para preparar a expedição</h2><p>Quando quiser, ligue a rádio. Ao entrar em uma missão, a música ficará para trás.</p><button id="radio-toggle" class="secondary-button" type="button">▶ Mostrar rádio</button><a class="radio-link" href="https://www.youtube.com/watch?v=' + RADIO_ID + '" target="_blank" rel="noopener noreferrer">Abrir no YouTube</a></div><div id="radio-frame" class="radio-frame" hidden></div></section>';
+  function musicIntroPanel() {
+    return '<section class="music-intro" aria-labelledby="music-title">' +
+      '<div class="music-copy"><span class="music-kicker">♪ MÚSICA DE ABERTURA</span><h2 id="music-title">Vamos começar a expedição?</h2><p>Toque na imagem para ouvir a música. A trilha fica no mapa inicial e para quando você entrar em uma missão.</p></div>' +
+      '<div class="music-image-wrap"><button id="map-music-toggle" class="music-image-button" type="button" aria-pressed="false" aria-label="Iniciar música da Expedição Natureza"><img src="' + MAP_MUSIC_IMAGE + '" alt="" loading="lazy"><span class="music-image-caption">▶ Toque na imagem para ouvir</span></button></div>' +
+      '<p id="map-music-status" class="music-status" role="status" aria-live="polite">A música começa quando você tocar na imagem.</p>' +
+      '<div id="map-music-player" class="player-host" aria-hidden="true"></div></section>';
   }
   function renderMap() {
     const cards = worldList().map((world) => {
@@ -70,30 +76,45 @@
     const completed = DATA.worlds.reduce((sum, world) => sum + count(world), 0);
     const total = DATA.worlds.reduce((sum, world) => sum + world.stages.length, 0);
     app.innerHTML = '<section class="map-intro"><div class="intro-character">' + capi("large") + '<span>Oi! Eu sou a Capi.</span></div><p class="eyebrow">EXPEDIÇÃO NATUREZA · O MAPA DAS DESCOBERTAS</p><h1>Vamos explorar juntos?</h1><p>Prepare a mochila, descubra os sons da natureza, encontre letras e use as palavras para realizar pequenas missões.</p><div class="intro-note"><strong>Uma dica da Capi:</strong> cada passo é importante. Você pode ouvir novamente, pedir ajuda e fazer tudo com calma.</div>' + (legacyFound ? '<p class="legacy-note">Seu progresso anterior foi preservado. Esta nova expedição começa com checkpoints novos.</p>' : '') + '<div class="overall-progress"><span>Seu diário de expedição</span><strong>' + completed + ' de ' + total + ' checkpoints</strong><div class="overall-track"><span style="width:' + (total ? completed / total * 100 : 0) + '%"></span></div></div></section>' +
-      radioPanel() + '<section class="world-grid" aria-label="Mapa da expedição">' + cards + '</section>' +
+      musicIntroPanel() + '<section class="world-grid" aria-label="Mapa da expedição">' + cards + '</section>' +
       '<section class="teacher-note"><h2>Uma expedição para aprender junto</h2><p>O professor pode conversar sobre as figuras, falar as palavras, bater palmas para separar sílabas e ajudar a usar o mouse ou touchpad. Arrastar objetos é opcional: também é possível selecionar e depois escolher o lugar.</p></section>';
-    document.getElementById("radio-toggle").addEventListener("click", toggleRadio);
+    document.getElementById("map-music-toggle").addEventListener("click", toggleMapMusic);
     updateStorageStatus();
   }
-  function toggleRadio() {
-    const host = document.getElementById("radio-frame");
-    const button = document.getElementById("radio-toggle");
-    if (!host || !button) return;
-    if (!host.hidden) {
+  function setMapMusicControl(playing, message) {
+    const button = document.getElementById("map-music-toggle");
+    const status = document.getElementById("map-music-status");
+    if (button) {
+      button.setAttribute("aria-pressed", String(playing));
+      button.setAttribute("aria-label", playing ? "Pausar música da Expedição Natureza" : "Iniciar música da Expedição Natureza");
+      const caption = button.querySelector(".music-image-caption");
+      if (caption) caption.textContent = playing ? "Ⅱ Pausar música" : "▶ Toque na imagem para ouvir";
+    }
+    if (status && message) status.textContent = message;
+  }
+  function toggleMapMusic() {
+    const host = document.getElementById("map-music-player");
+    if (!host) return;
+    if (host.firstElementChild) {
       host.replaceChildren();
-      host.hidden = true;
-      button.textContent = "▶ Mostrar rádio";
+      setMapMusicControl(false, "Música pausada. Toque na imagem quando quiser ouvir novamente.");
       return;
     }
     const iframe = document.createElement("iframe");
-    iframe.title = "Rádio do Acampamento — vídeo musical do YouTube";
-    iframe.src = "https://www.youtube-nocookie.com/embed/" + RADIO_ID + "?playlist=" + RADIO_ID + "&loop=1&playsinline=1&controls=1&rel=0";
-    iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+    iframe.title = "Trilha sonora da Expedição Natureza";
+    iframe.width = "200";
+    iframe.height = "200";
+    iframe.src = "https://www.youtube-nocookie.com/embed/" + MAP_MUSIC_ID + "?autoplay=1&controls=0&disablekb=1&loop=1&playlist=" + MAP_MUSIC_ID + "&playsinline=1&modestbranding=1&rel=0";
+    iframe.allow = "autoplay; encrypted-media";
     iframe.referrerPolicy = "strict-origin-when-cross-origin";
-    iframe.allowFullscreen = true;
+    iframe.tabIndex = -1;
     host.replaceChildren(iframe);
-    host.hidden = false;
-    button.textContent = "■ Desligar rádio";
+    setMapMusicControl(true, "♪ A música está tocando. Toque novamente na imagem para pausar.");
+  }
+  function stopMapMusic() {
+    const host = document.getElementById("map-music-player");
+    if (host) host.replaceChildren();
+    setMapMusicControl(false, "A música foi pausada ao sair do mapa inicial.");
   }
   function optionValue(item) {
     if (typeof item === "string") return item;
@@ -119,9 +140,18 @@
       '<div class="stage-actions"><button id="help-button" class="secondary-button" type="button">💡 Dica da Capi</button><button id="next-button" class="primary-button" type="button" disabled>Continuar</button></div>' +
       '<p class="skill-tag">' + esc(stage.objective) + '</p></section>';
   }
+  function renderActivityFinish() {
+    app.innerHTML = '<section class="finish-card activity-finish"><div class="finish-art">🌿🌼</div><p class="eyebrow">EXPEDIÇÃO CONCLUÍDA</p><h1>Obrigado por explorar comigo!</h1><p>Você percorreu os cinco mundos, descobriu sons, letras, sílabas e palavras. Cada passo foi uma grande descoberta!</p><img class="gratitude-image" src="' + GRATITUDE_IMAGE + '" alt="Uma capivara fofa segurando uma rosa" loading="lazy"><p class="gratitude-caption">Com carinho, Capi 💚</p><p class="bonus-reminder">O Diário de Bordo continua disponível como atividade bônus no mapa.</p><div class="finish-actions"><a href="#" class="primary-link" id="return-map">Voltar ao mapa</a></div></section>';
+    document.getElementById("return-map").addEventListener("click", (event) => { event.preventDefault(); global.location.hash = ""; renderMap(); });
+  }
   function renderWorld(world) {
     const current = count(world);
     if (current >= world.stages.length) {
+      const mainRouteComplete = DATA.worlds.every((item) => count(item) >= item.stages.length);
+      if (world.id !== DATA.bonus.id && mainRouteComplete) {
+        renderActivityFinish();
+        return;
+      }
       app.innerHTML = '<section class="finish-card"><div class="finish-art">' + esc(world.art) + '</div><p class="eyebrow">PARADA CONCLUÍDA</p><h1>Você explorou ' + esc(world.title) + '!</h1><p>A Capi está muito feliz com sua descoberta. Você pode voltar ao mapa para continuar a expedição.</p><div class="finish-actions"><a href="#" class="primary-link" id="return-map">Voltar ao mapa</a></div></section>';
       document.getElementById("return-map").addEventListener("click", (event) => { event.preventDefault(); global.location.hash = ""; renderMap(); });
       return;
@@ -366,6 +396,7 @@
     stopSpeech();
     const id = decodeURIComponent(global.location.hash.replace(/^#/, ""));
     if (!id) { renderMap(); return; }
+    stopMapMusic();
     const world = worldList().find((item) => item.id === id);
     if (world) { renderWorld(world); return; }
     global.location.hash = "";
@@ -382,9 +413,9 @@
   });
   document.getElementById("reset-progress").addEventListener("click", () => {
     if (!global.confirm("Apagar somente o progresso novo da Expedição Natureza neste navegador? O progresso antigo será preservado.")) return;
-    progress = STORE.reset(); storageMode = "localStorage"; save(); stopSpeech(); global.location.hash = ""; renderMap();
+    progress = STORE.reset(); storageMode = "localStorage"; save(); stopSpeech(); stopMapMusic(); global.location.hash = ""; renderMap();
   });
   global.addEventListener("hashchange", route);
-  global.addEventListener("pagehide", stopSpeech);
+  global.addEventListener("pagehide", () => { stopSpeech(); stopMapMusic(); });
   route();
 })(window);
