@@ -331,11 +331,8 @@
         if (complete || button.disabled) return;
         const value = button.dataset.dot;
         if (value !== String(sequence[at])) { wrong("Procure o próximo número da sequência: " + sequence[at] + "."); return; }
-        const matchingPoints = [...challenge.querySelectorAll("[data-dot]")].filter((point) => point.dataset.dot === value);
-        matchingPoints.forEach((point) => {
-          point.disabled = true;
-          point.classList.add(point === button ? "connected" : "duplicate-used");
-        });
+        button.disabled = true;
+        button.classList.add("connected");
         at += 1;
         challenge.querySelector("#trail-status").textContent = at < sequence.length ? "Próximo ponto " + sequence[at] + " (" + (at + 1) + " de " + sequence.length + ")" : "Caminho completo!";
         if (at === sequence.length) finish(stage.kind === "trace-letter" ? "Você acompanhou o caminho da letra " + round.letter + "!" : "Você completou a trilha de pegadas!");
