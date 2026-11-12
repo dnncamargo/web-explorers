@@ -93,6 +93,7 @@ for (const target of [
   "activities/word-adventure/assets/js/progress.js",
   "activities/word-adventure/assets/js/activity.js",
   "activities/word-adventure/tests/validate-activity.mjs",
+  "activities/word-adventure/worlds/06-field-journal.html",
   "activities/word-adventure/tests/validate-repository.mjs",
 ]) assert.ok(fs.existsSync(path.join(root, target)), `${target} exists`);
 
@@ -104,7 +105,8 @@ const menu = read("index.html");
 assert.ok(menu.includes('href="activities/digital-explorers/index.html"'), "the catalog opens the first activity's entry page");
 assert.ok(menu.includes('href="activities/yoshi-typing/index.html"'), "the catalog opens the Yoshi activity's entry page");
 assert.ok(menu.includes('href="activities/donkey-kong/index.html"'), "the catalog opens the Donkey Kong activity's entry page");
-assert.equal([...menu.matchAll(/class="activity-card(?:\s|"?)/g)].length, 3, "the catalog lists the three independent activities");
+assert.ok(menu.includes('href="activities/word-adventure/index.html"'), "the catalog opens the Expedição Natureza activity's entry page");
+assert.equal([...menu.matchAll(/class="activity-card(?:\s|"?)/g)].length, 4, "the catalog lists the four independent activities");
 
 const digitalRoot = "activities/digital-explorers";
 const routes = new Map([
