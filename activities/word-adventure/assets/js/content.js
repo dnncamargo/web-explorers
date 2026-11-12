@@ -1,6 +1,7 @@
 (function (global) {
   const choice = (prompt, target, options, speech = "") => ({ prompt, target, options, speech });
   const pic = (word, emoji) => ({ word, emoji });
+  const shapePic = (word, shape, color) => ({ word, value: word, shape, color });
   const stage = (title, objective, kind, prompt, rounds) => ({ title, objective, kind, prompt, rounds });
 
   const worlds = [
@@ -11,24 +12,24 @@
       stages: [
         stage("O primeiro clique", "Perceber que o clique provoca uma ação na tela", "click-target", "Encontre o objeto pedido e clique nele.", [
           choice("Clique na lanterna para acender a luz.", "Lanterna", [pic("Cantil", "🥤"), pic("Lanterna", "🔦"), pic("Mapa", "🗺️")]),
-          choice("Clique no botão verde para abrir a barraca.", "Abrir", [pic("Fechar", "🚪"), pic("Abrir", "🟢"), pic("Ajuda", "❔")]),
+          choice("Clique no botão ABRIR para abrir a barraca e começar o acampamento.", "Abrir", [pic("Fechar", "🚪"), { word: "ABRIR", value: "Abrir", visual: "open-button" }, pic("Ajuda", "❔")]),
           choice("Clique na pegada para descobrir quem passou por aqui.", "Pegada", [pic("Folha", "🍃"), pic("Pegada", "🐾"), pic("Pedra", "🪨")])
         ]),
         stage("Siga as pegadas", "Movimentar o ponteiro e acompanhar uma sequência de pontos", "connect-dots", "Ligue os pontos na ordem. Você também pode clicar em cada ponto.", [
           { prompt: "Ligue os quatro pontos seguindo os números.", sequence: ["1", "2", "3", "4"] },
-          { prompt: "Continue a trilha: encontre os pontos de 1 a 5.", sequence: ["1", "2", "3", "4", "5"] },
-          { prompt: "Mais uma trilha! Clique nos pontos em ordem.", sequence: ["1", "2", "3", "4", "5", "6"] }
+          { prompt: "Continue a trilha: encontre os pontos de 4 a 9.", sequence: ["4", "5", "6", "7", "8", "9"] },
+          { prompt: "A trilha faz algumas curvas. Siga os números na ordem indicada.", sequence: ["1", "3", "2", "4", "6", "8", "7", "6", "9"] }
         ]),
         stage("Formas na mochila", "Reconhecer formas e cores sem depender somente da cor", "find-shape", "Encontre a forma indicada.", [
-          choice("Encontre o círculo azul.", "Círculo azul", [pic("Círculo azul", "🔵"), pic("Quadrado verde", "🟩"), pic("Triângulo amarelo", "🔺")]),
-          choice("Encontre o quadrado verde.", "Quadrado verde", [pic("Círculo vermelho", "🔴"), pic("Quadrado verde", "🟩"), pic("Triângulo azul", "🔷")]),
-          choice("Encontre o triângulo amarelo.", "Triângulo amarelo", [pic("Estrela amarela", "⭐"), pic("Triângulo amarelo", "🔺"), pic("Círculo azul", "🔵")]),
-          choice("Agora encontre a estrela laranja.", "Estrela laranja", [pic("Estrela laranja", "🌟"), pic("Círculo laranja", "🟠"), pic("Quadrado amarelo", "🟨")])
+          choice("Encontre o círculo azul.", "Círculo azul", [shapePic("Círculo azul", "circle", "blue"), shapePic("Quadrado verde", "square", "green"), shapePic("Triângulo amarelo", "triangle", "yellow")]),
+          choice("Encontre o quadrado verde.", "Quadrado verde", [shapePic("Círculo vermelho", "circle", "red"), shapePic("Quadrado verde", "square", "green"), shapePic("Triângulo azul", "triangle", "blue")]),
+          choice("Encontre o triângulo amarelo.", "Triângulo amarelo", [shapePic("Estrela amarela", "star", "yellow"), shapePic("Triângulo amarelo", "triangle", "yellow"), shapePic("Círculo azul", "circle", "blue")]),
+          choice("Agora encontre a estrela laranja.", "Estrela laranja", [shapePic("Estrela laranja", "star", "orange"), shapePic("Círculo laranja", "circle", "orange"), shapePic("Quadrado amarelo", "square", "yellow")])
         ]),
-        stage("Arrume a mochila", "Selecionar e mover objetos para um destino", "place-item", "Escolha o objeto e coloque-o na mochila. Você pode arrastar ou clicar no objeto e depois na mochila.", [
-          { item: pic("Lanterna", "🔦"), target: "Mochila", options: [pic("Lanterna", "🔦"), pic("Folha", "🍃"), pic("Pedra", "🪨")] },
-          { item: pic("Cantil", "🥤"), target: "Mochila", options: [pic("Cantil", "🥤"), pic("Flor", "🌼"), pic("Nuvem", "☁️")] },
-          { item: pic("Mapa", "🗺️"), target: "Mochila", options: [pic("Mapa", "🗺️"), pic("Concha", "🐚"), pic("Maçã", "🍎")] }
+        stage("Arrume a mochila", "Preparar o que vamos usar para explorar a natureza durante o acampamento", "place-item", "Estamos arrumando a mochila para um acampamento. Escolha o objeto pedido e guarde-o na mochila. Você pode arrastar ou clicar no objeto e depois na mochila.", [
+          { prompt: "Estamos arrumando a mochila para um acampamento. Escolha a lanterna, que vai iluminar nosso caminho quando escurecer.", item: pic("Lanterna", "🔦"), target: "Mochila", options: [pic("Lanterna", "🔦"), pic("Folha", "🍃"), pic("Pedra", "🪨"), pic("Nuvem", "☁️")] },
+          { prompt: "Vamos levar os binóculos para observar os pássaros e outros animais durante o acampamento. Escolha os binóculos.", item: pic("Binóculos", "🔭"), target: "Mochila", options: [pic("Binóculos", "🔭"), pic("Flor", "🌼"), pic("Nuvem", "☁️"), pic("Bola", "⚽")] },
+          { prompt: "O mapa vai nos ajudar a encontrar o caminho durante o acampamento. Escolha o mapa e coloque-o na mochila.", item: pic("Mapa", "🗺️"), target: "Mochila", options: [pic("Mapa", "🗺️"), pic("Concha", "🐚"), pic("Maçã", "🍎"), pic("Flor", "🌼")] }
         ])
       ]
     },
