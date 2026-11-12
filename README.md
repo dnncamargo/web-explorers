@@ -81,7 +81,7 @@ A atividade combina cliques, seleção, conexão de pontos, arrastar e soltar, m
 
 ### Música e áudio
 
-A música de abertura aparece **somente no mapa inicial**. A imagem de introdução funciona como controle para iniciar ou pausar a faixa escolhida. O player do YouTube permanece fora da área visível, sem exibir vídeo nem controles, e repete a música inteira com `loop=1` e `playlist` apontando para o mesmo ID. Ao entrar em um mundo, o player é removido; ao voltar ao mapa, a música não reinicia sozinha. Os mundos não têm rádio nem trilha sonora contínua: usam apenas fala e áudio curto necessário ao exercício.
+A música de abertura aparece **somente no mapa inicial**. A imagem de introdução funciona como controle para iniciar ou pausar a faixa escolhida. O player do YouTube permanece fora da área visível, sem exibir vídeo nem controles, e repete a música inteira com `loop=1` e `playlist` apontando para o mesmo ID. Ao entrar em um mundo, o player é removido; ao voltar ao mapa, a música não reinicia sozinha. Os mundos não têm música de fundo nem trilha sonora contínua: usam apenas fala e áudio curto necessário ao exercício.
 
 Ao concluir os cinco mundos obrigatórios, a tela final apresenta uma mensagem de gratidão da Capi com a imagem da capivara segurando uma rosa. O Diário de Bordo continua opcional.
 
