@@ -32,6 +32,17 @@
       ? "O navegador não permite salvar o progresso. Ele ficará disponível enquanto esta página estiver aberta."
       : "Progresso salvo neste navegador. Você pode voltar depois.";
   }
+  const SYLLABLE_SPEECH = Object.freeze({
+    PO: "pô",
+    JA: "já",
+    "RÉ": "aré", // A vogal anterior mantém o R de jacaré suave, como no meio da palavra.
+    MA: "má",
+    LE: "lê"
+  });
+  function syllableSpeechText(syllable) {
+    const key = String(syllable).toLocaleUpperCase("pt-BR");
+    return SYLLABLE_SPEECH[key] || String(syllable).toLocaleLowerCase("pt-BR");
+  }
   function spoken(text, onComplete) {
     if (!("speechSynthesis" in global) || !text) return false;
     try {
@@ -328,7 +339,7 @@
           }
         };
         status.textContent = "Ouça a parte " + syllable + ".";
-        if (!spoken(syllable.toLocaleLowerCase("pt-BR"), finishAfterSound)) {
+        if (!spoken(syllableSpeechText(syllable), finishAfterSound)) {
           speakingPart = false;
           if (isLastPart) {
             status.textContent = "Todas as partes foram tocadas: " + round.syllables.join(" · ") + ".";
