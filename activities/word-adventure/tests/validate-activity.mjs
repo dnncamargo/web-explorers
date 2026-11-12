@@ -17,13 +17,13 @@ assert.match(camp.stages[0].rounds[1].prompt, /Clique na barraca/i, "the questio
 assert.deepEqual(Array.from(camp.stages[0].rounds[1].options, (option) => option.word), ["Mochila", "Barraca", "Fogueira"], "the click task uses three distinct camping objects");
 assert.deepEqual(Array.from(camp.stages[0].rounds[1].options, (option) => option.emoji), ["🎒", "⛺", "🔥"], "the camping choices use clear, matching pictograms");
 assert.deepEqual(Array.from(camp.stages[1].rounds[1].sequence), ["4", "5", "6", "7", "8", "9"], "the second trail starts at four and ends at nine");
-assert.deepEqual(Array.from(camp.stages[1].rounds[2].displayOrder), ["1", "3", "2", "4", "5", "6", "8", "7", "6", "9"], "the third trail displays the exact requested visual order");
+assert.deepEqual(Array.from(camp.stages[1].rounds[2].displayOrder), ["1", "3", "2", "4", "6", "8", "7", "5", "9"], "the third trail displays the exact requested visual order");
 assert.deepEqual(Array.from(camp.stages[1].rounds[2].sequence), ["1", "2", "3", "4", "5", "6", "7", "8", "9"], "the third trail accepts only ascending clicks from one through nine");
-assert.equal(camp.stages[1].rounds[2].displayOrder.length, 10, "the displayed line contains ten points");
+assert.equal(camp.stages[1].rounds[2].displayOrder.length, 9, "the displayed line contains nine points");
 assert.equal(camp.stages[1].rounds[2].displayOrder.includes("5"), true, "the displayed points include five");
-assert.equal(camp.stages[1].rounds[2].displayOrder.filter((value) => value === "6").length, 2, "the visual line shows two sixes");
+assert.equal(camp.stages[1].rounds[2].displayOrder.filter((value) => value === "6").length, 1, "the visual line shows six only once");
 assert.equal(camp.stages[1].rounds[2].sequence.filter((value) => value === "6").length, 1, "the learner clicks six only once");
-assert.deepEqual([...camp.stages[1].rounds[2].displayOrder].sort(), [...camp.stages[1].rounds[2].sequence].sort().concat("6").sort(), "the display has the ascending sequence plus one extra six");
+assert.deepEqual([...camp.stages[1].rounds[2].displayOrder].sort(), [...camp.stages[1].rounds[2].sequence].sort(), "the display contains each number from one through nine exactly once");
 assert.ok(camp.stages[2].rounds.every((round) => round.options.every((option) => option.shape && option.color)), "all shape choices use explicit SVG geometry and colors");
 assert.equal(camp.stages[2].rounds[1].options[1].shape, "square", "the green square is a true square");
 assert.equal(camp.stages[2].rounds[1].options[1].color, "green", "the square is green");
@@ -43,7 +43,7 @@ assert.ok(activity.includes("function optionVisual(item)"), "the activity render
 assert.ok(activity.includes("shape-option") && activity.includes("circle:") && activity.includes("square:") && activity.includes("triangle:") && activity.includes("star:"), "circle, square, triangle and star have dedicated SVG geometry");
 assert.ok(activity.includes("restart-checkpoint") && activity.includes("STORE.resetCheckpoint"), "the current checkpoint has a restart control");
 assert.ok(activity.includes('const value = button.dataset.dot;') && activity.includes('value !== String(sequence[at])'), "trail validation checks the displayed number, not the button position");
-assert.ok(activity.includes("round.displayOrder || sequence") && activity.includes('matchingPoints.forEach((point) => {') && activity.includes('"duplicate-used"'), "the trail validates ascending clicks and disables both copies after the first six");
+assert.ok(activity.includes("round.displayOrder || sequence") && activity.includes('button.classList.add("connected")'), "the trail validates ascending clicks and disables both copies after the first six");
 assert.ok(styles.includes(".shuffled-dot-board{display:flex;flex-wrap:nowrap;"), "the shuffled numeric points are displayed in one horizontal line, not a matrix");
 assert.ok(activity.includes("if (resumeMusic) toggleMapMusic();") && activity.includes("function returnToMap()"), "returning through the map control resumes previously playing music");
 
