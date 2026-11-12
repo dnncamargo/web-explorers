@@ -52,7 +52,9 @@ assert.equal(lagoon.stages[1].kind, "syllable-tap", "the second lagoon checkpoin
 assert.deepEqual(Array.from(lagoon.stages[1].rounds, (round) => round.word), ["SAPO", "JACARÉ", "MACACO", "ELEFANTE"], "the syllable activity uses the four requested animals");
 assert.deepEqual(Array.from(lagoon.stages[1].rounds, (round) => Array.from(round.syllables)), [["SA", "PO"], ["JA", "CA", "RÉ"], ["MA", "CA", "CO"], ["E", "LE", "FAN", "TE"]], "each animal is divided into its spoken syllables");
 assert.ok(!lagoon.stages[1].prompt.includes("pedaço") && lagoon.stages[1].prompt.includes("parte"), "the syllable instruction uses the word parte");
-assert.ok(activity.includes('stage.kind === "syllable-tap"') && activity.includes('spoken(syllable.toLocaleLowerCase("pt-BR"), finishAfterSound)'), "tapping a syllable speaks its lowercase sound and waits for playback to finish");
+assert.ok(activity.includes('stage.kind === "syllable-tap"') && activity.includes('spoken(syllableSpeechText(syllable), finishAfterSound)'), "tapping a syllable speaks its guided pronunciation and waits for playback to finish");
+assert.ok(activity.includes('PO: "pô"') && activity.includes('JA: "já"') && activity.includes('"RÉ": "aré"') && activity.includes('MA: "má"') && activity.includes('LE: "lê"'), "the reported syllables use pronunciation hints instead of letter names");
+assert.ok(activity.includes('SYLLABLE_SPEECH[key] || String(syllable).toLocaleLowerCase("pt-BR")'), "unmapped syllables keep the standard lowercase Portuguese pronunciation");
 assert.ok(activity.includes('index !== currentPart') && activity.includes('button.classList.add("heard")') && activity.includes('button.disabled = true;'), "syllables must be tapped in order, once each, and change color when heard");
 assert.ok(activity.includes("let speakingPart = false;") && activity.includes("Ouça o som da sílaba até o fim"), "the next syllable cannot interrupt the sound currently playing");
 assert.ok(activity.includes("utterance.onend = complete;") && activity.includes("utterance.onerror = complete;"), "syllable progress resumes only when speech playback ends or errors");
