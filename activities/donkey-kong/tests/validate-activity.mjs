@@ -261,9 +261,11 @@ assert.equal(JSON.parse(legacyLocalStorage.getItem(migrationStore.KEY)).version,
 const mapHtml = read("index.html");
 const activitySource = read("assets/js/activity.js");
 const activityCss = read("assets/css/donkey-kong.css");
-assert.ok(mapHtml.includes('id="start-screen"') && mapHtml.includes('id="start-button-label"'), "map has a Kong barrel entrance overlay");
-assert.ok(mapHtml.includes('class="barrel-image"') && mapHtml.includes("DK_Barrel_DKCR.png"), "barrel entrance uses the DK Barrel image asset");
-assert.ok(mapHtml.includes("ssbwiki.com/File:DK_Barrel_DKCR.png"), "barrel asset source is credited");
+assert.ok(!mapHtml.includes('id="start-screen"') && !mapHtml.includes("DK_Barrel_DKCR.png"), "map opens directly without the barrel overlay or external barrel image");
+assert.ok(!activitySource.includes("setupMapEntryOverlay"), "map entry is independent of YouTube radio readiness");
+
+
+
 assert.ok(activitySource.includes('id="reset-activity"'), "each active checkpoint offers an activity reset");
 assert.ok(activitySource.includes('id="reset-world"'), "each world guide offers a full-world reset");
 assert.ok(activitySource.includes('id="reset-boss"'), "the final poem mission offers an activity reset");
@@ -279,7 +281,7 @@ assert.ok(activitySource.includes('const showShift=!!action.shift'), "Shift high
 assert.ok(activitySource.includes('renderShift("left")') && activitySource.includes('renderShift("right")') && activitySource.includes('data-key="shift-'), "left and right Shift keys have independent physical positions");
 assert.ok(activitySource.includes('"1":["1","!"]') && activitySource.includes('"2":["2","@"]') && activitySource.includes('"6":["6","¨"]') && activitySource.includes('"7":["7","&"]') && activitySource.includes('"=":["=","+"]'), "the complete ABNT2 keyboard shows the number-row symbols");
 assert.ok(!data.worlds.camp.checkpoints.some((checkpoint) => checkpoint.kind === "typing-sequence"), "Camp now focuses on text operations rather than the old AltGr typing exercise");
-assert.ok(activitySource.includes("playFromGesture()"), "barrel interaction calls the radio gesture method");
+
 assert.ok(activitySource.includes('continueButton.focus({ preventScroll: true })'), "typing completion moves focus to the continue button");
 assert.ok(activitySource.includes('id="sequence-tip"') && activitySource.includes('function updateSequenceTip'), "typing sequences render a live tip span that updates with progress");
 assert.ok(activitySource.includes("Segure a tecla shift, mantenha-a pressionada e pressione O."), "the first O in the Mine sentence has the requested Shift teaching tip");
