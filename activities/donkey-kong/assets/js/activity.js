@@ -2146,9 +2146,7 @@
   const page = document.body.dataset.page;
   if (page === "map") {
     renderMap();
-
-  }
-  else if (page === "world") renderWorldPage();
+  } else if (page === "world") renderWorldPage();
   else if (page === "boss") renderBoss();
   updatePersistence();
 })(window);
