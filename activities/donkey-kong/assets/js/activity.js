@@ -101,42 +101,6 @@
     updatePersistence();
   }
 
-  function setupMapEntryOverlay() {
-    const screen = document.getElementById("start-screen");
-    const button = document.getElementById("start-button");
-    const status = document.getElementById("start-status");
-    const buttonLabel = document.getElementById("start-button-label");
-    if (!screen || !button || !status || !buttonLabel) return;
-
-    function allowEntry(withMusic) {
-      button.disabled = false;
-      buttonLabel.textContent = withMusic ? "ENTRAR" : "SEM MÚSICA";
-      status.textContent = withMusic
-        ? "Rádio pronta. Clique no barril para entrar e iniciar a trilha."
-        : "A rádio não respondeu. Você pode entrar sem música; a trilha também pode ser aberta no controle do YouTube.";
-      button.focus({ preventScroll: true });
-    }
-
-    button.disabled = true;
-    buttonLabel.textContent = "AGUARDE…";
-    status.textContent = "Conectando à trilha da Ilha dos Kongs…";
-
-    global.addEventListener("donkeykong:radio-ready", () => allowEntry(true), { once: true });
-    global.addEventListener("donkeykong:radio-error", () => allowEntry(false), { once: true });
-
-    if (global.DonkeyKongRadio?.isReady()) allowEntry(true);
-    else if (global.DonkeyKongRadio?.hasFailed()) allowEntry(false);
-
-    button.addEventListener("click", () => {
-      if (button.disabled) return;
-      if (global.DonkeyKongRadio?.isReady()) global.DonkeyKongRadio.playFromGesture();
-      button.disabled = true;
-      button.classList.add("entering");
-      screen.classList.add("leaving");
-      global.setTimeout(() => screen.remove(), 600);
-    });
-  }
-
   function fingerName(finger) {
     return ({
       "left-pinky": "mínimo esquerdo", "left-ring": "anelar esquerdo", "left-middle": "médio esquerdo", "left-index": "indicador esquerdo",
@@ -2182,7 +2146,7 @@
   const page = document.body.dataset.page;
   if (page === "map") {
     renderMap();
-    setupMapEntryOverlay();
+
   }
   else if (page === "world") renderWorldPage();
   else if (page === "boss") renderBoss();
