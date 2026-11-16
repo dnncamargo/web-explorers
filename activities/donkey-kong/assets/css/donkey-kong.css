@@ -52,23 +52,6 @@ button, a, input, textarea { outline-offset: 3px; }
 .radio-button:hover { background:#ffe59c; }
 .radio-fallback { color:#f9e9ae; font-size:12px; }
 .player-host, #radio-player { position:static; grid-column:1 / -1; display:block; width:min(360px,100%); height:203px; margin-top:4px; overflow:hidden; border-radius:5px; background:#0b1710; }
-.start-screen { position:fixed; inset:0; z-index:100; display:grid; place-items:center; padding:24px; background:linear-gradient(rgba(8,20,12,.72),rgba(5,16,9,.93)), radial-gradient(ellipse at 50% 35%,#497746 0%,#1f472d 58%,#0b2417 100%); color:#fff; text-align:center; transition:opacity .45s ease,transform .45s ease; }
-.start-screen.leaving { opacity:0; transform:scale(1.04); pointer-events:none; }
-.start-content { width:min(680px,100%); }
-.start-world-number { color:#ffe07d; font-size:11px; line-height:1.8; }
-.start-screen h1 { margin:12px 0; color:#fff1ae; font-size:clamp(34px,7vw,62px); line-height:1.2; text-shadow:4px 4px 0 #151b0f; }
-.start-screen p { max-width:540px; margin:10px auto; color:#f0f4e2; font-size:18px; line-height:1.5; }
-.start-status { min-height:24px; color:#ffe8a5 !important; font-size:13px !important; }
-.barrel-button { position:relative; display:grid; width:190px; height:226px; place-items:center; margin:18px auto 0; padding:0; border:0; background:transparent; color:#fff4cf; cursor:pointer; filter:drop-shadow(7px 9px 0 rgba(0,0,0,.55)); transition:transform .14s ease,filter .14s ease; }
-.barrel-image { display:block; width:100%; height:100%; object-fit:contain; }
-.barrel-enter-label { position:absolute; z-index:2; bottom:13px; left:0; right:0; color:#fff9e9; font-size:11px; font-weight:900; letter-spacing:.08em; text-shadow:2px 2px 3px #301909,-1px -1px 2px #301909; }
-.barrel-credit { display:inline-block; margin-top:6px; color:#e7eddb; font-size:10px; text-decoration:underline; text-underline-offset:2px; opacity:.84; }
-.barrel-button:hover:not(:disabled) { transform:translateY(-5px) scale(1.04); filter:drop-shadow(7px 12px 0 rgba(0,0,0,.55)); }
-.barrel-button:focus-visible { outline:5px solid #ffe07d; outline-offset:8px; }
-.barrel-button:active:not(:disabled) { transform:translateY(4px) scale(.98); }
-.barrel-button:disabled { cursor:wait; opacity:.62; }
-.barrel-button.entering { animation:enterBarrel .62s ease-in forwards; }
-@keyframes enterBarrel { 0%{transform:translateY(0);opacity:1} 55%{transform:translateY(28px);opacity:1} 100%{transform:translateY(95px);opacity:0} }
 .map-intro { margin:44px 0 24px; text-align:center; }
 .map-intro h1 { margin:0; color:#174b34; font-size:clamp(31px,5vw,52px); line-height:1.15; }
 .map-intro p { max-width:690px; margin:14px auto 0; color:var(--muted); font-size:18px; line-height:1.55; }
