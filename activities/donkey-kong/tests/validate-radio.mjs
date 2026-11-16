@@ -130,5 +130,6 @@ for (const [world, expectedVideoId] of [
   assert.equal(app.events.includes("donkeykong:radio-ready"), true, "map radio reports readiness for its optional control");
   app.window.DonkeyKongRadio.playFromGesture();
   assert.ok(app.player.calls.some(([name]) => name === "playVideo"), "map radio can still be started from its optional control");
+}
 
 console.log("OK: world-page autoplay, blocked-audio muted fallback, sound activation, pause, and optional map radio behavior");
