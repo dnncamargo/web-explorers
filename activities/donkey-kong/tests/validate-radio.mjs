@@ -124,12 +124,12 @@ for (const [world, expectedVideoId] of [
 
 {
   const app = boot("map");
-  assert.equal(app.player.options.playerVars.autoplay, 0, "map page waits for its barrel click");
+  assert.equal(app.player.options.playerVars.autoplay, 0, "map radio does not autoplay");
   app.player.options.events.onReady();
-  assert.equal(app.player.calls.some(([name]) => name === "playVideo"), false, "map page does not play before barrel interaction");
-  assert.equal(app.events.includes("donkeykong:radio-ready"), true, "map signals when the radio is ready");
+  assert.equal(app.player.calls.some(([name]) => name === "playVideo"), false, "map radio remains silent until explicitly requested");
+  assert.equal(app.events.includes("donkeykong:radio-ready"), true, "map radio reports readiness for its optional control");
   app.window.DonkeyKongRadio.playFromGesture();
-  assert.ok(app.player.calls.some(([name]) => name === "playVideo"), "barrel interaction can start playback");
+  assert.ok(app.player.calls.some(([name]) => name === "playVideo"), "map radio can still be started from its optional control");
 }
 
-console.log("OK: world-page autoplay, blocked-audio muted fallback, sound activation, pause, and map gesture behavior");
+console.log("OK: world-page autoplay, blocked-audio muted fallback, sound activation, pause, and optional map radio behavior");
