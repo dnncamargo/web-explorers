@@ -11,6 +11,11 @@ vm.runInNewContext(progressSource, context);
 const data = context.window.WordAdventureContent;
 const progress = context.window.WordAdventureProgress;
 
+const activitySource = read("../assets/js/activity.js");
+assert.ok(activitySource.includes('event.target.closest("[data-speak]")'), "all audio controls use one delegated click handler");
+assert.equal((activitySource.match(/querySelector\("\.audio-button"\)/g) || []).length, 0, "generated audio buttons do not register a second click handler");
+assert.ok(!activitySource.includes('promptAudio?.querySelector'), "the instruction audio button also uses the delegated handler");
+
 assert.equal(data.worlds.length, 4, "four required worlds exist");
 assert.equal(data.bonus.id, "story-city", "story city is separate optional bonus");
 for (const world of data.worlds) {
