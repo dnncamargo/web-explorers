@@ -140,10 +140,6 @@
         });
       });
     }
-    function audioWord(word) {
-      if (!spoken(word)) setFeedback("A leitura em voz alta não está disponível neste navegador. Peça ao professor para falar a palavra e continue a missão.", "hint");
-      else setFeedback("Escute com atenção e repita em voz alta, se puder.");
-    }
 
     if (stage.kind === "listen-picture") {
       const item = stage.items[(number - 1) % stage.items.length];
@@ -152,7 +148,7 @@
         if (value === item.word) finish("Você ouviu a palavra e encontrou o que ela nomeia!");
         else wrong("Ouça mais uma vez. Que palavra foi falada?");
       });
-      challenge.querySelector(".audio-button").addEventListener("click",()=>audioWord(item.word));
+
       setTimeout(()=>spoken(item.word),150);
     }
 
@@ -163,7 +159,7 @@
         if (Number(value) === item.syllables.length) finish("Isso! " + item.word + " tem " + item.syllables.length + " partes faladas: " + item.syllables.join(" · ") + ".");
         else wrong("Vamos falar devagar e bater palmas mais uma vez.");
       });
-      challenge.querySelector(".audio-button").addEventListener("click",()=>audioWord(item.word));
+
       setTimeout(()=>spoken(item.word),150);
     }
 
@@ -174,7 +170,7 @@
         if(value===item.answer) finish("Muito bem! " + item.word + " e " + item.answer + " começam com " + item.syllables[0] + ".");
         else wrong("Repita as duas palavras. Escute como cada uma começa.");
       });
-      challenge.querySelector(".audio-button").addEventListener("click",()=>audioWord(item.word));
+
       setTimeout(()=>spoken(item.word),150);
     }
 
@@ -185,7 +181,7 @@
         if (value === item.syllables[0]) finish("O primeiro pedaço é " + value + ". A palavra começa assim!");
         else wrong("Acompanhe os pedaços da esquerda para a direita e tente de novo.");
       }, "compact-choices");
-      challenge.querySelector(".audio-button").addEventListener("click",()=>audioWord(item.word));
+
       setTimeout(()=>spoken(item.word),150);
     }
 
@@ -202,7 +198,7 @@
         if (value === key) finish("Você encontrou a letra " + key + ". Ela representa o som que aparece no começo!");
         else wrong("Observe a forma da letra e escute o começo da palavra novamente.");
       }, "letter-choices");
-      challenge.querySelector(".audio-button").addEventListener("click",()=>audioWord(item.word || key));
+
       setTimeout(()=>spoken(item.word || key),150);
     }
 
@@ -222,7 +218,7 @@
         if(value===item.answer) finish("Você juntou " + item.consonant + " com " + item.vowel + " e formou " + item.answer + ".");
         else wrong("Ouça novamente e observe as duas letras que se juntam.");
       }, "compact-choices");
-      challenge.querySelector(".audio-button").addEventListener("click",()=>spoken(item.answer));
+
       setTimeout(()=>spoken(item.answer),150);
     }
 
@@ -239,7 +235,7 @@
           else setFeedback("Boa! Agora procure o próximo pedaço.");
         } else wrong("Diga a palavra devagar e procure o próximo bloco.");
       },"compact-choices");
-      challenge.querySelector(".audio-button").addEventListener("click",()=>audioWord(item.word));
+
       setTimeout(()=>spoken(item.word),150);
     }
 
@@ -251,7 +247,7 @@
         if(value===item.word) finish("Você leu a palavra e encontrou seu significado.");
         else wrong("Leia cada pedaço com calma e junte os sons.");
       });
-      challenge.querySelector(".audio-button").addEventListener("click",()=>audioWord(item.word));
+
       setTimeout(()=>spoken(item.word),150);
     }
 
@@ -276,7 +272,7 @@
         if(value===item.target) finish("Você compreendeu a mensagem e encontrou o que ela pediu.");
         else wrong("Leia ou escute a mensagem de novo. Qual palavra mostra o que fazer?");
       });
-      challenge.querySelector(".audio-button").addEventListener("click",()=>spoken(item.spoken || message));
+
       setTimeout(()=>spoken(item.spoken || message),150);
     }
 
@@ -311,10 +307,6 @@
       if(first) setFeedback(first,"hint");
       if (!spoken(stage.prompt)) setFeedback(first + " A voz não está disponível; o professor pode ler a instrução.", "hint");
     });
-    const promptAudio = document.getElementById("prompt-audio");
-    promptAudio?.querySelector("[data-speak]")?.addEventListener("click", () => {
-      if (!spoken(stage.prompt)) setFeedback("Peça ao professor para ler a instrução.", "hint");
-    });
     next.addEventListener("click",()=>{
       if(!complete)return;
       stopSpeech();
@@ -341,16 +333,20 @@
     if(world){renderWorld(world);return;}
     renderMap();
   }
-  document.addEventListener("click",(event)=>{
-    const button=event.target.closest("[data-speak]");
-    if(button && !button.closest("#prompt-audio")) {
-      if (!spoken(button.dataset.speak)) {
-        const feedback = document.getElementById("feedback");
-        if (feedback) {
-          feedback.className = "feedback hint";
-          feedback.textContent = "A leitura em voz alta não está disponível. Peça ao professor para falar a palavra.";
-        }
+  // One delegated listener handles every "Ouvir" control. Do not also bind
+  // handlers to generated buttons: that would cancel the same utterance twice.
+  document.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-speak]");
+    if (!button) return;
+    const feedback = document.getElementById("feedback");
+    if (!spoken(button.dataset.speak)) {
+      if (feedback) {
+        feedback.className = "feedback hint";
+        feedback.textContent = "A leitura em voz alta não está disponível. Peça ao professor para falar a palavra.";
       }
+    } else if (feedback) {
+      feedback.className = "feedback";
+      feedback.textContent = "Escute com atenção e repita em voz alta, se puder.";
     }
   });
   document.getElementById("reset-progress").addEventListener("click",()=>{
