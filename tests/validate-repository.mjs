@@ -94,6 +94,15 @@ for (const target of [
   "activities/word-adventure/assets/js/activity.js",
   "activities/word-adventure/tests/validate-activity.mjs",
   "activities/word-adventure/tests/validate-repository.mjs",
+  "activities/capi-logica/index.html",
+  "activities/capi-logica/assets/css/capi-logica.css",
+  "activities/capi-logica/assets/js/config.js",
+  "activities/capi-logica/assets/js/games.js",
+  "activities/capi-logica/assets/js/progress.js",
+  "activities/capi-logica/assets/js/activity.js",
+  "activities/capi-logica/assets/images/capi-pintora.svg",
+  "activities/capi-logica/tests/validate-activity.mjs",
+  "activities/capi-logica/tests/validate-repository.mjs",
 ]) assert.ok(fs.existsSync(path.join(root, target)), `${target} exists`);
 
 for (const obsolete of ["assets", "stages", "index2.html", "index3.html", "index_final.html", "02-entrar-no-submundo.html", "activities/donkey-kong/king-k-rool.html"]) {
