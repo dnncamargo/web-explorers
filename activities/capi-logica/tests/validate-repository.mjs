@@ -29,5 +29,5 @@ assert.ok(css.includes("prefers-reduced-motion") && css.includes("@media(max-wid
 
 const catalog = fs.readFileSync(path.join(root, "index.html"), "utf8");
 assert.ok(catalog.includes('href="activities/capi-logica/index.html"'), "the catalog opens Capi Logic Games");
-assert.equal([...catalog.matchAll(/class="activity-card(?:\\s|")/g)].length, 5, "the catalog lists five independent activities");
+assert.equal([...catalog.matchAll(/class="activity-card(?:\s|")/g)].length, 5, "the catalog lists five independent activities");
 console.log("OK: Capi Logic activity files, script order, painter configuration, responsive CSS and catalog route");
