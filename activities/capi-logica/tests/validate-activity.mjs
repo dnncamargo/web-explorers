@@ -8,13 +8,13 @@ vm.runInContext(read("../assets/js/games.js"), gamesContext, { filename: "games.
 const data = gamesContext.window.CapiLogicGames;
 assert.ok(data, "visual game data is registered");
 assert.equal(data.worlds.length, 7, "seven visual logic areas exist");
-assert.equal(data.tasks.length, 21, "each area has three short challenges");
+assert.equal(data.tasks.length, 24, "seven areas contain 24 short challenges, including six in the color area");
 assert.equal(new Set(data.worlds.map((world) => world.id)).size, 7, "world IDs are unique");
-assert.equal(new Set(data.tasks.map((task) => task.id)).size, 21, "task IDs are unique");
+assert.equal(new Set(data.tasks.map((task) => task.id)).size, 24, "task IDs are unique");
 
 for (const world of data.worlds) {
   const tasks = data.tasks.filter((task) => task.world === world.id);
-  assert.equal(tasks.length, 3, world.id + " has three challenges");
+  assert.equal(tasks.length, world.id === "cores" ? 6 : 3, world.id + " has the configured number of challenges");
   for (const task of tasks) assert.ok(task.prompt && task.title && task.icon, task.id + " has an audio prompt and visual identity");
 }
 const formsFirst = data.tasks.find((task) => task.id === "formas-01");
@@ -27,13 +27,22 @@ assert.deepEqual(Array.from(formsThird.sequence), ["red-circle", "blue-square", 
 assert.equal(formsThird.answer, "red-circle", "the approved third challenge answer is preserved");
 
 const kinds = new Set(data.tasks.map((task) => task.kind));
-for (const kind of ["pattern", "paint", "shape-match", "side-count", "count", "compare", "calculation", "odd-one", "grid-position", "position", "matrix", "pair", "proportion", "letter-pattern", "letter-match", "sound-pattern"]) {
+for (const kind of ["pattern", "paint", "shape-match", "side-count", "count", "compare", "calculation", "odd-one", "grid-position", "position", "matrix", "pair", "proportion", "letter-pattern", "letter-match", "sound-pattern", "color-matrix"]) {
   assert.ok(kinds.has(kind), kind + " is represented");
 }
 
-const paint = data.tasks.find((task) => task.kind === "paint");
-assert.equal(paint.legend.length, 3, "paint task has a simple three-color legend");
+const paintTasks = data.tasks.filter((task) => task.kind === "paint");
+assert.equal(paintTasks.length, 2, "the color area has two paint-by-key challenges");
+const paint = paintTasks.find((task) => task.id === "cores-02");
+assert.equal(paint.legend.length, 3, "the first paint task has a simple three-color legend");
 for (const number of paint.targets) assert.ok(paint.legend.some((item) => item.number === number), "each paint target has a matching legend entry");
+const advancedPaint = paintTasks.find((task) => task.id === "cores-06");
+assert.equal(advancedPaint.legend.length, 4, "the advanced paint task uses four palette colors");
+assert.equal(advancedPaint.targets.length, 9, "the advanced paint task contains nine targets");
+for (const number of advancedPaint.targets) assert.ok(advancedPaint.legend.some((item) => item.number === number), "each advanced paint target maps to one palette color");
+const colorMatrix = data.tasks.find((task) => task.id === "cores-05");
+assert.equal(colorMatrix.grid.length, 9, "the advanced color matrix has nine cells");
+assert.equal(colorMatrix.answer, "blue", "the color matrix completes the cyclic sequence with blue");
 
 const route = data.tasks.find((task) => task.kind === "grid-position");
 const finalPosition = route.moves.reduce((position, move) => ({
@@ -70,6 +79,8 @@ assert.ok(activity.includes('target.closest("[data-speak]")'), "audio instructio
 assert.ok(activity.includes("AudioContextClass"), "the sound-pattern game uses local browser audio");
 assert.ok(activity.includes('startsWith("https://")'), "the painter integration accepts only HTTPS links");
 assert.ok(activity.includes("data-paint-target") && activity.includes("data-paint-color"), "palette painting uses explicit color and target controls");
+assert.ok(activity.includes("class=\"paint-layout\"") && activity.includes("class=\"paint-sidebar\""), "paint games render the palette in a lateral sidebar");
+assert.ok(activity.includes("function colorMatrixVisual(task)") && activity.includes('task.kind === "color-matrix"'), "color matrix challenges have a dedicated renderer");
 assert.ok(activity.includes("answer-tray") && activity.includes("patternVisual(task.sequence, task.options)"), "pattern alternatives are rendered in a separate answer tray");
 assert.ok(activity.includes("function highlightOption(button)") && activity.includes('classList.toggle("is-selected"'), "selected answer options receive a persistent visual highlight");
-console.log("OK: seven worlds, 21 visual challenges, colors, shapes, numbers, rules, positions, proportions, letters, sound and progress");
+console.log("OK: seven worlds, 24 visual challenges, colors, shapes, numbers, rules, positions, proportions, letters, sound and progress");
