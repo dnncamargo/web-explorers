@@ -50,15 +50,18 @@
       return true;
     } catch { return false; }
   }
+  function shapeGlyphHTML(shape) {
+    return '<span class="shape-glyph shape-' + esc(shape) + '" aria-hidden="true"></span>';
+  }
   function tokenHTML(value) {
     const key = String(value);
     if (DATA.COLORS[key]) return '<span class="token token-color ' + esc(key) + '" aria-label="cor"></span>';
-    if (DATA.SHAPES[key]) return '<span class="token token-shape" aria-label="forma">' + DATA.SHAPES[key] + '</span>';
+    if (DATA.SHAPES[key]) return '<span class="token token-shape" aria-label="forma">' + shapeGlyphHTML(key) + '</span>';
     if (DATA.ARROWS[key]) return '<span class="token token-arrow" aria-label="direção">' + DATA.ARROWS[key] + '</span>';
     if (/^[A-Z]$/.test(key)) return '<span class="token token-letter">' + esc(key) + '</span>';
     const parts = key.split("-");
     if (parts.length === 2 && DATA.COLORS[parts[0]] && DATA.SHAPES[parts[1]]) {
-      return '<span class="token combo-token ' + esc(parts[0]) + '" aria-label="combinação de forma e cor">' + DATA.SHAPES[parts[1]] + '</span>';
+      return '<span class="token combo-token ' + esc(parts[0]) + '" aria-label="combinação de forma e cor">' + shapeGlyphHTML(parts[1]) + '</span>';
     }
     return '<span class="token">' + esc(key) + '</span>';
   }
@@ -117,6 +120,10 @@
     return '<div class="shape-target">' + tokenHTML(task.target) + '</div><div class="option-grid">' +
       task.options.map((value, index) => optionButton(value, "Opção " + (index + 1), index)).join("") + '</div>';
   }
+  function shapeMatchVisual(task) {
+    return '<div class="shape-target">' + tokenHTML(task.target) + '</div><div class="option-grid">' +
+      task.options.map((value, index) => optionButton(value, "Combinação " + (index + 1), index)).join("") + '</div>';
+  }
   function countVisual(task) {
     return groupVisual(task.emoji, task.count) + numberOptions(task.options);
   }
@@ -156,9 +163,37 @@
       ).join("") + '</div>';
   }
   function matrixVisual(task) {
-    return '<div class="matrix-grid">' + task.grid.map((value) =>
+    const sizeClass = task.grid.length === 9 ? " matrix-grid-3" : "";
+    return '<div class="matrix-grid' + sizeClass + '">' + task.grid.map((value) =>
       '<div class="matrix-cell ' + (value === null ? "missing" : "") + '">' + (value === null ? "?" : tokenHTML(value)) + '</div>'
     ).join("") + '</div><div class="option-grid">' + task.options.map((value, index) => optionButton(value, "Peça " + (index + 1), index)).join("") + '</div>';
+  }
+  function shapeCountVisual(task) {
+    return '<div class="shape-count-board">' +
+      '<div class="shape-count-model"><span>MODELO</span>' + tokenHTML(task.countShape) + '</div>' +
+      '<div class="shape-count-items">' + task.items.map((shape) => '<span class="shape-count-item">' + tokenHTML(shape) + '</span>').join("") + '</div>' +
+    '</div>' + numberOptions(task.options);
+  }
+  function polygonVisual(task) {
+    const pointMarkup = task.points.map((point, index) =>
+      '<circle class="polygon-point ' + (index === 0 ? "polygon-start is-next" : "") + '" data-point="' + index + '" cx="' + point.x + '" cy="' + point.y + '" r="10"></circle>'
+    ).join("");
+    return '<div class="polygon-game">' +
+      '<p class="polygon-instruction">🐾 Comece no ponto que cresce. Ligue as pontas seguindo a ordem.</p>' +
+      '<div class="polygon-stage">' +
+        '<svg id="polygon-svg" class="polygon-svg" viewBox="0 0 360 270" role="img" aria-label="Cinco pontos para ligar e formar um pentágono">' +
+          '<polyline id="polygon-lines" class="polygon-lines" points=""></polyline>' +
+          '<line id="polygon-preview" class="polygon-preview" x1="0" y1="0" x2="0" y2="0" visibility="hidden"></line>' +
+          pointMarkup +
+        '</svg>' +
+        '<span id="polygon-face" class="polygon-face" hidden>🙂</span>' +
+      '</div>' +
+      '<p id="polygon-hint" class="polygon-hint" aria-live="polite">Arraste do primeiro ponto até o próximo ponto que cresce.</p>' +
+      '<div class="polygon-controls"><button type="button" class="quiet-button" data-action="reset-polygon">↻ Recomeçar</button></div>' +
+      '<div id="polygon-answer" class="polygon-answer" hidden><p>Quantas pontas tem a figura?</p><div class="option-grid">' +
+        task.options.map((value, index) => '<button type="button" class="option-button" data-choice="' + value + '" data-choice-index="' + index + '"><span class="option-number">' + value + '</span></button>').join("") +
+      '</div></div>' +
+    '</div>';
   }
   function pairVisual(task) {
     return '<div class="shape-target">' + tokenHTML(task.target) + '</div><div class="option-grid">' +
@@ -189,7 +224,9 @@
     }
     if (task.kind === "paint") return paintVisual(task);
     if (task.kind === "color-matrix") return colorMatrixVisual(task);
-    if (task.kind === "shape-match") return shapeVisual(task);
+    if (task.kind === "shape-match") return shapeMatchVisual(task);
+    if (task.kind === "connect-polygon") return polygonVisual(task);
+    if (task.kind === "shape-count") return shapeCountVisual(task);
     if (task.kind === "side-count") {
       return '<div class="shape-target">' + tokenHTML(task.target) + '</div>' + numberOptions(task.options);
     }
@@ -271,6 +308,7 @@
       '<div class="game-actions"><button type="button" class="quiet-button" data-action="back-world">Voltar aos desafios</button>' +
       '<button type="button" class="next-button" data-action="next-task" ' + (!isDone ? "disabled" : "") + '>' + (index < tasks.length - 1 ? "Próximo desafio →" : "Concluir área ✓") + '</button></div>' +
       '<p class="painter-note">A Capi está aqui para ajudar. Você pode ouvir a instrução novamente sempre que precisar.</p></section>';
+    if (task.kind === "connect-polygon") setupPolygonDrawing(task);
   }
   function feedback(message, kind) {
     const node = document.getElementById("task-feedback");
@@ -302,6 +340,7 @@
   function handleChoice(button) {
     const task = currentTask();
     if (!task) return;
+    if (task.kind === "connect-polygon" && !document.getElementById("polygon-answer")?.contains(button)) return;
     highlightOption(button);
     const value = decodeURIComponent(button.dataset.choice || "");
     let correct = false;
@@ -350,7 +389,154 @@
     if (hint) hint.textContent = "Muito bem! Continue pintando os outros círculos.";
     if (painted.filter(Boolean).length === task.targets.length) completeTask("Todos os círculos receberam a cor correta! 🎨");
   }
-  function playSoundSequence(sequence) {
+  function setupPolygonDrawing(task) {
+    const svg = document.getElementById("polygon-svg");
+    const stage = document.querySelector(".polygon-stage");
+    const preview = document.getElementById("polygon-preview");
+    const lines = document.getElementById("polygon-lines");
+    const face = document.getElementById("polygon-face");
+    const hint = document.getElementById("polygon-hint");
+    const answer = document.getElementById("polygon-answer");
+    if (!svg || !stage || !preview || !lines || !face || !hint || !answer) return;
+
+    const points = task.points;
+    let accepted = [];
+    let drawing = false;
+    let pointerId = null;
+    let completed = false;
+    const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+    const coordinates = (event) => {
+      const rect = svg.getBoundingClientRect();
+      return {
+        x: Math.max(0, Math.min(360, (event.clientX - rect.left) / rect.width * 360)),
+        y: Math.max(0, Math.min(270, (event.clientY - rect.top) / rect.height * 270))
+      };
+    };
+    const lastIndex = () => accepted.length ? accepted[accepted.length - 1] : -1;
+    const expectedIndex = () => !accepted.length ? 0 : (accepted.length === points.length ? 0 : accepted.length);
+    const updateDots = () => {
+      svg.querySelectorAll("[data-point]").forEach((dot) => {
+        const index = Number(dot.dataset.point);
+        dot.classList.toggle("is-visited", accepted.includes(index));
+        dot.classList.toggle("is-next", !completed && index === expectedIndex());
+      });
+    };
+    const renderLines = (close = false) => {
+      const indexes = close ? accepted.concat(0) : accepted;
+      lines.setAttribute("points", indexes.map((index) => points[index].x + "," + points[index].y).join(" "));
+    };
+    const movePreview = (from, to) => {
+      preview.setAttribute("x1", points[from].x);
+      preview.setAttribute("y1", points[from].y);
+      preview.setAttribute("x2", to.x);
+      preview.setAttribute("y2", to.y);
+      preview.setAttribute("visibility", "visible");
+    };
+    const hidePreview = () => preview.setAttribute("visibility", "hidden");
+    const showFace = (event, mood) => {
+      const rect = stage.getBoundingClientRect();
+      face.textContent = mood === "happy" ? "😊" : "😟";
+      face.style.left = Math.max(18, Math.min(rect.width - 18, event.clientX - rect.left)) + "px";
+      face.style.top = Math.max(6, event.clientY - rect.top - 24) + "px";
+      face.hidden = false;
+      face.classList.toggle("happy", mood === "happy");
+      face.classList.toggle("sad", mood === "sad");
+    };
+    const hideFace = () => { face.hidden = true; };
+    const updateGuidance = (event, position) => {
+      const targetIndex = expectedIndex();
+      const target = points[targetIndex];
+      const targetDistance = distance(position, target);
+      const nearby = points.findIndex((point) => distance(position, point) <= 30);
+      if (targetDistance <= 36) showFace(event, "happy");
+      else if (nearby >= 0 && nearby !== targetIndex && nearby !== lastIndex()) showFace(event, "sad");
+      else hideFace();
+    };
+    const reset = () => {
+      accepted = [];
+      drawing = false;
+      pointerId = null;
+      completed = false;
+      renderLines();
+      hidePreview();
+      hideFace();
+      answer.hidden = true;
+      hint.textContent = "Arraste do primeiro ponto até o próximo ponto que cresce.";
+      updateDots();
+    };
+    const handlePointerDown = (event) => {
+      if (completed || (event.pointerType === "mouse" && event.button !== 0)) return;
+      const position = coordinates(event);
+      const startIndex = lastIndex() < 0 ? 0 : lastIndex();
+      if (distance(position, points[startIndex]) > 31) {
+        hint.textContent = accepted.length
+          ? "Comece o próximo traço na última ponta ligada."
+          : "Comece na bolinha que está crescendo.";
+        showFace(event, "sad");
+        return;
+      }
+      event.preventDefault();
+      drawing = true;
+      pointerId = event.pointerId;
+      try { svg.setPointerCapture(pointerId); } catch { /* captura opcional */ }
+      if (!accepted.length) {
+        accepted.push(0);
+        renderLines();
+        updateDots();
+      }
+      movePreview(lastIndex(), position);
+      updateGuidance(event, position);
+    };
+    const handlePointerMove = (event) => {
+      if (!drawing || event.pointerId !== pointerId) return;
+      event.preventDefault();
+      const position = coordinates(event);
+      movePreview(lastIndex(), position);
+      updateGuidance(event, position);
+    };
+    const finishPointer = (event) => {
+      if (!drawing || event.pointerId !== pointerId) return;
+      const position = coordinates(event);
+      drawing = false;
+      pointerId = null;
+      hidePreview();
+      const targetIndex = expectedIndex();
+      if (distance(position, points[targetIndex]) <= 36) {
+        if (targetIndex === 0 && accepted.length === points.length) {
+          completed = true;
+          renderLines(true);
+          hint.textContent = "Figura fechada! Agora conte quantas pontas ela tem.";
+          answer.hidden = false;
+          feedback("Muito bem! Você fechou a figura. Quantas pontas existem?", "good");
+          updateDots();
+        } else {
+          accepted.push(targetIndex);
+          renderLines();
+          hint.textContent = accepted.length === 1
+            ? "Ótimo começo! Siga para a próxima bolinha que cresceu."
+            : "Muito bem! Continue até fechar a figura.";
+          updateDots();
+        }
+      } else {
+        showFace(event, "sad");
+        hint.textContent = "Esse não é o próximo ponto. Siga a bolinha que está crescendo.";
+      }
+      try { if (svg.hasPointerCapture(event.pointerId)) svg.releasePointerCapture(event.pointerId); } catch { /* captura opcional */ }
+    };
+    svg.addEventListener("pointerdown", handlePointerDown);
+    svg.addEventListener("pointermove", handlePointerMove);
+    svg.addEventListener("pointerup", finishPointer);
+    svg.addEventListener("pointercancel", () => {
+      drawing = false;
+      pointerId = null;
+      hidePreview();
+      hideFace();
+    });
+    document.querySelector('[data-action="reset-polygon"]')?.addEventListener("click", reset);
+    updateDots();
+  }
+
+    function playSoundSequence(sequence) {
     const AudioContextClass = global.AudioContext || global.webkitAudioContext;
     if (!AudioContextClass) { feedback("O som não está disponível neste navegador. Você ainda pode observar as opções.", "hint"); return; }
     try {
