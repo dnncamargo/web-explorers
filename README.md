@@ -15,11 +15,16 @@ web-explorers/
 │   ├── yoshi-typing/             # Floresta do Yoshi
 │   ├── donkey-kong/              # Donkey Kong Country
 │   ├── word-adventure/           # Aventura das Palavras (alfabetização e letramento)
-│   └── capi-logica/              # Capi e os Desafios da Lógica
+│   │   ├── index.html
+│   │   ├── worlds/
+│   │   ├── assets/css/
+│   │   ├── assets/js/
+│   │   └── tests/
+│   └── capi-logica/               # Capi e os Desafios da Lógica (jogos visuais)
 │       ├── index.html
-│       ├── worlds/               # aliases das cinco áreas temáticas
 │       ├── assets/css/
-│       ├── assets/js/            # conteúdo pedagógico, progresso e interação
+│       ├── assets/js/             # configuração, catálogo de jogos, progresso e interação
+│       ├── assets/images/
 │       └── tests/
 ├── docs/activities/
 │   ├── donkey-kong-plan.md
