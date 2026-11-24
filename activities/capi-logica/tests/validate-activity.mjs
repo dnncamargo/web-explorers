@@ -100,6 +100,7 @@ assert.equal(shapeMatrix.answer, "blue-triangle", "the final shape matrix has on
 
 
 assert.ok(activity.includes("function setupPolygonDrawing(task)"), "pentagon drawing has a dedicated interaction controller");
+assert.ok(activity.includes("accepted.push(targetIndex)") && activity.includes("const finishPointer"), "a continuous drag connects successive polygon vertices");
 assert.ok(activity.includes('svg.addEventListener("pointermove"') && activity.includes('svg.addEventListener("pointerup"'), "pentagon drawing supports pointer and touch dragging");
 assert.ok(activity.includes('face.textContent = mood === "happy" ? "😊" : "😟"'), "polygon drawing gives happy and sad proximity feedback");
 assert.ok(activity.includes("function shapeGlyphHTML(shape)"), "shapes use centered CSS glyph elements rather than font glyph baselines");
