@@ -68,7 +68,7 @@
   function numberOptions(options) {
     return '<div class="option-grid">' + options.map((value, index) =>
       '<button type="button" class="option-button" data-choice="' + encodeURIComponent(String(value)) + '" data-choice-index="' + index + '" aria-label="Número ' + value + '"><span class="option-number">' + value + '</span></button>'
-    ).join("") + '</span>';
+    ).join("") + '</div>';
   }
   function patternVisual(sequence) {
     return '<div class="sequence-row">' + sequence.map((value) =>
@@ -146,7 +146,7 @@
   function stackVisual(stack) {
     return '<span class="stack-model">' + stack.map((color) =>
       '<span class="stack-block stack-' + esc(color) + '"></span>'
-    ).join("") + '</div>';
+    ).join("") + '</span>';
   }
   function proportionVisual(task) {
     return '<div class="stack-row"><div class="stack-card"><small>MODELO</small>' + stackVisual(task.model) + '</div></div>' +
@@ -187,7 +187,7 @@
   }
   function mapPainterAction() {
     const url = String(CONFIG.painterUrl || "").trim();
-    if (!/^https:\\/\\//i.test(url)) return '<span class="painter-link disabled" aria-disabled="true" title="O endereço será configurado quando a Capi Pintora estiver hospedada.">Link pendente</span>';
+    if (!url.startsWith("https://")) return '<span class="painter-link disabled" aria-disabled="true" title="O endereço será configurado quando a Capi Pintora estiver hospedada.">Link pendente</span>';
     return '<a class="painter-link" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">Abrir Capi Pintora ↗</a>';
   }
   function renderMap() {
