@@ -445,10 +445,9 @@
     const hideFace = () => { face.hidden = true; };
     const updateGuidance = (event, position) => {
       const targetIndex = expectedIndex();
-      const target = points[targetIndex];
-      const targetDistance = distance(position, target);
+      const targetDistance = distance(position, points[targetIndex]);
       const nearby = points.findIndex((point) => distance(position, point) <= 30);
-      if (targetDistance <= 36) showFace(event, "happy");
+      if (targetDistance <= 38) showFace(event, "happy");
       else if (nearby >= 0 && nearby !== targetIndex && nearby !== lastIndex()) showFace(event, "sad");
       else hideFace();
     };
@@ -461,7 +460,20 @@
       hidePreview();
       hideFace();
       answer.hidden = true;
-      hint.textContent = "Arraste do primeiro ponto até o próximo ponto que cresce.";
+      hint.textContent = "Arraste do primeiro ponto até o próximo ponto que cresce. Segure enquanto liga os pontos.";
+      const next = document.querySelector('[data-action="next-task"]');
+      if (next) next.disabled = true;
+      updateDots();
+    };
+    const finishPolygon = () => {
+      completed = true;
+      drawing = false;
+      renderLines(true);
+      hidePreview();
+      hideFace();
+      hint.textContent = "Figura fechada! Agora conte quantas pontas ela tem.";
+      answer.hidden = false;
+      feedback("Muito bem! Você fechou a figura. Quantas pontas existem?", "good");
       updateDots();
     };
     const handlePointerDown = (event) => {
@@ -483,6 +495,7 @@
         accepted.push(0);
         renderLines();
         updateDots();
+        hint.textContent = "Ótimo começo! Segure e arraste até a próxima bolinha.";
       }
       movePreview(lastIndex(), position);
       updateGuidance(event, position);
@@ -491,35 +504,38 @@
       if (!drawing || event.pointerId !== pointerId) return;
       event.preventDefault();
       const position = coordinates(event);
-      movePreview(lastIndex(), position);
       updateGuidance(event, position);
+      const targetIndex = expectedIndex();
+      if (distance(position, points[targetIndex]) <= 25) {
+        if (targetIndex === 0 && accepted.length === points.length) {
+          finishPolygon();
+          return;
+        }
+        accepted.push(targetIndex);
+        renderLines();
+        updateDots();
+        hidePreview();
+        hint.textContent = "Ponto ligado! Continue até fechar a figura.";
+        return;
+      }
+      movePreview(lastIndex(), position);
     };
     const finishPointer = (event) => {
       if (!drawing || event.pointerId !== pointerId) return;
-      const position = coordinates(event);
+      handlePointerMove(event);
       drawing = false;
       pointerId = null;
       hidePreview();
-      const targetIndex = expectedIndex();
-      if (distance(position, points[targetIndex]) <= 36) {
-        if (targetIndex === 0 && accepted.length === points.length) {
-          completed = true;
-          renderLines(true);
-          hint.textContent = "Figura fechada! Agora conte quantas pontas ela tem.";
-          answer.hidden = false;
-          feedback("Muito bem! Você fechou a figura. Quantas pontas existem?", "good");
-          updateDots();
-        } else {
-          accepted.push(targetIndex);
-          renderLines();
-          hint.textContent = accepted.length === 1
-            ? "Ótimo começo! Siga para a próxima bolinha que cresceu."
-            : "Muito bem! Continue até fechar a figura.";
-          updateDots();
+      if (!completed) {
+        const position = coordinates(event);
+        const targetIndex = expectedIndex();
+        const nearby = points.findIndex((point) => distance(position, point) <= 30);
+        if (nearby >= 0 && nearby !== targetIndex && nearby !== lastIndex()) {
+          showFace(event, "sad");
+          hint.textContent = "Esse não é o próximo ponto. Siga a bolinha que está crescendo.";
+        } else if (accepted.length) {
+          hint.textContent = "Soltou? Tudo bem! Continue arrastando a partir da última ponta ligada.";
         }
-      } else {
-        showFace(event, "sad");
-        hint.textContent = "Esse não é o próximo ponto. Siga a bolinha que está crescendo.";
       }
       try { if (svg.hasPointerCapture(event.pointerId)) svg.releasePointerCapture(event.pointerId); } catch { /* captura opcional */ }
     };
@@ -536,7 +552,7 @@
     updateDots();
   }
 
-    function playSoundSequence(sequence) {
+  function playSoundSequence(sequence) {
     const AudioContextClass = global.AudioContext || global.webkitAudioContext;
     if (!AudioContextClass) { feedback("O som não está disponível neste navegador. Você ainda pode observar as opções.", "hint"); return; }
     try {
