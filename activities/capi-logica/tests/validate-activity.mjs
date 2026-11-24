@@ -73,6 +73,8 @@ assert.equal(store.complete(state, "unknown-task"), false, "unknown challenge ID
 assert.equal(store.countWorld(state, "cores"), 1, "world progress counts its completed challenges");
 assert.equal(store.countAll(state), 1, "overall progress counts completed challenges");
 assert.equal(store.normalize({ version: 9, completed: ["cores-01"] }).completed.length, 0, "unknown progress versions reset safely");
+assert.deepEqual(Array.from(store.normalize({ version: 1, completed: ["cores-01", "unknown-task", "cores-01"] }).completed), ["cores-01"], "current progress versions preserve valid unique challenge IDs only");
+assert.equal(store.normalize({ completed: ["cores-01"] }).completed.length, 0, "progress without a version resets safely");
 
 const activity = read("../assets/js/activity.js");
 assert.ok(activity.includes('target.closest("[data-speak]")'), "audio instructions use one delegated click handler");
