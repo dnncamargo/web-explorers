@@ -28,7 +28,7 @@ const css = fs.readFileSync(path.join(root, "activities/capi-logica/assets/css/c
 assert.ok(css.includes("prefers-reduced-motion") && css.includes("@media(max-width:700px)"), "reduced motion and compact screens are supported");
 assert.ok(css.includes(".paint-layout") && css.includes(".paint-sidebar") && css.includes("@media(max-width:560px)"), "paint palettes sit beside the drawing on wide screens and adapt on narrow screens");
 assert.ok(css.includes(".shape-glyph") && css.includes(".shape-target .token-shape .shape-glyph"), "geometric shape glyphs are centered inside their tiles");
-assert.ok(css.includes(".polygon-point.is-next") && css.includes(".polygon-face.happy") && css.includes(".polygon-face.sad"), "the guided polygon game has next-point and proximity feedback states");
+assert.ok(css.includes(".polygon-point.is-next") && css.includes(".polygon-face.happy") && css.includes(".polygon-face.sad") && css.includes("transform:scale(1.5)"), "the guided polygon game enlarges the next point and shows proximity feedback");
 
 const catalog = fs.readFileSync(path.join(root, "index.html"), "utf8");
 assert.ok(catalog.includes('href="activities/capi-logica/index.html"'), "the catalog opens Capi Logic Games");
