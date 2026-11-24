@@ -4,6 +4,7 @@
   function taskIds() { return global.CapiLogicGames.tasks.map((task) => task.id); }
   function fresh() { return { version: 1, completed: [], updatedAt: null }; }
   function normalize(value) {
+    if (value?.version !== 1) return fresh();
     const valid = new Set(taskIds());
     const completed = Array.isArray(value?.completed) ? value.completed.filter((id) => valid.has(id)) : [];
     return { version: 1, completed: Array.from(new Set(completed)), updatedAt: typeof value?.updatedAt === "string" ? value.updatedAt : null };
