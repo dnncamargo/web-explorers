@@ -68,7 +68,7 @@
   function numberOptions(options) {
     return '<div class="option-grid">' + options.map((value, index) =>
       '<button type="button" class="option-button" data-choice="' + encodeURIComponent(String(value)) + '" data-choice-index="' + index + '" aria-label="Número ' + value + '"><span class="option-number">' + value + '</span></button>'
-    ).join("") + '</div>';
+    ).join("") + '</span>';
   }
   function patternVisual(sequence) {
     return '<div class="sequence-row">' + sequence.map((value) =>
@@ -78,7 +78,7 @@
     ).join("") + '</div>';
   }
   function groupVisual(emoji, count) {
-    return '<div class="counter-row">' + Array.from({ length: count }, () => '<span class="counter" aria-hidden="true">' + esc(emoji) + '</span>').join("") + '</div>';
+    return '<span class="counter-row">' + Array.from({ length: count }, () => '<span class="counter" aria-hidden="true">' + esc(emoji) + '</span>').join("") + '</span>';
   }
   function paintVisual(task) {
     return '<div class="paint-legend">' + task.legend.map((item) =>
@@ -126,7 +126,7 @@
       ).join("") + '</div>';
   }
   function positionBox(position, value) {
-    return '<div class="position-box ' + esc(position) + '"><span>' + esc(value) + '</span></div>';
+    return '<span class="position-box ' + esc(position) + '"><span>' + esc(value) + '</span></span>';
   }
   function positionVisual(task) {
     return '<div class="position-model">' + positionBox(task.target, "⭐") + '</div>' +
@@ -144,7 +144,7 @@
       task.options.map((value, index) => optionButton(value, "Combinação " + (index + 1), index)).join("") + '</div>';
   }
   function stackVisual(stack) {
-    return '<div class="stack-model">' + stack.map((color) =>
+    return '<span class="stack-model">' + stack.map((color) =>
       '<span class="stack-block stack-' + esc(color) + '"></span>'
     ).join("") + '</div>';
   }
@@ -187,7 +187,7 @@
   }
   function mapPainterAction() {
     const url = String(CONFIG.painterUrl || "").trim();
-    if (!url) return '<span class="painter-link disabled" aria-disabled="true" title="O endereço será configurado quando a Capi Pintora estiver hospedada.">Link pendente</span>';
+    if (!/^https:\\/\\//i.test(url)) return '<span class="painter-link disabled" aria-disabled="true" title="O endereço será configurado quando a Capi Pintora estiver hospedada.">Link pendente</span>';
     return '<a class="painter-link" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">Abrir Capi Pintora ↗</a>';
   }
   function renderMap() {
