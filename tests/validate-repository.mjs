@@ -113,7 +113,9 @@ const menu = read("index.html");
 assert.ok(menu.includes('href="activities/digital-explorers/index.html"'), "the catalog opens the first activity's entry page");
 assert.ok(menu.includes('href="activities/yoshi-typing/index.html"'), "the catalog opens the Yoshi activity's entry page");
 assert.ok(menu.includes('href="activities/donkey-kong/index.html"'), "the catalog opens the Donkey Kong activity's entry page");
-assert.equal([...menu.matchAll(/class="activity-card(?:\s|"?)/g)].length, 3, "the catalog lists the three independent activities");
+assert.ok(menu.includes('href="activities/word-adventure/index.html"'), "the catalog opens Aventura das Palavras");
+assert.ok(menu.includes('href="activities/capi-logica/index.html"'), "the catalog opens Capi e os Desafios da Lógica");
+assert.equal([...menu.matchAll(/class="activity-card(?:\s|"?)/g)].length, 5, "the catalog lists five independent activities");
 
 const digitalRoot = "activities/digital-explorers";
 const routes = new Map([
