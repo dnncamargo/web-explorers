@@ -8,9 +8,9 @@ A Capi permanece como mascote-guia. A Capi Pintora é uma ferramenta complementa
 
 ## Organização da experiência
 
-A página inicial apresenta sete áreas com três desafios cada, totalizando 21 desafios:
+A página inicial apresenta sete áreas e 24 desafios. A área de cores tem seis desafios em progressão; as demais áreas têm três cada:
 
-1. Ateliê das Cores — correspondência de cores, padrões e pintura por legenda.
+1. Ateliê das Cores — seis desafios em dificuldade crescente: padrão de duas cores, pintura por legenda de três cores, sequência de três cores, ciclo com quatro alternativas, matriz cromática 3×3 e pintura de nove alvos com quatro cores.
 2. Oficina das Formas — identificação de formas, contagem de lados e combinação de forma e cor.
 3. Trilha dos Números — contagem, comparação de grupos e adição visual.
 4. Jardim das Regras — padrões repetidos, elemento diferente e sequência de direções.
@@ -23,7 +23,7 @@ Cada área pode ser visitada independentemente. Não há cronômetro, vidas, pon
 ## Interações
 
 - Seleção por toque/clique em alvos grandes.
-- Paleta de cores com seleção da cor seguida do toque no elemento a pintar.
+- Paleta de cores lateral, com número e amostra selecionável; a criança escolhe a cor e toca no elemento a pintar. Em telas estreitas, a paleta passa para uma faixa horizontal.
 - Sequências com um espaço vazio e opções visuais.
 - Contagem e comparação de conjuntos de objetos.
 - Operações simples com grupos visíveis de elementos.
@@ -73,7 +73,7 @@ As referências fornecidas inspiram os seguintes formatos: sequência de cores e
 - assets/js/config.js — endereço futuro da Capi Pintora.
 - assets/js/games.js — catálogo de áreas, desafios, regras e respostas.
 - assets/js/progress.js — persistência isolada.
-- assets/js/activity.js — mapa, renderização, respostas, paleta, voz e sons.
+- assets/js/activity.js — mapa, renderização, respostas, paleta lateral, voz e sons.
 - assets/images/capi-pintora.svg — ilustração vetorial da Capi Pintora.
 - tests/validate-activity.mjs — dados, regras e progresso.
 - tests/validate-repository.mjs — estrutura, configuração e rota do catálogo.
