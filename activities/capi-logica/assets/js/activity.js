@@ -122,7 +122,7 @@
       task.moves.map((move) => '<span>' + DATA.ARROWS[move] + '</span>').join("") + '</div>' +
       '<div class="position-grid">' + task.grid.map((value, index) =>
         '<button type="button" class="position-cell ' + (index === task.startIndex ? "start" : "") + '" data-cell="' + index + '" aria-label="Casa ' + (index + 1) + '">' +
-        (index === task.startIndex ? '<small class="start-paw">🐾</small>' : '') + esc(value) + '</button>'
+        (index === task.startIndex ? "🐾" : esc(value)) + '</button>'
       ).join("") + '</div>';
   }
   function positionBox(position, value) {
