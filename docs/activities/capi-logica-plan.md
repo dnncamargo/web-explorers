@@ -8,10 +8,10 @@ A Capi permanece como mascote-guia. A Capi Pintora é uma ferramenta complementa
 
 ## Organização da experiência
 
-A página inicial apresenta sete áreas e 24 desafios. A área de cores tem seis desafios em progressão; as demais áreas têm três cada:
+A página inicial apresenta sete áreas e 29 desafios. A área de cores tem seis desafios, a Oficina das Formas tem oito e as demais áreas têm três cada:
 
 1. Ateliê das Cores — seis desafios em dificuldade crescente: padrão de duas cores, pintura por legenda de três cores, sequência de três cores, ciclo com quatro alternativas, matriz cromática 3×3 e pintura de nove alvos com quatro cores.
-2. Oficina das Formas — identificação de formas, contagem de lados e combinação de forma e cor.
+2. Oficina das Formas — oito desafios progressivos: correspondência de cor e forma; ligar pontos por arraste para formar e fechar um pentágono e contar suas cinco pontas; padrão de forma e cor; sequência de formas; semelhança; contagem de pentágonos; sequência com três características; e matriz 3×3. No traçado, o próximo ponto cresce e a proximidade recebe retorno facial feliz/triste.
 3. Trilha dos Números — contagem, comparação de grupos e adição visual.
 4. Jardim das Regras — padrões repetidos, elemento diferente e sequência de direções.
 5. Mapa dos Caminhos — seguir setas em uma grade, localizar posições e completar uma matriz.
