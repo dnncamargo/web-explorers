@@ -8,13 +8,13 @@ vm.runInContext(read("../assets/js/games.js"), gamesContext, { filename: "games.
 const data = gamesContext.window.CapiLogicGames;
 assert.ok(data, "visual game data is registered");
 assert.equal(data.worlds.length, 7, "seven visual logic areas exist");
-assert.equal(data.tasks.length, 24, "seven areas contain 24 short challenges, including six in the color area");
+assert.equal(data.tasks.length, 29, "seven areas contain 24 short challenges, including six in the color area");
 assert.equal(new Set(data.worlds.map((world) => world.id)).size, 7, "world IDs are unique");
-assert.equal(new Set(data.tasks.map((task) => task.id)).size, 24, "task IDs are unique");
+assert.equal(new Set(data.tasks.map((task) => task.id)).size, 29, "task IDs are unique");
 
 for (const world of data.worlds) {
   const tasks = data.tasks.filter((task) => task.world === world.id);
-  assert.equal(tasks.length, world.id === "cores" ? 6 : 3, world.id + " has the configured number of challenges");
+  assert.equal(tasks.length, world.id === "cores" ? 6 : world.id === "formas" ? 8 : 3, world.id + " has the configured number of challenges");
   for (const task of tasks) assert.ok(task.prompt && task.title && task.icon, task.id + " has an audio prompt and visual identity");
 }
 const formsFirst = data.tasks.find((task) => task.id === "formas-01");
@@ -27,7 +27,7 @@ assert.deepEqual(Array.from(formsThird.sequence), ["red-circle", "blue-square", 
 assert.equal(formsThird.answer, "red-circle", "the approved third challenge answer is preserved");
 
 const kinds = new Set(data.tasks.map((task) => task.kind));
-for (const kind of ["pattern", "paint", "shape-match", "side-count", "count", "compare", "calculation", "odd-one", "grid-position", "position", "matrix", "pair", "proportion", "letter-pattern", "letter-match", "sound-pattern", "color-matrix"]) {
+for (const kind of ["pattern", "paint", "shape-match", "connect-polygon", "shape-count", "count", "compare", "calculation", "odd-one", "grid-position", "position", "matrix", "pair", "proportion", "letter-pattern", "letter-match", "sound-pattern", "color-matrix"]) {
   assert.ok(kinds.has(kind), kind + " is represented");
 }
 
@@ -83,4 +83,24 @@ assert.ok(activity.includes("class=\"paint-layout\"") && activity.includes("clas
 assert.ok(activity.includes("function colorMatrixVisual(task)") && activity.includes('task.kind === "color-matrix"'), "color matrix challenges have a dedicated renderer");
 assert.ok(activity.includes("answer-tray") && activity.includes("patternVisual(task.sequence, task.options)"), "pattern alternatives are rendered in a separate answer tray");
 assert.ok(activity.includes("function highlightOption(button)") && activity.includes('classList.toggle("is-selected"'), "selected answer options receive a persistent visual highlight");
-console.log("OK: seven worlds, 24 visual challenges, colors, shapes, numbers, rules, positions, proportions, letters, sound and progress");
+
+const shapeTasks = data.tasks.filter((task) => task.world === "formas");
+assert.equal(shapeTasks.length, 8, "the shape area contains eight progressive challenges");
+const polygon = shapeTasks.find((task) => task.id === "formas-02");
+assert.equal(polygon.kind, "connect-polygon", "the second shape challenge constructs a polygon by dragging");
+assert.equal(polygon.points.length, 5, "the pentagon task has five vertices");
+assert.equal(polygon.answer, 5, "the learner counts five vertices after closing the pentagon");
+assert.ok(polygon.options.includes(5), "the pentagon vertex count is one of the choices");
+for (const point of polygon.points) assert.ok(point.x >= 0 && point.x <= 360 && point.y >= 0 && point.y <= 270, "polygon points stay inside the drawing area");
+const shapeCount = shapeTasks.find((task) => task.id === "formas-06");
+assert.equal(shapeCount.items.filter((shape) => shape === "pentagon").length, 3, "the shape-count challenge contains three pentagons");
+const shapeMatrix = shapeTasks.find((task) => task.id === "formas-08");
+assert.equal(shapeMatrix.grid.length, 9, "the final shape challenge uses a 3 by 3 matrix");
+assert.equal(shapeMatrix.answer, "blue-triangle", "the final shape matrix has one consistent answer");
+
+
+assert.ok(activity.includes("function setupPolygonDrawing(task)"), "pentagon drawing has a dedicated interaction controller");
+assert.ok(activity.includes('svg.addEventListener("pointermove"') && activity.includes('svg.addEventListener("pointerup"'), "pentagon drawing supports pointer and touch dragging");
+assert.ok(activity.includes('face.textContent = mood === "happy" ? "😊" : "😟"'), "polygon drawing gives happy and sad proximity feedback");
+assert.ok(activity.includes("function shapeGlyphHTML(shape)"), "shapes use centered CSS glyph elements rather than font glyph baselines");
+console.log("OK: seven worlds, 29 visual challenges, colors, shapes, numbers, rules, positions, proportions, letters, sound and progress");
