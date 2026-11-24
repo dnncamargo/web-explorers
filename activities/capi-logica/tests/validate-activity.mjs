@@ -8,7 +8,7 @@ vm.runInContext(read("../assets/js/games.js"), gamesContext, { filename: "games.
 const data = gamesContext.window.CapiLogicGames;
 assert.ok(data, "visual game data is registered");
 assert.equal(data.worlds.length, 7, "seven visual logic areas exist");
-assert.equal(data.tasks.length, 29, "seven areas contain 24 short challenges, including six in the color area");
+assert.equal(data.tasks.length, 29, "seven areas contain 29 short challenges, including six in colors and eight in shapes");
 assert.equal(new Set(data.worlds.map((world) => world.id)).size, 7, "world IDs are unique");
 assert.equal(new Set(data.tasks.map((task) => task.id)).size, 29, "task IDs are unique");
 
