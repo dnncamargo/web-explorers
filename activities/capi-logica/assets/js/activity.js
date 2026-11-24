@@ -242,7 +242,7 @@
     painted = [];
     const isDone = progress.completed.includes(task.id);
     const isPaint = task.kind === "paint";
-    app.innerHTML = '<section class="game-card"><div class="game-top"><div class="game-top-left"><button type="button" class="map-button" data-action="back-world">←</button><span>ÁREA ' + world.number + ' · DESAFIO ' + (index + 1) + '/' + tasks.length + '</span></div><span class="capi-avatar" aria-hidden="true"><i></i><b></b></span></div>' +
+    app.innerHTML = '<section class="game-card"><div class="game-top"><div class="game-top-left"><button type="button" class="map-button" data-action="back-world">←</button><span>ÁREA ' + world.number + ' · DESAFIO ' + (index + 1) + '/' + tasks.length + '</span></div><span class="capi-avatar" aria-hidden="true"><i></i><b></b><span></span></span></div>' +
       '<h1>' + esc(task.title) + '</h1><p class="game-prompt"><button type="button" class="listen-button" data-speak="' + esc(task.prompt) + '" aria-label="Ouvir instrução">🔊</button><span>' + esc(task.prompt) + '</span></p>' +
       '<div class="game-board">' + renderVisual(task) + '</div>' +
       '<p id="task-feedback" class="task-feedback" role="status" aria-live="polite">' + (isDone ? "Este desafio já foi concluído. Você pode praticar novamente." : (isPaint ? "Escolha uma cor na paleta e pinte os círculos." : "Toque na opção que completa o desafio.")) + '</p>' +
@@ -323,23 +323,26 @@
     try {
       if (!audioContext) audioContext = new AudioContextClass();
       const context = audioContext;
-      const start = context.currentTime + 0.08;
-      if (context.state === "suspended") context.resume();
-      sequence.forEach((tone, index) => {
-        const at = start + index * 0.34;
-        const oscillator = context.createOscillator();
-        const gain = context.createGain();
-        oscillator.type = "sine";
-        oscillator.frequency.value = tone === "high" ? 760 : 390;
-        gain.gain.setValueAtTime(0.0001, at);
-        gain.gain.exponentialRampToValueAtTime(0.13, at + 0.025);
-        gain.gain.exponentialRampToValueAtTime(0.0001, at + 0.2);
-        oscillator.connect(gain);
-        gain.connect(context.destination);
-        oscillator.start(at);
-        oscillator.stop(at + 0.21);
-      });
-      feedback("Escute os sons e escolha a sequência que combina com eles.");
+      const play = () => {
+        const start = context.currentTime + 0.08;
+        sequence.forEach((tone, index) => {
+          const at = start + index * 0.34;
+          const oscillator = context.createOscillator();
+          const gain = context.createGain();
+          oscillator.type = "sine";
+          oscillator.frequency.value = tone === "high" ? 760 : 390;
+          gain.gain.setValueAtTime(0.0001, at);
+          gain.gain.exponentialRampToValueAtTime(0.13, at + 0.025);
+          gain.gain.exponentialRampToValueAtTime(0.0001, at + 0.2);
+          oscillator.connect(gain);
+          gain.connect(context.destination);
+          oscillator.start(at);
+          oscillator.stop(at + 0.21);
+        });
+        feedback("Escute os sons e escolha a sequência que combina com eles.");
+      };
+      if (context.state === "suspended") context.resume().then(play).catch(() => feedback("Não foi possível iniciar o áudio neste navegador.", "hint"));
+      else play();
     } catch { feedback("Não foi possível tocar o som neste navegador.", "hint"); }
   }
 
