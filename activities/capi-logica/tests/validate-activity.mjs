@@ -17,6 +17,15 @@ for (const world of data.worlds) {
   assert.equal(tasks.length, 3, world.id + " has three challenges");
   for (const task of tasks) assert.ok(task.prompt && task.title && task.icon, task.id + " has an audio prompt and visual identity");
 }
+const formsFirst = data.tasks.find((task) => task.id === "formas-01");
+assert.equal(formsFirst.kind, "shape-match", "the first shape challenge remains a matching task");
+assert.equal(formsFirst.target, "red-circle", "the first shape challenge uses a colored tile and an inner shape");
+assert.deepEqual(Array.from(formsFirst.options), ["blue-circle", "red-square", "red-circle"], "the learner must compare both color and inner shape");
+assert.equal(formsFirst.answer, "red-circle", "the composite visual match has one correct answer");
+const formsThird = data.tasks.find((task) => task.id === "formas-03");
+assert.deepEqual(Array.from(formsThird.sequence), ["red-circle", "blue-square", "red-circle", "blue-square", null], "the approved third challenge sequence is preserved");
+assert.equal(formsThird.answer, "red-circle", "the approved third challenge answer is preserved");
+
 const kinds = new Set(data.tasks.map((task) => task.kind));
 for (const kind of ["pattern", "paint", "shape-match", "side-count", "count", "compare", "calculation", "odd-one", "grid-position", "position", "matrix", "pair", "proportion", "letter-pattern", "letter-match", "sound-pattern"]) {
   assert.ok(kinds.has(kind), kind + " is represented");
@@ -61,4 +70,6 @@ assert.ok(activity.includes('target.closest("[data-speak]")'), "audio instructio
 assert.ok(activity.includes("AudioContextClass"), "the sound-pattern game uses local browser audio");
 assert.ok(activity.includes('startsWith("https://")'), "the painter integration accepts only HTTPS links");
 assert.ok(activity.includes("data-paint-target") && activity.includes("data-paint-color"), "palette painting uses explicit color and target controls");
+assert.ok(activity.includes("answer-tray") && activity.includes("patternVisual(task.sequence, task.options)"), "pattern alternatives are rendered in a separate answer tray");
+assert.ok(activity.includes("function highlightOption(button)") && activity.includes('classList.toggle("is-selected"'), "selected answer options receive a persistent visual highlight");
 console.log("OK: seven worlds, 21 visual challenges, colors, shapes, numbers, rules, positions, proportions, letters, sound and progress");
