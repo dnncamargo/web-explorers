@@ -70,12 +70,17 @@
       '<button type="button" class="option-button" data-choice="' + encodeURIComponent(String(value)) + '" data-choice-index="' + index + '" aria-label="Número ' + value + '"><span class="option-number">' + value + '</span></button>'
     ).join("") + '</div>';
   }
-  function patternVisual(sequence) {
-    return '<div class="sequence-row">' + sequence.map((value) =>
-      value === null
-        ? '<span class="sequence-tile missing" aria-label="espaço vazio">?</span>'
-        : '<span class="sequence-tile">' + tokenHTML(value) + '</span>'
-    ).join("") + '</div>';
+  function patternVisual(sequence, options) {
+    return '<div class="pattern-challenge">' +
+      '<div class="sequence-row">' + sequence.map((value) =>
+        value === null
+          ? '<span class="sequence-tile missing" aria-label="espaço vazio">?</span>'
+          : '<span class="sequence-tile">' + tokenHTML(value) + '</span>'
+      ).join("") + '</div>' +
+      '<div class="answer-tray"><span class="answer-tray-cue" aria-hidden="true">☝️</span>' +
+      '<div class="option-grid">' + options.map((value, index) =>
+        optionButton(value, "Alternativa " + (index + 1), index)
+      ).join("") + '</div></div></div>';
   }
   function groupVisual(emoji, count) {
     return '<span class="counter-row">' + Array.from({ length: count }, () => '<span class="counter" aria-hidden="true">' + esc(emoji) + '</span>').join("") + '</span>';
@@ -164,7 +169,7 @@
   }
   function renderVisual(task) {
     if (task.kind === "pattern" || task.kind === "letter-pattern") {
-      return patternVisual(task.sequence) + '<div class="option-grid">' + task.options.map((value, index) => optionButton(value, "Opção " + (index + 1), index)).join("") + '</div>';
+      return patternVisual(task.sequence, task.options);
     }
     if (task.kind === "paint") return paintVisual(task);
     if (task.kind === "shape-match") return shapeVisual(task);
@@ -267,9 +272,20 @@
     const next = document.querySelector('[data-action="next-task"]');
     if (next) next.disabled = false;
   }
+  function highlightOption(button) {
+    const group = button.closest(".option-grid, .stack-row, .compare-grid");
+    if (group) {
+      group.querySelectorAll(".option-button, .stack-card, .compare-card").forEach((option) => {
+        option.classList.toggle("is-selected", option === button);
+      });
+    } else {
+      button.classList.add("is-selected");
+    }
+  }
   function handleChoice(button) {
     const task = currentTask();
     if (!task) return;
+    highlightOption(button);
     const value = decodeURIComponent(button.dataset.choice || "");
     let correct = false;
     if (task.kind === "proportion" || task.kind === "sound-pattern") {
