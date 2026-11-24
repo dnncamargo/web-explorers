@@ -93,7 +93,7 @@ O plano pedagógico, a referência curricular, a progressão e os critérios de 
 
 ## Capi e os Desafios da Lógica
 
-A nova atividade começa em activities/capi-logica/index.html e foi pensada para crianças não leitoras. A Capi acompanha sete áreas com 24 desafios curtos (seis na área de cores e três em cada uma das demais): cores, formas, números e cálculos, regras e sequências, posições e caminhos, combinações e proporções, letras e sons. A Oficina das Formas inclui construção de pentágono por arraste, padrões, semelhança, sequências e contagem de figuras.
+A nova atividade começa em activities/capi-logica/index.html e foi pensada para crianças não leitoras. A Capi acompanha sete áreas com 29 desafios curtos (seis na área de cores, oito na Oficina das Formas e três nas demais): cores, formas, números e cálculos, regras e sequências, posições e caminhos, combinações e proporções, letras e sons. A Oficina das Formas inclui oito desafios progressivos: reconhecimento de formas e cores, pentágono desenhado em um arraste contínuo com guia de carinha feliz/triste, padrões, semelhança, sequências, contagem de figuras e matriz 3×3.
 
 A interface usa imagens, cores, quantidades, setas e padrões como pistas principais. Instruções podem ser ouvidas, mas a criança não precisa ler para navegar ou responder. Não há cronômetro, vidas ou punição por erro. A pintura interna usa uma paleta lateral numerada por toque/clique; em telas estreitas, a paleta se reorganiza horizontalmente. A Capi Pintora é uma ferramenta separada; seu endereço HTTPS será configurado em activities/capi-logica/assets/js/config.js quando estiver hospedada. Enquanto isso, o painel informa que o link está pendente.
 
