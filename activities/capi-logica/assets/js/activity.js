@@ -86,16 +86,32 @@
     return '<span class="counter-row">' + Array.from({ length: count }, () => '<span class="counter" aria-hidden="true">' + esc(emoji) + '</span>').join("") + '</span>';
   }
   function paintVisual(task) {
-    return '<div class="paint-legend">' + task.legend.map((item) =>
-      '<div class="legend-item"><span class="option-number">' + item.number + '</span><span class="legend-dot" style="background:' + DATA.COLORS[item.color] + '"></span></div>'
+    return '<div class="paint-layout">' +
+      '<aside class="paint-sidebar" aria-label="Paleta de cores">' +
+        '<p class="palette-title" aria-hidden="true">🎨</p>' +
+        '<div class="paint-palette">' + task.legend.map((item) =>
+          '<button type="button" class="palette-button" data-paint-color="' + item.color + '" aria-label="Escolher cor número ' + item.number + '" title="Cor ' + item.number + '">' +
+            '<span class="palette-number">' + item.number + '</span><span class="paint-swatch ' + item.color + '"></span>' +
+          '</button>'
+        ).join("") + '</div>' +
+      '</aside>' +
+      '<div class="paint-workspace">' +
+        '<div class="paint-targets">' + task.targets.map((number, index) =>
+          '<button type="button" class="paint-target" data-paint-target="' + index + '" data-number="' + number + '" aria-label="Pintar círculo ' + (index + 1) + ', número ' + number + '">' + number + '</button>'
+        ).join("") + '</div>' +
+        '<p class="micro-hint" id="paint-hint">Escolha uma cor na paleta lateral e pinte os círculos com o mesmo número.</p>' +
+      '</div>' +
+    '</div>';
+  }
+  function colorMatrixVisual(task) {
+    return '<div class="color-matrix">' + task.grid.map((value) =>
+      value === null
+        ? '<span class="color-matrix-cell missing" aria-label="espaço vazio">?</span>'
+        : '<span class="color-matrix-cell">' + tokenHTML(value) + '</span>'
     ).join("") + '</div>' +
-    '<div class="paint-palette" aria-label="Paleta de cores">' + task.legend.map((item) =>
-      '<button type="button" class="palette-button" data-paint-color="' + item.color + '" aria-label="Escolher cor ' + item.number + '"><span class="paint-swatch ' + item.color + '"></span></button>'
-    ).join("") + '</div>' +
-    '<div class="paint-targets">' + task.targets.map((number, index) =>
-      '<button type="button" class="paint-target" data-paint-target="' + index + '" data-number="' + number + '" aria-label="Pintar círculo ' + (index + 1) + ', número ' + number + '">' + number + '</button>'
-    ).join("") + '</div>' +
-    '<p class="micro-hint" id="paint-hint">Escolha uma cor e depois toque no círculo correspondente.</p>';
+    '<div class="answer-tray"><span class="answer-tray-cue" aria-hidden="true">☝️</span>' +
+      '<div class="option-grid">' + task.options.map((value, index) => optionButton(value, "Alternativa " + (index + 1), index)).join("") + '</div>' +
+    '</div>';
   }
   function shapeVisual(task) {
     return '<div class="shape-target">' + tokenHTML(task.target) + '</div><div class="option-grid">' +
@@ -172,6 +188,7 @@
       return patternVisual(task.sequence, task.options);
     }
     if (task.kind === "paint") return paintVisual(task);
+    if (task.kind === "color-matrix") return colorMatrixVisual(task);
     if (task.kind === "shape-match") return shapeVisual(task);
     if (task.kind === "side-count") {
       return '<div class="shape-target">' + tokenHTML(task.target) + '</div>' + numberOptions(task.options);
