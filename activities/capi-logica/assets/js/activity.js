@@ -201,7 +201,7 @@
       return '<button type="button" class="world-card world-' + esc(world.color) + '" data-open-world="' + esc(world.id) + '">' +
         '<span class="world-meta"><span>ÁREA ' + world.number + '</span><span>' + done + '/' + totalWorld + '</span></span>' +
         '<span class="world-icon" aria-hidden="true">' + world.icon + '</span>' +
-        '<h2>' + esc(world.title) + '</h2><p>' + esc(world.subtitle) + '</p>' +
+        '<span class="world-title">' + esc(world.title) + '</span><span class="world-description">' + esc(world.subtitle) + '</span>' +
         '<span class="world-progress"><span class="mini-dots">' + Array.from({ length: totalWorld }, (_, index) => '<i class="' + (index < done ? "done" : "") + '"></i>').join("") + '</span>' +
         (done === totalWorld ? "Área explorada" : "Explorar desafios") + '</span></button>';
     }).join("");
