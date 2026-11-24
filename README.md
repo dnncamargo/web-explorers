@@ -93,9 +93,9 @@ O plano pedagógico, a referência curricular, a progressão e os critérios de 
 
 ## Capi e os Desafios da Lógica
 
-A nova atividade começa em activities/capi-logica/index.html e foi pensada para crianças não leitoras. A Capi acompanha sete áreas com 21 desafios curtos: cores, formas, números e cálculos, regras e sequências, posições e caminhos, combinações e proporções, letras e sons.
+A nova atividade começa em activities/capi-logica/index.html e foi pensada para crianças não leitoras. A Capi acompanha sete áreas com 24 desafios curtos (seis na área de cores e três em cada uma das demais): cores, formas, números e cálculos, regras e sequências, posições e caminhos, combinações e proporções, letras e sons.
 
-A interface usa imagens, cores, quantidades, setas e padrões como pistas principais. Instruções podem ser ouvidas, mas a criança não precisa ler para navegar ou responder. Não há cronômetro, vidas ou punição por erro. A pintura interna usa uma paleta por toque/clique. A Capi Pintora é uma ferramenta separada; seu endereço HTTPS será configurado em activities/capi-logica/assets/js/config.js quando estiver hospedada. Enquanto isso, o painel informa que o link está pendente.
+A interface usa imagens, cores, quantidades, setas e padrões como pistas principais. Instruções podem ser ouvidas, mas a criança não precisa ler para navegar ou responder. Não há cronômetro, vidas ou punição por erro. A pintura interna usa uma paleta lateral numerada por toque/clique; em telas estreitas, a paleta se reorganiza horizontalmente. A Capi Pintora é uma ferramenta separada; seu endereço HTTPS será configurado em activities/capi-logica/assets/js/config.js quando estiver hospedada. Enquanto isso, o painel informa que o link está pendente.
 
 O plano pedagógico e os critérios de aceite estão em [docs/activities/capi-logica-plan.md](docs/activities/capi-logica-plan.md).
 
