@@ -282,7 +282,10 @@
     if (task.kind === "color-matrix") return colorMatrixVisual(task);
     if (task.kind === "shape-match") return shapeMatchVisual(task);
     if (task.kind === "connect-polygon") return polygonVisual(task);
-    if (task.kind === "nested-shape-match") return nestedShapeVisual(task);\n    if (task.kind === "shape-color-choice") return shapeColorChoiceVisual(task);\n    if (task.kind === "shape-sort") return shapeSortVisual(task);\n    if (task.kind === "shape-count") return shapeCountVisual(task);
+    if (task.kind === "nested-shape-match") return nestedShapeVisual(task);
+    if (task.kind === "shape-color-choice") return shapeColorChoiceVisual(task);
+    if (task.kind === "shape-sort") return shapeSortVisual(task);
+    if (task.kind === "shape-count") return shapeCountVisual(task);
     if (task.kind === "side-count") {
       return '<div class="shape-target">' + tokenHTML(task.target) + '</div>' + numberOptions(task.options);
     }
@@ -364,7 +367,8 @@
       '<div class="game-actions"><button type="button" class="quiet-button" data-action="back-world">Voltar aos desafios</button>' +
       '<button type="button" class="next-button" data-action="next-task" ' + (!isDone ? "disabled" : "") + '>' + (index < tasks.length - 1 ? "Próximo desafio →" : "Concluir área ✓") + '</button></div>' +
       '<p class="painter-note">A Capi está aqui para ajudar. Você pode ouvir a instrução novamente sempre que precisar.</p></section>';
-    if (task.kind === "connect-polygon") setupPolygonDrawing(task);\n    if (task.kind === "shape-sort") setupShapeSorting(task);
+    if (task.kind === "connect-polygon") setupPolygonDrawing(task);
+    if (task.kind === "shape-sort") setupShapeSorting(task);
   }
   function feedback(message, kind) {
     const node = document.getElementById("task-feedback");
