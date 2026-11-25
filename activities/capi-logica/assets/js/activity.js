@@ -168,6 +168,62 @@
       '<div class="matrix-cell ' + (value === null ? "missing" : "") + '">' + (value === null ? "?" : tokenHTML(value)) + '</div>'
     ).join("") + '</div><div class="option-grid">' + task.options.map((value, index) => optionButton(value, "Peça " + (index + 1), index)).join("") + '</div>';
   }
+  function nestedLayersHTML(layers) {
+    if (!Array.isArray(layers) || !layers.length) return "";
+    const layer = layers[0];
+    const color = DATA.COLORS[layer.color] || "#334139";
+    return '<span class="nested-shape-layer shape-' + esc(layer.shape) + '" style="background:' + color + '">' +
+      nestedLayersHTML(layers.slice(1)) + '</span>';
+  }
+  function nestedShapeVisual(task) {
+    const makeCard = (layers, index, isTarget) =>
+      '<' + (isTarget ? 'div' : 'button type="button" data-choice="' + index + '" data-option-index="' + index + '" aria-label="Combinação ' + (index + 1) + '"') +
+      ' class="nested-option' + (isTarget ? ' nested-model' : ' option-button') + '">' +
+      '<span class="nested-shape-frame">' + nestedLayersHTML(layers) + '</span>' +
+      (isTarget ? '' : '</button>');
+    return '<div class="nested-challenge"><div class="nested-target-label">MODELO</div>' +
+      makeCard(task.targetLayers, 0, true) +
+      '<div class="nested-options option-grid">' +
+      task.options.map((option, index) => makeCard(option.layers, index, false)).join("") +
+      '</div></div>';
+  }
+  function coloredShapeHTML(shape, color) {
+    return '<span class="colored-shape shape-glyph shape-' + esc(shape) + '" style="background:' + (DATA.COLORS[color] || "#334139") + '"></span>';
+  }
+  function shapeColorChoiceVisual(task) {
+    return '<div class="shape-color-challenge">' +
+      '<div class="shape-color-model"><span class="shape-color-model-label">MODELO</span>' +
+        coloredShapeHTML(task.targetShape, task.targetColor) +
+      '</div>' +
+      '<div class="shape-color-options">' + task.options.map((option, index) =>
+        '<button type="button" class="option-button shape-color-option" data-choice="' + index + '" data-option-index="' + index + '" aria-label="Figura colorida ' + (index + 1) + '">' +
+          coloredShapeHTML(option.shape, option.color) +
+        '</button>'
+      ).join("") + '</div>' +
+    '</div>';
+  }
+  function shapeSortVisual(task) {
+    const zoneMarkup = task.zones.map((shape) =>
+      '<div class="sort-zone" data-sort-zone="' + esc(shape) + '">' +
+        '<div class="sort-zone-heading">' + coloredShapeHTML(shape, "black") + '</div>' +
+        '<div class="sort-zone-items" data-sort-items="' + esc(shape) + '"></div>' +
+        '<span class="sort-zone-count" data-sort-count="' + esc(shape) + '">0</span>' +
+      '</div>'
+    ).join("");
+    const itemsMarkup = task.items.map((item) =>
+      '<button type="button" class="sort-item" data-sort-id="' + esc(item.id) + '" data-sort-shape="' + esc(item.shape) + '" aria-label="Arrastar forma colorida">' +
+        coloredShapeHTML(item.shape, item.color) +
+      '</button>'
+    ).join("");
+    return '<div class="shape-sort-game" id="shape-sort">' +
+      '<div class="sort-source-panel"><div class="sort-panel-heading">FORMAS MISTURADAS</div>' +
+        '<div class="sort-source-tray" id="sort-source-tray">' + itemsMarkup + '</div>' +
+      '</div>' +
+      '<div class="sort-zones">' + zoneMarkup + '</div>' +
+      '<div class="sort-controls"><button type="button" class="quiet-button" data-action="reset-sorting">↻ Recomeçar</button></div>' +
+      '<p class="sort-instruction" id="sort-instruction">Arraste cada figura para o grupo da mesma forma.</p>' +
+    '</div>';
+  }
   function shapeCountVisual(task) {
     return '<div class="shape-count-board">' +
       '<div class="shape-count-model"><span>MODELO</span>' + tokenHTML(task.countShape) + '</div>' +
@@ -226,7 +282,7 @@
     if (task.kind === "color-matrix") return colorMatrixVisual(task);
     if (task.kind === "shape-match") return shapeMatchVisual(task);
     if (task.kind === "connect-polygon") return polygonVisual(task);
-    if (task.kind === "shape-count") return shapeCountVisual(task);
+    if (task.kind === "nested-shape-match") return nestedShapeVisual(task);\n    if (task.kind === "shape-color-choice") return shapeColorChoiceVisual(task);\n    if (task.kind === "shape-sort") return shapeSortVisual(task);\n    if (task.kind === "shape-count") return shapeCountVisual(task);
     if (task.kind === "side-count") {
       return '<div class="shape-target">' + tokenHTML(task.target) + '</div>' + numberOptions(task.options);
     }
@@ -308,7 +364,7 @@
       '<div class="game-actions"><button type="button" class="quiet-button" data-action="back-world">Voltar aos desafios</button>' +
       '<button type="button" class="next-button" data-action="next-task" ' + (!isDone ? "disabled" : "") + '>' + (index < tasks.length - 1 ? "Próximo desafio →" : "Concluir área ✓") + '</button></div>' +
       '<p class="painter-note">A Capi está aqui para ajudar. Você pode ouvir a instrução novamente sempre que precisar.</p></section>';
-    if (task.kind === "connect-polygon") setupPolygonDrawing(task);
+    if (task.kind === "connect-polygon") setupPolygonDrawing(task);\n    if (task.kind === "shape-sort") setupShapeSorting(task);
   }
   function feedback(message, kind) {
     const node = document.getElementById("task-feedback");
@@ -344,7 +400,7 @@
     highlightOption(button);
     const value = decodeURIComponent(button.dataset.choice || "");
     let correct = false;
-    if (task.kind === "proportion" || task.kind === "sound-pattern") {
+    if (task.kind === "proportion" || task.kind === "sound-pattern" || task.kind === "nested-shape-match" || task.kind === "shape-color-choice") {
       correct = Number(button.dataset.optionIndex) === task.answerIndex;
     } else {
       correct = String(value) === String(task.answer);
@@ -389,7 +445,109 @@
     if (hint) hint.textContent = "Muito bem! Continue pintando os outros círculos.";
     if (painted.filter(Boolean).length === task.targets.length) completeTask("Todos os círculos receberam a cor correta! 🎨");
   }
-  function setupPolygonDrawing(task) {
+  function setupShapeSorting(task) {
+    const root = document.getElementById("shape-sort");
+    const sourceTray = document.getElementById("sort-source-tray");
+    if (!root || !sourceTray) return;
+    const items = new Map(task.items.map((item) => [item.id, item]));
+    let drag = null;
+
+    const setCount = (shape) => {
+      const countNode = root.querySelector('[data-sort-count="' + shape + '"]');
+      const zone = root.querySelector('[data-sort-items="' + shape + '"]');
+      if (countNode && zone) countNode.textContent = String(zone.querySelectorAll("[data-sort-id]").length);
+    };
+    const removeGhost = () => {
+      if (drag?.ghost?.parentNode) drag.ghost.parentNode.removeChild(drag.ghost);
+      drag?.item?.classList.remove("is-dragging");
+    };
+    const moveGhost = (event) => {
+      if (!drag?.ghost) return;
+      drag.ghost.style.left = (event.clientX - drag.offsetX) + "px";
+      drag.ghost.style.top = (event.clientY - drag.offsetY) + "px";
+    };
+    const reset = () => {
+      task.items.forEach((item) => {
+        const node = root.querySelector('[data-sort-id="' + item.id + '"]');
+        if (!node) return;
+        node.disabled = false;
+        node.dataset.placed = "false";
+        node.classList.remove("is-placed", "is-dragging");
+        sourceTray.appendChild(node);
+      });
+      task.zones.forEach(setCount);
+      const instruction = document.getElementById("sort-instruction");
+      if (instruction) instruction.textContent = "Arraste cada figura para o grupo da mesma forma.";
+    };
+    root.addEventListener("pointerdown", (event) => {
+      const itemNode = event.target.closest("[data-sort-id]");
+      if (!itemNode || itemNode.dataset.placed === "true" || (event.pointerType === "mouse" && event.button !== 0)) return;
+      event.preventDefault();
+      const rect = itemNode.getBoundingClientRect();
+      const ghost = itemNode.cloneNode(true);
+      ghost.classList.add("sort-drag-ghost");
+      ghost.style.width = rect.width + "px";
+      ghost.style.height = rect.height + "px";
+      document.body.appendChild(ghost);
+      drag = {
+        item: itemNode,
+        ghost,
+        pointerId: event.pointerId,
+        offsetX: event.clientX - rect.left,
+        offsetY: event.clientY - rect.top
+      };
+      itemNode.classList.add("is-dragging");
+      try { root.setPointerCapture(event.pointerId); } catch { /* captura opcional */ }
+      moveGhost(event);
+    });
+    root.addEventListener("pointermove", (event) => {
+      if (!drag || event.pointerId !== drag.pointerId) return;
+      event.preventDefault();
+      moveGhost(event);
+      const underPointer = document.elementFromPoint(event.clientX, event.clientY);
+      const zone = underPointer?.closest("[data-sort-zone]");
+      root.querySelectorAll("[data-sort-zone]").forEach((node) => node.classList.toggle("is-hovered", node === zone));
+    });
+    root.addEventListener("pointerup", (event) => {
+      if (!drag || event.pointerId !== drag.pointerId) return;
+      const underPointer = document.elementFromPoint(event.clientX, event.clientY);
+      const zone = underPointer?.closest("[data-sort-zone]");
+      const item = drag.item;
+      const itemData = items.get(item.dataset.sortId);
+      removeGhost();
+      root.querySelectorAll("[data-sort-zone]").forEach((node) => node.classList.remove("is-hovered"));
+      if (zone && itemData && zone.dataset.sortZone === itemData.shape) {
+        const target = zone.querySelector(".sort-zone-items");
+        target.appendChild(item);
+        item.disabled = true;
+        item.dataset.placed = "true";
+        item.classList.add("is-placed");
+        setCount(itemData.shape);
+        const placed = root.querySelectorAll('[data-sort-id][data-placed="true"]').length;
+        const instruction = document.getElementById("sort-instruction");
+        if (instruction) instruction.textContent = placed === task.items.length
+          ? "Todos os grupos estão completos!"
+          : "Muito bem! Continue separando as formas parecidas.";
+        if (placed === task.items.length) completeTask("Você separou todas as formas nos grupos certos! 🌟");
+        else feedback("Boa escolha! Encontre o lugar das próximas formas.", "good");
+      } else {
+        feedback("Essa forma pertence a outro grupo. Observe o modelo e tente novamente.", "hint");
+      }
+      drag = null;
+      try { if (root.hasPointerCapture(event.pointerId)) root.releasePointerCapture(event.pointerId); } catch { /* captura opcional */ }
+    });
+    root.addEventListener("pointercancel", () => {
+      removeGhost();
+      drag = null;
+      root.querySelectorAll("[data-sort-zone]").forEach((node) => node.classList.remove("is-hovered"));
+    });
+    root.querySelector('[data-action="reset-sorting"]')?.addEventListener("click", () => {
+      reset();
+      feedback("Vamos tentar organizar as formas novamente.");
+    });
+  }
+
+    function setupPolygonDrawing(task) {
     const svg = document.getElementById("polygon-svg");
     const stage = document.querySelector(".polygon-stage");
     const preview = document.getElementById("polygon-preview");
