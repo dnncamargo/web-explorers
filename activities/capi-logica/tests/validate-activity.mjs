@@ -75,6 +75,7 @@ assert.equal(store.countAll(state), 1, "overall progress counts completed challe
 assert.equal(store.normalize({ version: 9, completed: ["cores-01"] }).completed.length, 0, "unknown progress versions reset safely");
 assert.deepEqual(Array.from(store.normalize({ version: 1, completed: ["cores-01", "unknown-task", "cores-01"] }).completed), ["cores-01"], "current progress versions preserve valid unique challenge IDs only");
 assert.equal(store.normalize({ completed: ["cores-01"] }).completed.length, 0, "progress without a version resets safely");
+assert.equal(store.normalize({ version: 1, completed: ["formas-05", "formas-06", "formas-08"] }).completed.length, 0, "redesigned shape challenges do not inherit completion from previous task IDs");
 
 const activity = read("../assets/js/activity.js");
 assert.ok(activity.includes('target.closest("[data-speak]")'), "audio instructions use one delegated click handler");
@@ -117,6 +118,7 @@ assert.equal(sorting.zones.length, 3, "shape sorting has three classification gr
 assert.equal(sorting.items.length, 12, "shape sorting has twelve mixed items");
 for (const shape of sorting.zones) assert.equal(sorting.items.filter((item) => item.shape === shape).length, 4, "each sorting group contains four items");
 assert.equal(new Set(sorting.items.map((item) => item.id)).size, sorting.items.length, "sorting item IDs are unique");
+assert.notDeepEqual(Array.from(sorting.items, (item) => item.shape), Array.from(sorting.items, (item) => item.shape).slice().sort(), "sorting items are shuffled rather than grouped by type");
 
 
 assert.ok(activity.includes("function setupPolygonDrawing(task)"), "pentagon drawing has a dedicated interaction controller");
