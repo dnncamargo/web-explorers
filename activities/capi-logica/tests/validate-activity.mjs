@@ -51,6 +51,7 @@ assert.equal(applePaint.kind, "apple-paint-count", "number challenge five requir
 assert.equal(applePaint.appleCount, 8, "apple painting contains eight apples");
 assert.equal(applePaint.appleColors.length, 8, "every apple has a color to apply");
 assert.equal(applePaint.answer, 8, "the apple painting challenge asks for the total number of apples");
+assert.equal(applePaint.options.indexOf(applePaint.answer), 0, "the apple-count answer is not in the middle position");
 
 const countdown = data.tasks.find((task) => task.id === "numeros-06-double-countdown");
 assert.equal(countdown.kind, "double-countdown", "number challenge six has two missing countdown values");
@@ -63,6 +64,7 @@ const tripleSum = data.tasks.find((task) => task.id === "numeros-07-triple-sum")
 assert.deepEqual(Array.from(tripleSum.terms), [5, 3, 4], "number challenge seven adds three groups");
 assert.equal(tripleSum.terms.reduce((sum, value) => sum + value, 0), 12, "triple addition totals twelve");
 assert.ok(tripleSum.options.includes(tripleSum.answer), "triple addition includes the correct answer");
+assert.equal(tripleSum.options.indexOf(tripleSum.answer), 2, "the three-group addition answer is shown in the last position");
 
 const missingAddend = data.tasks.find((task) => task.id === "numeros-09-missing-addend");
 assert.equal(missingAddend.knownCount + missingAddend.answer, missingAddend.total, "missing addend challenge has a consistent result");
