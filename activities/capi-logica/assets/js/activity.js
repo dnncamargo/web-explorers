@@ -613,7 +613,7 @@
     if (next) next.disabled = false;
   }
   function highlightOption(button) {
-    const group = button.closest(".option-grid, .stack-row, .compare-grid");
+    const group = button.closest(".option-grid, .stack-row, .compare-grid, .relative-position-options");
     if (group) {
       group.querySelectorAll(".option-button, .stack-card, .compare-card").forEach((option) => {
         option.classList.toggle("is-selected", option === button);
