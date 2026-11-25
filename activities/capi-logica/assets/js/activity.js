@@ -180,7 +180,7 @@
       '<' + (isTarget ? 'div' : 'button type="button" data-choice="' + index + '" data-option-index="' + index + '" aria-label="Combinação ' + (index + 1) + '"') +
       ' class="nested-option' + (isTarget ? ' nested-model' : ' option-button') + '">' +
       '<span class="nested-shape-frame">' + nestedLayersHTML(layers) + '</span>' +
-      (isTarget ? '' : '</button>');
+      (isTarget ? '</div>' : '</button>');
     return '<div class="nested-challenge"><div class="nested-target-label">MODELO</div>' +
       makeCard(task.targetLayers, 0, true) +
       '<div class="nested-options option-grid">' +
