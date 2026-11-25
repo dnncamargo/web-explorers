@@ -63,9 +63,23 @@
       [{ direction: "up-right", color: "red" }, { direction: "right", color: "blue" }, { direction: "down-left", color: "orange" }, { direction: "down", color: "green" }, { direction: "up-left", color: "purple" }]
     ], answerIndex: 0 },
 
-    { id: "posicoes-01", world: "posicoes", number: 1, kind: "grid-position", icon: "🗺️", title: "Siga as setas", prompt: "Comece na pegada do centro. Siga as setas e toque no lugar onde você chegar.", grid: ["🏠", "🌳", "🏡", "🌼", "🐾", "🌻", "🏕️", "🌲", "🏡"], startIndex: 4, moves: ["up", "right"], answerIndex: 2 },
+    { id: "posicoes-01-expanded-grid", world: "posicoes", number: 1, kind: "grid-position", icon: "🗺️", title: "Siga as três setas", prompt: "Comece na pegada. Vá para a direita, depois para cima e novamente para a direita. Onde você chegou? O destino fica ao lado direito da casa.", grid: ["🌳", "🏠", "🌼", "🌲", "🐾", "🌻", "🏕️", "🌷", "🌼", "🌲", "🏡", "🌳", "🌻", "🏕️", "🎯", "🌷"], startIndex: 4, moves: ["right", "up", "right"], answerIndex: 2 },
     { id: "posicoes-02", world: "posicoes", number: 2, kind: "position", icon: "⬆️", title: "Onde está a estrela?", prompt: "Observe a posição da estrela no quadro-modelo. Encontre a mesma posição.", target: "top-left", options: ["bottom-left", "top-left", "top-right"], answer: "top-left" },
     { id: "posicoes-03", world: "posicoes", number: 3, kind: "matrix", icon: "▦", title: "Complete o quadro", prompt: "Observe o que muda em cada linha e coluna. Qual peça está faltando?", grid: ["red-circle", "blue-circle", "red-square", null], options: ["blue-square", "red-triangle", "green-square"], answer: "blue-square" },
+    { id: "posicoes-04-relative-pair", world: "posicoes", number: 4, kind: "relative-position", icon: "↔️", title: "Casa à direita da árvore", prompt: "Observe o modelo. A casa fica imediatamente à direita da árvore. Encontre a mesma posição.", target: { items: [{ emoji: "🌳", cell: 4 }, { emoji: "🏠", cell: 5 }] }, options: [
+      { items: [{ emoji: "🌳", cell: 4 }, { emoji: "🏠", cell: 3 }] },
+      { items: [{ emoji: "🌳", cell: 4 }, { emoji: "🏠", cell: 5 }] },
+      { items: [{ emoji: "🌳", cell: 4 }, { emoji: "🏠", cell: 1 }] },
+      { items: [{ emoji: "🌳", cell: 4 }, { emoji: "🏠", cell: 7 }] }
+    ], answerIndex: 1 },
+    { id: "posicoes-05-relative-trio", world: "posicoes", number: 5, kind: "relative-position", icon: "📍", title: "Onde estão as três figuras?", prompt: "Observe o modelo: a flor fica acima da casa e a árvore fica à direita da casa. Encontre a mesma organização.", target: { items: [{ emoji: "🏠", cell: 4 }, { emoji: "🌼", cell: 1 }, { emoji: "🌳", cell: 5 }] }, options: [
+      { items: [{ emoji: "🏠", cell: 4 }, { emoji: "🌼", cell: 1 }, { emoji: "🌳", cell: 3 }] },
+      { items: [{ emoji: "🏠", cell: 4 }, { emoji: "🌼", cell: 7 }, { emoji: "🌳", cell: 5 }] },
+      { items: [{ emoji: "🏠", cell: 4 }, { emoji: "🌼", cell: 1 }, { emoji: "🌳", cell: 5 }] },
+      { items: [{ emoji: "🏠", cell: 4 }, { emoji: "🌼", cell: 3 }, { emoji: "🌳", cell: 5 }] }
+    ], answerIndex: 2 },
+    { id: "posicoes-06-long-route", world: "posicoes", number: 6, kind: "grid-position", icon: "🧭", title: "Siga um caminho maior", prompt: "Comece na pegada. Siga as setas na ordem e encontre o destino.", grid: ["🌲", "🌳", "🏡", "🌼", "🌷", "🌻", "🌳", "🏠", "🌲", "🌼", "🏕️", "🌷", "🌳", "🌲", "🏡", "🌼", "🌻", "🏠", "🎯", "🌳", "🌲", "🐾", "🌷", "🏕️", "🌼"], startIndex: 21, moves: ["right", "up", "right", "up", "up"], answerIndex: 8 },
+    { id: "posicoes-07-advanced-route", world: "posicoes", number: 7, kind: "grid-position", icon: "🏁", title: "Encontre a chegada", prompt: "Siga o caminho completo. Cada seta muda sua posição. Toque no lugar onde você termina.", grid: ["🌲", "🏡", "🌳", "🌼", "🏠", "🌷", "🌻", "🌲", "🏁", "🌳", "🏕️", "🌼", "🏠", "🌷", "🌲", "🌳", "🌻", "🏡", "🌲", "🌼", "🐾", "🌷", "🏕️", "🌳", "🌻"], startIndex: 20, moves: ["right", "up", "right", "up", "up", "right"], answerIndex: 8 },
 
     { id: "combinacoes-01", world: "combinacoes", number: 1, kind: "pair", icon: "🟣", title: "Junte forma e cor", prompt: "Encontre a combinação com a mesma forma e a mesma cor do modelo.", target: "purple-triangle", options: ["purple-circle", "purple-triangle", "blue-triangle"], answer: "purple-triangle" },
     { id: "combinacoes-02", world: "combinacoes", number: 2, kind: "proportion", icon: "🧱", title: "Compare as partes", prompt: "Observe a proporção de cores no modelo. Escolha a pilha que mantém a mesma proporção.", model: ["red", "red", "blue", "blue"], options: [["red", "blue"], ["red", "red", "red", "blue"], ["blue", "blue", "blue", "red"]], answerIndex: 0 },
