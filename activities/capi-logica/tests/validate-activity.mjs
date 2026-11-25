@@ -221,7 +221,7 @@ assert.ok(activity.includes("answer-tray") && activity.includes("patternVisual(t
 assert.ok(activity.includes("function highlightOption(button)") && activity.includes('classList.toggle("is-selected"'), "selected answer options receive a persistent visual highlight");
 
 const shapeTasks = data.tasks.filter((task) => task.world === "formas");
-assert.equal(shapeTasks.length, 8, "the shape area contains eight progressive challenges");
+assert.equal(shapeTasks.length, 9, "the shape area contains nine progressive challenges");
 const polygon = shapeTasks.find((task) => task.id === "formas-02");
 assert.equal(polygon.kind, "connect-polygon", "the second shape challenge constructs a polygon by dragging");
 assert.equal(polygon.points.length, 5, "the pentagon task has five vertices");
