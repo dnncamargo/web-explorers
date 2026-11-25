@@ -42,10 +42,10 @@
     { id: "numeros-01-frog", world: "numeros", number: 1, kind: "frog-jumps", icon: "🐸", title: "Conte os pulos do sapo", prompt: "Observe o sapo. Ele vai pular seis vezes. Conte cada pulo e escolha quantos foram.", jumpCount: 6, options: [4, 5, 6, 7, 8], answer: 6 },
     { id: "numeros-02-addition-steps", world: "numeros", number: 2, kind: "addition-series", icon: "➕", title: "Some +1, +2 e +3", prompt: "Resolva as somas. Primeiro some mais um, depois mais dois e por fim mais três.", emoji: "⭐", problems: [{"base":4,"increment":1,"answer":5,"options":[4,5,6]},{"base":2,"increment":1,"answer":3,"options":[2,3,4]},{"base":7,"increment":1,"answer":8,"options":[7,8,9]},{"base":3,"increment":2,"answer":5,"options":[4,5,6]},{"base":5,"increment":2,"answer":7,"options":[6,7,8]},{"base":6,"increment":2,"answer":8,"options":[7,8,9]},{"base":1,"increment":3,"answer":4,"options":[3,4,5]},{"base":4,"increment":3,"answer":7,"options":[6,7,8]},{"base":6,"increment":3,"answer":9,"options":[8,9,10]}] },
     { id: "numeros-03-group-sum", world: "numeros", number: 3, kind: "calculation", icon: "🧮", title: "Junte os grupos", prompt: "Conte os dois grupos de frutas. Junte tudo e escolha o total.", emoji: "🍎", leftCount: 4, operator: "+", rightCount: 3, options: [6, 7, 8], answer: 7 },
-    { id: "numeros-04", world: "numeros", number: 4, kind: "count", icon: "🐠", title: "Quantos peixinhos?", prompt: "Conte todos os peixinhos e escolha o número correspondente.", emoji: "🐠", count: 8, options: [6, 7, 8, 9], answer: 8 },
-    { id: "numeros-05", world: "numeros", number: 5, kind: "compare", icon: "🍓", title: "Qual grupo tem mais?", prompt: "Observe os dois grupos de frutas. Toque no grupo que tem mais.", emoji: "🍓", leftCount: 5, rightCount: 8, answer: "right" },
-    { id: "numeros-06", world: "numeros", number: 6, kind: "pattern", icon: "🔢", title: "Complete a contagem", prompt: "Os números estão aumentando de um em um. Qual vem depois?", sequence: [2, 3, 4, 5, null], options: [5, 6, 7], answer: 6 },
-    { id: "numeros-07", world: "numeros", number: 7, kind: "calculation", icon: "➕", title: "Some até dez", prompt: "Junte cinco frutas com mais três. Quantas frutas ficam juntas?", emoji: "🍐", leftCount: 5, operator: "+", rightCount: 3, options: [7, 8, 9], answer: 8 },
+    { id: "numeros-04-fish-count", world: "numeros", number: 4, kind: "fish-crab-count", icon: "🐟", title: "Conte só os peixes", prompt: "Conte apenas os peixes. Os caranguejos estão aqui para confundir: queremos saber quantos peixes existem.", animals: ["crab", "fish", "fish", "crab", "fish", "crab", "fish", "fish", "crab", "fish", "fish", "crab"], targetAnimal: "fish", answer: 7, options: [6, 7, 8, 9] },
+    { id: "numeros-05-apple-paint", world: "numeros", number: 5, kind: "apple-paint-count", icon: "🍎", title: "Pinte e conte as maçãs", prompt: "Toque em cada maçã para pintá-la. Quando todas estiverem coloridas, conte quantas maçãs você pintou.", appleCount: 8, appleColors: ["red", "yellow", "green", "red", "yellow", "green", "red", "yellow"], options: [7, 8, 9], answer: 8 },
+    { id: "numeros-06-double-countdown", world: "numeros", number: 6, kind: "double-countdown", icon: "🔟", title: "Complete a contagem regressiva", prompt: "A contagem está diminuindo de um em um. Descubra os dois números que estão faltando.", sequence: [10, 9, null, 7, null, 5, 4, 3], missingIndexes: [2, 4], answers: [8, 6], options: [[7, 8, 9], [5, 6, 7]] },
+    { id: "numeros-07-triple-sum", world: "numeros", number: 7, kind: "calculation", icon: "➕", title: "Some três grupos", prompt: "Conte os três grupos e junte as quantidades: cinco mais três mais quatro.", emoji: "🍐", terms: [5, 3, 4], operator: "+", options: [11, 12, 13], answer: 12 },
     { id: "numeros-08", world: "numeros", number: 8, kind: "pattern", icon: "🔟", title: "Conte de dois em dois", prompt: "Observe os números. Aumentam de dois em dois. Qual completa a sequência?", sequence: [1, 3, 5, 7, null], options: [8, 9, 10], answer: 9 },
     { id: "numeros-09-missing-addend", world: "numeros", number: 9, kind: "missing-addend", icon: "🧩", title: "Descubra o número que falta", prompt: "Seis mais um número formam dez. Qual número está faltando?", knownCount: 6, total: 10, options: [3, 4, 5], answer: 4 },
 
@@ -65,6 +65,46 @@
     { id: "letras-sons-02", world: "letras-sons", number: 2, kind: "letter-match", icon: "🅱️", title: "Encontre a igual", prompt: "Observe o desenho da letra. Toque na mesma letra entre as opções.", target: "B", options: ["P", "B", "D"], answer: "B" },
     { id: "letras-sons-03", world: "letras-sons", number: 3, kind: "sound-pattern", icon: "🔔", title: "Escute o padrão", prompt: "Toque para ouvir a sequência de sons. Depois escolha o desenho sonoro igual.", sound: ["low", "high", "low"], options: [["high", "low", "high"], ["low", "high", "low"], ["low", "low", "high"]], answerIndex: 1 }
   ];
+
+  function spreadCorrectOptionPositions(items) {
+    let cursor = 0;
+    const preferred = {
+      2: [0, 1],
+      3: [0, 2, 1],
+      4: [0, 3, 1, 2],
+      5: [0, 4, 2, 1, 3]
+    };
+    function rebalance(holder) {
+      if (!Array.isArray(holder.options) || !holder.options.length) return;
+      const options = holder.options;
+      const correctIndex = Number.isInteger(holder.answerIndex)
+        ? holder.answerIndex
+        : options.findIndex((option) => String(option) === String(holder.answer));
+      if (correctIndex < 0 || correctIndex >= options.length) return;
+      const length = options.length;
+      const positions = preferred[length] || Array.from({ length }, (_, index) => index);
+      const targetIndex = positions[cursor % positions.length];
+      cursor += 1;
+      if (targetIndex === correctIndex) return;
+      const correctOption = options.splice(correctIndex, 1)[0];
+      options.splice(targetIndex, 0, correctOption);
+      if (Number.isInteger(holder.answerIndex)) holder.answerIndex = targetIndex;
+    }
+    items.forEach((task) => {
+      if (task.kind === "addition-series" && Array.isArray(task.problems)) {
+        task.problems.forEach(rebalance);
+      } else if (task.kind === "double-countdown" && Array.isArray(task.options)) {
+        task.options.forEach((options, index) => {
+          const holder = { options, answer: task.answers[index] };
+          rebalance(holder);
+          task.options[index] = holder.options;
+        });
+      } else {
+        rebalance(task);
+      }
+    });
+  }
+  spreadCorrectOptionPositions(tasks);
 
   global.CapiLogicGames = Object.freeze({ COLORS, SHAPES, ARROWS, worlds, tasks });
 })(window);
