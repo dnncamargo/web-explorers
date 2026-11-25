@@ -18,13 +18,15 @@
     return global[name];
   }
   function load() {
+    let availableMode = "memory";
     for (const name of ["localStorage", "sessionStorage"]) {
       try {
         const value = storage(name).getItem(KEY);
         if (value) { const result = normalize(JSON.parse(value)); MEMORY.value = JSON.stringify(result); return { progress: result, mode: name }; }
+        if (availableMode === "memory") availableMode = name;
       } catch { /* armazenamento pode ser bloqueado */ }
     }
-    return { progress: fresh(), mode: "memory" };
+    return { progress: fresh(), mode: availableMode };
   }
   function save(progress, preferred) {
     const snapshot = Object.assign(normalize(progress), { updatedAt: new Date().toISOString() });
