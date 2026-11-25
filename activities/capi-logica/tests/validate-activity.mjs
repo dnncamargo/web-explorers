@@ -27,7 +27,7 @@ assert.deepEqual(Array.from(formsThird.sequence), ["red-circle", "blue-square", 
 assert.equal(formsThird.answer, "red-circle", "the approved third challenge answer is preserved");
 
 const kinds = new Set(data.tasks.map((task) => task.kind));
-for (const kind of ["pattern", "paint", "shape-match", "connect-polygon", "shape-count", "count", "compare", "calculation", "odd-one", "grid-position", "position", "matrix", "pair", "proportion", "letter-pattern", "letter-match", "sound-pattern", "color-matrix"]) {
+for (const kind of ["pattern", "paint", "shape-match", "connect-polygon", "nested-shape-match", "shape-color-choice", "shape-sort", "count", "compare", "calculation", "odd-one", "grid-position", "position", "matrix", "pair", "proportion", "letter-pattern", "letter-match", "sound-pattern", "color-matrix"]) {
   assert.ok(kinds.has(kind), kind + " is represented");
 }
 
@@ -94,11 +94,29 @@ assert.equal(polygon.points.length, 5, "the pentagon task has five vertices");
 assert.equal(polygon.answer, 5, "the learner counts five vertices after closing the pentagon");
 assert.ok(polygon.options.includes(5), "the pentagon vertex count is one of the choices");
 for (const point of polygon.points) assert.ok(point.x >= 0 && point.x <= 360 && point.y >= 0 && point.y <= 270, "polygon points stay inside the drawing area");
-const shapeCount = shapeTasks.find((task) => task.id === "formas-06");
-assert.equal(shapeCount.items.filter((shape) => shape === "pentagon").length, 3, "the shape-count challenge contains three pentagons");
-const shapeMatrix = shapeTasks.find((task) => task.id === "formas-08");
-assert.equal(shapeMatrix.grid.length, 9, "the final shape challenge uses a 3 by 3 matrix");
-assert.equal(shapeMatrix.answer, "blue-triangle", "the final shape matrix has one consistent answer");
+const nestedTask = shapeTasks.find((task) => task.id === "formas-05");
+assert.equal(nestedTask.kind, "nested-shape-match", "challenge five compares nested shapes");
+assert.equal(nestedTask.targetLayers.length, 4, "challenge five contains four nested layers");
+assert.ok(nestedTask.targetLayers.slice(1).length >= 2, "challenge five adds two inner shapes beyond the first nested pair");
+assert.equal(nestedTask.options.length, 3, "nested-shape challenge has three alternatives");
+for (const option of nestedTask.options) assert.equal(option.layers.length, 4, "every nested alternative has four layers");
+assert.equal(nestedTask.options[nestedTask.answerIndex].layers.map((layer) => layer.shape + "-" + layer.color).join("|"), nestedTask.targetLayers.map((layer) => layer.shape + "-" + layer.color).join("|"), "the nested answer matches all shapes and colors in order");
+
+const colorChoice = shapeTasks.find((task) => task.id === "formas-06");
+assert.equal(colorChoice.kind, "shape-color-choice", "challenge six searches for a shape with a specific color");
+assert.equal(colorChoice.options.length, 14, "challenge six displays fourteen colored alternatives");
+assert.equal(colorChoice.options.length / 7, 2, "fourteen alternatives are arranged as two rows of seven");
+const selectedShape = colorChoice.options[colorChoice.answerIndex];
+assert.equal(selectedShape.shape, colorChoice.targetShape, "the selected alternative has the requested pentagon shape");
+assert.equal(selectedShape.color, colorChoice.targetColor, "the selected alternative has the requested target color");
+assert.equal(colorChoice.options.filter((option) => option.shape === colorChoice.targetShape && option.color === colorChoice.targetColor).length, 1, "only one alternative matches both target attributes");
+
+const sorting = shapeTasks.find((task) => task.id === "formas-08");
+assert.equal(sorting.kind, "shape-sort", "challenge eight sorts shapes into groups");
+assert.equal(sorting.zones.length, 3, "shape sorting has three classification groups");
+assert.equal(sorting.items.length, 12, "shape sorting has twelve mixed items");
+for (const shape of sorting.zones) assert.equal(sorting.items.filter((item) => item.shape === shape).length, 4, "each sorting group contains four items");
+assert.equal(new Set(sorting.items.map((item) => item.id)).size, sorting.items.length, "sorting item IDs are unique");
 
 
 assert.ok(activity.includes("function setupPolygonDrawing(task)"), "pentagon drawing has a dedicated interaction controller");
@@ -106,4 +124,8 @@ assert.ok(activity.includes("accepted.push(targetIndex)") && activity.includes("
 assert.ok(activity.includes('svg.addEventListener("pointermove"') && activity.includes('svg.addEventListener("pointerup"'), "pentagon drawing supports pointer and touch dragging");
 assert.ok(activity.includes('face.textContent = mood === "happy" ? "😊" : "😟"'), "polygon drawing gives happy and sad proximity feedback");
 assert.ok(activity.includes("function shapeGlyphHTML(shape)"), "shapes use centered CSS glyph elements rather than font glyph baselines");
+assert.ok(activity.includes("function nestedLayersHTML(layers)") && activity.includes("function nestedShapeVisual(task)"), "nested shape matching renders multiple inner layers");
+assert.ok(activity.includes("function shapeColorChoiceVisual(task)") && activity.includes("shape-color-options"), "the fourteen colored shapes have a dedicated choice grid");
+assert.ok(activity.includes("function setupShapeSorting(task)") && activity.includes('root.addEventListener("pointerdown"') && activity.includes('root.addEventListener("pointerup"'), "shape classification supports pointer drag and drop");
+assert.ok(activity.includes('document.elementFromPoint(event.clientX, event.clientY)'), "shape sorting detects the drop target under the pointer");
 console.log("OK: seven worlds, 29 visual challenges, colors, shapes, numbers, rules, positions, proportions, letters, sound and progress");
