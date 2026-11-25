@@ -8,13 +8,13 @@ vm.runInContext(read("../assets/js/games.js"), gamesContext, { filename: "games.
 const data = gamesContext.window.CapiLogicGames;
 assert.ok(data, "visual game data is registered");
 assert.equal(data.worlds.length, 7, "seven visual logic areas exist");
-assert.equal(data.tasks.length, 41, "seven areas contain 41 short challenges, including eight in the rules area");
+assert.equal(data.tasks.length, 45, "seven areas contain 45 short challenges, including seven in the positions area");
 assert.equal(new Set(data.worlds.map((world) => world.id)).size, 7, "world IDs are unique");
 assert.equal(new Set(data.tasks.map((task) => task.id)).size, 41, "task IDs are unique");
 
 for (const world of data.worlds) {
   const tasks = data.tasks.filter((task) => task.world === world.id);
-  assert.equal(tasks.length, world.id === "cores" ? 6 : world.id === "formas" || world.id === "numeros" ? 9 : world.id === "regras" ? 8 : 3, world.id + " has the configured number of challenges");
+  assert.equal(tasks.length, world.id === "cores" ? 6 : world.id === "formas" || world.id === "numeros" ? 9 : world.id === "regras" ? 8 : world.id === "posicoes" ? 7 : 3, world.id + " has the configured number of challenges");
   for (const task of tasks) assert.ok(task.prompt && task.title && task.icon, task.id + " has an audio prompt and visual identity");
 }
 const numberPath = data.tasks.find((task) => task.id === "formas-09-number-path");
@@ -152,7 +152,7 @@ assert.ok(choicePositions.first > 0 && choicePositions.middle > 0 && choicePosit
 assert.ok(Math.max(...Object.values(choicePositions)) - Math.min(...Object.values(choicePositions)) <= 4, "three-choice correct-answer positions are reasonably balanced");
 
 const kinds = new Set(data.tasks.map((task) => task.kind));
-for (const kind of ["pattern", "paint", "shape-match", "connect-polygon", "nested-shape-match", "shape-color-choice", "shape-sort", "number-path", "frog-jumps", "addition-series", "missing-addend", "arrow-order", "complex-match", "arrow-sequence-match", "fish-crab-count", "apple-paint-count", "double-countdown", "calculation", "odd-one", "grid-position", "position", "matrix", "pair", "proportion", "letter-pattern", "letter-match", "sound-pattern", "color-matrix"]) {
+for (const kind of ["pattern", "paint", "shape-match", "connect-polygon", "nested-shape-match", "shape-color-choice", "shape-sort", "number-path", "frog-jumps", "addition-series", "missing-addend", "arrow-order", "complex-match", "arrow-sequence-match", "fish-crab-count", "apple-paint-count", "double-countdown", "calculation", "odd-one", "grid-position", "relative-position", "position", "matrix", "pair", "proportion", "letter-pattern", "letter-match", "sound-pattern", "color-matrix"]) {
   assert.ok(kinds.has(kind), kind + " is represented");
 }
 
@@ -169,12 +169,35 @@ const colorMatrix = data.tasks.find((task) => task.id === "cores-05");
 assert.equal(colorMatrix.grid.length, 9, "the advanced color matrix has nine cells");
 assert.equal(colorMatrix.answer, "blue", "the color matrix completes the cyclic sequence with blue");
 
-const route = data.tasks.find((task) => task.kind === "grid-position");
-const finalPosition = route.moves.reduce((position, move) => ({
-  row: position.row + (move === "up" ? -1 : move === "down" ? 1 : 0),
-  col: position.col + (move === "left" ? -1 : move === "right" ? 1 : 0)
-}), { row: Math.floor(route.startIndex / 3), col: route.startIndex % 3 });
-assert.equal(finalPosition.row * 3 + finalPosition.col, route.answerIndex, "arrow route leads to the configured grid answer");
+const positionTasks = data.tasks.filter((task) => task.world === "posicoes");
+assert.equal(positionTasks.length, 7, "the map area contains seven progressive challenges");
+const route = positionTasks.find((task) => task.id === "posicoes-01-expanded-grid");
+assert.equal(route.grid.length, 16, "the first route uses a larger 4 by 4 matrix");
+assert.deepEqual(Array.from(route.moves), ["right", "up", "right"], "the first route follows right, up, right");
+assert.equal(route.grid[1], "🏠", "the house is immediately to the left of the first route destination");
+assert.equal(route.answerIndex, 2, "the destination is the cell directly to the right of the house");
+const routeTasks = positionTasks.filter((task) => task.kind === "grid-position");
+for (const routeTask of routeTasks) {
+  const dimension = Math.sqrt(routeTask.grid.length);
+  assert.ok(Number.isInteger(dimension), "route matrices are square");
+  const finalPosition = routeTask.moves.reduce((position, move) => ({
+    row: Math.max(0, Math.min(dimension - 1, position.row + (move === "up" ? -1 : move === "down" ? 1 : 0))),
+    col: Math.max(0, Math.min(dimension - 1, position.col + (move === "left" ? -1 : move === "right" ? 1 : 0)))
+  }), { row: Math.floor(routeTask.startIndex / dimension), col: routeTask.startIndex % dimension });
+  assert.equal(finalPosition.row * dimension + finalPosition.col, routeTask.answerIndex, routeTask.id + " arrow route leads to its configured grid answer");
+}
+assert.equal(positionTasks.find((task) => task.id === "posicoes-06-long-route").grid.length, 25, "challenge six uses a 5 by 5 matrix");
+assert.equal(positionTasks.find((task) => task.id === "posicoes-07-advanced-route").grid.length, 25, "challenge seven uses a 5 by 5 matrix");
+const relativeTasks = positionTasks.filter((task) => task.kind === "relative-position");
+assert.equal(relativeTasks.length, 2, "the map area includes two relative-position challenges");
+assert.equal(relativeTasks[0].target.items.length, 2, "the first relative-position challenge compares two objects");
+assert.equal(relativeTasks[1].target.items.length, 3, "the second relative-position challenge compares three objects");
+for (const relativeTask of relativeTasks) {
+  assert.equal(relativeTask.options.length, 4, "relative-position challenge has four alternatives");
+  const signature = (layout) => layout.items.map((item) => item.emoji + "@" + item.cell).sort().join("|");
+  assert.equal(signature(relativeTask.options[relativeTask.answerIndex]), signature(relativeTask.target), "relative-position correct option preserves all object locations");
+}
+assert.notEqual(relativeTasks[0].answerIndex, relativeTasks[1].answerIndex, "relative-position answers do not repeat the same option position");
 
 const proportion = data.tasks.find((task) => task.kind === "proportion");
 const ratio = (stack) => {
@@ -208,7 +231,7 @@ assert.equal(store.normalize({ version: 9, completed: ["cores-01"] }).completed.
 assert.deepEqual(Array.from(store.normalize({ version: 1, completed: ["cores-01", "unknown-task", "cores-01"] }).completed), ["cores-01"], "current progress versions preserve valid unique challenge IDs only");
 assert.equal(store.normalize({ completed: ["cores-01"] }).completed.length, 0, "progress without a version resets safely");
 assert.equal(store.normalize({ version: 1, completed: ["formas-05", "formas-06", "formas-08", "numeros-01", "numeros-02", "numeros-03", "numeros-04", "numeros-05", "numeros-06", "numeros-07"] }).completed.length, 0, "redesigned shape and number challenges do not inherit completion from previous task IDs");
-assert.equal(store.normalize({ version: 1, completed: ["regras-01", "regras-02", "regras-03"] }).completed.length, 0, "redesigned rules challenges do not inherit completion from previous task IDs");
+assert.equal(store.normalize({ version: 1, completed: ["regras-01", "regras-02", "regras-03", "posicoes-01"] }).completed.length, 0, "redesigned rules and route challenges do not inherit completion from previous task IDs");
 
 const activity = read("../assets/js/activity.js");
 assert.ok(activity.includes('target.closest("[data-speak]")'), "audio instructions use one delegated click handler");
@@ -259,6 +282,8 @@ assert.ok(activity.includes("accepted.push(targetIndex)") && activity.includes("
 assert.ok(activity.includes('svg.addEventListener("pointermove"') && activity.includes('svg.addEventListener("pointerup"'), "pentagon drawing supports pointer and touch dragging");
 assert.ok(activity.includes('face.textContent = mood === "happy" ? "😊" : "😟"'), "polygon drawing gives happy and sad proximity feedback");
 assert.ok(activity.includes("function shapeGlyphHTML(shape)"), "shapes use centered CSS glyph elements rather than font glyph baselines");
+assert.ok(activity.includes("function relativePositionVisual(task)") && activity.includes("function relativePositionBoard(layout)"), "relative positions render object arrangements and alternatives");
+assert.ok(activity.includes("const dimension = Math.sqrt(task.grid.length)") && activity.includes("Math.min(dimension - 1"), "route movement supports different square matrix sizes");
 assert.ok(activity.includes("function arrowOrderVisual(task)") && activity.includes("function handleArrowOrderChoice(button)"), "colored arrows can be copied by clicking them in sequence");
 assert.ok(activity.includes("function complexMatchVisual(task)") && activity.includes("function irregularCompositionHTML(layers)"), "irregular nested compositions have a dedicated visual renderer");
 assert.ok(activity.includes("function arrowSequenceMatchVisual(task)") && activity.includes("task.kind === \"arrow-sequence-match\""), "complete arrow paths can be compared as alternatives");
@@ -275,4 +300,4 @@ assert.ok(activity.includes("function nestedLayersHTML(layers)") && activity.inc
 assert.ok(activity.includes("function shapeColorChoiceVisual(task)") && activity.includes("shape-color-options"), "the fourteen colored shapes have a dedicated choice grid");
 assert.ok(activity.includes("function setupShapeSorting(task)") && activity.includes('root.addEventListener("pointerdown"') && activity.includes('root.addEventListener("pointerup"'), "shape classification supports pointer drag and drop");
 assert.ok(activity.includes('document.elementFromPoint(event.clientX, event.clientY)'), "shape sorting detects the drop target under the pointer");
-console.log("OK: seven worlds, 41 visual challenges, colors, shapes, numbers, rules, positions, proportions, letters, sound and progress");
+console.log("OK: seven worlds, 45 visual challenges, colors, shapes, numbers, rules, positions, proportions, letters, sound and progress");
