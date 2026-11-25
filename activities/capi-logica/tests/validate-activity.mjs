@@ -88,6 +88,7 @@ const arrowCopy = rulesTasks.find((task) => task.id === "regras-01-arrow-copy");
 assert.equal(arrowCopy.kind, "arrow-order", "the first rules challenge copies a colored arrow order");
 assert.equal(arrowCopy.sequence.length, 4, "the first arrow order has four reference arrows");
 assert.equal(arrowCopy.choices.length, 8, "the first arrow order has eight selectable arrows");
+assert.equal(new Set(arrowCopy.choices.map((choice) => choice.id)).size, 8, "each selectable arrow has a unique identity");
 for (const arrow of arrowCopy.sequence) assert.equal(arrowCopy.choices.filter((choice) => choice.direction === arrow.direction && choice.color === arrow.color).length, 1, "each reference arrow has exactly one matching choice");
 
 const irregularMatch = rulesTasks.find((task) => task.id === "regras-02-irregular-match");
@@ -103,10 +104,27 @@ assert.equal(diagonalPattern.kind, "pattern", "the third rules challenge continu
 assert.equal(diagonalPattern.options.length, 6, "the diagonal arrow pattern offers six alternatives");
 for (const token of diagonalPattern.sequence.filter(Boolean).concat(diagonalPattern.options)) assert.ok(["up-right", "down-right", "down-left", "up-left"].includes(token.split("-").slice(-2).join("-")) || ["up-right", "down-right", "down-left", "up-left"].includes(token), "the diagonal task uses diagonal arrow directions");
 
+const opposite = rulesTasks.find((task) => task.id === "regras-04-opposite");
+assert.equal(opposite.kind, "odd-one", "challenge four asks the learner to find a different arrow");
+const oppositeDirections = opposite.items.map((item) => item.token.split("-").slice(-2).join("-"));
+assert.equal(oppositeDirections.filter((direction) => direction === "up-right").length, 5, "five arrows share the same diagonal direction");
+assert.equal(opposite.items.find((item) => item.value === opposite.answer).token.split("-").slice(-2).join("-"), "down-left", "the odd arrow points in the opposite direction");
+
+const colorDirection = rulesTasks.find((task) => task.id === "regras-05-color-direction");
+assert.equal(colorDirection.kind, "pattern", "challenge five combines arrow color and direction");
+assert.ok(colorDirection.sequence.some((token) => token.startsWith("red-")) && colorDirection.sequence.some((token) => token.startsWith("blue-")), "the color-direction pattern contains different arrow colors");
+
+const arrowMatrix = rulesTasks.find((task) => task.id === "regras-06-arrow-matrix");
+assert.equal(arrowMatrix.kind, "matrix", "challenge six is a directional matrix");
+assert.equal(arrowMatrix.grid.length, 9, "directional matrix has nine cells");
+assert.equal(arrowMatrix.grid.filter((value) => value === null).length, 1, "directional matrix has one missing cell");
+assert.ok(arrowMatrix.options.includes(arrowMatrix.answer), "directional matrix includes its correct answer");
+
 const longerCopy = rulesTasks.find((task) => task.id === "regras-07-arrow-copy-plus");
 assert.equal(longerCopy.kind, "arrow-order", "challenge seven extends the arrow-copy interaction");
 assert.equal(longerCopy.sequence.length, 6, "the advanced arrow-copy challenge has six steps");
 assert.equal(longerCopy.choices.length, 12, "the advanced arrow-copy challenge has twelve selectable arrows");
+for (const arrow of longerCopy.sequence) assert.equal(longerCopy.choices.filter((choice) => choice.direction === arrow.direction && choice.color === arrow.color).length, 1, "advanced arrow sequence has one exact choice per step");
 const pathMatch = rulesTasks.find((task) => task.id === "regras-08-sequence-match");
 assert.equal(pathMatch.kind, "arrow-sequence-match", "challenge eight compares complete arrow paths");
 assert.equal(pathMatch.target.length, 5, "the path model has five arrows");
