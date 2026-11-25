@@ -32,6 +32,9 @@ assert.ok(css.includes(".nested-shape-layer") && css.includes(".nested-options")
 assert.ok(css.includes(".shape-color-options{display:grid;grid-template-columns:repeat(7") && css.includes(".shape-color-option"), "fourteen colored alternatives render in two rows of seven");
 assert.ok(css.includes(".sort-zones") && css.includes(".sort-zone.is-hovered") && css.includes(".sort-drag-ghost"), "shape sorting has draggable items and visible drop zones");
 assert.ok(css.includes(".polygon-point.is-next") && css.includes(".polygon-face.happy") && css.includes(".polygon-face.sad") && css.includes("transform:scale(1.5)"), "the guided polygon game enlarges the next point and shows proximity feedback");
+assert.ok(css.includes(".nested-shape-layer") && css.includes(".nested-options"), "nested-shape challenge has multiple centered layers");
+assert.ok(css.includes(".shape-color-options{display:grid;grid-template-columns:repeat(7") && css.includes(".shape-color-option"), "the fourteen color-shape alternatives fit two rows");
+assert.ok(css.includes(".sort-zones") && css.includes(".sort-zone.is-hovered") && css.includes(".sort-drag-ghost"), "drag sorting has clear drop zones and dragging feedback");
 
 const catalog = fs.readFileSync(path.join(root, "index.html"), "utf8");
 assert.ok(catalog.includes('href="activities/capi-logica/index.html"'), "the catalog opens Capi Logic Games");
