@@ -73,7 +73,10 @@ assert.ok(missingAddend.options.includes(missingAddend.answer), "missing addend 
 const formsFirst = data.tasks.find((task) => task.id === "formas-01");
 assert.equal(formsFirst.kind, "shape-match", "the first shape challenge remains a matching task");
 assert.equal(formsFirst.target, "red-circle", "the first shape challenge uses a colored tile and an inner shape");
-assert.deepEqual(Array.from(formsFirst.options), ["blue-circle", "red-square", "red-circle"], "the learner must compare both color and inner shape");
+assert.equal(formsFirst.options.length, 3, "the first shape challenge has three alternatives");
+assert.ok(formsFirst.options.includes("blue-circle"), "one distractor keeps the circle but changes its color");
+assert.ok(formsFirst.options.includes("red-square"), "one distractor keeps the color but changes its shape");
+assert.ok(formsFirst.options.includes("red-circle"), "one alternative matches both the target color and shape");
 assert.equal(formsFirst.answer, "red-circle", "the composite visual match has one correct answer");
 const formsThird = data.tasks.find((task) => task.id === "formas-03");
 assert.deepEqual(Array.from(formsThird.sequence), ["red-circle", "blue-square", "red-circle", "blue-square", null], "the approved third challenge sequence is preserved");
