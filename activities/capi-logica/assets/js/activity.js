@@ -333,12 +333,31 @@
     ).join("") + '</div>';
   }
   function gridVisual(task) {
-    return '<div class="position-cue"><span class="start-marker">🐾</span><span>→</span>' +
+    const dimension = Math.sqrt(task.grid.length);
+    return '<div class="position-cue"><span class="start-marker">🐾</span>' +
       task.moves.map((move) => '<span>' + DATA.ARROWS[move] + '</span>').join("") + '</div>' +
-      '<div class="position-grid">' + task.grid.map((value, index) =>
+      '<div class="position-grid" style="--grid-columns:' + dimension + '">' + task.grid.map((value, index) =>
         '<button type="button" class="position-cell ' + (index === task.startIndex ? "start" : "") + '" data-cell="' + index + '" aria-label="Casa ' + (index + 1) + '">' +
         (index === task.startIndex ? "🐾" : esc(value)) + '</button>'
       ).join("") + '</div>';
+  }
+  function relativePositionBoard(layout) {
+    const occupied = new Map(layout.items.map((item) => [item.cell, item.emoji]));
+    return '<div class="relative-position-grid">' + Array.from({ length: 9 }, (_, index) =>
+      '<span class="relative-position-cell">' + (occupied.get(index) || "") + '</span>'
+    ).join("") + '</div>';
+  }
+  function relativePositionVisual(task) {
+    return '<div class="relative-position-game">' +
+      '<p class="relative-position-label">MODELO</p>' +
+      '<div class="relative-position-model">' + relativePositionBoard(task.target) + '</div>' +
+      '<p class="relative-position-instruction">Encontre a mesma organização.</p>' +
+      '<div class="relative-position-options">' + task.options.map((layout, index) =>
+        '<button type="button" class="option-button relative-position-option" data-choice="' + index + '" data-choice-index="' + index + '" data-option-index="' + index + '" aria-label="Organização ' + (index + 1) + '">' +
+          relativePositionBoard(layout) +
+        '</button>'
+      ).join("") + '</div>' +
+    '</div>';
   }
   function positionBox(position, value) {
     return '<span class="position-box ' + esc(position) + '"><span>' + esc(value) + '</span></span>';
@@ -491,6 +510,7 @@
     if (task.kind === "calculation") return calculationVisual(task);
     if (task.kind === "odd-one") return oddVisual(task);
     if (task.kind === "grid-position") return gridVisual(task);
+    if (task.kind === "relative-position") return relativePositionVisual(task);
     if (task.kind === "position") return positionVisual(task);
     if (task.kind === "matrix") return matrixVisual(task);
     if (task.kind === "pair") return pairVisual(task);
@@ -668,7 +688,7 @@
     if (task.kind === "apple-paint-count" && document.getElementById("apple-paint-answer")?.hidden !== false) return;
 
     let correct = false;
-    if (task.kind === "proportion" || task.kind === "sound-pattern" || task.kind === "nested-shape-match" || task.kind === "shape-color-choice" || task.kind === "complex-match" || task.kind === "arrow-sequence-match") {
+    if (task.kind === "proportion" || task.kind === "sound-pattern" || task.kind === "nested-shape-match" || task.kind === "shape-color-choice" || task.kind === "complex-match" || task.kind === "arrow-sequence-match" || task.kind === "relative-position") {
       correct = Number(button.dataset.optionIndex) === task.answerIndex;
     } else {
       correct = String(value) === String(task.answer);
@@ -679,12 +699,17 @@
   function handleGridCell(button) {
     const task = currentTask();
     if (!task || task.kind !== "grid-position") return;
+    const dimension = Math.sqrt(task.grid.length);
+    if (!Number.isInteger(dimension) || dimension < 2) return;
     const rowCol = task.moves.reduce((position, move) => {
       const row = position.row + (move === "up" ? -1 : move === "down" ? 1 : 0);
       const col = position.col + (move === "left" ? -1 : move === "right" ? 1 : 0);
-      return { row: Math.max(0, Math.min(2, row)), col: Math.max(0, Math.min(2, col)) };
-    }, { row: Math.floor(task.startIndex / 3), col: task.startIndex % 3 });
-    const answer = rowCol.row * 3 + rowCol.col;
+      return {
+        row: Math.max(0, Math.min(dimension - 1, row)),
+        col: Math.max(0, Math.min(dimension - 1, col))
+      };
+    }, { row: Math.floor(task.startIndex / dimension), col: task.startIndex % dimension });
+    const answer = rowCol.row * dimension + rowCol.col;
     if (Number(button.dataset.cell) === answer && answer === task.answerIndex) completeTask("Caminho encontrado! Você seguiu todas as setas.");
     else feedback("Siga uma seta de cada vez, partindo da pegada.", "hint");
   }
