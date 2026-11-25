@@ -67,14 +67,14 @@
   ];
 
   function spreadCorrectOptionPositions(items) {
-    let cursor = 0;
+    const cursors = Object.create(null);
     const preferred = {
       2: [0, 1],
       3: [0, 2, 1],
       4: [0, 3, 1, 2],
       5: [0, 4, 2, 1, 3]
     };
-    function rebalance(holder) {
+    function rebalance(holder, forcedIndex) {
       if (!Array.isArray(holder.options) || !holder.options.length) return;
       const options = holder.options;
       const correctIndex = Number.isInteger(holder.answerIndex)
@@ -83,8 +83,11 @@
       if (correctIndex < 0 || correctIndex >= options.length) return;
       const length = options.length;
       const positions = preferred[length] || Array.from({ length }, (_, index) => index);
-      const targetIndex = positions[cursor % positions.length];
-      cursor += 1;
+      const cursor = cursors[length] || 0;
+      cursors[length] = cursor + 1;
+      const targetIndex = Number.isInteger(forcedIndex)
+        ? Math.max(0, Math.min(length - 1, forcedIndex))
+        : positions[cursor % positions.length];
       if (targetIndex === correctIndex) return;
       const correctOption = options.splice(correctIndex, 1)[0];
       options.splice(targetIndex, 0, correctOption);
