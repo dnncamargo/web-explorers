@@ -35,6 +35,9 @@ assert.ok(css.includes(".polygon-point.is-next") && css.includes(".polygon-face.
 assert.ok(css.includes(".nested-shape-layer") && css.includes(".nested-options"), "nested-shape challenge has multiple centered layers");
 assert.ok(css.includes(".shape-color-options{display:grid;grid-template-columns:repeat(7") && css.includes(".shape-color-option"), "the fourteen color-shape alternatives fit two rows");
 assert.ok(css.includes(".sort-zones") && css.includes(".sort-zone.is-hovered") && css.includes(".sort-drag-ghost"), "drag sorting has clear drop zones and dragging feedback");
+assert.ok(css.includes(".frog-stage") && css.includes("@keyframes frog-hop"), "frog counting uses a visible hop animation");
+assert.ok(css.includes(".addition-series") && css.includes(".addition-step-dot"), "incremental addition shows a nine-step progress strip");
+assert.ok(css.includes(".number-path-svg") && css.includes(".number-path-dot.is-next"), "the numeric 3 by 3 path highlights its next point");
 
 const catalog = fs.readFileSync(path.join(root, "index.html"), "utf8");
 assert.ok(catalog.includes('href="activities/capi-logica/index.html"'), "the catalog opens Capi Logic Games");
