@@ -102,6 +102,7 @@ assert.deepEqual(Array.from(irregularMatch.options[irregularMatch.answerIndex].l
 const diagonalPattern = rulesTasks.find((task) => task.id === "regras-03-diagonal-pattern");
 assert.equal(diagonalPattern.kind, "pattern", "the third rules challenge continues a diagonal arrow pattern");
 assert.equal(diagonalPattern.options.length, 6, "the diagonal arrow pattern offers six alternatives");
+assert.ok(diagonalPattern.options.includes(diagonalPattern.answer), "the diagonal arrow pattern includes its correct continuation");
 for (const token of diagonalPattern.sequence.filter(Boolean).concat(diagonalPattern.options)) assert.ok(["up-right", "down-right", "down-left", "up-left"].includes(token.split("-").slice(-2).join("-")) || ["up-right", "down-right", "down-left", "up-left"].includes(token), "the diagonal task uses diagonal arrow directions");
 
 const opposite = rulesTasks.find((task) => task.id === "regras-04-opposite");
@@ -112,6 +113,7 @@ assert.equal(opposite.items.find((item) => item.value === opposite.answer).token
 
 const colorDirection = rulesTasks.find((task) => task.id === "regras-05-color-direction");
 assert.equal(colorDirection.kind, "pattern", "challenge five combines arrow color and direction");
+assert.ok(colorDirection.options.includes(colorDirection.answer), "the color-direction sequence includes its correct combination");
 assert.ok(colorDirection.sequence.some((token) => token.startsWith("red-")) && colorDirection.sequence.some((token) => token.startsWith("blue-")), "the color-direction pattern contains different arrow colors");
 
 const arrowMatrix = rulesTasks.find((task) => task.id === "regras-06-arrow-matrix");
@@ -206,6 +208,7 @@ assert.equal(store.normalize({ version: 9, completed: ["cores-01"] }).completed.
 assert.deepEqual(Array.from(store.normalize({ version: 1, completed: ["cores-01", "unknown-task", "cores-01"] }).completed), ["cores-01"], "current progress versions preserve valid unique challenge IDs only");
 assert.equal(store.normalize({ completed: ["cores-01"] }).completed.length, 0, "progress without a version resets safely");
 assert.equal(store.normalize({ version: 1, completed: ["formas-05", "formas-06", "formas-08", "numeros-01", "numeros-02", "numeros-03", "numeros-04", "numeros-05", "numeros-06", "numeros-07"] }).completed.length, 0, "redesigned shape and number challenges do not inherit completion from previous task IDs");
+assert.equal(store.normalize({ version: 1, completed: ["regras-01", "regras-02", "regras-03"] }).completed.length, 0, "redesigned rules challenges do not inherit completion from previous task IDs");
 
 const activity = read("../assets/js/activity.js");
 assert.ok(activity.includes('target.closest("[data-speak]")'), "audio instructions use one delegated click handler");
