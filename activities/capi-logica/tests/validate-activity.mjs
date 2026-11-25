@@ -8,7 +8,7 @@ vm.runInContext(read("../assets/js/games.js"), gamesContext, { filename: "games.
 const data = gamesContext.window.CapiLogicGames;
 assert.ok(data, "visual game data is registered");
 assert.equal(data.worlds.length, 7, "seven visual logic areas exist");
-assert.equal(data.tasks.length, 45, "seven areas contain 45 short challenges, including seven in the positions area");
+assert.equal(data.tasks.length, 45, "seven areas contain 45 short challenges, including seven in positions and eight in rules");
 assert.equal(new Set(data.worlds.map((world) => world.id)).size, 7, "world IDs are unique");
 assert.equal(new Set(data.tasks.map((task) => task.id)).size, 41, "task IDs are unique");
 
@@ -283,6 +283,7 @@ assert.ok(activity.includes('svg.addEventListener("pointermove"') && activity.in
 assert.ok(activity.includes('face.textContent = mood === "happy" ? "😊" : "😟"'), "polygon drawing gives happy and sad proximity feedback");
 assert.ok(activity.includes("function shapeGlyphHTML(shape)"), "shapes use centered CSS glyph elements rather than font glyph baselines");
 assert.ok(activity.includes("function relativePositionVisual(task)") && activity.includes("function relativePositionBoard(layout)"), "relative positions render object arrangements and alternatives");
+assert.ok(activity.includes(".relative-position-options") && activity.includes("relative-position-options");"), "relative-position alternatives highlight as one exclusive choice");
 assert.ok(activity.includes("const dimension = Math.sqrt(task.grid.length)") && activity.includes("Math.min(dimension - 1"), "route movement supports different square matrix sizes");
 assert.ok(activity.includes("function arrowOrderVisual(task)") && activity.includes("function handleArrowOrderChoice(button)"), "colored arrows can be copied by clicking them in sequence");
 assert.ok(activity.includes("function complexMatchVisual(task)") && activity.includes("function irregularCompositionHTML(layers)"), "irregular nested compositions have a dedicated visual renderer");
