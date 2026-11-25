@@ -15,6 +15,7 @@
   let additionSeriesStep = 0;
   let countdownStep = 0;
   let applePainted = [];
+  let arrowOrderStep = 0;
   let frogRunToken = 0;
   let frogTimer = null;
   let audioContext = null;
@@ -68,6 +69,9 @@
     if (parts.length === 2 && DATA.COLORS[parts[0]] && DATA.SHAPES[parts[1]]) {
       return '<span class="token combo-token ' + esc(parts[0]) + '" aria-label="combinação de forma e cor">' + shapeGlyphHTML(parts[1]) + '</span>';
     }
+    if (parts.length === 3 && DATA.COLORS[parts[0]] && DATA.ARROWS[parts.slice(1).join("-")]) {
+      return '<span class="token token-arrow colored-arrow" style="color:' + DATA.COLORS[parts[0]] + '" aria-label="seta colorida">' + DATA.ARROWS[parts.slice(1).join("-")] + '</span>';
+    }
     return '<span class="token">' + esc(key) + '</span>';
   }
   function optionButton(value, label, index, extraClass) {
@@ -77,6 +81,62 @@
     return '<div class="option-grid">' + options.map((value, index) =>
       '<button type="button" class="option-button" data-choice="' + encodeURIComponent(String(value)) + '" data-choice-index="' + index + '" aria-label="Número ' + value + '"><span class="option-number">' + value + '</span></button>'
     ).join("") + '</div>';
+  }
+  function arrowVisual(arrow, extraClass) {
+    const glyph = DATA.ARROWS[arrow.direction] || "?";
+    const color = DATA.COLORS[arrow.color] || DATA.COLORS.black;
+    return '<span class="arrow-visual ' + (extraClass || "") + '" style="--arrow-color:' + color + '" aria-hidden="true">' + glyph + '</span>';
+  }
+  function arrowOrderVisual(task) {
+    return '<div class="arrow-order-game">' +
+      '<div class="arrow-reference-panel"><p>OLHE A ORDEM</p><div class="arrow-reference-row">' +
+        task.sequence.map((arrow, index) => '<span class="arrow-reference-step" data-arrow-step="' + index + '">' + arrowVisual(arrow, "reference-arrow") + '</span>').join("") +
+      '</div></div>' +
+      '<p class="arrow-order-instruction">Agora toque nas setas de baixo na mesma ordem.</p>' +
+      '<div class="arrow-choice-grid">' + task.choices.map((arrow) =>
+        '<button type="button" class="arrow-choice-button" data-arrow-choice-id="' + esc(arrow.id) + '" aria-label="Seta ' + esc(arrow.color) + '">' + arrowVisual(arrow, "choice-arrow") + '</button>'
+      ).join("") + '</div>' +
+      '<div class="arrow-order-progress" id="arrow-order-progress" aria-live="polite">0 / ' + task.sequence.length + '</div>' +
+    '</div>';
+  }
+  const IRREGULAR_PATHS = {
+    cloud: "M17 54 C7 43 15 25 31 27 C36 9 61 8 68 27 C87 23 96 43 82 57 C87 74 67 86 52 76 C37 91 15 78 17 54Z",
+    leaf: "M12 63 C16 37 43 13 87 15 C83 52 57 84 12 63Z",
+    wave: "M12 27 C28 7 42 28 54 17 C69 5 87 20 80 36 C99 51 80 75 63 66 C46 89 23 70 28 57 C7 55 4 40 12 27Z",
+    blob: "M49 8 C66 2 78 18 74 32 C93 40 91 63 72 70 C65 90 43 92 34 75 C13 78 5 57 20 42 C13 23 31 12 49 8Z",
+    shell: "M18 70 C9 52 18 23 39 15 C58 7 80 22 84 43 C88 63 65 85 42 83 C29 83 21 79 18 70Z",
+    ribbon: "M15 18 C34 8 45 31 61 18 C75 7 91 21 82 37 C75 51 56 42 45 59 C35 77 17 86 11 69 C4 51 29 43 15 18Z"
+  };
+  function irregularCompositionHTML(layers) {
+    const transforms = ["", "translate(20 20) scale(.60)", "translate(37 37) scale(.27)", "translate(43 43) scale(.14)"];
+    return '<svg class="irregular-composition" viewBox="0 0 100 100" role="img" aria-label="Composição de formas irregulares encaixadas">' +
+      layers.map((layer, index) =>
+        '<path d="' + IRREGULAR_PATHS[layer.shape] + '" transform="' + transforms[Math.min(index, transforms.length - 1)] + '" fill="' + (DATA.COLORS[layer.color] || DATA.COLORS.black) + '" stroke="#334b3b" stroke-width="2.2" stroke-linejoin="round"/>'
+      ).join("") + '</svg>';
+  }
+  function complexMatchVisual(task) {
+    return '<div class="complex-match-game">' +
+      '<p class="complex-match-label">MODELO</p>' +
+      '<div class="complex-match-target">' + irregularCompositionHTML(task.targetLayers) + '</div>' +
+      '<p class="complex-match-instruction">Encontre a mesma combinação.</p>' +
+      '<div class="complex-match-options">' + task.options.map((option, index) =>
+        '<button type="button" class="option-button complex-match-option" data-choice="' + index + '" data-choice-index="' + index + '" data-option-index="' + index + '" aria-label="Combinação ' + (index + 1) + '">' +
+          irregularCompositionHTML(option.layers) +
+        '</button>'
+      ).join("") + '</div>' +
+    '</div>';
+  }
+  function arrowSequenceMatchVisual(task) {
+    const renderRow = (sequence) => sequence.map(arrow => arrowVisual(arrow, "sequence-match-arrow")).join("");
+    return '<div class="arrow-sequence-match-game">' +
+      '<p class="arrow-match-label">CAMINHO MODELO</p>' +
+      '<div class="arrow-match-target">' + renderRow(task.target) + '</div>' +
+      '<div class="arrow-sequence-options">' + task.options.map((sequence, index) =>
+        '<button type="button" class="option-button arrow-sequence-option" data-choice="' + index + '" data-choice-index="' + index + '" data-option-index="' + index + '" aria-label="Caminho ' + (index + 1) + '">' +
+          renderRow(sequence) +
+        '</button>'
+      ).join("") + '</div>' +
+    '</div>';
   }
   function patternVisual(sequence, options) {
     return '<div class="pattern-challenge">' +
@@ -402,6 +462,9 @@
       ).join("") + '</div>';
   }
   function renderVisual(task) {
+    if (task.kind === "arrow-order") return arrowOrderVisual(task);
+    if (task.kind === "complex-match") return complexMatchVisual(task);
+    if (task.kind === "arrow-sequence-match") return arrowSequenceMatchVisual(task);
     if (task.kind === "pattern" || task.kind === "letter-pattern") {
       return patternVisual(task.sequence, task.options);
     }
@@ -495,6 +558,7 @@
     additionSeriesStep = 0;
     countdownStep = 0;
     applePainted = [];
+    arrowOrderStep = 0;
     frogRunToken += 1;
     if (frogTimer !== null) global.clearTimeout(frogTimer);
     frogTimer = null;
@@ -536,6 +600,29 @@
       });
     } else {
       button.classList.add("is-selected");
+    }
+  }
+  function handleArrowOrderChoice(button) {
+    const task = currentTask();
+    if (!task || task.kind !== "arrow-order" || button.disabled) return;
+    const choice = task.choices.find(item => item.id === button.dataset.arrowChoiceId);
+    const expected = task.sequence[arrowOrderStep];
+    if (!choice || !expected) return;
+    if (choice.direction !== expected.direction || choice.color !== expected.color) {
+      feedback("Observe a seta que vem agora e tente outra.", "hint");
+      return;
+    }
+    button.disabled = true;
+    button.classList.add("is-selected");
+    const reference = document.querySelector('[data-arrow-step="' + arrowOrderStep + '"]');
+    if (reference) reference.classList.add("is-complete");
+    arrowOrderStep += 1;
+    const counter = document.getElementById("arrow-order-progress");
+    if (counter) counter.textContent = arrowOrderStep + " / " + task.sequence.length;
+    if (arrowOrderStep === task.sequence.length) {
+      completeTask("Você copiou todas as setas na ordem certa! 🌟");
+    } else {
+      feedback("Muito bem! Agora encontre a próxima seta.", "good");
     }
   }
   function handleChoice(button) {
@@ -581,7 +668,7 @@
     if (task.kind === "apple-paint-count" && document.getElementById("apple-paint-answer")?.hidden !== false) return;
 
     let correct = false;
-    if (task.kind === "proportion" || task.kind === "sound-pattern" || task.kind === "nested-shape-match" || task.kind === "shape-color-choice") {
+    if (task.kind === "proportion" || task.kind === "sound-pattern" || task.kind === "nested-shape-match" || task.kind === "shape-color-choice" || task.kind === "complex-match" || task.kind === "arrow-sequence-match") {
       correct = Number(button.dataset.optionIndex) === task.answerIndex;
     } else {
       correct = String(value) === String(task.answer);
@@ -1171,12 +1258,14 @@
     if (paintTarget) { handlePaintTarget(paintTarget); return; }
     const cell = target.closest("[data-cell]");
     if (cell) { handleGridCell(cell); return; }
+    const arrowChoice = target.closest("[data-arrow-choice-id]");
+    if (arrowChoice) { handleArrowOrderChoice(arrowChoice); return; }
     const choice = target.closest("[data-choice]");
     if (choice) { handleChoice(choice); return; }
     const option = target.closest("[data-option-index]");
     if (option) {
       const task = currentTask();
-      if (task && (task.kind === "proportion" || task.kind === "sound-pattern")) handleChoice(option);
+      if (task && (task.kind === "proportion" || task.kind === "sound-pattern" || task.kind === "complex-match" || task.kind === "arrow-sequence-match")) handleChoice(option);
     }
   });
 
