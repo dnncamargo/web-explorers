@@ -8,15 +8,42 @@ vm.runInContext(read("../assets/js/games.js"), gamesContext, { filename: "games.
 const data = gamesContext.window.CapiLogicGames;
 assert.ok(data, "visual game data is registered");
 assert.equal(data.worlds.length, 7, "seven visual logic areas exist");
-assert.equal(data.tasks.length, 29, "seven areas contain 29 short challenges, including six in colors and eight in shapes");
+assert.equal(data.tasks.length, 36, "seven areas contain 36 short challenges, including six in colors and nine each in shapes and numbers");
 assert.equal(new Set(data.worlds.map((world) => world.id)).size, 7, "world IDs are unique");
-assert.equal(new Set(data.tasks.map((task) => task.id)).size, 29, "task IDs are unique");
+assert.equal(new Set(data.tasks.map((task) => task.id)).size, 36, "task IDs are unique");
 
 for (const world of data.worlds) {
   const tasks = data.tasks.filter((task) => task.world === world.id);
-  assert.equal(tasks.length, world.id === "cores" ? 6 : world.id === "formas" ? 8 : 3, world.id + " has the configured number of challenges");
+  assert.equal(tasks.length, world.id === "cores" ? 6 : world.id === "formas" || world.id === "numeros" ? 9 : 3, world.id + " has the configured number of challenges");
   for (const task of tasks) assert.ok(task.prompt && task.title && task.icon, task.id + " has an audio prompt and visual identity");
 }
+const numberPath = data.tasks.find((task) => task.id === "formas-09-number-path");
+assert.equal(numberPath.kind, "number-path", "shape area challenge nine connects numbered dots");
+assert.equal(numberPath.points.length, 9, "number path has a 3 by 3 set of nine points");
+assert.deepEqual(Array.from(numberPath.points, (point) => point.value).sort((a, b) => a - b), [1, 2, 3, 4, 5, 6, 7, 8, 9], "number path includes each number from one to nine exactly once");
+assert.notDeepEqual(Array.from(numberPath.points, (point) => point.value), [1, 2, 3, 4, 5, 6, 7, 8, 9], "number path points are shuffled out of order");
+assert.equal(new Set(numberPath.points.map((point) => point.x + "," + point.y)).size, 9, "all number path dots occupy distinct grid cells");
+
+const frogTask = data.tasks.find((task) => task.id === "numeros-01-frog");
+assert.equal(frogTask.kind, "frog-jumps", "number challenge one animates frog jumps");
+assert.equal(frogTask.jumpCount, 6, "the frog performs exactly six jumps");
+assert.equal(frogTask.answer, 6, "the frog jump count answer is six");
+
+const additionSeries = data.tasks.find((task) => task.id === "numeros-02-addition-steps");
+assert.equal(additionSeries.kind, "addition-series", "number challenge two is an incremental addition series");
+assert.equal(additionSeries.problems.length, 9, "the addition series contains nine equations");
+for (const increment of [1, 2, 3]) {
+  const level = additionSeries.problems.filter((problem) => problem.increment === increment);
+  assert.equal(level.length, 3, "the addition series contains three questions for +" + increment);
+  for (const problem of level) {
+    assert.equal(problem.base + problem.increment, problem.answer, "addition series result matches its addends");
+    assert.ok(problem.options.includes(problem.answer), "addition series includes the correct result among its choices");
+  }
+}
+const missingAddend = data.tasks.find((task) => task.id === "numeros-09-missing-addend");
+assert.equal(missingAddend.knownCount + missingAddend.answer, missingAddend.total, "missing addend challenge has a consistent result");
+assert.ok(missingAddend.options.includes(missingAddend.answer), "missing addend answer is a selectable option");
+
 const formsFirst = data.tasks.find((task) => task.id === "formas-01");
 assert.equal(formsFirst.kind, "shape-match", "the first shape challenge remains a matching task");
 assert.equal(formsFirst.target, "red-circle", "the first shape challenge uses a colored tile and an inner shape");
@@ -27,7 +54,7 @@ assert.deepEqual(Array.from(formsThird.sequence), ["red-circle", "blue-square", 
 assert.equal(formsThird.answer, "red-circle", "the approved third challenge answer is preserved");
 
 const kinds = new Set(data.tasks.map((task) => task.kind));
-for (const kind of ["pattern", "paint", "shape-match", "connect-polygon", "nested-shape-match", "shape-color-choice", "shape-sort", "count", "compare", "calculation", "odd-one", "grid-position", "position", "matrix", "pair", "proportion", "letter-pattern", "letter-match", "sound-pattern", "color-matrix"]) {
+for (const kind of ["pattern", "paint", "shape-match", "connect-polygon", "nested-shape-match", "shape-color-choice", "shape-sort", "number-path", "frog-jumps", "addition-series", "missing-addend", "count", "compare", "calculation", "odd-one", "grid-position", "position", "matrix", "pair", "proportion", "letter-pattern", "letter-match", "sound-pattern", "color-matrix"]) {
   assert.ok(kinds.has(kind), kind + " is represented");
 }
 
@@ -75,7 +102,7 @@ assert.equal(store.countAll(state), 1, "overall progress counts completed challe
 assert.equal(store.normalize({ version: 9, completed: ["cores-01"] }).completed.length, 0, "unknown progress versions reset safely");
 assert.deepEqual(Array.from(store.normalize({ version: 1, completed: ["cores-01", "unknown-task", "cores-01"] }).completed), ["cores-01"], "current progress versions preserve valid unique challenge IDs only");
 assert.equal(store.normalize({ completed: ["cores-01"] }).completed.length, 0, "progress without a version resets safely");
-assert.equal(store.normalize({ version: 1, completed: ["formas-05", "formas-06", "formas-08"] }).completed.length, 0, "redesigned shape challenges do not inherit completion from previous task IDs");
+assert.equal(store.normalize({ version: 1, completed: ["formas-05", "formas-06", "formas-08", "numeros-01", "numeros-02", "numeros-03"] }).completed.length, 0, "redesigned shape and number challenges do not inherit completion from previous task IDs");
 
 const activity = read("../assets/js/activity.js");
 assert.ok(activity.includes('target.closest("[data-speak]")'), "audio instructions use one delegated click handler");
@@ -126,8 +153,12 @@ assert.ok(activity.includes("accepted.push(targetIndex)") && activity.includes("
 assert.ok(activity.includes('svg.addEventListener("pointermove"') && activity.includes('svg.addEventListener("pointerup"'), "pentagon drawing supports pointer and touch dragging");
 assert.ok(activity.includes('face.textContent = mood === "happy" ? "😊" : "😟"'), "polygon drawing gives happy and sad proximity feedback");
 assert.ok(activity.includes("function shapeGlyphHTML(shape)"), "shapes use centered CSS glyph elements rather than font glyph baselines");
+assert.ok(activity.includes("function numberPathVisual(task)") && activity.includes("function setupNumberPath(task)"), "the 3 by 3 number path has a dedicated renderer and drag controller");
+assert.ok(activity.includes("function frogJumpVisual(task)") && activity.includes("function playFrogJumps(task)"), "frog jumps have a visual renderer and timed animation");
+assert.ok(activity.includes("function additionSeriesVisual(task)") && activity.includes("additionSeriesStep += 1"), "addition series advances after each correct answer");
+assert.ok(activity.includes("function missingAddendVisual(task)"), "missing addend has a dedicated visual equation renderer");
 assert.ok(activity.includes("function nestedLayersHTML(layers)") && activity.includes("function nestedShapeVisual(task)"), "nested shape matching renders multiple inner layers");
 assert.ok(activity.includes("function shapeColorChoiceVisual(task)") && activity.includes("shape-color-options"), "the fourteen colored shapes have a dedicated choice grid");
 assert.ok(activity.includes("function setupShapeSorting(task)") && activity.includes('root.addEventListener("pointerdown"') && activity.includes('root.addEventListener("pointerup"'), "shape classification supports pointer drag and drop");
 assert.ok(activity.includes('document.elementFromPoint(event.clientX, event.clientY)'), "shape sorting detects the drop target under the pointer");
-console.log("OK: seven worlds, 29 visual challenges, colors, shapes, numbers, rules, positions, proportions, letters, sound and progress");
+console.log("OK: seven worlds, 36 visual challenges, colors, shapes, numbers, rules, positions, proportions, letters, sound and progress");
