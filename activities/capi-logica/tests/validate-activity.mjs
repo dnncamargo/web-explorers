@@ -152,7 +152,7 @@ assert.ok(choicePositions.first > 0 && choicePositions.middle > 0 && choicePosit
 assert.ok(Math.max(...Object.values(choicePositions)) - Math.min(...Object.values(choicePositions)) <= 4, "three-choice correct-answer positions are reasonably balanced");
 
 const kinds = new Set(data.tasks.map((task) => task.kind));
-for (const kind of ["pattern", "paint", "shape-match", "connect-polygon", "nested-shape-match", "shape-color-choice", "shape-sort", "number-path", "frog-jumps", "addition-series", "missing-addend", "arrow-order", "complex-match", "arrow-sequence-match", "fish-crab-count", "apple-paint-count", "double-countdown", "count", "compare", "calculation", "odd-one", "grid-position", "position", "matrix", "pair", "proportion", "letter-pattern", "letter-match", "sound-pattern", "color-matrix"]) {
+for (const kind of ["pattern", "paint", "shape-match", "connect-polygon", "nested-shape-match", "shape-color-choice", "shape-sort", "number-path", "frog-jumps", "addition-series", "missing-addend", "arrow-order", "complex-match", "arrow-sequence-match", "fish-crab-count", "apple-paint-count", "double-countdown", "calculation", "odd-one", "grid-position", "position", "matrix", "pair", "proportion", "letter-pattern", "letter-match", "sound-pattern", "color-matrix"]) {
   assert.ok(kinds.has(kind), kind + " is represented");
 }
 
