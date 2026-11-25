@@ -95,7 +95,7 @@
     }
     items.forEach((task) => {
       if (task.kind === "addition-series" && Array.isArray(task.problems)) {
-        task.problems.forEach(rebalance);
+        task.problems.forEach((problem) => rebalance(problem));
       } else if (task.kind === "double-countdown" && Array.isArray(task.options)) {
         task.options.forEach((options, index) => {
           const holder = { options, answer: task.answers[index] };
