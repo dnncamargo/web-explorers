@@ -359,7 +359,11 @@
     if (task.kind === "connect-polygon") return polygonVisual(task);
     if (task.kind === "nested-shape-match") return nestedShapeVisual(task);
     if (task.kind === "shape-color-choice") return shapeColorChoiceVisual(task);
-    if (task.kind === "shape-sort") return shapeSortVisual(task);\n    if (task.kind === "number-path") return numberPathVisual(task);\n    if (task.kind === "frog-jumps") return frogJumpVisual(task);\n    if (task.kind === "addition-series") return additionSeriesVisual(task);\n    if (task.kind === "missing-addend") return missingAddendVisual(task);
+    if (task.kind === "shape-sort") return shapeSortVisual(task);
+    if (task.kind === "number-path") return numberPathVisual(task);
+    if (task.kind === "frog-jumps") return frogJumpVisual(task);
+    if (task.kind === "addition-series") return additionSeriesVisual(task);
+    if (task.kind === "missing-addend") return missingAddendVisual(task);
     if (task.kind === "shape-count") return shapeCountVisual(task);
     if (task.kind === "side-count") {
       return '<div class="shape-target">' + tokenHTML(task.target) + '</div>' + numberOptions(task.options);
@@ -447,7 +451,8 @@
       '<button type="button" class="next-button" data-action="next-task" ' + (!isDone ? "disabled" : "") + '>' + (index < tasks.length - 1 ? "Próximo desafio →" : "Concluir área ✓") + '</button></div>' +
       '<p class="painter-note">A Capi está aqui para ajudar. Você pode ouvir a instrução novamente sempre que precisar.</p></section>';
     if (task.kind === "connect-polygon") setupPolygonDrawing(task);
-    if (task.kind === "shape-sort") setupShapeSorting(task);\n    if (task.kind === "number-path") setupNumberPath(task);
+    if (task.kind === "shape-sort") setupShapeSorting(task);
+    if (task.kind === "number-path") setupNumberPath(task);
   }
   function feedback(message, kind) {
     const node = document.getElementById("task-feedback");
@@ -1051,7 +1056,8 @@
         renderMap();
         return;
       }
-      if (name === "play-sound") { const task = currentTask(); if (task?.kind === "sound-pattern") playSoundSequence(task.sound); return; }\n        if (name === "start-frog") { const task = currentTask(); if (task?.kind === "frog-jumps") playFrogJumps(task); return; }
+      if (name === "play-sound") { const task = currentTask(); if (task?.kind === "sound-pattern") playSoundSequence(task.sound); return; }
+        if (name === "start-frog") { const task = currentTask(); if (task?.kind === "frog-jumps") playFrogJumps(task); return; }
     }
     const speechButton = target.closest("[data-speak]");
     if (speechButton) {
