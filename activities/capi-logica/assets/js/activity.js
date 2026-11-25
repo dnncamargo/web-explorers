@@ -204,7 +204,7 @@
   }
   function shapeSortVisual(task) {
     const zoneMarkup = task.zones.map((shape) =>
-      '<div class="sort-zone" data-sort-zone="' + esc(shape) + '">' +
+      '<div class="sort-zone" role="group" aria-label="Conjunto de formas" data-sort-zone="' + esc(shape) + '">' +
         '<div class="sort-zone-heading">' + coloredShapeHTML(shape, "black") + '</div>' +
         '<div class="sort-zone-items" data-sort-items="' + esc(shape) + '"></div>' +
         '<span class="sort-zone-count" data-sort-count="' + esc(shape) + '">0</span>' +
@@ -221,7 +221,7 @@
       '</div>' +
       '<div class="sort-zones">' + zoneMarkup + '</div>' +
       '<div class="sort-controls"><button type="button" class="quiet-button" data-action="reset-sorting">↻ Recomeçar</button></div>' +
-      '<p class="sort-instruction" id="sort-instruction">Arraste cada figura para o grupo da mesma forma.</p>' +
+      '<p class="sort-instruction" id="sort-instruction" aria-live="polite">Arraste cada figura para o grupo da mesma forma.</p>' +
     '</div>';
   }
   function shapeCountVisual(task) {
