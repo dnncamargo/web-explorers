@@ -12,6 +12,9 @@
   let activeTaskIndex = 0;
   let selectedColor = null;
   let painted = [];
+  let additionSeriesStep = 0;
+  let frogRunToken = 0;
+  let frogTimer = null;
   let audioContext = null;
 
   function esc(value) {
@@ -123,6 +126,78 @@
   function shapeMatchVisual(task) {
     return '<div class="shape-target">' + tokenHTML(task.target) + '</div><div class="option-grid">' +
       task.options.map((value, index) => optionButton(value, "Combinação " + (index + 1), index)).join("") + '</div>';
+  }
+  function frogJumpVisual(task) {
+    return '<div class="frog-game" id="frog-game">' +
+      '<div class="frog-stage" id="frog-stage">' +
+        '<div class="frog-pads">' + Array.from({ length: task.jumpCount + 1 }, (_, index) =>
+          '<span class="frog-pad" aria-hidden="true">🪷</span>'
+        ).join("") + '</div>' +
+        '<span class="frog-character" id="frog-character" aria-label="Sapo">🐸</span>' +
+      '</div>' +
+      '<button type="button" class="frog-start-button" data-action="start-frog">▶️</button>' +
+      '<p class="frog-hint" id="frog-hint">Toque para ver o sapo pular.</p>' +
+      '<div class="frog-answer" id="frog-answer" hidden><p>Quantos pulos o sapo deu?</p>' + numberOptions(task.options) + '</div>' +
+    '</div>';
+  }
+  function additionSeriesVisual(task) {
+    const problem = task.problems[additionSeriesStep] || task.problems[0];
+    const dots = task.problems.map((item, index) =>
+      '<i class="addition-step-dot ' + (index < additionSeriesStep ? "done" : index === additionSeriesStep ? "current" : "") + '"></i>'
+    ).join("");
+    return '<div class="addition-series">' +
+      '<div class="addition-series-top"><span class="addition-level">+' + problem.increment + '</span><span class="addition-count">' + (additionSeriesStep + 1) + ' / ' + task.problems.length + '</span></div>' +
+      '<div class="addition-progress">' + dots + '</div>' +
+      '<div class="addition-equation">' +
+        '<span class="addition-number">' + problem.base + '</span><span class="addition-symbol">+</span>' +
+        '<span class="addition-number">' + problem.increment + '</span><span class="addition-symbol">=</span>' +
+        '<span class="addition-missing">?</span>' +
+      '</div>' +
+      '<div class="addition-visual-groups"><div class="addition-visual-group">' +
+        Array.from({ length: problem.base }, () => '<span>' + esc(task.emoji) + '</span>').join("") +
+      '</div><span class="addition-symbol">+</span><div class="addition-visual-group extra">' +
+        Array.from({ length: problem.increment }, () => '<span>' + esc(task.emoji) + '</span>').join("") +
+      '</div></div>' +
+      '<p class="addition-hint">Encontre o total.</p>' +
+      numberOptions(problem.options) +
+    '</div>';
+  }
+  function missingAddendVisual(task) {
+    return '<div class="missing-addend-game">' +
+      '<div class="missing-addend-equation">' +
+        '<span class="addition-number">' + task.knownCount + '</span><span class="addition-symbol">+</span>' +
+        '<span class="addition-missing">?</span><span class="addition-symbol">=</span>' +
+        '<span class="addition-number">' + task.total + '</span>' +
+      '</div>' +
+      '<div class="missing-addend-pictures"><div class="addition-visual-group">' +
+        Array.from({ length: task.knownCount }, () => '<span>🍊</span>').join("") +
+      '</div><span class="addition-symbol">+</span><span class="addition-missing">?</span>' +
+      '<span class="addition-symbol">=</span><div class="addition-visual-group total">' +
+        Array.from({ length: task.total }, () => '<span>🍊</span>').join("") +
+      '</div></div>' +
+      numberOptions(task.options) +
+    '</div>';
+  }
+  function numberPathVisual(task) {
+    const points = task.points.map((point) =>
+      '<g class="number-path-dot ' + (point.value === 1 ? "is-next" : "") + '" data-point-value="' + point.value + '">' +
+        '<circle cx="' + point.x + '" cy="' + point.y + '" r="21"></circle>' +
+        '<text x="' + point.x + '" y="' + (point.y + 7) + '">' + point.value + '</text>' +
+      '</g>'
+    ).join("");
+    return '<div class="number-path-game">' +
+      '<p class="number-path-instruction">Ligue do 1 ao 9 sem pular nenhum número.</p>' +
+      '<div class="number-path-stage">' +
+        '<svg id="number-path-svg" class="number-path-svg" viewBox="0 0 360 300" role="img" aria-label="Grade três por três de pontos numerados fora de ordem">' +
+          '<polyline id="number-path-lines" class="number-path-lines" points=""></polyline>' +
+          '<line id="number-path-preview" class="number-path-preview" x1="0" y1="0" x2="0" y2="0" visibility="hidden"></line>' +
+          points +
+        '</svg>' +
+        '<span id="number-path-face" class="polygon-face" hidden>🙂</span>' +
+      '</div>' +
+      '<p id="number-path-hint" class="number-path-hint" aria-live="polite">Comece no número 1. O próximo número vai crescer.</p>' +
+      '<div class="number-path-controls"><button type="button" class="quiet-button" data-action="reset-number-path">↻ Recomeçar</button></div>' +
+    '</div>';
   }
   function countVisual(task) {
     return groupVisual(task.emoji, task.count) + numberOptions(task.options);
@@ -284,7 +359,7 @@
     if (task.kind === "connect-polygon") return polygonVisual(task);
     if (task.kind === "nested-shape-match") return nestedShapeVisual(task);
     if (task.kind === "shape-color-choice") return shapeColorChoiceVisual(task);
-    if (task.kind === "shape-sort") return shapeSortVisual(task);
+    if (task.kind === "shape-sort") return shapeSortVisual(task);\n    if (task.kind === "number-path") return numberPathVisual(task);\n    if (task.kind === "frog-jumps") return frogJumpVisual(task);\n    if (task.kind === "addition-series") return additionSeriesVisual(task);\n    if (task.kind === "missing-addend") return missingAddendVisual(task);
     if (task.kind === "shape-count") return shapeCountVisual(task);
     if (task.kind === "side-count") {
       return '<div class="shape-target">' + tokenHTML(task.target) + '</div>' + numberOptions(task.options);
@@ -358,6 +433,10 @@
     activeTaskIndex = index;
     selectedColor = null;
     painted = [];
+    additionSeriesStep = 0;
+    frogRunToken += 1;
+    if (frogTimer !== null) global.clearTimeout(frogTimer);
+    frogTimer = null;
     const isDone = progress.completed.includes(task.id);
     const isPaint = task.kind === "paint";
     app.innerHTML = '<section class="game-card"><div class="game-top"><div class="game-top-left"><button type="button" class="map-button" data-action="back-world">←</button><span>ÁREA ' + world.number + ' · DESAFIO ' + (index + 1) + '/' + tasks.length + '</span></div><span class="capi-avatar" aria-hidden="true"><i></i><b></b><span></span></span></div>' +
@@ -368,7 +447,7 @@
       '<button type="button" class="next-button" data-action="next-task" ' + (!isDone ? "disabled" : "") + '>' + (index < tasks.length - 1 ? "Próximo desafio →" : "Concluir área ✓") + '</button></div>' +
       '<p class="painter-note">A Capi está aqui para ajudar. Você pode ouvir a instrução novamente sempre que precisar.</p></section>';
     if (task.kind === "connect-polygon") setupPolygonDrawing(task);
-    if (task.kind === "shape-sort") setupShapeSorting(task);
+    if (task.kind === "shape-sort") setupShapeSorting(task);\n    if (task.kind === "number-path") setupNumberPath(task);
   }
   function feedback(message, kind) {
     const node = document.getElementById("task-feedback");
@@ -401,8 +480,27 @@
     const task = currentTask();
     if (!task) return;
     if (task.kind === "connect-polygon" && !document.getElementById("polygon-answer")?.contains(button)) return;
+    if (task.kind === "frog-jumps" && document.getElementById("frog-answer")?.hidden !== false) return;
     highlightOption(button);
     const value = decodeURIComponent(button.dataset.choice || "");
+
+    if (task.kind === "addition-series") {
+      const problem = task.problems[additionSeriesStep];
+      if (Number(value) !== problem.answer) {
+        feedback("Quase! Conte os grupos e tente novamente.", "hint");
+        return;
+      }
+      if (additionSeriesStep === task.problems.length - 1) {
+        completeTask("Você resolveu todas as somas de +1, +2 e +3! 🌟");
+        return;
+      }
+      additionSeriesStep += 1;
+      const board = document.querySelector(".game-board");
+      if (board) board.innerHTML = renderVisual(task);
+      feedback("Muito bem! Vamos para a próxima soma.", "good");
+      return;
+    }
+
     let correct = false;
     if (task.kind === "proportion" || task.kind === "sound-pattern" || task.kind === "nested-shape-match" || task.kind === "shape-color-choice") {
       correct = Number(button.dataset.optionIndex) === task.answerIndex;
@@ -449,7 +547,192 @@
     if (hint) hint.textContent = "Muito bem! Continue pintando os outros círculos.";
     if (painted.filter(Boolean).length === task.targets.length) completeTask("Todos os círculos receberam a cor correta! 🎨");
   }
-  function setupShapeSorting(task) {
+  function setupNumberPath(task) {
+    const svg = document.getElementById("number-path-svg");
+    const stage = document.querySelector(".number-path-stage");
+    const preview = document.getElementById("number-path-preview");
+    const lines = document.getElementById("number-path-lines");
+    const face = document.getElementById("number-path-face");
+    const hint = document.getElementById("number-path-hint");
+    if (!svg || !stage || !preview || !lines || !face || !hint) return;
+    let accepted = [];
+    let drawing = false;
+    let pointerId = null;
+    let completed = false;
+    const pointByValue = new Map(task.points.map((point) => [point.value, point]));
+    const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+    const coordinates = (event) => {
+      const rect = svg.getBoundingClientRect();
+      return {
+        x: Math.max(0, Math.min(360, (event.clientX - rect.left) / rect.width * 360)),
+        y: Math.max(0, Math.min(300, (event.clientY - rect.top) / rect.height * 300))
+      };
+    };
+    const expectedValue = () => accepted.length + 1;
+    const lastValue = () => accepted.length ? accepted[accepted.length - 1] : null;
+    const renderLines = () => {
+      const path = accepted.map((value) => pointByValue.get(value).x + "," + pointByValue.get(value).y).join(" ");
+      lines.setAttribute("points", path);
+    };
+    const updateDots = () => {
+      svg.querySelectorAll("[data-point-value]").forEach((node) => {
+        const value = Number(node.dataset.pointValue);
+        node.classList.toggle("is-next", !completed && value === expectedValue());
+        node.classList.toggle("is-visited", accepted.includes(value));
+      });
+    };
+    const hideFace = () => { face.hidden = true; };
+    const showFace = (event, mood) => {
+      const rect = stage.getBoundingClientRect();
+      face.textContent = mood === "happy" ? "😊" : "😟";
+      face.style.left = Math.max(18, Math.min(rect.width - 18, event.clientX - rect.left)) + "px";
+      face.style.top = Math.max(6, event.clientY - rect.top - 24) + "px";
+      face.hidden = false;
+      face.classList.toggle("happy", mood === "happy");
+      face.classList.toggle("sad", mood === "sad");
+    };
+    const showPreview = (from, to) => {
+      preview.setAttribute("x1", from.x);
+      preview.setAttribute("y1", from.y);
+      preview.setAttribute("x2", to.x);
+      preview.setAttribute("y2", to.y);
+      preview.setAttribute("visibility", "visible");
+    };
+    const hidePreview = () => preview.setAttribute("visibility", "hidden");
+    const reset = () => {
+      accepted = [];
+      drawing = false;
+      pointerId = null;
+      completed = false;
+      lines.setAttribute("points", "");
+      hidePreview();
+      hideFace();
+      hint.textContent = "Comece no número 1. O próximo número vai crescer.";
+      updateDots();
+      const next = document.querySelector('[data-action="next-task"]');
+      if (next) next.disabled = true;
+    };
+    const finish = () => {
+      completed = true;
+      drawing = false;
+      renderLines();
+      hidePreview();
+      hideFace();
+      hint.textContent = "Você ligou todos os números em ordem!";
+      updateDots();
+      completeTask("Muito bem! Você chegou do 1 ao 9 sem pular nenhum número. 🌟");
+    };
+    const handlePointerDown = (event) => {
+      if (completed || (event.pointerType === "mouse" && event.button !== 0)) return;
+      const position = coordinates(event);
+      const startValue = lastValue() || 1;
+      const start = pointByValue.get(startValue);
+      if (distance(position, start) > 32) {
+        showFace(event, "sad");
+        hint.textContent = "Comece no último número que você ligou.";
+        return;
+      }
+      event.preventDefault();
+      drawing = true;
+      pointerId = event.pointerId;
+      try { svg.setPointerCapture(pointerId); } catch { /* captura opcional */ }
+      if (!accepted.length) {
+        accepted.push(1);
+        renderLines();
+        updateDots();
+      }
+      const from = pointByValue.get(lastValue());
+      showPreview(from, position);
+    };
+    const handlePointerMove = (event) => {
+      if (!drawing || event.pointerId !== pointerId) return;
+      event.preventDefault();
+      const position = coordinates(event);
+      const target = pointByValue.get(expectedValue());
+      const targetDistance = distance(position, target);
+      const nearest = task.points.find(point => distance(position, point) <= 29);
+      if (targetDistance <= 36) showFace(event, "happy");
+      else if (nearest && nearest.value !== expectedValue() && nearest.value !== lastValue()) showFace(event, "sad");
+      else hideFace();
+      if (targetDistance <= 25) {
+        const nextValue = expectedValue();
+        accepted.push(nextValue);
+        renderLines();
+        updateDots();
+        hidePreview();
+        if (nextValue === 9) {
+          finish();
+          return;
+        }
+        hint.textContent = "Muito bem! Continue para o próximo número.";
+      } else {
+        showPreview(pointByValue.get(lastValue()), position);
+      }
+    };
+    const handlePointerUp = (event) => {
+      if (!drawing || event.pointerId !== pointerId) return;
+      handlePointerMove(event);
+      drawing = false;
+      pointerId = null;
+      hidePreview();
+      if (!completed && accepted.length) hint.textContent = "Soltou? Continue do último número conectado.";
+      try { if (svg.hasPointerCapture(event.pointerId)) svg.releasePointerCapture(event.pointerId); } catch { /* captura opcional */ }
+    };
+    svg.addEventListener("pointerdown", handlePointerDown);
+    svg.addEventListener("pointermove", handlePointerMove);
+    svg.addEventListener("pointerup", handlePointerUp);
+    svg.addEventListener("pointercancel", () => {
+      drawing = false;
+      pointerId = null;
+      hidePreview();
+      hideFace();
+    });
+    document.querySelector('[data-action="reset-number-path"]')?.addEventListener("click", reset);
+    updateDots();
+  }
+
+    function playFrogJumps(task) {
+    const frog = document.getElementById("frog-character");
+    const answer = document.getElementById("frog-answer");
+    const button = document.querySelector('[data-action="start-frog"]');
+    const hint = document.getElementById("frog-hint");
+    if (!frog || !answer || !button || !hint) return;
+    frogRunToken += 1;
+    const runToken = frogRunToken;
+    if (frogTimer !== null) global.clearTimeout(frogTimer);
+    let jumps = 0;
+    answer.hidden = true;
+    button.disabled = true;
+    button.textContent = "🐸";
+    frog.style.left = "0%";
+    hint.textContent = "Observe os pulos do sapo!";
+    const jump = () => {
+      if (runToken !== frogRunToken) return;
+      jumps += 1;
+      frog.style.left = (jumps / task.jumpCount * 88) + "%";
+      frog.classList.remove("is-hopping");
+      void frog.offsetWidth;
+      frog.classList.add("is-hopping");
+      hint.textContent = "🐸";
+      if (jumps < task.jumpCount) {
+        frogTimer = global.setTimeout(jump, 650);
+      } else {
+        frogTimer = global.setTimeout(() => {
+          if (runToken !== frogRunToken) return;
+          frog.classList.remove("is-hopping");
+          button.disabled = false;
+          button.textContent = "↻";
+          hint.textContent = "Quantos pulos você contou?";
+          answer.hidden = false;
+          feedback("Agora escolha quantos pulos o sapo deu.", "good");
+          frogTimer = null;
+        }, 520);
+      }
+    };
+    frogTimer = global.setTimeout(jump, 280);
+  }
+
+    function setupShapeSorting(task) {
     const root = document.getElementById("shape-sort");
     const sourceTray = document.getElementById("sort-source-tray");
     if (!root || !sourceTray) return;
@@ -768,7 +1051,7 @@
         renderMap();
         return;
       }
-      if (name === "play-sound") { const task = currentTask(); if (task?.kind === "sound-pattern") playSoundSequence(task.sound); return; }
+      if (name === "play-sound") { const task = currentTask(); if (task?.kind === "sound-pattern") playSoundSequence(task.sound); return; }\n        if (name === "start-frog") { const task = currentTask(); if (task?.kind === "frog-jumps") playFrogJumps(task); return; }
     }
     const speechButton = target.closest("[data-speak]");
     if (speechButton) {
@@ -791,6 +1074,8 @@
   });
 
   global.addEventListener("pagehide", () => {
+    frogRunToken += 1;
+    if (frogTimer !== null) global.clearTimeout(frogTimer);
     try { global.speechSynthesis?.cancel(); } catch { /* voz opcional */ }
     try { audioContext?.close(); } catch { /* áudio opcional */ }
   });
