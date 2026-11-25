@@ -40,6 +40,30 @@ for (const increment of [1, 2, 3]) {
     assert.ok(problem.options.includes(problem.answer), "addition series includes the correct result among its choices");
   }
 }
+const fishCount = data.tasks.find((task) => task.id === "numeros-04-fish-count");
+assert.equal(fishCount.kind, "fish-crab-count", "number challenge four mixes fish and crabs");
+assert.equal(fishCount.animals.filter((animal) => animal === "fish").length, 7, "fish-count challenge has seven fish");
+assert.ok(fishCount.animals.includes("crab"), "fish-count challenge includes crabs as distractors");
+assert.equal(fishCount.answer, 7, "fish-count answer counts fish only");
+
+const applePaint = data.tasks.find((task) => task.id === "numeros-05-apple-paint");
+assert.equal(applePaint.kind, "apple-paint-count", "number challenge five requires tapping and coloring apples");
+assert.equal(applePaint.appleCount, 8, "apple painting contains eight apples");
+assert.equal(applePaint.appleColors.length, 8, "every apple has a color to apply");
+assert.equal(applePaint.answer, 8, "the apple painting challenge asks for the total number of apples");
+
+const countdown = data.tasks.find((task) => task.id === "numeros-06-double-countdown");
+assert.equal(countdown.kind, "double-countdown", "number challenge six has two missing countdown values");
+assert.equal(countdown.sequence.filter((value) => value === null).length, 2, "countdown has exactly two empty positions");
+assert.deepEqual(Array.from(countdown.answers), [8, 6], "countdown missing values descend from ten to three");
+assert.equal(countdown.options.length, 2, "the two countdown gaps are answered one at a time");
+for (let index = 0; index < 2; index++) assert.ok(countdown.options[index].includes(countdown.answers[index]), "each countdown gap includes its correct choice");
+
+const tripleSum = data.tasks.find((task) => task.id === "numeros-07-triple-sum");
+assert.deepEqual(Array.from(tripleSum.terms), [5, 3, 4], "number challenge seven adds three groups");
+assert.equal(tripleSum.terms.reduce((sum, value) => sum + value, 0), 12, "triple addition totals twelve");
+assert.ok(tripleSum.options.includes(tripleSum.answer), "triple addition includes the correct answer");
+
 const missingAddend = data.tasks.find((task) => task.id === "numeros-09-missing-addend");
 assert.equal(missingAddend.knownCount + missingAddend.answer, missingAddend.total, "missing addend challenge has a consistent result");
 assert.ok(missingAddend.options.includes(missingAddend.answer), "missing addend answer is a selectable option");
@@ -53,8 +77,26 @@ const formsThird = data.tasks.find((task) => task.id === "formas-03");
 assert.deepEqual(Array.from(formsThird.sequence), ["red-circle", "blue-square", "red-circle", "blue-square", null], "the approved third challenge sequence is preserved");
 assert.equal(formsThird.answer, "red-circle", "the approved third challenge answer is preserved");
 
+const choicePositions = { first: 0, middle: 0, last: 0 };
+const collectChoicePosition = (holder) => {
+  if (!Array.isArray(holder.options) || holder.options.length !== 3) return;
+  const index = Number.isInteger(holder.answerIndex)
+    ? holder.answerIndex
+    : holder.options.findIndex((option) => String(option) === String(holder.answer));
+  if (index === 0) choicePositions.first += 1;
+  else if (index === 1) choicePositions.middle += 1;
+  else if (index === 2) choicePositions.last += 1;
+};
+for (const task of data.tasks) {
+  if (task.kind === "addition-series") task.problems.forEach(collectChoicePosition);
+  else if (task.kind === "double-countdown") task.options.forEach((options, index) => collectChoicePosition({ options, answer: task.answers[index] }));
+  else collectChoicePosition(task);
+}
+assert.ok(choicePositions.first > 0 && choicePositions.middle > 0 && choicePositions.last > 0, "three-choice correct answers are distributed across first, middle and last positions");
+assert.ok(Math.max(...Object.values(choicePositions)) - Math.min(...Object.values(choicePositions)) <= 4, "three-choice correct-answer positions are reasonably balanced");
+
 const kinds = new Set(data.tasks.map((task) => task.kind));
-for (const kind of ["pattern", "paint", "shape-match", "connect-polygon", "nested-shape-match", "shape-color-choice", "shape-sort", "number-path", "frog-jumps", "addition-series", "missing-addend", "count", "compare", "calculation", "odd-one", "grid-position", "position", "matrix", "pair", "proportion", "letter-pattern", "letter-match", "sound-pattern", "color-matrix"]) {
+for (const kind of ["pattern", "paint", "shape-match", "connect-polygon", "nested-shape-match", "shape-color-choice", "shape-sort", "number-path", "frog-jumps", "addition-series", "missing-addend", "fish-crab-count", "apple-paint-count", "double-countdown", "count", "compare", "calculation", "odd-one", "grid-position", "position", "matrix", "pair", "proportion", "letter-pattern", "letter-match", "sound-pattern", "color-matrix"]) {
   assert.ok(kinds.has(kind), kind + " is represented");
 }
 
@@ -109,7 +151,7 @@ assert.ok(memoryMap.has(store.KEY), "completed progress is written to localStora
 assert.equal(store.normalize({ version: 9, completed: ["cores-01"] }).completed.length, 0, "unknown progress versions reset safely");
 assert.deepEqual(Array.from(store.normalize({ version: 1, completed: ["cores-01", "unknown-task", "cores-01"] }).completed), ["cores-01"], "current progress versions preserve valid unique challenge IDs only");
 assert.equal(store.normalize({ completed: ["cores-01"] }).completed.length, 0, "progress without a version resets safely");
-assert.equal(store.normalize({ version: 1, completed: ["formas-05", "formas-06", "formas-08", "numeros-01", "numeros-02", "numeros-03"] }).completed.length, 0, "redesigned shape and number challenges do not inherit completion from previous task IDs");
+assert.equal(store.normalize({ version: 1, completed: ["formas-05", "formas-06", "formas-08", "numeros-01", "numeros-02", "numeros-03", "numeros-04", "numeros-05", "numeros-06", "numeros-07"] }).completed.length, 0, "redesigned shape and number challenges do not inherit completion from previous task IDs");
 
 const activity = read("../assets/js/activity.js");
 assert.ok(activity.includes('target.closest("[data-speak]")'), "audio instructions use one delegated click handler");
@@ -164,6 +206,10 @@ assert.ok(activity.includes("function numberPathVisual(task)") && activity.inclu
 assert.ok(activity.includes("function frogJumpVisual(task)") && activity.includes("function playFrogJumps(task)"), "frog jumps have a visual renderer and timed animation");
 assert.ok(activity.includes("function additionSeriesVisual(task)") && activity.includes("additionSeriesStep += 1"), "addition series advances after each correct answer");
 assert.ok(activity.includes("function missingAddendVisual(task)"), "missing addend has a dedicated visual equation renderer");
+assert.ok(activity.includes("function fishCrabCountVisual(task)"), "fish counting differentiates fish from crabs");
+assert.ok(activity.includes("function applePaintVisual(task)") && activity.includes("function handleApplePaint(button)"), "apple counting requires painting each apple by touch");
+assert.ok(activity.includes("function doubleCountdownVisual(task)") && activity.includes("countdownStep += 1"), "countdown asks for the two missing numbers sequentially");
+assert.ok(activity.includes("Array.isArray(task.terms)"), "calculation renderer supports three or more addends");
 assert.ok(activity.includes("function nestedLayersHTML(layers)") && activity.includes("function nestedShapeVisual(task)"), "nested shape matching renders multiple inner layers");
 assert.ok(activity.includes("function shapeColorChoiceVisual(task)") && activity.includes("shape-color-options"), "the fourteen colored shapes have a dedicated choice grid");
 assert.ok(activity.includes("function setupShapeSorting(task)") && activity.includes('root.addEventListener("pointerdown"') && activity.includes('root.addEventListener("pointerup"'), "shape classification supports pointer drag and drop");
