@@ -14,11 +14,17 @@ web-explorers/
 │   ├── digital-explorers/        # Exploradores do Mundo Digital
 │   ├── yoshi-typing/             # Floresta do Yoshi
 │   ├── donkey-kong/              # Donkey Kong Country
-│   └── word-adventure/           # Aventura das Palavras (alfabetização e letramento)
+│   ├── word-adventure/           # Aventura das Palavras (alfabetização e letramento)
+│   │   ├── index.html
+│   │   ├── worlds/
+│   │   ├── assets/css/
+│   │   ├── assets/js/
+│   │   └── tests/
+│   └── capi-logica/               # Capi e os Desafios da Lógica (jogos visuais)
 │       ├── index.html
-│       ├── worlds/               # aliases das cinco áreas temáticas
 │       ├── assets/css/
-│       ├── assets/js/            # conteúdo pedagógico, progresso e interação
+│       ├── assets/js/             # configuração, catálogo de jogos, progresso e interação
+│       ├── assets/images/
 │       └── tests/
 ├── docs/activities/
 │   ├── donkey-kong-plan.md
@@ -27,7 +33,7 @@ web-explorers/
     └── validate-repository.mjs
 ```
 
-O catálogo da raiz apresenta quatro atividades independentes. Cada experiência conserva seus próprios recursos e progresso.
+O catálogo da raiz apresenta cinco atividades independentes. Cada experiência conserva seus próprios recursos e progresso.
 
 ## Como executar localmente
 
@@ -49,6 +55,7 @@ Em seguida, abra no navegador:
 
 - Catálogo: [http://localhost:8000/](http://localhost:8000/)
 - Aventura das Palavras: [http://localhost:8000/activities/word-adventure/](http://localhost:8000/activities/word-adventure/)
+- Capi e os Desafios da Lógica: [http://localhost:8000/activities/capi-logica/](http://localhost:8000/activities/capi-logica/)
 
 Para encerrar o servidor, volte ao terminal e pressione `Ctrl+C`. Mantenha o terminal aberto enquanto estiver usando a versão local.
 
@@ -84,6 +91,14 @@ A atividade não diagnostica nem rotula o aluno. Seu progresso é local e regist
 
 O plano pedagógico, a referência curricular, a progressão e os critérios de aceite estão em [docs/activities/word-adventure-plan.md](docs/activities/word-adventure-plan.md). A sequência se relaciona especialmente às habilidades BNCC EF01LP04–EF01LP11 e EF12LP01/EF12LP04. O marco nacional vigente usado como referência é o Compromisso Nacional Criança Alfabetizada (Decreto nº 11.556/2023). O Decreto nº 9.765/2019, da antiga Política Nacional de Alfabetização, foi revogado e não é tratado como política vigente.
 
+## Capi e os Desafios da Lógica
+
+A nova atividade começa em activities/capi-logica/index.html e foi pensada para crianças não leitoras. A Capi acompanha sete áreas com 45 desafios curtos (seis no Ateliê das Cores, nove na Oficina das Formas, nove na Trilha dos Números, oito no Jardim das Regras, sete no Mapa dos Caminhos e três nas demais): cores, formas, números e cálculos, regras e sequências de setas, comparações de formas irregulares encaixadas, posições e caminhos, combinações e proporções, letras e sons. A Oficina das Formas inclui nove desafios progressivos, encerrando com uma grade 3×3 de números embaralhados que a criança conecta de 1 a 9. O Jardim das Regras inclui oito desafios de sequência de setas coloridas, composições irregulares encaixadas, direções diagonais, padrões de cor/direção, matrizes e comparação de caminhos. O Mapa dos Caminhos inclui sete desafios com matrizes 4×4 e 5×5, relações entre objetos, percursos de várias etapas e localização de destinos em relação a pontos de referência. A Trilha dos Números inclui nove desafios: seis pulos de sapo para contar, nove somas progressivas de +1, +2 e +3, contagem seletiva de peixes entre caranguejos, pintura e contagem de maçãs, contagem regressiva com duas lacunas e soma de três grupos (5 + 3 + 4).
+
+A interface usa imagens, cores, quantidades, setas e padrões como pistas principais. Instruções podem ser ouvidas, mas a criança não precisa ler para navegar ou responder. Não há cronômetro, vidas ou punição por erro. A pintura interna usa uma paleta lateral numerada por toque/clique; em telas estreitas, a paleta se reorganiza horizontalmente. A Capi Pintora é uma ferramenta separada; seu endereço HTTPS será configurado em activities/capi-logica/assets/js/config.js quando estiver hospedada. Enquanto isso, o painel informa que o link está pendente.
+
+O plano pedagógico e os critérios de aceite estão em [docs/activities/capi-logica-plan.md](docs/activities/capi-logica-plan.md).
+
 ## Testes
 
 Execute a partir da raiz do repositório:
@@ -91,6 +106,8 @@ Execute a partir da raiz do repositório:
 ```bash
 node activities/word-adventure/tests/validate-activity.mjs
 node activities/word-adventure/tests/validate-repository.mjs
+node activities/capi-logica/tests/validate-activity.mjs
+node activities/capi-logica/tests/validate-repository.mjs
 node tests/validate-repository.mjs
 ```
 
