@@ -13,6 +13,8 @@
   let selectedColor = null;
   let painted = [];
   let additionSeriesStep = 0;
+  let countdownStep = 0;
+  let applePainted = [];
   let frogRunToken = 0;
   let frogTimer = null;
   let audioContext = null;
@@ -199,6 +201,52 @@
       '<div class="number-path-controls"><button type="button" class="quiet-button" data-action="reset-number-path">↻ Recomeçar</button></div>' +
     '</div>';
   }
+  function fishCrabCountVisual(task) {
+    const animals = task.animals.map((animal, index) =>
+      '<span class="count-animal ' + animal + '" aria-label="' + (animal === "fish" ? "peixe" : "caranguejo") + '">' +
+        (animal === "fish" ? "🐟" : "🦀") +
+      '</span>'
+    ).join("");
+    return '<div class="fish-count-game">' +
+      '<div class="fish-count-target"><span>🐟</span><strong>CONTE OS PEIXES</strong><small>Não conte os caranguejos!</small></div>' +
+      '<div class="fish-count-group">' + animals + '</div>' +
+      '<p class="fish-count-reminder">🐟 Conte os peixes. 🦀 Ignore os caranguejos.</p>' +
+      numberOptions(task.options) +
+    '</div>';
+  }
+  function appleSVG() {
+    return '<svg viewBox="0 0 72 72" aria-hidden="true">' +
+      '<path class="apple-body" d="M36 23 C25 15 10 25 12 43 C14 59 25 66 36 61 C47 66 58 59 60 43 C62 25 47 15 36 23Z" fill="#fff" stroke="#496b4d" stroke-width="3.5" stroke-linejoin="round"/>' +
+      '<path d="M36 23 C35 16 38 11 43 7" fill="none" stroke="#765334" stroke-width="4" stroke-linecap="round"/>' +
+      '<path d="M39 13 C48 4 57 9 55 17 C49 21 43 19 39 13Z" fill="#a9cf7a" stroke="#496b4d" stroke-width="2"/>' +
+    '</svg>';
+  }
+  function applePaintVisual(task) {
+    return '<div class="apple-paint-game">' +
+      '<div class="apple-paint-grid">' + Array.from({ length: task.appleCount }, (_, index) =>
+        '<button type="button" class="apple-paint-item" data-apple-index="' + index + '" aria-label="Pintar maçã ' + (index + 1) + '">' + appleSVG() + '</button>'
+      ).join("") + '</div>' +
+      '<div class="apple-paint-counter" id="apple-paint-counter" aria-live="polite"><span>🍎</span> Maçãs pintadas: <strong>0 / ' + task.appleCount + '</strong></div>' +
+      '<div class="apple-paint-answer" id="apple-paint-answer" hidden><p>Quantas maçãs você pintou?</p>' + numberOptions(task.options) + '</div>' +
+    '</div>';
+  }
+  function doubleCountdownVisual(task) {
+    const missingIndex = task.missingIndexes[countdownStep];
+    const sequence = task.sequence.map((value, index) => {
+      if (value !== null) return '<span class="countdown-number">' + value + '</span>';
+      const missingPosition = task.missingIndexes.indexOf(index);
+      if (missingPosition < countdownStep) {
+        return '<span class="countdown-number filled">' + task.answers[missingPosition] + '</span>';
+      }
+      return '<span class="countdown-number missing ' + (index === missingIndex ? "active" : "") + '">?</span>';
+    }).join("");
+    return '<div class="double-countdown-game">' +
+      '<div class="countdown-progress"><span>FALTA PREENCHER</span><strong>' + (countdownStep + 1) + ' / 2</strong></div>' +
+      '<div class="countdown-sequence">' + sequence + '</div>' +
+      '<p class="countdown-hint">Qual número vem aqui?</p>' +
+      numberOptions(task.options[countdownStep]) +
+    '</div>';
+  }
   function countVisual(task) {
     return groupVisual(task.emoji, task.count) + numberOptions(task.options);
   }
@@ -209,6 +257,10 @@
       '</div>';
   }
   function calculationVisual(task) {
+    if (Array.isArray(task.terms)) {
+      const groups = task.terms.map((count) => '<div class="math-group">' + Array.from({ length: count }, () => '<span>' + esc(task.emoji) + '</span>').join("") + '</div>');
+      return '<div class="math-row triple-math-row">' + groups.join('<span class="math-symbol">' + esc(task.operator || "+") + '</span>') + '<span class="math-symbol">=</span><span class="option-number">?</span></div>' + numberOptions(task.options);
+    }
     return '<div class="math-row">' +
       '<div class="math-group">' + Array.from({ length: task.leftCount }, () => '<span>' + esc(task.emoji) + '</span>').join("") + '</div>' +
       '<span class="math-symbol">' + esc(task.operator) + '</span>' +
@@ -364,6 +416,9 @@
     if (task.kind === "frog-jumps") return frogJumpVisual(task);
     if (task.kind === "addition-series") return additionSeriesVisual(task);
     if (task.kind === "missing-addend") return missingAddendVisual(task);
+    if (task.kind === "fish-crab-count") return fishCrabCountVisual(task);
+    if (task.kind === "apple-paint-count") return applePaintVisual(task);
+    if (task.kind === "double-countdown") return doubleCountdownVisual(task);
     if (task.kind === "shape-count") return shapeCountVisual(task);
     if (task.kind === "side-count") {
       return '<div class="shape-target">' + tokenHTML(task.target) + '</div>' + numberOptions(task.options);
@@ -438,6 +493,8 @@
     selectedColor = null;
     painted = [];
     additionSeriesStep = 0;
+    countdownStep = 0;
+    applePainted = [];
     frogRunToken += 1;
     if (frogTimer !== null) global.clearTimeout(frogTimer);
     frogTimer = null;
@@ -506,6 +563,23 @@
       return;
     }
 
+    if (task.kind === "double-countdown") {
+      if (Number(value) !== task.answers[countdownStep]) {
+        feedback("Quase! Conte para trás e tente novamente.", "hint");
+        return;
+      }
+      if (countdownStep === task.answers.length - 1) {
+        completeTask("Você encontrou os dois números que faltavam! 🌟");
+        return;
+      }
+      countdownStep += 1;
+      const board = document.querySelector(".game-board");
+      if (board) board.innerHTML = renderVisual(task);
+      feedback("Muito bem! Agora descubra o próximo número que falta.", "good");
+      return;
+    }
+    if (task.kind === "apple-paint-count" && document.getElementById("apple-paint-answer")?.hidden !== false) return;
+
     let correct = false;
     if (task.kind === "proportion" || task.kind === "sound-pattern" || task.kind === "nested-shape-match" || task.kind === "shape-color-choice") {
       correct = Number(button.dataset.optionIndex) === task.answerIndex;
@@ -526,6 +600,31 @@
     const answer = rowCol.row * 3 + rowCol.col;
     if (Number(button.dataset.cell) === answer && answer === task.answerIndex) completeTask("Caminho encontrado! Você seguiu todas as setas.");
     else feedback("Siga uma seta de cada vez, partindo da pegada.", "hint");
+  }
+  function handleApplePaint(button) {
+    const task = currentTask();
+    if (!task || task.kind !== "apple-paint-count" || button.dataset.painted === "true") return;
+    const index = Number(button.dataset.appleIndex);
+    if (!Number.isInteger(index) || index < 0 || index >= task.appleCount) return;
+    const color = task.appleColors[index % task.appleColors.length];
+    const body = button.querySelector(".apple-body");
+    if (!body) return;
+    body.setAttribute("fill", DATA.COLORS[color] || "#e64b42");
+    button.dataset.painted = "true";
+    button.disabled = true;
+    button.classList.add("is-painted");
+    button.setAttribute("aria-label", "Maçã " + (index + 1) + " pintada");
+    applePainted[index] = color;
+    const count = applePainted.filter(Boolean).length;
+    const counter = document.getElementById("apple-paint-counter");
+    if (counter) counter.innerHTML = '<span>🍎</span> Maçãs pintadas: <strong>' + count + ' / ' + task.appleCount + '</strong>';
+    if (count === task.appleCount) {
+      const answer = document.getElementById("apple-paint-answer");
+      if (answer) answer.hidden = false;
+      feedback("Todas as maçãs foram pintadas! Agora conte quantas são.", "good");
+    } else {
+      feedback("Mais uma maçã pintada! Continue contando.", "good");
+    }
   }
   function handlePaintColor(button) {
     selectedColor = button.dataset.paintColor;
@@ -1066,6 +1165,8 @@
     }
     const colorButton = target.closest("[data-paint-color]");
     if (colorButton) { handlePaintColor(colorButton); return; }
+    const appleButton = target.closest("[data-apple-index]");
+    if (appleButton) { handleApplePaint(appleButton); return; }
     const paintTarget = target.closest("[data-paint-target]");
     if (paintTarget) { handlePaintTarget(paintTarget); return; }
     const cell = target.closest("[data-cell]");
