@@ -8,13 +8,13 @@ vm.runInContext(read("../assets/js/games.js"), gamesContext, { filename: "games.
 const data = gamesContext.window.CapiLogicGames;
 assert.ok(data, "visual game data is registered");
 assert.equal(data.worlds.length, 7, "seven visual logic areas exist");
-assert.equal(data.tasks.length, 36, "seven areas contain 36 short challenges, including six in colors and nine each in shapes and numbers");
+assert.equal(data.tasks.length, 41, "seven areas contain 41 short challenges, including eight in the rules area");
 assert.equal(new Set(data.worlds.map((world) => world.id)).size, 7, "world IDs are unique");
-assert.equal(new Set(data.tasks.map((task) => task.id)).size, 36, "task IDs are unique");
+assert.equal(new Set(data.tasks.map((task) => task.id)).size, 41, "task IDs are unique");
 
 for (const world of data.worlds) {
   const tasks = data.tasks.filter((task) => task.world === world.id);
-  assert.equal(tasks.length, world.id === "cores" ? 6 : world.id === "formas" || world.id === "numeros" ? 9 : 3, world.id + " has the configured number of challenges");
+  assert.equal(tasks.length, world.id === "cores" ? 6 : world.id === "formas" || world.id === "numeros" ? 9 : world.id === "regras" ? 8 : 3, world.id + " has the configured number of challenges");
   for (const task of tasks) assert.ok(task.prompt && task.title && task.icon, task.id + " has an audio prompt and visual identity");
 }
 const numberPath = data.tasks.find((task) => task.id === "formas-09-number-path");
@@ -82,6 +82,37 @@ const formsThird = data.tasks.find((task) => task.id === "formas-03");
 assert.deepEqual(Array.from(formsThird.sequence), ["red-circle", "blue-square", "red-circle", "blue-square", null], "the approved third challenge sequence is preserved");
 assert.equal(formsThird.answer, "red-circle", "the approved third challenge answer is preserved");
 
+const rulesTasks = data.tasks.filter((task) => task.world === "regras");
+assert.equal(rulesTasks.length, 8, "the rules area contains eight progressive challenges");
+const arrowCopy = rulesTasks.find((task) => task.id === "regras-01-arrow-copy");
+assert.equal(arrowCopy.kind, "arrow-order", "the first rules challenge copies a colored arrow order");
+assert.equal(arrowCopy.sequence.length, 4, "the first arrow order has four reference arrows");
+assert.equal(arrowCopy.choices.length, 8, "the first arrow order has eight selectable arrows");
+for (const arrow of arrowCopy.sequence) assert.equal(arrowCopy.choices.filter((choice) => choice.direction === arrow.direction && choice.color === arrow.color).length, 1, "each reference arrow has exactly one matching choice");
+
+const irregularMatch = rulesTasks.find((task) => task.id === "regras-02-irregular-match");
+assert.equal(irregularMatch.kind, "complex-match", "the second rules challenge compares irregular nested compositions");
+assert.equal(irregularMatch.targetLayers.length, 3, "the irregular model has three nested elements");
+assert.equal(irregularMatch.options.length, 4, "the irregular composition has four alternatives");
+const allowedIrregularShapes = new Set(["cloud", "leaf", "wave", "blob", "shell", "ribbon"]);
+for (const layer of irregularMatch.targetLayers) assert.ok(allowedIrregularShapes.has(layer.shape), "the nested model uses an irregular silhouette");
+assert.deepEqual(Array.from(irregularMatch.options[irregularMatch.answerIndex].layers, (layer) => layer.shape + "-" + layer.color), Array.from(irregularMatch.targetLayers, (layer) => layer.shape + "-" + layer.color), "the correct irregular option matches all nested parts and colors");
+
+const diagonalPattern = rulesTasks.find((task) => task.id === "regras-03-diagonal-pattern");
+assert.equal(diagonalPattern.kind, "pattern", "the third rules challenge continues a diagonal arrow pattern");
+assert.equal(diagonalPattern.options.length, 6, "the diagonal arrow pattern offers six alternatives");
+for (const token of diagonalPattern.sequence.filter(Boolean).concat(diagonalPattern.options)) assert.ok(["up-right", "down-right", "down-left", "up-left"].includes(token.split("-").slice(-2).join("-")) || ["up-right", "down-right", "down-left", "up-left"].includes(token), "the diagonal task uses diagonal arrow directions");
+
+const longerCopy = rulesTasks.find((task) => task.id === "regras-07-arrow-copy-plus");
+assert.equal(longerCopy.kind, "arrow-order", "challenge seven extends the arrow-copy interaction");
+assert.equal(longerCopy.sequence.length, 6, "the advanced arrow-copy challenge has six steps");
+assert.equal(longerCopy.choices.length, 12, "the advanced arrow-copy challenge has twelve selectable arrows");
+const pathMatch = rulesTasks.find((task) => task.id === "regras-08-sequence-match");
+assert.equal(pathMatch.kind, "arrow-sequence-match", "challenge eight compares complete arrow paths");
+assert.equal(pathMatch.target.length, 5, "the path model has five arrows");
+assert.equal(pathMatch.options.length, 4, "the path comparison has four complete alternatives");
+assert.deepEqual(Array.from(pathMatch.options[pathMatch.answerIndex], (arrow) => arrow.direction + "-" + arrow.color), Array.from(pathMatch.target, (arrow) => arrow.direction + "-" + arrow.color), "the correct path matches direction, color and order");
+
 const choicePositions = { first: 0, middle: 0, last: 0 };
 const collectChoicePosition = (holder) => {
   if (!Array.isArray(holder.options) || holder.options.length !== 3) return;
@@ -101,7 +132,7 @@ assert.ok(choicePositions.first > 0 && choicePositions.middle > 0 && choicePosit
 assert.ok(Math.max(...Object.values(choicePositions)) - Math.min(...Object.values(choicePositions)) <= 4, "three-choice correct-answer positions are reasonably balanced");
 
 const kinds = new Set(data.tasks.map((task) => task.kind));
-for (const kind of ["pattern", "paint", "shape-match", "connect-polygon", "nested-shape-match", "shape-color-choice", "shape-sort", "number-path", "frog-jumps", "addition-series", "missing-addend", "fish-crab-count", "apple-paint-count", "double-countdown", "count", "compare", "calculation", "odd-one", "grid-position", "position", "matrix", "pair", "proportion", "letter-pattern", "letter-match", "sound-pattern", "color-matrix"]) {
+for (const kind of ["pattern", "paint", "shape-match", "connect-polygon", "nested-shape-match", "shape-color-choice", "shape-sort", "number-path", "frog-jumps", "addition-series", "missing-addend", "arrow-order", "complex-match", "arrow-sequence-match", "fish-crab-count", "apple-paint-count", "double-countdown", "count", "compare", "calculation", "odd-one", "grid-position", "position", "matrix", "pair", "proportion", "letter-pattern", "letter-match", "sound-pattern", "color-matrix"]) {
   assert.ok(kinds.has(kind), kind + " is represented");
 }
 
@@ -207,6 +238,10 @@ assert.ok(activity.includes("accepted.push(targetIndex)") && activity.includes("
 assert.ok(activity.includes('svg.addEventListener("pointermove"') && activity.includes('svg.addEventListener("pointerup"'), "pentagon drawing supports pointer and touch dragging");
 assert.ok(activity.includes('face.textContent = mood === "happy" ? "😊" : "😟"'), "polygon drawing gives happy and sad proximity feedback");
 assert.ok(activity.includes("function shapeGlyphHTML(shape)"), "shapes use centered CSS glyph elements rather than font glyph baselines");
+assert.ok(activity.includes("function arrowOrderVisual(task)") && activity.includes("function handleArrowOrderChoice(button)"), "colored arrows can be copied by clicking them in sequence");
+assert.ok(activity.includes("function complexMatchVisual(task)") && activity.includes("function irregularCompositionHTML(layers)"), "irregular nested compositions have a dedicated visual renderer");
+assert.ok(activity.includes("function arrowSequenceMatchVisual(task)") && activity.includes("task.kind === \"arrow-sequence-match\""), "complete arrow paths can be compared as alternatives");
+assert.ok(activity.includes('target.closest("[data-arrow-choice-id]")'), "arrow order interaction uses delegated button input");
 assert.ok(activity.includes("function numberPathVisual(task)") && activity.includes("function setupNumberPath(task)"), "the 3 by 3 number path has a dedicated renderer and drag controller");
 assert.ok(activity.includes("function frogJumpVisual(task)") && activity.includes("function playFrogJumps(task)"), "frog jumps have a visual renderer and timed animation");
 assert.ok(activity.includes("function additionSeriesVisual(task)") && activity.includes("additionSeriesStep += 1"), "addition series advances after each correct answer");
@@ -219,4 +254,4 @@ assert.ok(activity.includes("function nestedLayersHTML(layers)") && activity.inc
 assert.ok(activity.includes("function shapeColorChoiceVisual(task)") && activity.includes("shape-color-options"), "the fourteen colored shapes have a dedicated choice grid");
 assert.ok(activity.includes("function setupShapeSorting(task)") && activity.includes('root.addEventListener("pointerdown"') && activity.includes('root.addEventListener("pointerup"'), "shape classification supports pointer drag and drop");
 assert.ok(activity.includes('document.elementFromPoint(event.clientX, event.clientY)'), "shape sorting detects the drop target under the pointer");
-console.log("OK: seven worlds, 36 visual challenges, colors, shapes, numbers, rules, positions, proportions, letters, sound and progress");
+console.log("OK: seven worlds, 41 visual challenges, colors, shapes, numbers, rules, positions, proportions, letters, sound and progress");
