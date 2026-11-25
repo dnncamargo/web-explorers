@@ -94,7 +94,7 @@ assert.equal(polygon.points.length, 5, "the pentagon task has five vertices");
 assert.equal(polygon.answer, 5, "the learner counts five vertices after closing the pentagon");
 assert.ok(polygon.options.includes(5), "the pentagon vertex count is one of the choices");
 for (const point of polygon.points) assert.ok(point.x >= 0 && point.x <= 360 && point.y >= 0 && point.y <= 270, "polygon points stay inside the drawing area");
-const nestedTask = shapeTasks.find((task) => task.id === "formas-05");
+const nestedTask = shapeTasks.find((task) => task.id === "formas-05-nested");
 assert.equal(nestedTask.kind, "nested-shape-match", "challenge five compares nested shapes");
 assert.equal(nestedTask.targetLayers.length, 4, "challenge five contains four nested layers");
 assert.ok(nestedTask.targetLayers.slice(1).length >= 2, "challenge five adds two inner shapes beyond the first nested pair");
@@ -102,7 +102,7 @@ assert.equal(nestedTask.options.length, 3, "nested-shape challenge has three alt
 for (const option of nestedTask.options) assert.equal(option.layers.length, 4, "every nested alternative has four layers");
 assert.equal(nestedTask.options[nestedTask.answerIndex].layers.map((layer) => layer.shape + "-" + layer.color).join("|"), nestedTask.targetLayers.map((layer) => layer.shape + "-" + layer.color).join("|"), "the nested answer matches all shapes and colors in order");
 
-const colorChoice = shapeTasks.find((task) => task.id === "formas-06");
+const colorChoice = shapeTasks.find((task) => task.id === "formas-06-color-search");
 assert.equal(colorChoice.kind, "shape-color-choice", "challenge six searches for a shape with a specific color");
 assert.equal(colorChoice.options.length, 14, "challenge six displays fourteen colored alternatives");
 assert.equal(colorChoice.options.length / 7, 2, "fourteen alternatives are arranged as two rows of seven");
@@ -111,7 +111,7 @@ assert.equal(selectedShape.shape, colorChoice.targetShape, "the selected alterna
 assert.equal(selectedShape.color, colorChoice.targetColor, "the selected alternative has the requested target color");
 assert.equal(colorChoice.options.filter((option) => option.shape === colorChoice.targetShape && option.color === colorChoice.targetColor).length, 1, "only one alternative matches both target attributes");
 
-const sorting = shapeTasks.find((task) => task.id === "formas-08");
+const sorting = shapeTasks.find((task) => task.id === "formas-08-sort");
 assert.equal(sorting.kind, "shape-sort", "challenge eight sorts shapes into groups");
 assert.equal(sorting.zones.length, 3, "shape sorting has three classification groups");
 assert.equal(sorting.items.length, 12, "shape sorting has twelve mixed items");
