@@ -709,12 +709,12 @@
     answer.hidden = true;
     button.disabled = true;
     button.textContent = "🐸";
-    frog.style.left = "0%";
+    frog.style.left = "11.43%";
     hint.textContent = "Observe os pulos do sapo!";
     const jump = () => {
       if (runToken !== frogRunToken) return;
       jumps += 1;
-      frog.style.left = (jumps / task.jumpCount * 88) + "%";
+      frog.style.left = (11.43 + jumps / task.jumpCount * 77.14) + "%";
       frog.classList.remove("is-hopping");
       void frog.offsetWidth;
       frog.classList.add("is-hopping");
