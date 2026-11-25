@@ -103,7 +103,10 @@
           task.options[index] = holder.options;
         });
       } else {
-        rebalance(task);
+        const forcedIndex = task.id === "numeros-05-apple-paint" ? 0
+          : task.id === "numeros-07-triple-sum" ? 2
+          : undefined;
+        rebalance(task, forcedIndex);
       }
     });
   }
